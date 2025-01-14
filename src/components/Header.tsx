@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Moon, Sun } from "lucide-react";
+import { useTheme } from "@/components/theme-provider";
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b">
@@ -24,6 +26,18 @@ export const Header = () => {
             <Link to="/marketplace" className="text-sm hover:text-primary transition-colors">
               Marketplace
             </Link>
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="mr-4"
+            >
+              {theme === "dark" ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </Button>
             <Button variant="outline" className="ml-4">
               Connect Wallet
             </Button>
@@ -49,6 +63,18 @@ export const Header = () => {
               <Link to="/marketplace" className="text-sm hover:text-primary transition-colors">
                 Marketplace
               </Link>
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="w-full flex justify-center"
+              >
+                {theme === "dark" ? (
+                  <Sun className="h-5 w-5" />
+                ) : (
+                  <Moon className="h-5 w-5" />
+                )}
+              </Button>
               <Button variant="outline" className="w-full">
                 Connect Wallet
               </Button>
