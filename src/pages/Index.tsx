@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Shield, Zap, Trophy, Wallet, TrendingUp, Users, Star } from "lucide-react";
+import { Shield, Zap, Trophy, Wallet, TrendingUp, Users, Star, ArrowRight } from "lucide-react";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -111,6 +111,9 @@ const Index = () => {
         
         <div className="container mx-auto px-4 pt-16 relative z-10">
           <div className="max-w-3xl mx-auto text-center space-y-8">
+            <div className="inline-block animate-bounce bg-primary/20 backdrop-blur-sm rounded-full px-4 py-1 text-sm mb-4">
+              🚀 Welcome to the Future of Digital Art
+            </div>
             <h1 className="text-5xl md:text-6xl font-bold leading-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-400 animate-fade-in">
               Discover, collect, and sell extraordinary NFTs
             </h1>
@@ -118,8 +121,11 @@ const Index = () => {
               NFTverse is the world's first and largest NFT marketplace
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
-              <Button asChild size="lg" className="bg-primary/90 hover:bg-primary/100 backdrop-blur-sm">
-                <Link to="/marketplace">Explore</Link>
+              <Button asChild size="lg" className="bg-primary/90 hover:bg-primary/100 backdrop-blur-sm group">
+                <Link to="/marketplace" className="flex items-center gap-2">
+                  Explore
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
               </Button>
               <Button variant="outline" size="lg" className="backdrop-blur-sm border-primary/20 hover:bg-primary/10">
                 Create
@@ -134,7 +140,7 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {stats.map((stat, index) => (
-              <div key={index} className="text-center p-6 rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10 hover:border-primary/30 transition-all duration-300">
+              <div key={index} className="text-center p-6 rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10 hover:border-primary/30 transition-all duration-300 hover:transform hover:scale-105">
                 <stat.icon className="w-8 h-8 mx-auto mb-4 text-primary" />
                 <div className="text-3xl font-bold text-primary mb-2">{stat.value}</div>
                 <div className="text-muted-foreground">{stat.label}</div>
@@ -145,8 +151,9 @@ const Index = () => {
       </div>
 
       {/* Featured NFTs Section */}
-      <div className="py-24 bg-background" ref={featuredRef}>
-        <div className="container mx-auto px-4">
+      <div className="py-24 bg-background relative overflow-hidden" ref={featuredRef}>
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent"></div>
+        <div className="container mx-auto px-4 relative">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-400">
             Featured Collections
           </h2>
@@ -161,15 +168,16 @@ const Index = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
+            <CarouselPrevious className="bg-background/80 backdrop-blur-sm border-primary/20" />
+            <CarouselNext className="bg-background/80 backdrop-blur-sm border-primary/20" />
           </Carousel>
         </div>
       </div>
 
       {/* Platform Benefits Section */}
-      <div className="py-24 bg-secondary/5">
-        <div className="container mx-auto px-4">
+      <div className="py-24 bg-secondary/5 relative">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1920')] bg-cover bg-fixed opacity-5"></div>
+        <div className="container mx-auto px-4 relative">
           <h2 
             ref={benefitsRef}
             className="text-3xl md:text-4xl font-bold text-center mb-16 bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-400"
@@ -180,7 +188,7 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div 
               ref={el => cardsRef.current[0] = el}
-              className="p-6 rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10 hover:border-primary/30 transition-all duration-300 group"
+              className="p-6 rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10 hover:border-primary/30 transition-all duration-300 group hover:transform hover:scale-105"
             >
               <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <Shield className="text-primary" />
@@ -193,7 +201,7 @@ const Index = () => {
 
             <div 
               ref={el => cardsRef.current[1] = el}
-              className="p-6 rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10 hover:border-primary/30 transition-all duration-300 group"
+              className="p-6 rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10 hover:border-primary/30 transition-all duration-300 group hover:transform hover:scale-105"
             >
               <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <Zap className="text-primary" />
@@ -206,7 +214,7 @@ const Index = () => {
 
             <div 
               ref={el => cardsRef.current[2] = el}
-              className="p-6 rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10 hover:border-primary/30 transition-all duration-300 group"
+              className="p-6 rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10 hover:border-primary/30 transition-all duration-300 group hover:transform hover:scale-105"
             >
               <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <Trophy className="text-primary" />
@@ -219,7 +227,7 @@ const Index = () => {
 
             <div 
               ref={el => cardsRef.current[3] = el}
-              className="p-6 rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10 hover:border-primary/30 transition-all duration-300 group"
+              className="p-6 rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10 hover:border-primary/30 transition-all duration-300 group hover:transform hover:scale-105"
             >
               <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <Wallet className="text-primary" />
