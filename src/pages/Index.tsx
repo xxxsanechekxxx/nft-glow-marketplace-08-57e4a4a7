@@ -1,15 +1,59 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Shield, Zap, Trophy, Wallet } from "lucide-react";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Index = () => {
+  const heroRef = useRef(null);
+  const benefitsRef = useRef(null);
+  const cardsRef = useRef([]);
+
+  useEffect(() => {
+    // Hero section animation
+    gsap.from(heroRef.current, {
+      opacity: 0,
+      y: 100,
+      duration: 1,
+      ease: "power3.out"
+    });
+
+    // Benefits heading animation
+    gsap.from(benefitsRef.current, {
+      scrollTrigger: {
+        trigger: benefitsRef.current,
+        start: "top 80%",
+      },
+      opacity: 0,
+      y: 50,
+      duration: 1,
+      ease: "power3.out"
+    });
+
+    // Cards stagger animation
+    gsap.from(cardsRef.current, {
+      scrollTrigger: {
+        trigger: cardsRef.current[0],
+        start: "top 80%",
+      },
+      opacity: 0,
+      y: 50,
+      stagger: 0.2,
+      duration: 0.8,
+      ease: "power3.out"
+    });
+  }, []);
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <div className="relative min-h-screen flex items-center">
+      <div className="relative min-h-screen flex items-center" ref={heroRef}>
         <div className="absolute inset-0 hero-gradient opacity-10"></div>
         <div className="container mx-auto px-4 pt-16">
-          <div className="max-w-3xl mx-auto text-center space-y-8 animate-fade-in">
+          <div className="max-w-3xl mx-auto text-center space-y-8">
             <h1 className="text-5xl md:text-6xl font-bold leading-tight">
               Discover, collect, and sell extraordinary NFTs
             </h1>
@@ -31,13 +75,19 @@ const Index = () => {
       {/* Platform Benefits Section */}
       <div className="py-24 bg-secondary/5">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-400">
+          <h2 
+            ref={benefitsRef}
+            className="text-3xl md:text-4xl font-bold text-center mb-16 bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-400"
+          >
             Why Choose NFTverse?
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Security */}
-            <div className="p-6 rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10 hover:border-primary/30 transition-all duration-300 group">
+            <div 
+              ref={el => cardsRef.current[0] = el}
+              className="p-6 rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10 hover:border-primary/30 transition-all duration-300 group"
+            >
               <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <Shield className="text-primary" />
               </div>
@@ -48,7 +98,10 @@ const Index = () => {
             </div>
 
             {/* Speed */}
-            <div className="p-6 rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10 hover:border-primary/30 transition-all duration-300 group">
+            <div 
+              ref={el => cardsRef.current[1] = el}
+              className="p-6 rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10 hover:border-primary/30 transition-all duration-300 group"
+            >
               <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <Zap className="text-primary" />
               </div>
@@ -59,7 +112,10 @@ const Index = () => {
             </div>
 
             {/* Exclusive */}
-            <div className="p-6 rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10 hover:border-primary/30 transition-all duration-300 group">
+            <div 
+              ref={el => cardsRef.current[2] = el}
+              className="p-6 rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10 hover:border-primary/30 transition-all duration-300 group"
+            >
               <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <Trophy className="text-primary" />
               </div>
@@ -70,7 +126,10 @@ const Index = () => {
             </div>
 
             {/* Low Fees */}
-            <div className="p-6 rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10 hover:border-primary/30 transition-all duration-300 group">
+            <div 
+              ref={el => cardsRef.current[3] = el}
+              className="p-6 rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10 hover:border-primary/30 transition-all duration-300 group"
+            >
               <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <Wallet className="text-primary" />
               </div>
