@@ -5,46 +5,73 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+// Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
 
 const Index = () => {
   const heroRef = useRef(null);
   const benefitsRef = useRef(null);
-  const cardsRef = useRef([]);
+  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
+    // Clear any existing ScrollTrigger instances
+    ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    
     // Hero section animation
-    gsap.from(heroRef.current, {
-      opacity: 0,
-      y: 100,
-      duration: 1,
-      ease: "power3.out"
-    });
+    gsap.fromTo(heroRef.current,
+      { 
+        opacity: 0, 
+        y: 100 
+      },
+      { 
+        opacity: 1, 
+        y: 0, 
+        duration: 1,
+        ease: "power3.out"
+      }
+    );
 
     // Benefits heading animation
-    gsap.from(benefitsRef.current, {
-      scrollTrigger: {
-        trigger: benefitsRef.current,
-        start: "top 80%",
+    gsap.fromTo(benefitsRef.current,
+      { 
+        opacity: 0, 
+        y: 50 
       },
-      opacity: 0,
-      y: 50,
-      duration: 1,
-      ease: "power3.out"
-    });
+      {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        scrollTrigger: {
+          trigger: benefitsRef.current,
+          start: "top 80%",
+          toggleActions: "play none none reverse"
+        }
+      }
+    );
 
     // Cards stagger animation
-    gsap.from(cardsRef.current, {
-      scrollTrigger: {
-        trigger: cardsRef.current[0],
-        start: "top 80%",
+    gsap.fromTo(cardsRef.current,
+      { 
+        opacity: 0, 
+        y: 50 
       },
-      opacity: 0,
-      y: 50,
-      stagger: 0.2,
-      duration: 0.8,
-      ease: "power3.out"
-    });
+      {
+        opacity: 1,
+        y: 0,
+        stagger: 0.2,
+        duration: 0.8,
+        scrollTrigger: {
+          trigger: cardsRef.current[0],
+          start: "top 80%",
+          toggleActions: "play none none reverse"
+        }
+      }
+    );
+
+    // Cleanup function
+    return () => {
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
   }, []);
 
   return (
