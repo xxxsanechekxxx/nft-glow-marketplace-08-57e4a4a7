@@ -78,20 +78,27 @@ const Index = () => {
     <div className="min-h-screen">
       {/* Hero Section */}
       <div className="relative min-h-screen flex items-center" ref={heroRef}>
-        <div className="absolute inset-0 hero-gradient opacity-10"></div>
-        <div className="container mx-auto px-4 pt-16">
+        {/* Background Elements */}
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1500673922987-e212871fec22?auto=format&fit=crop&w=1920')] bg-cover bg-center bg-no-repeat opacity-20"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-background via-background/95 to-background/90"></div>
+        
+        {/* Animated Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-purple-500/10 to-primary/10 animate-gradient"></div>
+        
+        {/* Content */}
+        <div className="container mx-auto px-4 pt-16 relative z-10">
           <div className="max-w-3xl mx-auto text-center space-y-8">
-            <h1 className="text-5xl md:text-6xl font-bold leading-tight">
+            <h1 className="text-5xl md:text-6xl font-bold leading-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-400">
               Discover, collect, and sell extraordinary NFTs
             </h1>
             <p className="text-xl text-muted-foreground">
               NFTverse is the world's first and largest NFT marketplace
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg">
+              <Button asChild size="lg" className="bg-primary/90 hover:bg-primary/100 backdrop-blur-sm">
                 <Link to="/marketplace">Explore</Link>
               </Button>
-              <Button variant="outline" size="lg">
+              <Button variant="outline" size="lg" className="backdrop-blur-sm border-primary/20 hover:bg-primary/10">
                 Create
               </Button>
             </div>
