@@ -1,9 +1,10 @@
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Share2, Heart, DollarSign, User, Info } from "lucide-react";
+import { ArrowLeft, Share2, Heart, DollarSign, User, Info, Timer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { NFT_DATA } from "@/data/nfts";
+import { CountdownTimer } from "@/components/CountdownTimer";
 
 const NFTDetail = () => {
   const { id } = useParams();
@@ -66,6 +67,17 @@ const NFTDetail = () => {
               <User className="h-4 w-4" />
               <span>Created by {nft.creator}</span>
             </div>
+          </div>
+
+          <div 
+            className="space-y-4 animate-fade-in" 
+            style={{ animationDelay: "300ms" }}
+          >
+            <div className="flex items-center gap-2">
+              <Timer className="h-4 w-4" />
+              <h2 className="text-lg font-semibold">Auction Ends In</h2>
+            </div>
+            <CountdownTimer endTime={nft.endTime} />
           </div>
 
           <div 
