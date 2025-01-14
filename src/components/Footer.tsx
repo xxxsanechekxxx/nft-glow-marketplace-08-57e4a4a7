@@ -1,4 +1,5 @@
 import { Github, Twitter, Instagram } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export const Footer = () => {
   return (
@@ -19,9 +20,9 @@ export const Footer = () => {
             <h3 className="font-semibold mb-4">Marketplace</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-sm text-muted-foreground hover:text-primary">
+                <Link to="/marketplace" className="text-sm text-muted-foreground hover:text-primary">
                   All NFTs
-                </a>
+                </Link>
               </li>
               <li>
                 <a href="#" className="text-sm text-muted-foreground hover:text-primary">
@@ -40,9 +41,9 @@ export const Footer = () => {
             <h3 className="font-semibold mb-4">Resources</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-sm text-muted-foreground hover:text-primary">
+                <Link to="/help" className="text-sm text-muted-foreground hover:text-primary">
                   Help Center
-                </a>
+                </Link>
               </li>
               <li>
                 <a href="#" className="text-sm text-muted-foreground hover:text-primary">

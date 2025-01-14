@@ -8,6 +8,7 @@ import { Footer } from "./components/Footer";
 import Index from "./pages/Index";
 import Marketplace from "./pages/Marketplace";
 import NFTDetail from "./pages/NFTDetail";
+import HelpCenter from "./pages/HelpCenter";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/marketplace" element={<Marketplace />} />
               <Route path="/nft/:id" element={<NFTDetail />} />
+              <Route path="/help" element={<HelpCenter />} />
             </Routes>
           </main>
           <Footer />
