@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Shield, Zap, Trophy, Wallet, TrendingUp, Users, Star, ArrowRight, Sparkles } from "lucide-react";
+import { Shield, Zap, Trophy, Wallet, TrendingUp, Users, Star, ArrowRight, Sparkles, MessageSquare, Heart, Award } from "lucide-react";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -21,6 +21,8 @@ const Index = () => {
   const benefitsRef = useRef(null);
   const statsRef = useRef(null);
   const featuredRef = useRef(null);
+  const howItWorksRef = useRef(null);
+  const testimonialsRef = useRef(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
@@ -88,6 +90,34 @@ const Index = () => {
       }
     );
 
+    gsap.fromTo(howItWorksRef.current,
+      { opacity: 0, y: 50 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        scrollTrigger: {
+          trigger: howItWorksRef.current,
+          start: "top 80%",
+          toggleActions: "play none none reverse"
+        }
+      }
+    );
+
+    gsap.fromTo(testimonialsRef.current,
+      { opacity: 0, y: 50 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        scrollTrigger: {
+          trigger: testimonialsRef.current,
+          start: "top 80%",
+          toggleActions: "play none none reverse"
+        }
+      }
+    );
+
     return () => {
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
@@ -101,16 +131,52 @@ const Index = () => {
 
   const featuredNFTs = NFT_DATA.slice(0, 5);
 
+  const testimonials = [
+    {
+      name: "Alex Thompson",
+      role: "Digital Artist",
+      content: "NFTverse transformed how I share my art with the world. The platform's ease of use and community engagement is unmatched.",
+      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop"
+    },
+    {
+      name: "Sarah Chen",
+      role: "Collector",
+      content: "The security and transparency of NFTverse give me confidence in my digital investments. Best NFT marketplace out there!",
+      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop"
+    },
+    {
+      name: "Michael Roberts",
+      role: "Crypto Enthusiast",
+      content: "The community here is incredible. I've discovered amazing artists and made valuable connections through NFTverse.",
+      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop"
+    }
+  ];
+
+  const steps = [
+    {
+      icon: Wallet,
+      title: "Connect Wallet",
+      description: "Link your crypto wallet to start your NFT journey"
+    },
+    {
+      icon: Star,
+      title: "Create or Collect",
+      description: "Mint your own NFTs or collect from others"
+    },
+    {
+      icon: Heart,
+      title: "Build Community",
+      description: "Engage with other creators and collectors"
+    }
+  ];
+
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
       <div className="relative min-h-screen flex items-center overflow-hidden" ref={heroRef}>
-        {/* Decorative elements */}
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1500673922987-e212871fec22?auto=format&fit=crop&w=1920')] bg-cover bg-center bg-no-repeat opacity-20"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-background via-background/95 to-background/90"></div>
         <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-purple-500/10 to-primary/10 animate-gradient"></div>
         
-        {/* Floating elements */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-20 left-10 w-32 h-32 bg-primary/20 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute bottom-20 right-10 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
@@ -145,7 +211,27 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Stats Section with enhanced design */}
+      <div className="py-24 bg-background/50 relative overflow-hidden" ref={howItWorksRef}>
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent"></div>
+        <div className="container mx-auto px-4 relative">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-400">
+            How It Works
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {steps.map((step, index) => (
+              <div key={index} 
+                className="p-8 rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10 hover:border-primary/30 transition-all duration-300 hover:transform hover:scale-105 group relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <step.icon className="w-12 h-12 mx-auto mb-4 text-primary group-hover:scale-110 transition-transform" />
+                <h3 className="text-xl font-semibold text-center mb-2">{step.title}</h3>
+                <p className="text-muted-foreground text-center">{step.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <div className="py-16 bg-secondary/5 relative overflow-hidden" ref={statsRef}>
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent"></div>
         <div className="container mx-auto px-4 relative">
@@ -163,7 +249,6 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Featured NFTs Section with enhanced carousel */}
       <div className="py-24 bg-background relative overflow-hidden" ref={featuredRef}>
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent"></div>
         <div className="container mx-auto px-4 relative">
@@ -187,37 +272,31 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Platform Benefits Section with enhanced cards */}
-      <div className="py-24 bg-secondary/5 relative">
+      <div className="py-24 bg-secondary/5 relative overflow-hidden" ref={testimonialsRef}>
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1920')] bg-cover bg-fixed opacity-5"></div>
         <div className="container mx-auto px-4 relative">
-          <h2 
-            ref={benefitsRef}
-            className="text-3xl md:text-4xl font-bold text-center mb-16 bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-400"
-          >
-            Why Choose NFTverse?
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-400">
+            What Our Users Say
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { icon: Shield, title: "Secure Platform", description: "Advanced security measures to protect your digital assets and transactions" },
-              { icon: Zap, title: "Lightning Fast", description: "Quick transactions and seamless trading experience on the Ethereum network" },
-              { icon: Trophy, title: "Exclusive NFTs", description: "Access to unique and rare digital collectibles from top creators" },
-              { icon: Wallet, title: "Low Fees", description: "Competitive transaction fees to maximize your trading profits" }
-            ].map((benefit, index) => (
-              <div 
-                key={index}
-                ref={el => cardsRef.current[index] = el}
-                className="p-8 rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10 hover:border-primary/30 transition-all duration-300 group hover:transform hover:scale-105 relative overflow-hidden"
-              >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <div key={index} 
+                className="p-8 rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10 hover:border-primary/30 transition-all duration-300 hover:transform hover:-translate-y-2 group relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform relative">
-                  <benefit.icon className="text-primary" />
+                <div className="flex items-center mb-6">
+                  <img 
+                    src={testimonial.avatar} 
+                    alt={testimonial.name}
+                    className="w-12 h-12 rounded-full mr-4 object-cover"
+                  />
+                  <div>
+                    <h3 className="font-semibold">{testimonial.name}</h3>
+                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                  </div>
                 </div>
-                <h3 className="text-xl font-semibold mb-2 relative">{benefit.title}</h3>
-                <p className="text-muted-foreground group-hover:text-primary/80 transition-colors relative">
-                  {benefit.description}
-                </p>
+                <MessageSquare className="w-8 h-8 text-primary/20 mb-4" />
+                <p className="text-muted-foreground italic">{testimonial.content}</p>
               </div>
             ))}
           </div>
