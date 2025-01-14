@@ -1,37 +1,33 @@
+import { useEffect, useState } from "react";
 import { NFTCard } from "@/components/NFTCard";
-
-const FEATURED_NFTS = [
-  {
-    id: "1",
-    name: "Cosmic Dreamer #1",
-    image: "https://images.unsplash.com/photo-1634973357973-f2ed2657db3c",
-    price: "0.85",
-    creator: "CryptoArtist",
-  },
-  {
-    id: "2",
-    name: "Digital Horizon",
-    image: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e",
-    price: "1.2",
-    creator: "DigitalCreator",
-  },
-  {
-    id: "3",
-    name: "Abstract Mind",
-    image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe",
-    price: "0.95",
-    creator: "ArtisticSoul",
-  },
-  {
-    id: "4",
-    name: "Future Vision",
-    image: "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead",
-    price: "1.5",
-    creator: "FutureArtist",
-  },
-];
+import { fetchNFTs } from "@/data/nfts";
+import { useInView } from "react-intersection-observer";
+import { Loader2 } from "lucide-react";
 
 const Marketplace = () => {
+  const [nfts, setNfts] = useState<any[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const { ref, inView } = useInView();
+
+  const loadMoreNFTs = async () => {
+    if (loading || !hasMore) return;
+    
+    setLoading(true);
+    const result = fetchNFTs(page);
+    setNfts(prev => [...prev, ...result.nfts]);
+    setHasMore(result.hasMore);
+    setPage(prev => prev + 1);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (inView) {
+      loadMoreNFTs();
+    }
+  }, [inView]);
+
   return (
     <div className="container mx-auto px-4 pt-24">
       <div className="text-center mb-12 animate-fade-in">
@@ -42,9 +38,22 @@ const Marketplace = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {FEATURED_NFTS.map((nft) => (
+        {nfts.map((nft) => (
           <NFTCard key={nft.id} {...nft} />
         ))}
+      </div>
+
+      {/* Loading indicator and intersection observer target */}
+      <div
+        ref={ref}
+        className="w-full flex justify-center py-8"
+      >
+        {loading && (
+          <div className="flex items-center gap-2">
+            <Loader2 className="h-6 w-6 animate-spin" />
+            <span>Loading more NFTs...</span>
+          </div>
+        )}
       </div>
     </div>
   );
