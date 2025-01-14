@@ -22,7 +22,6 @@ const Index = () => {
   const statsRef = useRef(null);
   const featuredRef = useRef(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const backgroundNFTs = NFT_DATA.slice(0, 6);
 
   useEffect(() => {
     ScrollTrigger.getAll().forEach(trigger => trigger.kill());
@@ -105,36 +104,8 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <div className="relative min-h-screen flex items-center overflow-hidden" ref={heroRef}>
-        {/* Background NFT Carousel */}
-        <div className="absolute inset-0 w-full h-full">
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-              dragFree: true,
-              containScroll: false,
-            }}
-            className="w-full h-full"
-          >
-            <CarouselContent className="h-full">
-              {backgroundNFTs.map((nft) => (
-                <CarouselItem key={nft.id} className="basis-full md:basis-1/2 lg:basis-1/3 xl:basis-1/4 h-full">
-                  <div className="w-full h-full">
-                    <img
-                      src={nft.image}
-                      alt={nft.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-          </Carousel>
-        </div>
-        
-        {/* Overlay gradients */}
-        <div className="absolute inset-0 bg-background/90 backdrop-blur-sm"></div>
+      <div className="relative min-h-screen flex items-center" ref={heroRef}>
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1500673922987-e212871fec22?auto=format&fit=crop&w=1920')] bg-cover bg-center bg-no-repeat opacity-20"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-background via-background/95 to-background/90"></div>
         <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-purple-500/10 to-primary/10 animate-gradient"></div>
         
