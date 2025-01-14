@@ -28,9 +28,13 @@ export const CountdownTimer = ({ endTime }: CountdownTimerProps) => {
       }
     };
 
+    // Calculate immediately
     calculateTimeLeft();
+    
+    // Update every second
     const timer = setInterval(calculateTimeLeft, 1000);
 
+    // Cleanup interval on unmount
     return () => clearInterval(timer);
   }, [endTime]);
 
