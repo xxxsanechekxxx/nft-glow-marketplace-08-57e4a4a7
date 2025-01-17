@@ -179,7 +179,7 @@ const Index = () => {
     },
     {
       name: "NFTHunter",
-      content: "Bitcoin NFT coming soon to this site ?",
+      content: "bitoingNFT coming soon to this site ?",
       isFormatted: false
     },
     {
@@ -195,6 +195,31 @@ const Index = () => {
     {
       name: "art_enthusiast",
       content: "just got my first nft here super excited",
+      isFormatted: false
+    },
+    {
+      name: "nft_wizard",
+      content: "prices are good comparing to other marketplaces",
+      isFormatted: false
+    },
+    {
+      name: "crypto_newbie",
+      content: "how do i transfer my nft to wallet help pls",
+      isFormatted: false
+    },
+    {
+      name: "future_collector",
+      content: "saving money to buy my first nft here",
+      isFormatted: false
+    },
+    {
+      name: "meta_trader",
+      content: "nice collection but need more categories",
+      isFormatted: false
+    },
+    {
+      name: "pixel_master",
+      content: "when new drops coming",
       isFormatted: false
     }
   ];
