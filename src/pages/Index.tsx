@@ -16,6 +16,24 @@ import {
 
 gsap.registerPlugin(ScrollTrigger);
 
+const steps = [
+  {
+    title: "Connect Your Wallet",
+    description: "Link your crypto wallet to start buying and selling NFTs securely on our platform.",
+    icon: Wallet
+  },
+  {
+    title: "Choose Your NFTs",
+    description: "Browse through our curated collection of unique digital assets and select your favorites.",
+    icon: Star
+  },
+  {
+    title: "Make Transactions",
+    description: "Buy, sell, or trade NFTs with confidence using our secure blockchain technology.",
+    icon: Shield
+  }
+];
+
 const Index = () => {
   const heroRef = useRef(null);
   const benefitsRef = useRef(null);
