@@ -1,4 +1,4 @@
-import { Github, Twitter, Instagram } from "lucide-react";
+import { Twitter, Instagram, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export const Footer = () => {
@@ -67,15 +67,24 @@ export const Footer = () => {
               <a href="#" className="text-muted-foreground hover:text-primary">
                 <Instagram size={20} />
               </a>
-              <a href="#" className="text-muted-foreground hover:text-primary">
-                <Github size={20} />
-              </a>
             </div>
           </div>
         </div>
         
-        <div className="border-t mt-12 pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; 2024 NFTverse. All rights reserved.</p>
+        <div className="border-t mt-12 pt-8">
+          <div className="text-center text-sm text-muted-foreground space-y-4">
+            <p>&copy; 2024 NFTverse. All rights reserved.</p>
+            <div className="flex items-center justify-center space-x-6">
+              <a href="https://t.me/nftverse" className="flex items-center gap-2 hover:text-primary">
+                <span>Telegram:</span>
+                <span>@nftverse</span>
+              </a>
+              <a href="mailto:contact@nftverse.com" className="flex items-center gap-2 hover:text-primary">
+                <Mail size={16} />
+                <span>contact@nftverse.com</span>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
