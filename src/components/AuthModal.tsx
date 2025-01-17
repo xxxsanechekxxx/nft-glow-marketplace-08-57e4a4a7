@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -30,12 +31,21 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
   const [nickname, setNickname] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [country, setCountry] = useState("");
+  const [policyAgreed, setPolicyAgreed] = useState(false);
   const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Here you would typically handle the authentication logic
+    if (!isLogin && !policyAgreed) {
+      toast({
+        title: "Error",
+        description: "You must agree to the website policy to register",
+        variant: "destructive",
+      });
+      return;
+    }
+
     toast({
       title: isLogin ? "Login successful" : "Registration successful",
       description: `Email: ${email}`,
@@ -133,8 +143,37 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
                     <SelectItem value="es">Spain</SelectItem>
                     <SelectItem value="it">Italy</SelectItem>
                     <SelectItem value="jp">Japan</SelectItem>
+                    <SelectItem value="cn">China</SelectItem>
+                    <SelectItem value="in">India</SelectItem>
+                    <SelectItem value="br">Brazil</SelectItem>
+                    <SelectItem value="mx">Mexico</SelectItem>
+                    <SelectItem value="ar">Argentina</SelectItem>
+                    <SelectItem value="kr">South Korea</SelectItem>
+                    <SelectItem value="sg">Singapore</SelectItem>
+                    <SelectItem value="ae">United Arab Emirates</SelectItem>
+                    <SelectItem value="za">South Africa</SelectItem>
+                    <SelectItem value="se">Sweden</SelectItem>
+                    <SelectItem value="no">Norway</SelectItem>
+                    <SelectItem value="nz">New Zealand</SelectItem>
+                    <SelectItem value="pl">Poland</SelectItem>
+                    <SelectItem value="tr">Turkey</SelectItem>
+                    <SelectItem value="eg">Egypt</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="policy" 
+                  checked={policyAgreed}
+                  onCheckedChange={(checked) => setPolicyAgreed(checked as boolean)}
+                />
+                <label
+                  htmlFor="policy"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  I agree to the website policy and terms of service
+                </label>
               </div>
             </>
           )}
