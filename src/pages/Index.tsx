@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Shield, Zap, Trophy, Wallet, TrendingUp, Users, Star, ArrowRight, Sparkles, MessageSquare, Heart, Award } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { Shield, Zap, Trophy, Wallet, TrendingUp, Users, Star, ArrowRight, Sparkles, MessageSquare, Heart, Award, ChevronDown, ChevronUp } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { NFT_DATA } from "@/data/nfts";
@@ -24,6 +24,7 @@ const Index = () => {
   const howItWorksRef = useRef(null);
   const testimonialsRef = useRef(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const [showAllTestimonials, setShowAllTestimonials] = useState(false);
 
   useEffect(() => {
     ScrollTrigger.getAll().forEach(trigger => trigger.kill());
@@ -136,39 +137,51 @@ const Index = () => {
       name: "Alex Thompson",
       role: "Digital Artist",
       content: "NFTverse transformed how I share my art with the world. The platform's ease of use and community engagement is unmatched.",
-      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop"
+      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop",
+      isFormatted: true
     },
     {
       name: "Sarah Chen",
       role: "Collector",
       content: "The security and transparency of NFTverse give me confidence in my digital investments. Best NFT marketplace out there!",
-      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop"
+      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop",
+      isFormatted: true
     },
     {
       name: "Michael Roberts",
       role: "Crypto Enthusiast",
       content: "The community here is incredible. I've discovered amazing artists and made valuable connections through NFTverse.",
-      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop"
+      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop",
+      isFormatted: true
+    },
+    {
+      name: "crypto_lover88",
+      content: "very nice thank you nftverse",
+      isFormatted: false
+    },
+    {
+      name: "NFTHunter",
+      content: "Bitcoin NFT coming soon to this site ?",
+      isFormatted: false
+    },
+    {
+      name: "new_collector",
+      content: "found this on ad from my mail bought one waiting to raise up i will change it if something went wrong",
+      isFormatted: false
+    },
+    {
+      name: "digital_dreamer",
+      content: "best platform for nft trading no cap",
+      isFormatted: false
+    },
+    {
+      name: "art_enthusiast",
+      content: "just got my first nft here super excited",
+      isFormatted: false
     }
   ];
 
-  const steps = [
-    {
-      icon: Wallet,
-      title: "Connect Wallet",
-      description: "Link your crypto wallet to start your NFT journey"
-    },
-    {
-      icon: Star,
-      title: "Create or Collect",
-      description: "Mint your own NFTs or collect from others"
-    },
-    {
-      icon: Heart,
-      title: "Build Community",
-      description: "Engage with other creators and collectors"
-    }
-  ];
+  const visibleTestimonials = showAllTestimonials ? testimonials : testimonials.slice(0, 3);
 
   return (
     <div className="min-h-screen">
@@ -279,27 +292,56 @@ const Index = () => {
             What Our Users Say
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {visibleTestimonials.map((testimonial, index) => (
               <div key={index} 
-                className="p-8 rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10 hover:border-primary/30 transition-all duration-300 hover:transform hover:-translate-y-2 group relative overflow-hidden">
+                className={`p-8 rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10 hover:border-primary/30 transition-all duration-300 group relative overflow-hidden ${
+                  testimonial.isFormatted ? "hover:transform hover:-translate-y-2" : ""
+                }`}>
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <div className="flex items-center mb-6">
-                  <img 
-                    src={testimonial.avatar} 
-                    alt={testimonial.name}
-                    className="w-12 h-12 rounded-full mr-4 object-cover"
-                  />
-                  <div>
-                    <h3 className="font-semibold">{testimonial.name}</h3>
-                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                
+                {testimonial.isFormatted ? (
+                  <>
+                    <div className="flex items-center mb-6">
+                      <img 
+                        src={testimonial.avatar} 
+                        alt={testimonial.name}
+                        className="w-12 h-12 rounded-full mr-4 object-cover"
+                      />
+                      <div>
+                        <h3 className="font-semibold">{testimonial.name}</h3>
+                        <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                      </div>
+                    </div>
+                    <MessageSquare className="w-8 h-8 text-primary/20 mb-4" />
+                  </>
+                ) : (
+                  <div className="mb-4">
+                    <p className="text-sm text-muted-foreground">@{testimonial.name}</p>
                   </div>
-                </div>
-                <MessageSquare className="w-8 h-8 text-primary/20 mb-4" />
-                <p className="text-muted-foreground italic">{testimonial.content}</p>
+                )}
+                <p className={`${testimonial.isFormatted ? "text-muted-foreground italic" : "text-sm"}`}>
+                  {testimonial.content}
+                </p>
               </div>
             ))}
           </div>
+
+          {testimonials.length > 3 && (
+            <div className="mt-12 text-center">
+              <Button
+                variant="outline"
+                onClick={() => setShowAllTestimonials(!showAllTestimonials)}
+                className="group"
+              >
+                {showAllTestimonials ? (
+                  <>Show Less <ChevronUp className="ml-2 w-4 h-4 group-hover:-translate-y-1 transition-transform" /></>
+                ) : (
+                  <>Show More <ChevronDown className="ml-2 w-4 h-4 group-hover:translate-y-1 transition-transform" /></>
+                )}
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>
