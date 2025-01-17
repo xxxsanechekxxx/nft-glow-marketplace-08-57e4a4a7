@@ -7,6 +7,15 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { User, Settings, Mail, Key, LogOut, Wallet } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const Profile = () => {
   const { toast } = useToast();
@@ -47,7 +56,6 @@ const Profile = () => {
 
   const handleWithdraw = (e: React.FormEvent) => {
     e.preventDefault();
-    // Add withdraw logic here when backend is integrated
     toast({
       title: "Success",
       description: `Withdrawal of ${withdrawAmount} ETH initiated`,
@@ -57,7 +65,6 @@ const Profile = () => {
 
   const handleDeposit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Add deposit logic here when backend is integrated
     toast({
       title: "Success",
       description: `Deposit of ${depositAmount} ETH initiated`,
@@ -139,38 +146,74 @@ const Profile = () => {
                   <CardTitle>Wallet Operations</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <form onSubmit={handleWithdraw} className="space-y-4">
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium">Withdraw Amount (ETH)</label>
-                        <Input
-                          type="number"
-                          step="0.001"
-                          min="0"
-                          value={withdrawAmount}
-                          onChange={(e) => setWithdrawAmount(e.target.value)}
-                          placeholder="0.00"
-                          required
-                        />
-                      </div>
-                      <Button type="submit" variant="destructive">Withdraw</Button>
-                    </form>
+                  <div className="flex gap-4">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="destructive">
+                          <Wallet className="w-4 h-4 mr-2" />
+                          Withdraw
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Withdraw ETH</DialogTitle>
+                          <DialogDescription>
+                            Enter the amount of ETH you want to withdraw.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <form onSubmit={handleWithdraw} className="space-y-4">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Amount (ETH)</label>
+                            <Input
+                              type="number"
+                              step="0.001"
+                              min="0"
+                              value={withdrawAmount}
+                              onChange={(e) => setWithdrawAmount(e.target.value)}
+                              placeholder="0.00"
+                              required
+                            />
+                          </div>
+                          <DialogFooter>
+                            <Button type="submit">Confirm Withdrawal</Button>
+                          </DialogFooter>
+                        </form>
+                      </DialogContent>
+                    </Dialog>
 
-                    <form onSubmit={handleDeposit} className="space-y-4">
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium">Deposit Amount (ETH)</label>
-                        <Input
-                          type="number"
-                          step="0.001"
-                          min="0"
-                          value={depositAmount}
-                          onChange={(e) => setDepositAmount(e.target.value)}
-                          placeholder="0.00"
-                          required
-                        />
-                      </div>
-                      <Button type="submit">Deposit</Button>
-                    </form>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button>
+                          <Wallet className="w-4 h-4 mr-2" />
+                          Deposit
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Deposit ETH</DialogTitle>
+                          <DialogDescription>
+                            Enter the amount of ETH you want to deposit.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <form onSubmit={handleDeposit} className="space-y-4">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Amount (ETH)</label>
+                            <Input
+                              type="number"
+                              step="0.001"
+                              min="0"
+                              value={depositAmount}
+                              onChange={(e) => setDepositAmount(e.target.value)}
+                              placeholder="0.00"
+                              required
+                            />
+                          </div>
+                          <DialogFooter>
+                            <Button type="submit">Confirm Deposit</Button>
+                          </DialogFooter>
+                        </form>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                 </CardContent>
               </Card>
