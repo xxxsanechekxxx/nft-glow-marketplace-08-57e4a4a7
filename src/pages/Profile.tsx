@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { User, Settings, Mail, Key, LogOut, Wallet } from "lucide-react";
+import { User, Settings, Mail, Key, LogOut, Wallet, ArrowUpCircle, ArrowDownCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   Dialog,
@@ -16,6 +16,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const Profile = () => {
   const { toast } = useToast();
@@ -37,6 +45,13 @@ const Profile = () => {
     avatar: "https://github.com/shadcn.png",
     balance: "1.5" // Mock ETH balance
   };
+
+  // Mock transaction history (replace with actual data when backend is integrated)
+  const transactions = [
+    { id: 1, type: "deposit", amount: "0.5", date: "2024-03-15", status: "completed" },
+    { id: 2, type: "withdraw", amount: "0.2", date: "2024-03-14", status: "completed" },
+    { id: 3, type: "purchase", amount: "0.3", date: "2024-03-13", item: "NFT #123", status: "completed" },
+  ];
 
   const handlePasswordChange = (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,7 +114,7 @@ const Profile = () => {
         </div>
 
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="profile" className="flex items-center gap-2">
               <User className="w-4 h-4" />
               Profile
@@ -108,116 +123,41 @@ const Profile = () => {
               <Settings className="w-4 h-4" />
               Settings
             </TabsTrigger>
+            <TabsTrigger value="wallet" className="flex items-center gap-2">
+              <Wallet className="w-4 h-4" />
+              Wallet
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="profile">
-            <div className="grid gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Profile Information</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium flex items-center gap-2">
-                        <Mail className="w-4 h-4" />
-                        Email
-                      </label>
-                      <Input value={userData.email} readOnly />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Nickname</label>
-                      <Input value={userData.nickname} readOnly />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Country</label>
-                      <Input value={userData.country} readOnly />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Birth Date</label>
-                      <Input value={userData.birthDate} readOnly />
-                    </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Profile Information</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium flex items-center gap-2">
+                      <Mail className="w-4 h-4" />
+                      Email
+                    </label>
+                    <Input value={userData.email} readOnly />
                   </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Wallet Operations</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex gap-4">
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button variant="destructive">
-                          <Wallet className="w-4 h-4 mr-2" />
-                          Withdraw
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Withdraw ETH</DialogTitle>
-                          <DialogDescription>
-                            Enter the amount of ETH you want to withdraw.
-                          </DialogDescription>
-                        </DialogHeader>
-                        <form onSubmit={handleWithdraw} className="space-y-4">
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium">Amount (ETH)</label>
-                            <Input
-                              type="number"
-                              step="0.001"
-                              min="0"
-                              value={withdrawAmount}
-                              onChange={(e) => setWithdrawAmount(e.target.value)}
-                              placeholder="0.00"
-                              required
-                            />
-                          </div>
-                          <DialogFooter>
-                            <Button type="submit">Confirm Withdrawal</Button>
-                          </DialogFooter>
-                        </form>
-                      </DialogContent>
-                    </Dialog>
-
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button>
-                          <Wallet className="w-4 h-4 mr-2" />
-                          Deposit
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Deposit ETH</DialogTitle>
-                          <DialogDescription>
-                            Enter the amount of ETH you want to deposit.
-                          </DialogDescription>
-                        </DialogHeader>
-                        <form onSubmit={handleDeposit} className="space-y-4">
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium">Amount (ETH)</label>
-                            <Input
-                              type="number"
-                              step="0.001"
-                              min="0"
-                              value={depositAmount}
-                              onChange={(e) => setDepositAmount(e.target.value)}
-                              placeholder="0.00"
-                              required
-                            />
-                          </div>
-                          <DialogFooter>
-                            <Button type="submit">Confirm Deposit</Button>
-                          </DialogFooter>
-                        </form>
-                      </DialogContent>
-                    </Dialog>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Nickname</label>
+                    <Input value={userData.nickname} readOnly />
                   </div>
-                </CardContent>
-              </Card>
-            </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Country</label>
+                    <Input value={userData.country} readOnly />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Birth Date</label>
+                    <Input value={userData.birthDate} readOnly />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="settings">
@@ -271,6 +211,115 @@ const Profile = () => {
                 <LogOut className="w-4 h-4 mr-2" />
                 Logout
               </Button>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="wallet">
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Wallet Operations</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex gap-4">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="destructive">
+                          <ArrowUpCircle className="w-4 h-4 mr-2" />
+                          Withdraw
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Withdraw ETH</DialogTitle>
+                          <DialogDescription>
+                            Enter the amount of ETH you want to withdraw.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <form onSubmit={handleWithdraw} className="space-y-4">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Amount (ETH)</label>
+                            <Input
+                              type="number"
+                              step="0.001"
+                              min="0"
+                              value={withdrawAmount}
+                              onChange={(e) => setWithdrawAmount(e.target.value)}
+                              placeholder="0.00"
+                              required
+                            />
+                          </div>
+                          <DialogFooter>
+                            <Button type="submit">Confirm Withdrawal</Button>
+                          </DialogFooter>
+                        </form>
+                      </DialogContent>
+                    </Dialog>
+
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button>
+                          <ArrowDownCircle className="w-4 h-4 mr-2" />
+                          Deposit
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Deposit ETH</DialogTitle>
+                          <DialogDescription>
+                            Enter the amount of ETH you want to deposit.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <form onSubmit={handleDeposit} className="space-y-4">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Amount (ETH)</label>
+                            <Input
+                              type="number"
+                              step="0.001"
+                              min="0"
+                              value={depositAmount}
+                              onChange={(e) => setDepositAmount(e.target.value)}
+                              placeholder="0.00"
+                              required
+                            />
+                          </div>
+                          <DialogFooter>
+                            <Button type="submit">Confirm Deposit</Button>
+                          </DialogFooter>
+                        </form>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Transaction History</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Amount (ETH)</TableHead>
+                        <TableHead>Status</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {transactions.map((transaction) => (
+                        <TableRow key={transaction.id}>
+                          <TableCell>{transaction.date}</TableCell>
+                          <TableCell className="capitalize">{transaction.type}</TableCell>
+                          <TableCell>{transaction.amount}</TableCell>
+                          <TableCell className="capitalize">{transaction.status}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
             </div>
           </TabsContent>
         </Tabs>
