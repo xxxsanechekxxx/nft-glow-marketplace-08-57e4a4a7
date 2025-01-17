@@ -20,7 +20,7 @@ const Profile = () => {
     login: "johndoe",
     nickname: "JD",
     country: "United States",
-    joinDate: "2024-01-01",
+    birthDate: "1990-01-01", // Changed from joinDate to birthDate
     avatar: "https://github.com/shadcn.png",
   };
 
@@ -98,8 +98,8 @@ const Profile = () => {
                     <Input value={userData.country} readOnly />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Join Date</label>
-                    <Input value={userData.joinDate} readOnly />
+                    <label className="text-sm font-medium">Birth Date</label>
+                    <Input value={userData.birthDate} readOnly />
                   </div>
                 </div>
               </CardContent>
