@@ -35,14 +35,48 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
   const [policyAgreed, setPolicyAgreed] = useState(false);
   const { toast } = useToast();
 
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePassword = (password: string) => {
+    return password.length >= 8;
+  };
+
+  const validateLogin = (login: string) => {
+    return login.length >= 3;
+  };
+
+  const validateNickname = (nickname: string) => {
+    return nickname.length >= 2;
+  };
+
+  const validateBirthDate = (birthDate: string) => {
+    if (!birthDate) return false;
+    const today = new Date();
+    const birthDateObj = new Date(birthDate);
+    const age = today.getFullYear() - birthDateObj.getFullYear();
+    return age >= 18;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!isLogin) {
-      if (!policyAgreed) {
+      if (!validateEmail(email)) {
         toast({
           title: "Error",
-          description: "You must agree to the website policy to register",
+          description: "Please enter a valid email address",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!validatePassword(password)) {
+        toast({
+          title: "Error",
+          description: "Password must be at least 8 characters long",
           variant: "destructive",
         });
         return;
@@ -52,6 +86,51 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
         toast({
           title: "Error",
           description: "Passwords do not match",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!validateLogin(login)) {
+        toast({
+          title: "Error",
+          description: "Login must be at least 3 characters long",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!validateNickname(nickname)) {
+        toast({
+          title: "Error",
+          description: "Nickname must be at least 2 characters long",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!validateBirthDate(birthDate)) {
+        toast({
+          title: "Error",
+          description: "You must be at least 18 years old to register",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!country) {
+        toast({
+          title: "Error",
+          description: "Please select your country",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!policyAgreed) {
+        toast({
+          title: "Error",
+          description: "You must agree to the website policy to register",
           variant: "destructive",
         });
         return;
