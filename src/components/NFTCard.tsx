@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { Coins } from "lucide-react";
 
 interface NFTCardProps {
   id: string;
@@ -35,7 +36,10 @@ export const NFTCard = ({ id, name, image, price, creator }: NFTCardProps) => {
           <h3 className="font-semibold text-lg">{name}</h3>
           <p className="text-sm text-muted-foreground">by {creator}</p>
           <div className="flex items-center justify-between mt-4">
-            <span className="text-sm font-medium">{price} ETH</span>
+            <span className="text-sm font-medium flex items-center gap-1">
+              <Coins className="h-4 w-4" />
+              {price} ETH
+            </span>
             <Button onClick={handlePurchase} size="sm">
               Purchase
             </Button>
