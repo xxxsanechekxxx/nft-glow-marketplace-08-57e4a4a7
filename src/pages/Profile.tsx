@@ -6,9 +6,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { User, Settings, Mail, Key, LogOut } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
@@ -47,10 +49,11 @@ const Profile = () => {
       title: "Success",
       description: "You have been logged out",
     });
+    navigate('/');
   };
 
   return (
-    <div className="container mx-auto py-8 px-4 mt-16"> {/* Added mt-16 for header spacing */}
+    <div className="container mx-auto py-8 px-4 mt-16">
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="flex items-center gap-6 p-6 bg-card rounded-lg border">
           <Avatar className="w-24 h-24">
