@@ -49,7 +49,7 @@ export const Header = () => {
             <AuthModal 
               trigger={
                 <Button variant="outline">
-                  Регистрация
+                  Authorization
                 </Button>
               }
             />
@@ -88,7 +88,7 @@ export const Header = () => {
               <AuthModal 
                 trigger={
                   <Button variant="outline" className="w-full">
-                    Регистрация
+                    Authorization
                   </Button>
                 }
               />
