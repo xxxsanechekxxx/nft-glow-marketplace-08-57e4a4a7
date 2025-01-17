@@ -34,6 +34,12 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    padding-right: 0 !important;
+  }
+
+  /* Prevent layout shift when modal opens */
+  body[data-state="open"] {
+    padding-right: var(--removed-body-scroll-bar-size) !important;
   }
 }
 
