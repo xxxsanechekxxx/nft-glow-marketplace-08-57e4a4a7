@@ -188,38 +188,48 @@ const Index = () => {
       isFormatted: false
     },
     {
-      name: "digital_dreamer",
+      name: "digital_dreamer123",
       content: "best platform for nft trading no cap",
       isFormatted: false
     },
     {
-      name: "art_enthusiast",
+      name: "art_enthusiast99",
       content: "just got my first nft here super excited",
       isFormatted: false
     },
     {
-      name: "nft_wizard",
+      name: "nft_wizard42",
       content: "prices are good comparing to other marketplaces",
       isFormatted: false
     },
     {
-      name: "crypto_newbie",
+      name: "crypto_newbie777",
       content: "how do i transfer my nft to wallet help pls",
       isFormatted: false
     },
     {
-      name: "future_collector",
+      name: "future_collector365",
       content: "saving money to buy my first nft here",
       isFormatted: false
     },
     {
-      name: "meta_trader",
+      name: "meta_trader90",
       content: "nice collection but need more categories",
       isFormatted: false
     },
     {
-      name: "pixel_master",
+      name: "pixel_master55",
       content: "when new drops coming",
+      isFormatted: false
+    },
+    {
+      name: "nft_hunter456",
+      content: "cant wait for the next drop lets go",
+      isFormatted: false
+    },
+    {
+      name: "crypto_king789",
+      content: "this marketplace is fire frfr",
       isFormatted: false
     }
   ];
