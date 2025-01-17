@@ -27,6 +27,7 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [login, setLogin] = useState("");
   const [nickname, setNickname] = useState("");
   const [birthDate, setBirthDate] = useState("");
@@ -37,13 +38,24 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!isLogin && !policyAgreed) {
-      toast({
-        title: "Error",
-        description: "You must agree to the website policy to register",
-        variant: "destructive",
-      });
-      return;
+    if (!isLogin) {
+      if (!policyAgreed) {
+        toast({
+          title: "Error",
+          description: "You must agree to the website policy to register",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        toast({
+          title: "Error",
+          description: "Passwords do not match",
+          variant: "destructive",
+        });
+        return;
+      }
     }
 
     toast({
@@ -161,20 +173,6 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
                   </SelectContent>
                 </Select>
               </div>
-
-              <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id="policy" 
-                  checked={policyAgreed}
-                  onCheckedChange={(checked) => setPolicyAgreed(checked as boolean)}
-                />
-                <label
-                  htmlFor="policy"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  I agree to the website policy and terms of service
-                </label>
-              </div>
             </>
           )}
 
@@ -191,6 +189,38 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
               required
             />
           </div>
+
+          {!isLogin && (
+            <div className="space-y-2">
+              <label htmlFor="confirmPassword" className="text-sm font-medium">
+                Confirm Password
+              </label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="••••••••"
+                required={!isLogin}
+              />
+            </div>
+          )}
+
+          {!isLogin && (
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="policy" 
+                checked={policyAgreed}
+                onCheckedChange={(checked) => setPolicyAgreed(checked as boolean)}
+              />
+              <label
+                htmlFor="policy"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                I agree to the website policy and terms of service
+              </label>
+            </div>
+          )}
 
           <div className="flex flex-col space-y-4">
             <Button type="submit">
