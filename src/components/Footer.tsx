@@ -67,6 +67,9 @@ export const Footer = () => {
               <a href="#" className="text-muted-foreground hover:text-primary">
                 <Instagram size={20} />
               </a>
+              <a href="https://t.me/nftverse" className="text-muted-foreground hover:text-primary">
+                <Mail size={20} />
+              </a>
             </div>
           </div>
         </div>
@@ -75,10 +78,6 @@ export const Footer = () => {
           <div className="text-center text-sm text-muted-foreground space-y-4">
             <p>&copy; 2024 NFTverse. All rights reserved.</p>
             <div className="flex items-center justify-center space-x-6">
-              <a href="https://t.me/nftverse" className="flex items-center gap-2 hover:text-primary">
-                <span>Telegram:</span>
-                <span>@nftverse</span>
-              </a>
               <a href="mailto:contact@nftverse.com" className="flex items-center gap-2 hover:text-primary">
                 <Mail size={16} />
                 <span>contact@nftverse.com</span>
