@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+import { AuthModal } from './AuthModal';
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -45,9 +46,13 @@ export const Header = () => {
                 <div className="absolute bottom-[-20px] left-0 w-full h-[2px] bg-primary" />
               )}
             </Link>
-            <Button variant="outline" className="ml-4">
-              Connect Wallet
-            </Button>
+            <AuthModal 
+              trigger={
+                <Button variant="outline">
+                  Регистрация
+                </Button>
+              }
+            />
           </nav>
 
           <button
@@ -80,9 +85,13 @@ export const Header = () => {
               >
                 Marketplace
               </Link>
-              <Button variant="outline" className="w-full">
-                Connect Wallet
-              </Button>
+              <AuthModal 
+                trigger={
+                  <Button variant="outline" className="w-full">
+                    Регистрация
+                  </Button>
+                }
+              />
             </nav>
           </div>
         </div>
