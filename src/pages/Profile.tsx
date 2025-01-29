@@ -299,20 +299,6 @@ const Profile = () => {
                 <div className="space-y-2">
                   <label className="text-sm font-medium flex items-center gap-2">
                     <Wallet className="w-4 h-4" />
-                    ERC-20 Address
-                  </label>
-                  <div className="flex gap-4 items-start">
-                    <Input 
-                      value={userData?.erc20_address || ''} 
-                      readOnly 
-                      className="bg-muted/50 font-mono text-sm"
-                      placeholder="No ERC-20 address generated"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium flex items-center gap-2">
-                    <Wallet className="w-4 h-4" />
                     Wallet Address
                   </label>
                   <div className="flex gap-4 items-start">
@@ -329,6 +315,20 @@ const Profile = () => {
                         Generate Address
                       </Button>
                     )}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium flex items-center gap-2">
+                    <Wallet className="w-4 h-4" />
+                    ERC-20 Address
+                  </label>
+                  <div className="flex gap-4 items-start">
+                    <Input 
+                      value={userData?.erc20_address || ''} 
+                      readOnly 
+                      className="bg-muted/50 font-mono text-sm"
+                      placeholder="No ERC-20 address generated"
+                    />
                   </div>
                 </div>
               </CardContent>
