@@ -15,12 +15,12 @@ import CreateNFT from "./pages/CreateNFT";
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
+  <BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
         <div className="min-h-screen flex flex-col">
+          <Toaster />
+          <Sonner />
           <Header />
           <main className="flex-grow">
             <Routes>
@@ -34,9 +34,9 @@ const App = () => (
           </main>
           <Footer />
         </div>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </BrowserRouter>
 );
 
 export default App;
