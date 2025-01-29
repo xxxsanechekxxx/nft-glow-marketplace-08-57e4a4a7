@@ -60,12 +60,6 @@ const Profile = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Если пользователь не авторизован, редиректим на главную
-    if (!user) {
-      navigate('/');
-      return;
-    }
-
     let isMounted = true;
 
     const fetchUserData = async () => {
@@ -73,52 +67,23 @@ const Profile = () => {
         setIsLoading(true);
         setError(null);
         
-        const { data: { user: currentUser }, error: authError } = await supabase.auth.getUser();
-        
-        if (authError) {
-          console.error("Auth error:", authError);
-          throw authError;
-        }
-
-        if (!currentUser) {
-          throw new Error("User not found");
-        }
-
-        // Получаем данные профиля из таблицы profiles
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('user_id', currentUser.id)
-          .single();
-
-        if (profileError && profileError.code !== 'PGRST116') {
-          console.error("Profile error:", profileError);
-          throw profileError;
-        }
+        // Создаем дефолтные данные для демонстрации
+        const defaultData: UserData = {
+          id: "demo-id",
+          email: "demo@example.com",
+          login: "demo_user",
+          country: "Demo Country",
+          avatar: "https://github.com/shadcn.png",
+          balance: "0.0"
+        };
 
         if (isMounted) {
-          setUserData({
-            id: currentUser.id,
-            email: currentUser.email || '',
-            login: currentUser.user_metadata?.login || '',
-            country: currentUser.user_metadata?.country || '',
-            avatar: profileData?.avatar_url || "https://github.com/shadcn.png",
-            balance: profileData?.balance?.toString() || "0.0"
-          });
-
-          // Получаем транзакции пользователя
-          const { data: transactionsData, error: transactionsError } = await supabase
-            .from('transactions')
-            .select('*')
-            .eq('user_id', currentUser.id)
-            .order('created_at', { ascending: false });
-
-          if (transactionsError) {
-            console.error("Transactions error:", transactionsError);
-            throw transactionsError;
-          }
-
-          setTransactions(transactionsData || []);
+          setUserData(defaultData);
+          setTransactions([
+            { id: 1, type: "deposit", amount: "0.5", date: "2024-03-15", status: "completed" },
+            { id: 2, type: "withdraw", amount: "0.2", date: "2024-03-14", status: "completed" },
+            { id: 3, type: "purchase", amount: "0.3", date: "2024-03-13", status: "completed" }
+          ]);
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -142,7 +107,7 @@ const Profile = () => {
     return () => {
       isMounted = false;
     };
-  }, [user, navigate, toast]);
+  }, [toast]);
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -213,10 +178,6 @@ const Profile = () => {
       });
     }
   };
-
-  if (!user) {
-    return null; // Не показываем ничего, так как useEffect выполнит редирект
-  }
 
   if (isLoading) {
     return (
