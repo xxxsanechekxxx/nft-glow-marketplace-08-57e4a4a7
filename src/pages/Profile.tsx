@@ -40,9 +40,7 @@ interface UserData {
   id: string;
   email: string;
   login: string;
-  nickname: string;
   country: string;
-  birthDate: string;
   avatar: string;
   balance: string;
 }
@@ -62,6 +60,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (!user) {
+      console.log("No user found, redirecting to home");
       navigate("/");
       return;
     }
@@ -69,24 +68,39 @@ const Profile = () => {
     const fetchUserData = async () => {
       try {
         setIsLoading(true);
-        const { data: { user: currentUser }, error } = await supabase.auth.getUser();
+        console.log("Fetching user data for ID:", user.id);
         
-        if (error) {
-          throw error;
+        // First, get the user's auth data
+        const { data: { user: currentUser }, error: authError } = await supabase.auth.getUser();
+        
+        if (authError) {
+          console.error("Auth error:", authError);
+          throw authError;
         }
+
+        // Then, get the profile data
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('user_id', user.id)
+          .single();
+
+        if (profileError) {
+          console.error("Profile error:", profileError);
+          throw profileError;
+        }
+
+        console.log("Profile data:", profileData);
+        console.log("Current user metadata:", currentUser?.user_metadata);
         
         if (currentUser) {
-          console.log("Current user metadata:", currentUser.user_metadata);
-          
           setUserData({
             id: currentUser.id,
             email: currentUser.email || '',
-            login: currentUser.user_metadata?.login || '',
-            nickname: currentUser.user_metadata?.nickname || '',
-            country: currentUser.user_metadata?.country || '',
-            birthDate: currentUser.user_metadata?.birth_date || '',
-            avatar: currentUser.user_metadata?.avatar_url || "https://github.com/shadcn.png",
-            balance: "0.0"
+            login: profileData?.login || currentUser.user_metadata?.login || '',
+            country: profileData?.country || currentUser.user_metadata?.country || '',
+            avatar: profileData?.avatar_url || "https://github.com/shadcn.png",
+            balance: profileData?.balance?.toString() || "0.0"
           });
 
           // Sample transactions - replace with actual data in production
@@ -100,7 +114,7 @@ const Profile = () => {
         console.error("Error fetching user data:", error);
         toast({
           title: "Error",
-          description: "Failed to fetch user data",
+          description: "Failed to fetch user data. Please check console for details.",
           variant: "destructive",
         });
       } finally {
@@ -195,7 +209,7 @@ const Profile = () => {
     return (
       <div className="container mx-auto py-8 px-4 mt-16">
         <div className="max-w-4xl mx-auto">
-          <p>No user data available</p>
+          <p>No user data available. Please check console for details.</p>
         </div>
       </div>
     );
