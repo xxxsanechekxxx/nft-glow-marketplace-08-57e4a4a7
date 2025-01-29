@@ -45,6 +45,7 @@ interface UserData {
   avatar_url: string | null;
   balance: string;
   wallet_address?: string;
+  erc20_address?: string;
 }
 
 const Profile = () => {
@@ -300,12 +301,21 @@ const Profile = () => {
                     Wallet Address
                   </label>
                   <div className="flex gap-4 items-start">
-                    <Input 
-                      value={userData?.wallet_address || ''} 
-                      readOnly 
-                      className="bg-muted/50 font-mono text-sm"
-                      placeholder="No wallet address generated"
-                    />
+                    <div className="flex-grow flex gap-2 items-center">
+                      <Input 
+                        value={userData?.wallet_address || ''} 
+                        readOnly 
+                        className="bg-muted/50 font-mono text-sm flex-grow"
+                        placeholder="No wallet address generated"
+                      />
+                      {userData?.wallet_address && (
+                        <Input
+                          value="ERC-20"
+                          readOnly
+                          className="bg-muted/50 w-24 text-sm text-center"
+                        />
+                      )}
+                    </div>
                     {!userData?.wallet_address && (
                       <Button
                         onClick={() => setIsWalletModalOpen(true)}
