@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { User, Settings, Mail, Key, LogOut, Wallet, ArrowUpCircle, ArrowDownCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import WalletAddressModal from "@/components/WalletAddressModal";
 import {
   Dialog,
   DialogContent,
@@ -43,6 +44,7 @@ interface UserData {
   country: string;
   avatar_url: string | null;
   balance: string;
+  wallet_address?: string;
 }
 
 const Profile = () => {
@@ -57,6 +59,7 @@ const Profile = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -100,7 +103,8 @@ const Profile = () => {
             login: profileData?.login || currentUser.user_metadata?.login || '',
             country: profileData?.country || currentUser.user_metadata?.country || '',
             avatar_url: null,
-            balance: profileData?.balance?.toString() || "0.0"
+            balance: profileData?.balance?.toString() || "0.0",
+            wallet_address: profileData?.wallet_address || ''
           });
 
           setTransactions([
@@ -131,6 +135,31 @@ const Profile = () => {
       isMounted = false;
     };
   }, [toast]);
+
+  const handleGenerateWalletAddress = async (address: string) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ wallet_address: address })
+        .eq('user_id', userData?.id);
+
+      if (error) throw error;
+
+      setUserData(prev => prev ? { ...prev, wallet_address: address } : null);
+      
+      toast({
+        title: "Success",
+        description: "Wallet address has been generated and saved.",
+      });
+    } catch (error) {
+      console.error("Error saving wallet address:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save wallet address. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -262,7 +291,27 @@ const Profile = () => {
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Country</label>
-                    <Input value={userData?.country} readOnly className="bg-muted/50 truncate-none" />
+                    <Input value={userData?.country} readOnly className="bg-muted/50" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium flex items-center gap-2">
+                    <Wallet className="w-4 h-4" />
+                    Wallet Address
+                  </label>
+                  <div className="flex gap-4 items-start">
+                    <Input 
+                      value={userData?.wallet_address || ''} 
+                      readOnly 
+                      className="bg-muted/50 font-mono text-sm"
+                      placeholder="No wallet address generated"
+                    />
+                    <Button
+                      onClick={() => setIsWalletModalOpen(true)}
+                      disabled={!!userData?.wallet_address}
+                    >
+                      Generate Address
+                    </Button>
                   </div>
                 </div>
               </CardContent>
@@ -433,6 +482,12 @@ const Profile = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      <WalletAddressModal
+        isOpen={isWalletModalOpen}
+        onClose={() => setIsWalletModalOpen(false)}
+        onGenerated={handleGenerateWalletAddress}
+      />
     </div>
   );
 };
