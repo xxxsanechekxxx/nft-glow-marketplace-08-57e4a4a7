@@ -41,7 +41,6 @@
     width: 100%;
   }
 
-  /* Prevent layout shift when modal opens */
   body[data-state="open"] {
     overflow: hidden !important;
     padding-right: var(--removed-body-scroll-bar-size) !important;
@@ -57,19 +56,19 @@
   background: linear-gradient(102.3deg, rgba(147,39,143,1) 5.9%, rgba(234,172,232,1) 64%, rgba(246,219,245,1) 89%);
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
-}
-
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 @keyframes gradient {

@@ -38,18 +38,25 @@ const Marketplace = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {nfts.map((nft) => (
-          <NFTCard key={nft.id} {...nft} />
+        {nfts.map((nft, index) => (
+          <div
+            key={nft.id}
+            className="opacity-0 animate-[fadeIn_0.8s_ease-out_forwards]"
+            style={{
+              animationDelay: `${index * 0.15}s`,
+            }}
+          >
+            <NFTCard {...nft} />
+          </div>
         ))}
       </div>
 
-      {/* Loading indicator and intersection observer target */}
       <div
         ref={ref}
         className="w-full flex justify-center py-8"
       >
         {loading && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 animate-fade-in">
             <Loader2 className="h-6 w-6 animate-spin" />
             <span>Loading more NFTs...</span>
           </div>
