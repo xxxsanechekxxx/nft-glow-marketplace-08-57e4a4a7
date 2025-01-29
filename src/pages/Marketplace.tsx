@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { NFTCard } from "@/components/NFTCard";
 import { fetchNFTs } from "@/api/nfts";
 import { useInView } from "react-intersection-observer";
-import { Loader2 } from "lucide-react";
+import { Loader2, PackageX } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const Marketplace = () => {
   const [nfts, setNfts] = useState<any[]>([]);
@@ -48,19 +49,28 @@ const Marketplace = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {nfts.map((nft, index) => (
-          <div
-            key={nft._id}
-            className="opacity-0 animate-[fadeIn_1.2s_ease-out_forwards]"
-            style={{
-              animationDelay: `${index * 0.25}s`,
-            }}
-          >
-            <NFTCard {...nft} />
-          </div>
-        ))}
-      </div>
+      {nfts.length === 0 && !loading ? (
+        <Alert className="max-w-2xl mx-auto">
+          <PackageX className="h-5 w-5" />
+          <AlertDescription>
+            No NFTs available at the moment. Be the first to create one!
+          </AlertDescription>
+        </Alert>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {nfts.map((nft, index) => (
+            <div
+              key={nft._id}
+              className="opacity-0 animate-[fadeIn_1.2s_ease-out_forwards]"
+              style={{
+                animationDelay: `${index * 0.25}s`,
+              }}
+            >
+              <NFTCard {...nft} />
+            </div>
+          ))}
+        </div>
+      )}
 
       <div
         ref={ref}
