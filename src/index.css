@@ -34,13 +34,16 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    overflow-y: scroll !important;
+    margin-right: 0 !important;
     padding-right: 0 !important;
-    overflow-y: scroll;
+    position: relative;
+    width: 100%;
   }
 
   /* Prevent layout shift when modal opens */
   body[data-state="open"] {
-    overflow: hidden;
+    overflow: hidden !important;
     padding-right: var(--removed-body-scroll-bar-size) !important;
   }
 }
