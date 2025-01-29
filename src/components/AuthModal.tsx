@@ -31,8 +31,6 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [login, setLogin] = useState("");
-  const [nickname, setNickname] = useState("");
-  const [birthDate, setBirthDate] = useState("");
   const [country, setCountry] = useState("");
   const [policyAgreed, setPolicyAgreed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -74,8 +72,6 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
           options: {
             data: {
               login,
-              nickname,
-              birth_date: birthDate,
               country,
             }
           },
@@ -123,18 +119,6 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
     return login.length >= 3;
   };
 
-  const validateNickname = (nickname: string) => {
-    return nickname.length >= 2;
-  };
-
-  const validateBirthDate = (birthDate: string) => {
-    if (!birthDate) return false;
-    const today = new Date();
-    const birthDateObj = new Date(birthDate);
-    const age = today.getFullYear() - birthDateObj.getFullYear();
-    return age >= 18;
-  };
-
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -176,33 +160,6 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
                   value={login}
                   onChange={(e) => setLogin(e.target.value)}
                   placeholder="Enter your login"
-                  required={!isLogin}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="nickname" className="text-sm font-medium">
-                  Nickname
-                </label>
-                <Input
-                  id="nickname"
-                  type="text"
-                  value={nickname}
-                  onChange={(e) => setNickname(e.target.value)}
-                  placeholder="Choose a nickname"
-                  required={!isLogin}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="birthDate" className="text-sm font-medium">
-                  Birth Date
-                </label>
-                <Input
-                  id="birthDate"
-                  type="date"
-                  value={birthDate}
-                  onChange={(e) => setBirthDate(e.target.value)}
                   required={!isLogin}
                 />
               </div>
