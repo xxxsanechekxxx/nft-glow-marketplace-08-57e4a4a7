@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -24,6 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { supabase } from "@/lib/supabase";
 
 const Profile = () => {
   const { toast } = useToast();
@@ -33,9 +34,11 @@ const Profile = () => {
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [depositAmount, setDepositAmount] = useState("");
+  const [userData, setUserData] = useState(null);
 
   // Mock user data (replace with actual user data when backend is integrated)
-  const userData = {
+  const userDataMock = {
+    id: "user-id",
     name: "John Doe",
     email: "john@example.com",
     login: "johndoe",
@@ -45,6 +48,11 @@ const Profile = () => {
     avatar: "https://github.com/shadcn.png",
     balance: "1.5" // Mock ETH balance
   };
+
+  useEffect(() => {
+    // Fetch user data from Supabase or use mock data
+    setUserData(userDataMock);
+  }, []);
 
   // Mock transaction history (replace with actual data when backend is integrated)
   const transactions = [
@@ -95,20 +103,78 @@ const Profile = () => {
     navigate('/');
   };
 
+  const handleNFTUpload = async (file: File) => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `${userData.id}/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('nfts')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('nfts')
+        .getPublicUrl(filePath);
+
+      return publicUrl;
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Error uploading NFT image",
+        variant: "destructive",
+      });
+      return null;
+    }
+  };
+
+  const createNFT = async (nftData: {
+    name: string;
+    description: string;
+    price: number;
+    image_url: string;
+  }) => {
+    try {
+      const { error } = await supabase
+        .from('nfts')
+        .insert([
+          {
+            ...nftData,
+            creator_id: userData.id,
+          },
+        ]);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "NFT created successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Error creating NFT",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="container mx-auto py-8 px-4 mt-16">
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="flex items-center gap-6 p-6 bg-card rounded-lg border">
           <Avatar className="w-24 h-24">
-            <AvatarImage src={userData.avatar} alt={userData.name} />
-            <AvatarFallback>{userData.name[0]}</AvatarFallback>
+            <AvatarImage src={userData?.avatar} alt={userData?.name} />
+            <AvatarFallback>{userData?.name[0]}</AvatarFallback>
           </Avatar>
           <div className="space-y-2">
-            <h1 className="text-2xl font-bold">{userData.name}</h1>
-            <p className="text-muted-foreground">@{userData.login}</p>
+            <h1 className="text-2xl font-bold">{userData?.name}</h1>
+            <p className="text-muted-foreground">@{userData?.login}</p>
             <div className="flex items-center gap-2 text-primary">
               <Wallet className="w-4 h-4" />
-              <span>{userData.balance} ETH</span>
+              <span>{userData?.balance} ETH</span>
             </div>
           </div>
         </div>
@@ -141,19 +207,19 @@ const Profile = () => {
                       <Mail className="w-4 h-4" />
                       Email
                     </label>
-                    <Input value={userData.email} readOnly />
+                    <Input value={userData?.email} readOnly />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Nickname</label>
-                    <Input value={userData.nickname} readOnly />
+                    <Input value={userData?.nickname} readOnly />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Country</label>
-                    <Input value={userData.country} readOnly />
+                    <Input value={userData?.country} readOnly />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Birth Date</label>
-                    <Input value={userData.birthDate} readOnly />
+                    <Input value={userData?.birthDate} readOnly />
                   </div>
                 </div>
               </CardContent>

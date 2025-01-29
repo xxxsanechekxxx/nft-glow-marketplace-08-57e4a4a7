@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { supabase } from "@/lib/supabase";
 
 interface AuthModalProps {
   trigger: React.ReactNode;
@@ -33,7 +34,66 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
   const [birthDate, setBirthDate] = useState("");
   const [country, setCountry] = useState("");
   const [policyAgreed, setPolicyAgreed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      if (isLogin) {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) throw error;
+
+        toast({
+          title: "Success",
+          description: "Logged in successfully",
+        });
+      } else {
+        if (password !== confirmPassword) {
+          toast({
+            title: "Error",
+            description: "Passwords do not match",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              login,
+              nickname,
+              birth_date: birthDate,
+              country,
+            },
+          },
+        });
+
+        if (error) throw error;
+
+        toast({
+          title: "Success",
+          description: "Registration successful! Please check your email for verification.",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -58,89 +118,6 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
     const birthDateObj = new Date(birthDate);
     const age = today.getFullYear() - birthDateObj.getFullYear();
     return age >= 18;
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!isLogin) {
-      if (!validateEmail(email)) {
-        toast({
-          title: "Error",
-          description: "Please enter a valid email address",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      if (!validatePassword(password)) {
-        toast({
-          title: "Error",
-          description: "Password must be at least 8 characters long",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      if (password !== confirmPassword) {
-        toast({
-          title: "Error",
-          description: "Passwords do not match",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      if (!validateLogin(login)) {
-        toast({
-          title: "Error",
-          description: "Login must be at least 3 characters long",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      if (!validateNickname(nickname)) {
-        toast({
-          title: "Error",
-          description: "Nickname must be at least 2 characters long",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      if (!validateBirthDate(birthDate)) {
-        toast({
-          title: "Error",
-          description: "You must be at least 18 years old to register",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      if (!country) {
-        toast({
-          title: "Error",
-          description: "Please select your country",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      if (!policyAgreed) {
-        toast({
-          title: "Error",
-          description: "You must agree to the website policy to register",
-          variant: "destructive",
-        });
-        return;
-      }
-    }
-
-    toast({
-      title: isLogin ? "Login successful" : "Registration successful",
-      description: `Email: ${email}`,
-    });
   };
 
   return (
@@ -302,7 +279,7 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
           )}
 
           <div className="flex flex-col space-y-4">
-            <Button type="submit">
+            <Button type="submit" disabled={isLoading}>
               {isLogin ? "Sign In" : "Register"}
             </Button>
             <Button
