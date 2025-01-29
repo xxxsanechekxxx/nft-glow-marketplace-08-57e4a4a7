@@ -25,8 +25,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/hooks/useAuth";
 
 const Profile = () => {
+  const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [currentPassword, setCurrentPassword] = useState("");
@@ -36,30 +38,41 @@ const Profile = () => {
   const [depositAmount, setDepositAmount] = useState("");
   const [userData, setUserData] = useState(null);
 
-  // Mock user data (replace with actual user data when backend is integrated)
-  const userDataMock = {
-    id: "user-id",
-    name: "John Doe",
-    email: "john@example.com",
-    login: "johndoe",
-    nickname: "JD",
-    country: "United States",
-    birthDate: "1990-01-01",
-    avatar: "https://github.com/shadcn.png",
-    balance: "1.5" // Mock ETH balance
-  };
-
   useEffect(() => {
-    // Fetch user data from Supabase or use mock data
-    setUserData(userDataMock);
-  }, []);
+    if (!user) {
+      navigate("/");
+      return;
+    }
 
-  // Mock transaction history (replace with actual data when backend is integrated)
-  const transactions = [
-    { id: 1, type: "deposit", amount: "0.5", date: "2024-03-15", status: "completed" },
-    { id: 2, type: "withdraw", amount: "0.2", date: "2024-03-14", status: "completed" },
-    { id: 3, type: "purchase", amount: "0.3", date: "2024-03-13", item: "NFT #123", status: "completed" },
-  ];
+    const fetchUserData = async () => {
+      try {
+        const { data: { user: currentUser }, error } = await supabase.auth.getUser();
+        
+        if (error) throw error;
+        
+        if (currentUser) {
+          setUserData({
+            id: currentUser.id,
+            email: currentUser.email,
+            login: currentUser.user_metadata?.login,
+            nickname: currentUser.user_metadata?.nickname,
+            country: currentUser.user_metadata?.country,
+            birthDate: currentUser.user_metadata?.birth_date,
+            avatar: currentUser.user_metadata?.avatar_url || "https://github.com/shadcn.png",
+            balance: "0.0" // Здесь можно добавить реальный баланс из базы данных
+          });
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to fetch user data",
+          variant: "destructive",
+        });
+      }
+    };
+
+    fetchUserData();
+  }, [user, navigate, toast]);
 
   const handlePasswordChange = (e: React.FormEvent) => {
     e.preventDefault();

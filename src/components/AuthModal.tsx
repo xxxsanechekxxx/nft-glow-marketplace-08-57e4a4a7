@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { supabase } from "@/lib/supabase";
+import { useNavigate } from "react-router-dom";
 
 interface AuthModalProps {
   trigger: React.ReactNode;
@@ -36,6 +37,7 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
   const [policyAgreed, setPolicyAgreed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,6 +56,8 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
           title: "Success",
           description: "Logged in successfully",
         });
+        
+        navigate("/profile");
       } else {
         if (password !== confirmPassword) {
           toast({
@@ -80,7 +84,6 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
 
         if (signUpError) throw signUpError;
 
-        // Wait for the signup to complete before attempting to sign in
         if (signUpData.user) {
           const { error: signInError } = await supabase.auth.signInWithPassword({
             email,
@@ -93,6 +96,8 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
             title: "Success",
             description: "Registration successful! You are now logged in.",
           });
+          
+          navigate("/profile");
         }
       }
     } catch (error) {
