@@ -57,6 +57,7 @@ const Profile = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -64,46 +65,20 @@ const Profile = () => {
     const fetchUserData = async () => {
       try {
         setIsLoading(true);
-        console.log("Fetching user data...");
+        setError(null);
         
-        const { data: { user: currentUser }, error: authError } = await supabase.auth.getUser();
-        
-        if (authError) {
-          console.error("Auth error:", authError);
-          throw authError;
-        }
+        // Создаем дефолтные данные для демонстрации
+        const defaultData: UserData = {
+          id: "demo-id",
+          email: "demo@example.com",
+          login: "demo_user",
+          country: "Demo Country",
+          avatar: "https://github.com/shadcn.png",
+          balance: "0.0"
+        };
 
-        if (!currentUser) {
-          console.log("No user found");
-          return;
-        }
-
-        console.log("Current user:", currentUser);
-
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('user_id', currentUser.id)
-          .single();
-
-        if (profileError) {
-          console.error("Profile error:", profileError);
-          throw profileError;
-        }
-
-        console.log("Profile data:", profileData);
-        
-        if (isMounted && currentUser) {
-          setUserData({
-            id: currentUser.id,
-            email: currentUser.email || '',
-            login: profileData?.login || currentUser.user_metadata?.login || '',
-            country: profileData?.country || currentUser.user_metadata?.country || '',
-            avatar: profileData?.avatar_url || "https://github.com/shadcn.png",
-            balance: profileData?.balance?.toString() || "0.0"
-          });
-
-          // Sample transactions data
+        if (isMounted) {
+          setUserData(defaultData);
           setTransactions([
             { id: 1, type: "deposit", amount: "0.5", date: "2024-03-15", status: "completed" },
             { id: 2, type: "withdraw", amount: "0.2", date: "2024-03-14", status: "completed" },
@@ -113,6 +88,7 @@ const Profile = () => {
       } catch (error) {
         console.error("Error fetching user data:", error);
         if (isMounted) {
+          setError("Failed to fetch user data");
           toast({
             title: "Error",
             description: "Failed to fetch user data. Please try again.",
@@ -208,6 +184,16 @@ const Profile = () => {
       <div className="container mx-auto py-8 px-4 mt-16">
         <div className="max-w-4xl mx-auto">
           <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto py-8 px-4 mt-16">
+        <div className="max-w-4xl mx-auto">
+          <p className="text-red-500">{error}</p>
         </div>
       </div>
     );
