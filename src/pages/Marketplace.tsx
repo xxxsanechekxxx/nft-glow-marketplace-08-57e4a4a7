@@ -41,9 +41,9 @@ const Marketplace = () => {
         {nfts.map((nft, index) => (
           <div
             key={nft.id}
-            className="opacity-0 animate-[fadeIn_0.8s_ease-out_forwards]"
+            className="opacity-0 animate-[fadeIn_1.2s_ease-out_forwards]"
             style={{
-              animationDelay: `${index * 0.15}s`,
+              animationDelay: `${index * 0.25}s`,
             }}
           >
             <NFTCard {...nft} />
