@@ -36,8 +36,19 @@ interface Transaction {
   item?: string;
 }
 
+interface UserData {
+  id: string;
+  email: string;
+  login: string;
+  nickname: string;
+  country: string;
+  birthDate: string;
+  avatar: string;
+  balance: string;
+}
+
 const Profile = () => {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [currentPassword, setCurrentPassword] = useState("");
@@ -45,8 +56,9 @@ const Profile = () => {
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [depositAmount, setDepositAmount] = useState("");
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!user) {
@@ -56,24 +68,28 @@ const Profile = () => {
 
     const fetchUserData = async () => {
       try {
+        setIsLoading(true);
         const { data: { user: currentUser }, error } = await supabase.auth.getUser();
         
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
         
         if (currentUser) {
+          console.log("Current user metadata:", currentUser.user_metadata);
+          
           setUserData({
             id: currentUser.id,
-            email: currentUser.email,
-            login: currentUser.user_metadata?.login,
-            nickname: currentUser.user_metadata?.nickname,
-            country: currentUser.user_metadata?.country,
-            birthDate: currentUser.user_metadata?.birth_date,
+            email: currentUser.email || '',
+            login: currentUser.user_metadata?.login || '',
+            nickname: currentUser.user_metadata?.nickname || '',
+            country: currentUser.user_metadata?.country || '',
+            birthDate: currentUser.user_metadata?.birth_date || '',
             avatar: currentUser.user_metadata?.avatar_url || "https://github.com/shadcn.png",
-            balance: "0.0" // Здесь можно добавить реальный баланс из базы данных
+            balance: "0.0" // This should be fetched from your database in production
           });
 
-          // Initialize with some sample transactions
-          // This should be replaced with actual transaction fetching from the database
+          // Sample transactions - replace with actual data in production
           setTransactions([
             { id: 1, type: "deposit", amount: "0.5", date: "2024-03-15", status: "completed" },
             { id: 2, type: "withdraw", amount: "0.2", date: "2024-03-14", status: "completed" },
@@ -81,18 +97,21 @@ const Profile = () => {
           ]);
         }
       } catch (error) {
+        console.error("Error fetching user data:", error);
         toast({
           title: "Error",
           description: "Failed to fetch user data",
           variant: "destructive",
         });
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchUserData();
   }, [user, navigate, toast]);
 
-  const handlePasswordChange = (e: React.FormEvent) => {
+  const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmNewPassword) {
       toast({
@@ -102,10 +121,29 @@ const Profile = () => {
       });
       return;
     }
-    toast({
-      title: "Success",
-      description: "Password has been updated",
-    });
+
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Password has been updated",
+      });
+
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmNewPassword("");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update password",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleWithdraw = (e: React.FormEvent) => {
@@ -126,71 +164,42 @@ const Profile = () => {
     setDepositAmount("");
   };
 
-  const handleLogout = () => {
-    toast({
-      title: "Success",
-      description: "You have been logged out",
-    });
-    navigate('/');
-  };
-
-  const handleNFTUpload = async (file: File) => {
+  const handleLogout = async () => {
     try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `${userData.id}/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('nfts')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('nfts')
-        .getPublicUrl(filePath);
-
-      return publicUrl;
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Error uploading NFT image",
-        variant: "destructive",
-      });
-      return null;
-    }
-  };
-
-  const createNFT = async (nftData: {
-    name: string;
-    description: string;
-    price: number;
-    image_url: string;
-  }) => {
-    try {
-      const { error } = await supabase
-        .from('nfts')
-        .insert([
-          {
-            ...nftData,
-            creator_id: userData.id,
-          },
-        ]);
-
-      if (error) throw error;
-
+      await signOut();
       toast({
         title: "Success",
-        description: "NFT created successfully",
+        description: "You have been logged out",
       });
+      navigate('/');
     } catch (error) {
       toast({
         title: "Error",
-        description: "Error creating NFT",
+        description: "Failed to log out",
         variant: "destructive",
       });
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto py-8 px-4 mt-16">
+        <div className="max-w-4xl mx-auto">
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!userData) {
+    return (
+      <div className="container mx-auto py-8 px-4 mt-16">
+        <div className="max-w-4xl mx-auto">
+          <p>No user data available</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto py-8 px-4 mt-16">
@@ -423,6 +432,7 @@ const Profile = () => {
       </div>
     </div>
   );
+
 };
 
 export default Profile;
