@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { User, Settings, Mail, Key, LogOut, Wallet, ArrowUpCircle, ArrowDownCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
 import {
   Dialog,
   DialogContent,
@@ -29,18 +28,30 @@ import {
 const Profile = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { user, logout, loadUser } = useAuth();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [depositAmount, setDepositAmount] = useState("");
 
-  useEffect(() => {
-    if (!user) {
-      loadUser();
-    }
-  }, [user, loadUser]);
+  // Mock user data (replace with actual user data when backend is integrated)
+  const userData = {
+    name: "John Doe",
+    email: "john@example.com",
+    login: "johndoe",
+    nickname: "JD",
+    country: "United States",
+    birthDate: "1990-01-01",
+    avatar: "https://github.com/shadcn.png",
+    balance: "1.5" // Mock ETH balance
+  };
+
+  // Mock transaction history (replace with actual data when backend is integrated)
+  const transactions = [
+    { id: 1, type: "deposit", amount: "0.5", date: "2024-03-15", status: "completed" },
+    { id: 2, type: "withdraw", amount: "0.2", date: "2024-03-14", status: "completed" },
+    { id: 3, type: "purchase", amount: "0.3", date: "2024-03-13", item: "NFT #123", status: "completed" },
+  ];
 
   const handlePasswordChange = (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,38 +88,27 @@ const Profile = () => {
   };
 
   const handleLogout = () => {
-    logout();
+    toast({
+      title: "Success",
+      description: "You have been logged out",
+    });
     navigate('/');
   };
-
-  if (!user) {
-    return (
-      <div className="container mx-auto py-8 px-4 mt-16">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <Card>
-            <CardContent className="flex items-center justify-center h-[200px]">
-              <p>Please log in to view your profile</p>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="container mx-auto py-8 px-4 mt-16">
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="flex items-center gap-6 p-6 bg-card rounded-lg border">
           <Avatar className="w-24 h-24">
-            <AvatarImage src="https://github.com/shadcn.png" alt={user.nickname} />
-            <AvatarFallback>{user.nickname[0]}</AvatarFallback>
+            <AvatarImage src={userData.avatar} alt={userData.name} />
+            <AvatarFallback>{userData.name[0]}</AvatarFallback>
           </Avatar>
           <div className="space-y-2">
-            <h1 className="text-2xl font-bold">{user.nickname}</h1>
-            <p className="text-muted-foreground">@{user.login}</p>
+            <h1 className="text-2xl font-bold">{userData.name}</h1>
+            <p className="text-muted-foreground">@{userData.login}</p>
             <div className="flex items-center gap-2 text-primary">
               <Wallet className="w-4 h-4" />
-              <span>{user.balance} ETH</span>
+              <span>{userData.balance} ETH</span>
             </div>
           </div>
         </div>
@@ -141,19 +141,19 @@ const Profile = () => {
                       <Mail className="w-4 h-4" />
                       Email
                     </label>
-                    <Input value={user.email} readOnly />
+                    <Input value={userData.email} readOnly />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Nickname</label>
-                    <Input value={user.nickname} readOnly />
+                    <Input value={userData.nickname} readOnly />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Country</label>
-                    <Input value={user.country} readOnly />
+                    <Input value={userData.country} readOnly />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Birth Date</label>
-                    <Input value={user.birthDate} readOnly />
+                    <Input value={userData.birthDate} readOnly />
                   </div>
                 </div>
               </CardContent>
@@ -308,25 +308,14 @@ const Profile = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {/* Mock transaction history (replace with actual data when backend is integrated) */}
-                      <TableRow>
-                        <TableCell>2024-03-15</TableCell>
-                        <TableCell className="capitalize">deposit</TableCell>
-                        <TableCell>0.5</TableCell>
-                        <TableCell className="capitalize">completed</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell>2024-03-14</TableCell>
-                        <TableCell className="capitalize">withdraw</TableCell>
-                        <TableCell>0.2</TableCell>
-                        <TableCell className="capitalize">completed</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell>2024-03-13</TableCell>
-                        <TableCell className="capitalize">purchase</TableCell>
-                        <TableCell>0.3</TableCell>
-                        <TableCell className="capitalize">completed</TableCell>
-                      </TableRow>
+                      {transactions.map((transaction) => (
+                        <TableRow key={transaction.id}>
+                          <TableCell>{transaction.date}</TableCell>
+                          <TableCell className="capitalize">{transaction.type}</TableCell>
+                          <TableCell>{transaction.amount}</TableCell>
+                          <TableCell className="capitalize">{transaction.status}</TableCell>
+                        </TableRow>
+                      ))}
                     </TableBody>
                   </Table>
                 </CardContent>

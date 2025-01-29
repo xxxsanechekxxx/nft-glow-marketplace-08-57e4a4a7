@@ -11,8 +11,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/useAuth";
-import { Loader2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -35,9 +33,7 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
   const [birthDate, setBirthDate] = useState("");
   const [country, setCountry] = useState("");
   const [policyAgreed, setPolicyAgreed] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
-  const { login: loginUser, register, isLoading } = useAuth();
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -64,7 +60,7 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
     return age >= 18;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!isLogin) {
@@ -139,32 +135,16 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
         });
         return;
       }
-
-      try {
-        await register({
-          email,
-          password,
-          login,
-          nickname,
-          birthDate,
-          country,
-        });
-        setIsOpen(false);
-      } catch (error) {
-        // Error is handled in the register function
-      }
-    } else {
-      try {
-        await loginUser(email, password);
-        setIsOpen(false);
-      } catch (error) {
-        // Error is handled in the login function
-      }
     }
+
+    toast({
+      title: isLogin ? "Login successful" : "Registration successful",
+      description: `Email: ${email}`,
+    });
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog>
       <DialogTrigger asChild>
         {trigger}
       </DialogTrigger>
@@ -322,8 +302,7 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
           )}
 
           <div className="flex flex-col space-y-4">
-            <Button type="submit" disabled={isLoading}>
-              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Button type="submit">
               {isLogin ? "Sign In" : "Register"}
             </Button>
             <Button
@@ -331,7 +310,6 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
               variant="link"
               onClick={() => setIsLogin(!isLogin)}
               className="text-sm"
-              disabled={isLoading}
             >
               {isLogin 
                 ? "Don't have an account? Register" 
