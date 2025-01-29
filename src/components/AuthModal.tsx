@@ -74,7 +74,8 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
               birth_date: birthDate,
               country,
             },
-            emailRedirectTo: undefined // Отключаем редирект после подтверждения email
+            emailRedirectTo: undefined,
+            emailConfirm: false // Отключаем подтверждение email
           },
         });
 
@@ -84,6 +85,14 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
           title: "Success",
           description: "Registration successful! You can now log in.",
         });
+        
+        // Автоматически входим после регистрации
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (signInError) throw signInError;
       }
     } catch (error) {
       toast({
