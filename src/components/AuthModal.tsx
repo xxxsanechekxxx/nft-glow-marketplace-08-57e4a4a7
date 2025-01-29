@@ -77,8 +77,7 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
               nickname,
               birth_date: birthDate,
               country,
-            },
-            emailRedirectTo: undefined
+            }
           },
         });
 
