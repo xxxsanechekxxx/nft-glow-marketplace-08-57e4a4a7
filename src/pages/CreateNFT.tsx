@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2, Upload } from "lucide-react";
-import { createNFT } from "@/api/nfts";
 
 const CreateNFT = () => {
   const navigate = useNavigate();
@@ -22,17 +21,9 @@ const CreateNFT = () => {
     setIsLoading(true);
 
     try {
-      const currentDate = new Date();
-      const endDate = new Date();
-      endDate.setDate(currentDate.getDate() + 7); // Set auction end date to 7 days from now
-
-      await createNFT({
-        name: formData.name,
-        image: formData.image,
-        price: formData.price,
-        creator: "User", // This should be replaced with actual user data when available
-        endTime: endDate.toISOString(),
-      });
+      // Here we would typically make an API call to create the NFT
+      // For now, we'll just show a success message
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
       
       toast({
         title: "Success!",
