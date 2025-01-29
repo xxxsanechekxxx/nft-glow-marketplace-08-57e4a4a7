@@ -268,19 +268,15 @@ const Profile = () => {
                       <Mail className="w-4 h-4" />
                       Email
                     </label>
-                    <Input value={userData?.email} readOnly />
+                    <Input value={userData.email} readOnly />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Nickname</label>
-                    <Input value={userData?.nickname} readOnly />
+                    <label className="text-sm font-medium">Login</label>
+                    <Input value={userData.login} readOnly />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Country</label>
-                    <Input value={userData?.country} readOnly />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Birth Date</label>
-                    <Input value={userData?.birthDate} readOnly />
+                    <Input value={userData.country} readOnly />
                   </div>
                 </div>
               </CardContent>
