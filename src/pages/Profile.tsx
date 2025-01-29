@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { User, Settings, Mail, Key, LogOut, Wallet, ArrowUpCircle, ArrowDownCircle } from "lucide-react";
@@ -216,18 +216,17 @@ const Profile = () => {
   return (
     <div className="container mx-auto py-8 px-4 mt-16">
       <div className="max-w-4xl mx-auto space-y-8">
-        <div className="flex items-center gap-6 p-6 bg-card rounded-lg border">
-          <Avatar className="w-24 h-24">
+        <div className="flex items-center gap-6 p-8 bg-card rounded-lg border shadow-lg hover:shadow-xl transition-shadow duration-300">
+          <Avatar className="w-24 h-24 border-2 border-primary/20">
             <AvatarFallback>
               <User className="w-12 h-12 text-muted-foreground" />
             </AvatarFallback>
           </Avatar>
-          <div className="space-y-2">
-            <h1 className="text-2xl font-bold">{userData?.login}</h1>
-            <p className="text-muted-foreground">@{userData?.login}</p>
+          <div className="space-y-3">
+            <h1 className="text-3xl font-bold text-foreground">@{userData?.login}</h1>
             <div className="flex items-center gap-2 text-primary">
-              <Wallet className="w-4 h-4" />
-              <span>{userData?.balance} ETH</span>
+              <Wallet className="w-5 h-5" />
+              <span className="text-lg font-semibold">{userData?.balance} ETH</span>
             </div>
           </div>
         </div>
@@ -249,7 +248,7 @@ const Profile = () => {
           </TabsList>
 
           <TabsContent value="profile">
-            <Card>
+            <Card className="shadow-md hover:shadow-lg transition-shadow duration-300">
               <CardHeader>
                 <CardTitle>Profile Information</CardTitle>
               </CardHeader>
@@ -260,15 +259,11 @@ const Profile = () => {
                       <Mail className="w-4 h-4" />
                       Email
                     </label>
-                    <Input value={userData.email} readOnly />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Login</label>
-                    <Input value={userData.login} readOnly />
+                    <Input value={userData?.email} readOnly className="bg-muted/50" />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Country</label>
-                    <Input value={userData.country} readOnly />
+                    <Input value={userData?.country} readOnly className="bg-muted/50 truncate-none" />
                   </div>
                 </div>
               </CardContent>
