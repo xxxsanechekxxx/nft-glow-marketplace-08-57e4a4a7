@@ -27,6 +27,15 @@ import {
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 
+interface Transaction {
+  id: number;
+  type: string;
+  amount: string;
+  date: string;
+  status: string;
+  item?: string;
+}
+
 const Profile = () => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -37,6 +46,7 @@ const Profile = () => {
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [depositAmount, setDepositAmount] = useState("");
   const [userData, setUserData] = useState(null);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   useEffect(() => {
     if (!user) {
@@ -61,6 +71,14 @@ const Profile = () => {
             avatar: currentUser.user_metadata?.avatar_url || "https://github.com/shadcn.png",
             balance: "0.0" // Здесь можно добавить реальный баланс из базы данных
           });
+
+          // Initialize with some sample transactions
+          // This should be replaced with actual transaction fetching from the database
+          setTransactions([
+            { id: 1, type: "deposit", amount: "0.5", date: "2024-03-15", status: "completed" },
+            { id: 2, type: "withdraw", amount: "0.2", date: "2024-03-14", status: "completed" },
+            { id: 3, type: "purchase", amount: "0.3", date: "2024-03-13", status: "completed" }
+          ]);
         }
       } catch (error) {
         toast({
