@@ -64,7 +64,7 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
           return;
         }
 
-        const { error } = await supabase.auth.signUp({
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -74,25 +74,26 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
               birth_date: birthDate,
               country,
             },
-            emailRedirectTo: undefined,
-            emailConfirm: false // Отключаем подтверждение email
+            emailRedirectTo: undefined
           },
         });
 
-        if (error) throw error;
+        if (signUpError) throw signUpError;
 
-        toast({
-          title: "Success",
-          description: "Registration successful! You can now log in.",
-        });
-        
-        // Автоматически входим после регистрации
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+        // Wait for the signup to complete before attempting to sign in
+        if (signUpData.user) {
+          const { error: signInError } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
 
-        if (signInError) throw signInError;
+          if (signInError) throw signInError;
+
+          toast({
+            title: "Success",
+            description: "Registration successful! You are now logged in.",
+          });
+        }
       }
     } catch (error) {
       toast({
