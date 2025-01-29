@@ -7,6 +7,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
+import { supabase } from '@/lib/supabase';
+import { useToast } from "@/hooks/use-toast";
 
 interface WalletAddressModalProps {
   isOpen: boolean;
@@ -18,6 +20,7 @@ const WalletAddressModal = ({ isOpen, onClose, onGenerated }: WalletAddressModal
   const [progress, setProgress] = useState(0);
   const [isGenerating, setIsGenerating] = useState(true);
   const [generatedAddress, setGeneratedAddress] = useState("");
+  const { toast } = useToast();
 
   useEffect(() => {
     if (isOpen && isGenerating) {

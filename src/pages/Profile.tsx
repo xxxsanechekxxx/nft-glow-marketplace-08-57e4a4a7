@@ -306,12 +306,13 @@ const Profile = () => {
                       className="bg-muted/50 font-mono text-sm"
                       placeholder="No wallet address generated"
                     />
-                    <Button
-                      onClick={() => setIsWalletModalOpen(true)}
-                      disabled={!!userData?.wallet_address}
-                    >
-                      Generate Address
-                    </Button>
+                    {!userData?.wallet_address && (
+                      <Button
+                        onClick={() => setIsWalletModalOpen(true)}
+                      >
+                        Generate Address
+                      </Button>
+                    )}
                   </div>
                 </div>
               </CardContent>
