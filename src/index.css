@@ -35,10 +35,12 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
     padding-right: 0 !important;
+    overflow-y: scroll;
   }
 
   /* Prevent layout shift when modal opens */
   body[data-state="open"] {
+    overflow: hidden;
     padding-right: var(--removed-body-scroll-bar-size) !important;
   }
 }
