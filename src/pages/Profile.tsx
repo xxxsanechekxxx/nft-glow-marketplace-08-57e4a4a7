@@ -218,8 +218,10 @@ const Profile = () => {
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="flex items-center gap-6 p-6 bg-card rounded-lg border">
           <Avatar className="w-24 h-24">
-            <AvatarImage src={userData?.avatar} alt={userData?.login} />
-            <AvatarFallback>{userData?.login?.[0]}</AvatarFallback>
+            <AvatarImage src={userData?.avatar} />
+            <AvatarFallback>
+              <User className="w-12 h-12 text-muted-foreground" />
+            </AvatarFallback>
           </Avatar>
           <div className="space-y-2">
             <h1 className="text-2xl font-bold">{userData?.login}</h1>
