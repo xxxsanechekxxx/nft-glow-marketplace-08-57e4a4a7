@@ -45,6 +45,7 @@ interface UserData {
   avatar_url: string | null;
   balance: string;
   wallet_address?: string;
+  erc20_address?: string;
 }
 
 const Profile = () => {
@@ -104,7 +105,8 @@ const Profile = () => {
             country: profileData?.country || currentUser.user_metadata?.country || '',
             avatar_url: null,
             balance: profileData?.balance?.toString() || "0.0",
-            wallet_address: profileData?.wallet_address || ''
+            wallet_address: profileData?.wallet_address || '',
+            erc20_address: profileData?.erc20_address || ''
           });
 
           setTransactions([
@@ -313,6 +315,20 @@ const Profile = () => {
                         Generate Address
                       </Button>
                     )}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium flex items-center gap-2">
+                    <Wallet className="w-4 h-4" />
+                    ERC-20 Address
+                  </label>
+                  <div className="flex gap-4 items-start">
+                    <Input 
+                      value={userData?.erc20_address || ''} 
+                      readOnly 
+                      className="bg-muted/50 font-mono text-sm"
+                      placeholder="No ERC-20 address generated"
+                    />
                   </div>
                 </div>
               </CardContent>
