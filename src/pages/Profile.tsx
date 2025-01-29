@@ -41,7 +41,7 @@ interface UserData {
   email: string;
   login: string;
   country: string;
-  avatar_url: string;
+  avatar_url: string | null;
   balance: string;
 }
 
@@ -99,7 +99,7 @@ const Profile = () => {
             email: currentUser.email || '',
             login: profileData?.login || currentUser.user_metadata?.login || '',
             country: profileData?.country || currentUser.user_metadata?.country || '',
-            avatar_url: profileData?.avatar_url || "https://github.com/shadcn.png",
+            avatar_url: null,  // Set to null to use the default User icon
             balance: profileData?.balance?.toString() || "0.0"
           });
 
@@ -218,7 +218,6 @@ const Profile = () => {
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="flex items-center gap-6 p-6 bg-card rounded-lg border">
           <Avatar className="w-24 h-24">
-            <AvatarImage src={userData?.avatar_url} />
             <AvatarFallback>
               <User className="w-12 h-12 text-muted-foreground" />
             </AvatarFallback>
