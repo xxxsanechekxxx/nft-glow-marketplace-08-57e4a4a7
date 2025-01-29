@@ -62,15 +62,9 @@ const Profile = () => {
     let isMounted = true;
 
     const fetchUserData = async () => {
-      if (!user) {
-        console.log("No user found, redirecting to home");
-        navigate("/");
-        return;
-      }
-
       try {
         setIsLoading(true);
-        console.log("Fetching user data for ID:", user.id);
+        console.log("Fetching user data...");
         
         const { data: { user: currentUser }, error: authError } = await supabase.auth.getUser();
         
@@ -79,10 +73,17 @@ const Profile = () => {
           throw authError;
         }
 
+        if (!currentUser) {
+          console.log("No user found");
+          return;
+        }
+
+        console.log("Current user:", currentUser);
+
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('*')
-          .eq('user_id', user.id)
+          .eq('user_id', currentUser.id)
           .single();
 
         if (profileError) {
@@ -91,9 +92,8 @@ const Profile = () => {
         }
 
         console.log("Profile data:", profileData);
-        console.log("Current user metadata:", currentUser?.user_metadata);
         
-        if (currentUser && isMounted) {
+        if (isMounted && currentUser) {
           setUserData({
             id: currentUser.id,
             email: currentUser.email || '',
@@ -131,7 +131,7 @@ const Profile = () => {
     return () => {
       isMounted = false;
     };
-  }, [user, navigate, toast]);
+  }, [toast]);
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -213,30 +213,20 @@ const Profile = () => {
     );
   }
 
-  if (!userData) {
-    return (
-      <div className="container mx-auto py-8 px-4 mt-16">
-        <div className="max-w-4xl mx-auto">
-          <p>No user data available. Please try again later.</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="container mx-auto py-8 px-4 mt-16">
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="flex items-center gap-6 p-6 bg-card rounded-lg border">
           <Avatar className="w-24 h-24">
-            <AvatarImage src={userData.avatar} alt={userData.login} />
-            <AvatarFallback>{userData.login[0]}</AvatarFallback>
+            <AvatarImage src={userData?.avatar} alt={userData?.login} />
+            <AvatarFallback>{userData?.login?.[0]}</AvatarFallback>
           </Avatar>
           <div className="space-y-2">
-            <h1 className="text-2xl font-bold">{userData.login}</h1>
-            <p className="text-muted-foreground">@{userData.login}</p>
+            <h1 className="text-2xl font-bold">{userData?.login}</h1>
+            <p className="text-muted-foreground">@{userData?.login}</p>
             <div className="flex items-center gap-2 text-primary">
               <Wallet className="w-4 h-4" />
-              <span>{userData.balance} ETH</span>
+              <span>{userData?.balance} ETH</span>
             </div>
           </div>
         </div>
