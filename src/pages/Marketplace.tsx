@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { NFTCard } from "@/components/NFTCard";
-import { fetchNFTs } from "@/data/nfts";
+import { fetchNFTs } from "@/api/nfts";
 import { useInView } from "react-intersection-observer";
 import { Loader2 } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 const Marketplace = () => {
   const [nfts, setNfts] = useState<any[]>([]);
@@ -10,16 +11,26 @@ const Marketplace = () => {
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const { ref, inView } = useInView();
+  const { toast } = useToast();
 
   const loadMoreNFTs = async () => {
     if (loading || !hasMore) return;
     
     setLoading(true);
-    const result = fetchNFTs(page);
-    setNfts(prev => [...prev, ...result.nfts]);
-    setHasMore(result.hasMore);
-    setPage(prev => prev + 1);
-    setLoading(false);
+    try {
+      const result = await fetchNFTs(page);
+      setNfts(prev => [...prev, ...result.nfts]);
+      setHasMore(result.hasMore);
+      setPage(prev => prev + 1);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to load NFTs. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -40,7 +51,7 @@ const Marketplace = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {nfts.map((nft, index) => (
           <div
-            key={nft.id}
+            key={nft._id}
             className="opacity-0 animate-[fadeIn_1.2s_ease-out_forwards]"
             style={{
               animationDelay: `${index * 0.25}s`,

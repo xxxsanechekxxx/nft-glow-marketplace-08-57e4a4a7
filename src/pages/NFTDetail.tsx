@@ -1,15 +1,46 @@
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Share2, Heart, DollarSign, User, Info, Timer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { NFT_DATA } from "@/data/nfts";
 import { CountdownTimer } from "@/components/CountdownTimer";
+import { fetchNFTById } from "@/api/nfts";
 
 const NFTDetail = () => {
   const { id } = useParams();
   const { toast } = useToast();
-  const nft = NFT_DATA.find((n) => n.id === id);
+  const [nft, setNft] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadNFT = async () => {
+      try {
+        const data = await fetchNFTById(id!);
+        setNft(data);
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to load NFT details. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadNFT();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 pt-24">
+        <div className="flex justify-center items-center">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      </div>
+    );
+  }
 
   if (!nft) {
     return (
