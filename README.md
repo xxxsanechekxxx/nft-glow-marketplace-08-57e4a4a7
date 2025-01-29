@@ -1,28 +1,28 @@
 # NFT Marketplace
 
-## Структура проекта
-Проект разделен на две части:
-- `frontend/` - React приложение (клиентская часть)
-- `backend/` - Express сервер (серверная часть)
+This project is split into two main directories:
 
-## Запуск проекта
+- `frontend/`: Contains the React frontend application
+- `backend/`: Contains the Express.js backend API
 
-### Backend
+## Setup
+
+1. Setup backend:
 ```bash
 cd backend
 npm install
+# Create .env file from .env.example
 npm start
 ```
-Сервер запустится на http://localhost:5000
 
-### Frontend
+2. Setup frontend (in a new terminal):
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-Приложение будет доступно на http://localhost:8080
 
-## Требования
-- Node.js 18+
-- MongoDB
+## Development
+
+- Frontend runs on http://localhost:5173
+- Backend API runs on http://localhost:5000
