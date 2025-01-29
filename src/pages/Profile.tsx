@@ -103,6 +103,7 @@ const Profile = () => {
             balance: profileData?.balance?.toString() || "0.0"
           });
 
+          // Sample transactions data
           setTransactions([
             { id: 1, type: "deposit", amount: "0.5", date: "2024-03-15", status: "completed" },
             { id: 2, type: "withdraw", amount: "0.2", date: "2024-03-14", status: "completed" },
@@ -114,7 +115,7 @@ const Profile = () => {
         if (isMounted) {
           toast({
             title: "Error",
-            description: "Failed to fetch user data. Please check console for details.",
+            description: "Failed to fetch user data. Please try again.",
             variant: "destructive",
           });
         }
@@ -216,7 +217,7 @@ const Profile = () => {
     return (
       <div className="container mx-auto py-8 px-4 mt-16">
         <div className="max-w-4xl mx-auto">
-          <p>No user data available. Please check console for details.</p>
+          <p>No user data available. Please try again later.</p>
         </div>
       </div>
     );
