@@ -9,6 +9,11 @@ router.post('/register', async (req, res) => {
   try {
     const { email, password, login, nickname, birthDate, country } = req.body;
 
+    // Validate required fields
+    if (!email || !password || !login || !nickname || !birthDate || !country) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
     // Check if user exists
     const emailExists = await User.findOne({ email });
     if (emailExists) {
@@ -55,7 +60,10 @@ router.post('/register', async (req, res) => {
       }
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Registration error:', error);
+    res.status(500).json({ 
+      message: error.message || 'Error during registration. Please try again.' 
+    });
   }
 });
 

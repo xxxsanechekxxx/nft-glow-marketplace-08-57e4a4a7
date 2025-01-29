@@ -50,7 +50,8 @@ export const useAuth = create<AuthState>((set) => ({
       toast.success('Successfully logged in');
     } catch (error: any) {
       set({ isLoading: false });
-      toast.error(error.response?.data?.message || 'Login failed');
+      const errorMessage = error.response?.data?.message || 'Login failed';
+      toast.error(errorMessage);
       throw error;
     }
   },
@@ -66,7 +67,8 @@ export const useAuth = create<AuthState>((set) => ({
       toast.success('Successfully registered');
     } catch (error: any) {
       set({ isLoading: false });
-      toast.error(error.response?.data?.message || 'Registration failed');
+      const errorMessage = error.response?.data?.message || 'Registration failed';
+      toast.error(errorMessage);
       throw error;
     }
   },
