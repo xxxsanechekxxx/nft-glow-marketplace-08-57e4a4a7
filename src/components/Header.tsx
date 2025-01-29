@@ -3,10 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { AuthModal } from './AuthModal';
+import { useAuth } from "@/hooks/useAuth";
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { user } = useAuth();
 
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -46,13 +48,21 @@ export const Header = () => {
                 <div className="absolute bottom-[-20px] left-0 w-full h-[2px] bg-primary" />
               )}
             </Link>
-            <AuthModal 
-              trigger={
+            {user ? (
+              <Link to="/profile">
                 <Button variant="outline">
-                  Authorization
+                  {user.user_metadata.login || 'Profile'}
                 </Button>
-              }
-            />
+              </Link>
+            ) : (
+              <AuthModal 
+                trigger={
+                  <Button variant="outline">
+                    Authorization
+                  </Button>
+                }
+              />
+            )}
           </nav>
 
           <button
@@ -85,13 +95,21 @@ export const Header = () => {
               >
                 Marketplace
               </Link>
-              <AuthModal 
-                trigger={
+              {user ? (
+                <Link to="/profile">
                   <Button variant="outline" className="w-full">
-                    Authorization
+                    {user.user_metadata.login || 'Profile'}
                   </Button>
-                }
-              />
+                </Link>
+              ) : (
+                <AuthModal 
+                  trigger={
+                    <Button variant="outline" className="w-full">
+                      Authorization
+                    </Button>
+                  }
+                />
+              )}
             </nav>
           </div>
         </div>

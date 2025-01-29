@@ -86,7 +86,7 @@ const Profile = () => {
             country: currentUser.user_metadata?.country || '',
             birthDate: currentUser.user_metadata?.birth_date || '',
             avatar: currentUser.user_metadata?.avatar_url || "https://github.com/shadcn.png",
-            balance: "0.0" // This should be fetched from your database in production
+            balance: "0.0"
           });
 
           // Sample transactions - replace with actual data in production
@@ -206,15 +206,15 @@ const Profile = () => {
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="flex items-center gap-6 p-6 bg-card rounded-lg border">
           <Avatar className="w-24 h-24">
-            <AvatarImage src={userData?.avatar} alt={userData?.name} />
-            <AvatarFallback>{userData?.name[0]}</AvatarFallback>
+            <AvatarImage src={userData.avatar} alt={userData.login} />
+            <AvatarFallback>{userData.login[0]}</AvatarFallback>
           </Avatar>
           <div className="space-y-2">
-            <h1 className="text-2xl font-bold">{userData?.name}</h1>
-            <p className="text-muted-foreground">@{userData?.login}</p>
+            <h1 className="text-2xl font-bold">{userData.nickname}</h1>
+            <p className="text-muted-foreground">@{userData.login}</p>
             <div className="flex items-center gap-2 text-primary">
               <Wallet className="w-4 h-4" />
-              <span>{userData?.balance} ETH</span>
+              <span>{userData.balance} ETH</span>
             </div>
           </div>
         </div>
@@ -432,7 +432,6 @@ const Profile = () => {
       </div>
     </div>
   );
-
 };
 
 export default Profile;
