@@ -27,6 +27,15 @@ import {
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 
+// Country codes mapping
+const countryNames: { [key: string]: string } = {
+  uk: "United Kingdom",
+  us: "United States",
+  au: "Australia",
+  ca: "Canada",
+  // Add more country mappings as needed
+};
+
 interface Transaction {
   id: number;
   type: string;
@@ -94,12 +103,15 @@ const Profile = () => {
         console.log("Profile data:", profileData);
         
         if (isMounted && currentUser) {
+          const countryCode = profileData?.country?.toLowerCase() || currentUser.user_metadata?.country?.toLowerCase() || '';
+          const fullCountryName = countryNames[countryCode] || countryCode;
+
           setUserData({
             id: currentUser.id,
             email: currentUser.email || '',
             login: profileData?.login || currentUser.user_metadata?.login || '',
-            country: profileData?.country || currentUser.user_metadata?.country || '',
-            avatar_url: null,  // Set to null to use the default User icon
+            country: fullCountryName, // Use the full country name here
+            avatar_url: null,
             balance: profileData?.balance?.toString() || "0.0"
           });
 
