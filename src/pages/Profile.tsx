@@ -59,18 +59,19 @@ const Profile = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) {
-      console.log("No user found, redirecting to home");
-      navigate("/");
-      return;
-    }
+    let isMounted = true;
 
     const fetchUserData = async () => {
+      if (!user) {
+        console.log("No user found, redirecting to home");
+        navigate("/");
+        return;
+      }
+
       try {
         setIsLoading(true);
         console.log("Fetching user data for ID:", user.id);
         
-        // First, get the user's auth data
         const { data: { user: currentUser }, error: authError } = await supabase.auth.getUser();
         
         if (authError) {
@@ -78,7 +79,6 @@ const Profile = () => {
           throw authError;
         }
 
-        // Then, get the profile data
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('*')
@@ -93,7 +93,7 @@ const Profile = () => {
         console.log("Profile data:", profileData);
         console.log("Current user metadata:", currentUser?.user_metadata);
         
-        if (currentUser) {
+        if (currentUser && isMounted) {
           setUserData({
             id: currentUser.id,
             email: currentUser.email || '',
@@ -103,7 +103,6 @@ const Profile = () => {
             balance: profileData?.balance?.toString() || "0.0"
           });
 
-          // Sample transactions - replace with actual data in production
           setTransactions([
             { id: 1, type: "deposit", amount: "0.5", date: "2024-03-15", status: "completed" },
             { id: 2, type: "withdraw", amount: "0.2", date: "2024-03-14", status: "completed" },
@@ -112,17 +111,25 @@ const Profile = () => {
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
-        toast({
-          title: "Error",
-          description: "Failed to fetch user data. Please check console for details.",
-          variant: "destructive",
-        });
+        if (isMounted) {
+          toast({
+            title: "Error",
+            description: "Failed to fetch user data. Please check console for details.",
+            variant: "destructive",
+          });
+        }
       } finally {
-        setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
 
     fetchUserData();
+
+    return () => {
+      isMounted = false;
+    };
   }, [user, navigate, toast]);
 
   const handlePasswordChange = async (e: React.FormEvent) => {
@@ -224,7 +231,7 @@ const Profile = () => {
             <AvatarFallback>{userData.login[0]}</AvatarFallback>
           </Avatar>
           <div className="space-y-2">
-            <h1 className="text-2xl font-bold">{userData.nickname}</h1>
+            <h1 className="text-2xl font-bold">{userData.login}</h1>
             <p className="text-muted-foreground">@{userData.login}</p>
             <div className="flex items-center gap-2 text-primary">
               <Wallet className="w-4 h-4" />
