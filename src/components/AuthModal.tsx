@@ -72,7 +72,7 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
           options: {
             data: {
               login,
-              country,
+              country: country, // Now we're passing the full country name directly
             }
           },
         });
@@ -173,31 +173,31 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
                     <SelectValue placeholder="Select your country" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="us">United States</SelectItem>
-                    <SelectItem value="uk">United Kingdom</SelectItem>
-                    <SelectItem value="ca">Canada</SelectItem>
-                    <SelectItem value="au">Australia</SelectItem>
-                    <SelectItem value="ru">Russia</SelectItem>
-                    <SelectItem value="de">Germany</SelectItem>
-                    <SelectItem value="fr">France</SelectItem>
-                    <SelectItem value="es">Spain</SelectItem>
-                    <SelectItem value="it">Italy</SelectItem>
-                    <SelectItem value="jp">Japan</SelectItem>
-                    <SelectItem value="cn">China</SelectItem>
-                    <SelectItem value="in">India</SelectItem>
-                    <SelectItem value="br">Brazil</SelectItem>
-                    <SelectItem value="mx">Mexico</SelectItem>
-                    <SelectItem value="ar">Argentina</SelectItem>
-                    <SelectItem value="kr">South Korea</SelectItem>
-                    <SelectItem value="sg">Singapore</SelectItem>
-                    <SelectItem value="ae">United Arab Emirates</SelectItem>
-                    <SelectItem value="za">South Africa</SelectItem>
-                    <SelectItem value="se">Sweden</SelectItem>
-                    <SelectItem value="no">Norway</SelectItem>
-                    <SelectItem value="nz">New Zealand</SelectItem>
-                    <SelectItem value="pl">Poland</SelectItem>
-                    <SelectItem value="tr">Turkey</SelectItem>
-                    <SelectItem value="eg">Egypt</SelectItem>
+                    <SelectItem value="United Kingdom">United Kingdom</SelectItem>
+                    <SelectItem value="United States">United States</SelectItem>
+                    <SelectItem value="Canada">Canada</SelectItem>
+                    <SelectItem value="Australia">Australia</SelectItem>
+                    <SelectItem value="Russia">Russia</SelectItem>
+                    <SelectItem value="Germany">Germany</SelectItem>
+                    <SelectItem value="France">France</SelectItem>
+                    <SelectItem value="Spain">Spain</SelectItem>
+                    <SelectItem value="Italy">Italy</SelectItem>
+                    <SelectItem value="Japan">Japan</SelectItem>
+                    <SelectItem value="China">China</SelectItem>
+                    <SelectItem value="India">India</SelectItem>
+                    <SelectItem value="Brazil">Brazil</SelectItem>
+                    <SelectItem value="Mexico">Mexico</SelectItem>
+                    <SelectItem value="Argentina">Argentina</SelectItem>
+                    <SelectItem value="South Korea">South Korea</SelectItem>
+                    <SelectItem value="Singapore">Singapore</SelectItem>
+                    <SelectItem value="United Arab Emirates">United Arab Emirates</SelectItem>
+                    <SelectItem value="South Africa">South Africa</SelectItem>
+                    <SelectItem value="Sweden">Sweden</SelectItem>
+                    <SelectItem value="Norway">Norway</SelectItem>
+                    <SelectItem value="New Zealand">New Zealand</SelectItem>
+                    <SelectItem value="Poland">Poland</SelectItem>
+                    <SelectItem value="Turkey">Turkey</SelectItem>
+                    <SelectItem value="Egypt">Egypt</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

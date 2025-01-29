@@ -27,15 +27,6 @@ import {
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 
-// Country codes mapping
-const countryNames: { [key: string]: string } = {
-  uk: "United Kingdom",
-  us: "United States",
-  au: "Australia",
-  ca: "Canada",
-  // Add more country mappings as needed
-};
-
 interface Transaction {
   id: number;
   type: string;
@@ -103,19 +94,15 @@ const Profile = () => {
         console.log("Profile data:", profileData);
         
         if (isMounted && currentUser) {
-          const countryCode = profileData?.country?.toLowerCase() || currentUser.user_metadata?.country?.toLowerCase() || '';
-          const fullCountryName = countryNames[countryCode] || countryCode;
-
           setUserData({
             id: currentUser.id,
             email: currentUser.email || '',
             login: profileData?.login || currentUser.user_metadata?.login || '',
-            country: fullCountryName, // Use the full country name here
+            country: profileData?.country || currentUser.user_metadata?.country || '',
             avatar_url: null,
             balance: profileData?.balance?.toString() || "0.0"
           });
 
-          // Sample transactions data
           setTransactions([
             { id: 1, type: "deposit", amount: "0.5", date: "2024-03-15", status: "completed" },
             { id: 2, type: "withdraw", amount: "0.2", date: "2024-03-14", status: "completed" },
