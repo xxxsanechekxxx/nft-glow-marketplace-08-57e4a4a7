@@ -74,6 +74,7 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
               birth_date: birthDate,
               country,
             },
+            emailRedirectTo: undefined // Отключаем редирект после подтверждения email
           },
         });
 
@@ -81,7 +82,7 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
 
         toast({
           title: "Success",
-          description: "Registration successful! Please check your email for verification.",
+          description: "Registration successful! You can now log in.",
         });
       }
     } catch (error) {
