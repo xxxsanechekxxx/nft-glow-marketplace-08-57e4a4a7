@@ -62,7 +62,6 @@ const Profile = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
 
-  // Add handleLogout function
   const handleLogout = async () => {
     try {
       await signOut();
@@ -113,7 +112,6 @@ const Profile = () => {
           throw profileError;
         }
 
-        // Fetch transactions
         const { data: transactionsData, error: transactionsError } = await supabase
           .from('transactions')
           .select('*')
@@ -253,7 +251,6 @@ const Profile = () => {
       });
       setWithdrawAmount("");
       
-      // Refresh transactions
       const { data: transactionsData, error: transactionsError } = await supabase
         .from('transactions')
         .select('*')
@@ -304,7 +301,6 @@ const Profile = () => {
       });
       setDepositAmount("");
       
-      // Refresh transactions
       const { data: transactionsData, error: transactionsError } = await supabase
         .from('transactions')
         .select('*')
@@ -567,26 +563,32 @@ const Profile = () => {
                   <CardTitle>Transaction History</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Type</TableHead>
-                        <TableHead>Amount (ETH)</TableHead>
-                        <TableHead>Status</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {transactions.map((transaction) => (
-                        <TableRow key={transaction.id}>
-                          <TableCell>{transaction.created_at}</TableCell>
-                          <TableCell className="capitalize">{transaction.type}</TableCell>
-                          <TableCell>{transaction.amount}</TableCell>
-                          <TableCell className="capitalize">{transaction.status}</TableCell>
+                  {transactions.length > 0 ? (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Date</TableHead>
+                          <TableHead>Type</TableHead>
+                          <TableHead>Amount (ETH)</TableHead>
+                          <TableHead>Status</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+                      <TableBody>
+                        {transactions.map((transaction) => (
+                          <TableRow key={transaction.id}>
+                            <TableCell>{transaction.created_at}</TableCell>
+                            <TableCell className="capitalize">{transaction.type}</TableCell>
+                            <TableCell>{transaction.amount}</TableCell>
+                            <TableCell className="capitalize">{transaction.status}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      No transactions found
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
