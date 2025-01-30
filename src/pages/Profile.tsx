@@ -29,11 +29,11 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 
 interface Transaction {
-  id: number;
-  type: string;
+  id: string;
+  type: 'deposit' | 'withdraw' | 'purchase';
   amount: string;
-  date: string;
-  status: string;
+  created_at: string;
+  status: 'pending' | 'completed' | 'failed';
   item?: string;
 }
 
@@ -95,6 +95,18 @@ const Profile = () => {
           throw profileError;
         }
 
+        // Fetch transactions
+        const { data: transactionsData, error: transactionsError } = await supabase
+          .from('transactions')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(10);
+
+        if (transactionsError) {
+          console.error("Transactions error:", transactionsError);
+          throw transactionsError;
+        }
+
         console.log("Profile data:", profileData);
         
         if (isMounted && currentUser) {
@@ -108,11 +120,14 @@ const Profile = () => {
             wallet_address: profileData?.wallet_address || ''
           });
 
-          setTransactions([
-            { id: 1, type: "deposit", amount: "0.5", date: "2024-03-15", status: "completed" },
-            { id: 2, type: "withdraw", amount: "0.2", date: "2024-03-14", status: "completed" },
-            { id: 3, type: "purchase", amount: "0.3", date: "2024-03-13", status: "completed" }
-          ]);
+          setTransactions(transactionsData?.map(tx => ({
+            id: tx.id,
+            type: tx.type,
+            amount: tx.amount.toString(),
+            created_at: new Date(tx.created_at).toISOString().split('T')[0],
+            status: tx.status,
+            item: tx.item
+          })) || []);
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -197,36 +212,103 @@ const Profile = () => {
     }
   };
 
-  const handleWithdraw = (e: React.FormEvent) => {
+  const handleWithdraw = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Success",
-      description: `Withdrawal of ${withdrawAmount} ETH initiated`,
-    });
-    setWithdrawAmount("");
-  };
-
-  const handleDeposit = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast({
-      title: "Success",
-      description: `Deposit of ${depositAmount} ETH initiated`,
-    });
-    setDepositAmount("");
-  };
-
-  const handleLogout = async () => {
     try {
-      await signOut();
+      const { data, error } = await supabase
+        .from('transactions')
+        .insert([
+          {
+            type: 'withdraw',
+            amount: withdrawAmount,
+            status: 'pending'
+          }
+        ])
+        .select()
+        .single();
+
+      if (error) throw error;
+
       toast({
         title: "Success",
-        description: "You have been logged out",
+        description: `Withdrawal of ${withdrawAmount} ETH initiated`,
       });
-      navigate('/');
+      setWithdrawAmount("");
+      
+      // Refresh transactions
+      const { data: transactionsData, error: transactionsError } = await supabase
+        .from('transactions')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (transactionsError) throw transactionsError;
+
+      setTransactions(transactionsData?.map(tx => ({
+        id: tx.id,
+        type: tx.type,
+        amount: tx.amount.toString(),
+        created_at: new Date(tx.created_at).toISOString().split('T')[0],
+        status: tx.status,
+        item: tx.item
+      })) || []);
+
     } catch (error) {
+      console.error('Error:', error);
       toast({
         title: "Error",
-        description: "Failed to log out",
+        description: "Failed to process withdrawal",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeposit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const { data, error } = await supabase
+        .from('transactions')
+        .insert([
+          {
+            type: 'deposit',
+            amount: depositAmount,
+            status: 'pending'
+          }
+        ])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: `Deposit of ${depositAmount} ETH initiated`,
+      });
+      setDepositAmount("");
+      
+      // Refresh transactions
+      const { data: transactionsData, error: transactionsError } = await supabase
+        .from('transactions')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (transactionsError) throw transactionsError;
+
+      setTransactions(transactionsData?.map(tx => ({
+        id: tx.id,
+        type: tx.type,
+        amount: tx.amount.toString(),
+        created_at: new Date(tx.created_at).toISOString().split('T')[0],
+        status: tx.status,
+        item: tx.item
+      })) || []);
+
+    } catch (error) {
+      console.error('Error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to process deposit",
         variant: "destructive",
       });
     }
@@ -479,7 +561,7 @@ const Profile = () => {
                     <TableBody>
                       {transactions.map((transaction) => (
                         <TableRow key={transaction.id}>
-                          <TableCell>{transaction.date}</TableCell>
+                          <TableCell>{transaction.created_at}</TableCell>
                           <TableCell className="capitalize">{transaction.type}</TableCell>
                           <TableCell>{transaction.amount}</TableCell>
                           <TableCell className="capitalize">{transaction.status}</TableCell>
