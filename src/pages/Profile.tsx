@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { User, Settings, Mail, Key, LogOut, Wallet, ArrowUpCircle, ArrowDownCircle } from "lucide-react";
+import { User, Settings, Mail, Key, LogOut, Wallet, ArrowUpCircle, ArrowDownCircle, Globe } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import WalletAddressModal from "@/components/WalletAddressModal";
 import {
@@ -398,7 +398,10 @@ const Profile = () => {
                     <Input value={userData?.email} readOnly className="bg-muted/50" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Country</label>
+                    <label className="text-sm font-medium flex items-center gap-2">
+                      <Globe className="w-4 h-4" />
+                      Country
+                    </label>
                     <Input value={userData?.country} readOnly className="bg-muted/50" />
                   </div>
                 </div>
