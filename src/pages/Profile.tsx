@@ -230,6 +230,17 @@ const Profile = () => {
 
   const handleWithdraw = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check if user has sufficient balance
+    if (!userData?.balance || parseFloat(userData.balance) <= 0) {
+      toast({
+        title: "Error",
+        description: "Insufficient funds in your account",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { data, error } = await supabase
         .from('transactions')
