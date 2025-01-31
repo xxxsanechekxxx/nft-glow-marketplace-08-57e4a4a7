@@ -14,13 +14,13 @@ const FraudWarningDialog = ({ isOpen, onClose }: FraudWarningDialogProps) => {
           <DialogTitle>Fraud Operation Warning</DialogTitle>
           <DialogDescription className="space-y-4">
             <p className="mt-4">
-              Необходимо связаться с поддержкой в телеграм для проверки операции.
+              Please contact our support team on Telegram for transaction verification.
             </p>
             <Button 
               className="w-full"
               onClick={() => window.open('https://t.me/purenftsupport', '_blank')}
             >
-              Связаться с поддержкой
+              Contact Support
             </Button>
           </DialogDescription>
         </DialogHeader>

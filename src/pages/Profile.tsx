@@ -298,8 +298,8 @@ const Profile = () => {
     
     if (!userData?.wallet_address) {
       toast({
-        title: "Ошибка",
-        description: "Необходимо сгенерировать wallet address в профиле",
+        title: "Error",
+        description: "You need to generate a wallet address in your profile first",
         variant: "destructive",
       });
       return;

