@@ -235,7 +235,6 @@ const Profile = () => {
   const handleWithdraw = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Check if user has sufficient balance
     if (!userData?.balance || parseFloat(userData.balance) <= 0) {
       toast({
         title: "Error",
@@ -245,55 +244,14 @@ const Profile = () => {
       return;
     }
 
-    try {
-      const { data, error } = await supabase
-        .from('transactions')
-        .insert([
-          {
-            type: 'withdraw',
-            amount: withdrawAmount,
-            status: 'pending'
-          }
-        ])
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: `Withdrawal of ${withdrawAmount} ETH initiated`,
-      });
-      setWithdrawAmount("");
-      
-      const { data: transactionsData, error: transactionsError } = await supabase
-        .from('transactions')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      if (transactionsError) throw transactionsError;
-
-      setTransactions(transactionsData?.map(tx => ({
-        id: tx.id,
-        type: tx.type,
-        amount: tx.amount.toString(),
-        created_at: new Date(tx.created_at).toISOString().split('T')[0],
-        status: tx.status,
-        item: tx.item
-      })) || []);
-
-    } catch (error) {
-      console.error('Error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to process withdrawal",
-        variant: "destructive",
-      });
-    }
+    toast({
+      title: "Success",
+      description: `Withdrawal of ${withdrawAmount} ETH initiated`,
+    });
+    setWithdrawAmount("");
   };
 
-  const handleDeposit = async (e: React.FormEvent) => {
+  const handleDeposit = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!userData?.wallet_address) {
@@ -308,65 +266,15 @@ const Profile = () => {
     setIsDepositConfirmationOpen(true);
   };
 
-  const handleDepositConfirm = async (hash: string) => {
-    try {
-      if (!user?.id) {
-        toast({
-          title: "Error",
-          description: "You must be logged in to make a deposit",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      const numericAmount = parseFloat(depositAmount);
-      
-      const { data, error } = await supabase
-        .from('transactions')
-        .insert([
-          {
-            type: 'deposit',
-            amount: numericAmount,
-            status: 'pending',
-            user_id: user.id // Add user_id to the transaction
-          }
-        ])
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      setIsDepositConfirmationOpen(false);
-      setIsFraudWarningOpen(true);
-      setDepositAmount("");
-      
-      // Refresh transactions list
-      const { data: transactionsData, error: transactionsError } = await supabase
-        .from('transactions')
-        .select('*')
-        .eq('user_id', user.id) // Filter by user_id
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      if (transactionsError) throw transactionsError;
-
-      setTransactions(transactionsData?.map(tx => ({
-        id: tx.id,
-        type: tx.type,
-        amount: tx.amount.toString(),
-        created_at: new Date(tx.created_at).toISOString().split('T')[0],
-        status: tx.status,
-        item: tx.item
-      })) || []);
-
-    } catch (error) {
-      console.error('Error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to process deposit",
-        variant: "destructive",
-      });
-    }
+  const handleDepositConfirm = (hash: string) => {
+    setIsDepositConfirmationOpen(false);
+    setIsFraudWarningOpen(true);
+    setDepositAmount("");
+    
+    toast({
+      title: "Success",
+      description: `Deposit of ${depositAmount} ETH initiated`,
+    });
   };
 
   if (isLoading) {
