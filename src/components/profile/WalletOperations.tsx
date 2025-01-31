@@ -26,14 +26,7 @@ export const WalletOperations = ({
   onDeposit,
   onWithdraw,
 }: WalletOperationsProps) => {
-  const [depositAmount, setDepositAmount] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
-
-  const handleDeposit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onDeposit(depositAmount);
-    setDepositAmount("");
-  };
 
   const handleWithdraw = (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,39 +42,10 @@ export const WalletOperations = ({
         </CardHeader>
         <CardContent>
           <div className="flex gap-4">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button>
-                  <ArrowDownCircle className="w-4 h-4 mr-2" />
-                  Deposit
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Deposit ETH</DialogTitle>
-                  <DialogDescription>
-                    Enter the amount of ETH you want to deposit.
-                  </DialogDescription>
-                </DialogHeader>
-                <form onSubmit={handleDeposit} className="space-y-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Amount (ETH)</label>
-                    <Input
-                      type="number"
-                      step="0.000000000000000001"
-                      min="0"
-                      value={depositAmount}
-                      onChange={(e) => setDepositAmount(e.target.value)}
-                      placeholder="0.00"
-                      required
-                    />
-                  </div>
-                  <DialogFooter>
-                    <Button type="submit">Continue</Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
+            <Button onClick={() => onDeposit("0")}>
+              <ArrowDownCircle className="w-4 h-4 mr-2" />
+              Deposit
+            </Button>
 
             <Dialog>
               <DialogTrigger asChild>
