@@ -19,6 +19,8 @@ const DepositConfirmationDialog = ({
   amount,
   onConfirm
 }: DepositConfirmationDialogProps) => {
+  const [step, setStep] = useState<'amount' | 'hash'>('amount');
+  const [depositAmount, setDepositAmount] = useState(amount);
   const [transactionHash, setTransactionHash] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -56,49 +58,94 @@ const DepositConfirmationDialog = ({
     onConfirm(transactionHash);
   };
 
+  const handleNextStep = () => {
+    if (!depositAmount || parseFloat(depositAmount) <= 0) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please enter a valid amount"
+      });
+      return;
+    }
+    setStep('hash');
+  };
+
+  const handleClose = () => {
+    setStep('amount');
+    setTransactionHash("");
+    setDepositAmount("");
+    onClose();
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Deposit Confirmation</DialogTitle>
           <DialogDescription className="space-y-4">
-            <div className="mt-4">
-              <CountdownTimer endTime={endTime} />
-            </div>
-            
-            <div className="space-y-2 mt-4">
-              <p>Please send {amount} ETH to the following address:</p>
-              <div className="bg-muted p-2 rounded-md break-all font-mono">
-                {walletAddress} (ERC-20)
+            {step === 'amount' ? (
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">
+                    Amount (ETH)
+                  </label>
+                  <Input
+                    type="number"
+                    step="0.001"
+                    min="0"
+                    value={depositAmount}
+                    onChange={(e) => setDepositAmount(e.target.value)}
+                    placeholder="Enter amount"
+                  />
+                </div>
+                <Button 
+                  className="w-full" 
+                  onClick={handleNextStep}
+                >
+                  Continue
+                </Button>
               </div>
-            </div>
+            ) : (
+              <>
+                <div className="mt-4">
+                  <CountdownTimer endTime={endTime} />
+                </div>
+                
+                <div className="space-y-2 mt-4">
+                  <p>Please send {depositAmount} ETH to the following address:</p>
+                  <div className="bg-muted p-2 rounded-md break-all font-mono">
+                    {walletAddress} (ERC-20)
+                  </div>
+                </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Transaction Hash
-              </label>
-              <Input
-                value={transactionHash}
-                onChange={(e) => setTransactionHash(e.target.value)}
-                placeholder="Enter transaction hash"
-                className="font-mono"
-              />
-            </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">
+                    Transaction Hash
+                  </label>
+                  <Input
+                    value={transactionHash}
+                    onChange={(e) => setTransactionHash(e.target.value)}
+                    placeholder="Enter transaction hash"
+                    className="font-mono"
+                  />
+                </div>
 
-            <Button 
-              className="w-full" 
-              onClick={handleSubmit}
-              disabled={!transactionHash || isSubmitting}
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Processing...
-                </>
-              ) : (
-                'Confirm'
-              )}
-            </Button>
+                <Button 
+                  className="w-full" 
+                  onClick={handleSubmit}
+                  disabled={!transactionHash || isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    'Confirm'
+                  )}
+                </Button>
+              </>
+            )}
           </DialogDescription>
         </DialogHeader>
       </DialogContent>
