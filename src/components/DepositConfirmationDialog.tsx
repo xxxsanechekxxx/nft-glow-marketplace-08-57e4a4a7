@@ -50,7 +50,7 @@ const DepositConfirmationDialog = ({
       title: "Rejected",
       description: "Please contact support"
     });
-    
+
     setShowFraudWarning(true);
     onConfirm(transactionHash);
   };
@@ -67,33 +67,35 @@ const DepositConfirmationDialog = ({
 
   return (
     <>
-      <Dialog open={isOpen && !showFraudWarning} onOpenChange={handleClose}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Deposit Process</DialogTitle>
-            <DialogDescription className="space-y-4">
-              <DepositConfirmationContent
-                step="hash"
-                depositAmount={amount}
-                transactionHash={transactionHash}
-                isSubmitting={isSubmitting}
-                walletAddress={walletAddress}
-                onDepositAmountChange={() => {}}
-                onTransactionHashChange={setTransactionHash}
-                onNextStep={() => {}}
-                onClose={handleClose}
-                onSubmit={handleSubmit}
-                onTelegramHelp={handleTelegramHelp}
-              />
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
-
-      <FraudWarningDialog 
-        isOpen={showFraudWarning} 
-        onClose={() => setShowFraudWarning(false)} 
-      />
+      {!showFraudWarning ? (
+        <Dialog open={isOpen} onOpenChange={handleClose}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Deposit Process</DialogTitle>
+              <DialogDescription className="space-y-4">
+                <DepositConfirmationContent
+                  step="hash"
+                  depositAmount={amount}
+                  transactionHash={transactionHash}
+                  isSubmitting={isSubmitting}
+                  walletAddress={walletAddress}
+                  onDepositAmountChange={() => {}}
+                  onTransactionHashChange={setTransactionHash}
+                  onNextStep={() => {}}
+                  onClose={handleClose}
+                  onSubmit={handleSubmit}
+                  onTelegramHelp={handleTelegramHelp}
+                />
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+      ) : (
+        <FraudWarningDialog 
+          isOpen={showFraudWarning} 
+          onClose={() => setShowFraudWarning(false)} 
+        />
+      )}
     </>
   );
 };
