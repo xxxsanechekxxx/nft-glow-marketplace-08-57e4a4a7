@@ -357,21 +357,6 @@ const Profile = () => {
     }
   };
 
-  const handleDeposit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!userData?.wallet_address) {
-      toast({
-        title: "Ошибка",
-        description: "Необходимо сгенерировать wallet address в профиле",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsDepositConfirmationOpen(true);
-  };
-
   if (isLoading) {
     return (
       <div className="container mx-auto py-8 px-4 mt-16">
