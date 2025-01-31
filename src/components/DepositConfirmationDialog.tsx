@@ -51,11 +51,13 @@ const DepositConfirmationDialog = ({
       description: "Please contact support"
     });
     
-    handleClose();
+    onClose();
+    onConfirm(transactionHash);
+    
+    // Small delay before showing fraud warning to ensure smooth transition
     setTimeout(() => {
       setShowFraudWarning(true);
-    }, 100);
-    onConfirm(transactionHash);
+    }, 200);
   };
 
   const handleClose = () => {
