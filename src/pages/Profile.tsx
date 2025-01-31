@@ -310,12 +310,14 @@ const Profile = () => {
 
   const handleDepositConfirm = async (hash: string) => {
     try {
+      const numericAmount = parseFloat(depositAmount);
+      
       const { data, error } = await supabase
         .from('transactions')
         .insert([
           {
             type: 'deposit',
-            amount: depositAmount,
+            amount: numericAmount, // Convert string to number
             status: 'pending'
           }
         ])
