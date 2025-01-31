@@ -91,8 +91,8 @@ const DepositConfirmationDialog = ({
                   </label>
                   <Input
                     type="number"
-                    step="0.001"
-                    min="0"
+                    step="0.0001"
+                    min="0.0001"
                     value={depositAmount}
                     onChange={(e) => setDepositAmount(e.target.value)}
                     placeholder="Enter amount"
