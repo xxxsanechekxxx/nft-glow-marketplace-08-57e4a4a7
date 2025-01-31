@@ -21,7 +21,7 @@ export const Header = () => {
           <Link to="/" className="flex items-center space-x-2">
             <div className="w-8 h-8 rounded-full bg-primary animate-pulse"></div>
             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-400">
-              NFTverse
+              PureNFT
             </span>
           </Link>
 

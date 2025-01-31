@@ -9,7 +9,7 @@ export const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 rounded-full bg-primary"></div>
-              <span className="text-xl font-bold">NFTverse</span>
+              <span className="text-xl font-bold">PureNFT</span>
             </div>
             <p className="text-sm text-muted-foreground">
               Discover, collect, and sell extraordinary NFTs
@@ -76,11 +76,11 @@ export const Footer = () => {
         
         <div className="border-t mt-12 pt-8">
           <div className="text-center text-sm text-muted-foreground space-y-4">
-            <p>&copy; 2024 NFTverse. All rights reserved.</p>
+            <p>&copy; 2024 PureNFT. All rights reserved.</p>
             <div className="flex items-center justify-center space-x-6">
-              <a href="mailto:contact@nftverse.com" className="flex items-center gap-2 hover:text-primary">
+              <a href="mailto:contact@purenft.com" className="flex items-center gap-2 hover:text-primary">
                 <Mail size={16} />
-                <span>contact@nftverse.com</span>
+                <span>contact@purenft.com</span>
               </a>
             </div>
           </div>
