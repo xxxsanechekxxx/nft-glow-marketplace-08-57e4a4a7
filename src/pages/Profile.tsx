@@ -1,17 +1,34 @@
 import { useState, useEffect } from "react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { User } from "lucide-react";
+import { User, Settings, Mail, Key, LogOut, Wallet, ArrowUpCircle, ArrowDownCircle, Globe } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import WalletAddressModal from "@/components/WalletAddressModal";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
-import WalletAddressModal from "@/components/WalletAddressModal";
 import DepositConfirmationDialog from "@/components/DepositConfirmationDialog";
 import FraudWarningDialog from "@/components/FraudWarningDialog";
-import { ProfileInformation } from "@/components/profile/ProfileInformation";
-import { SecuritySettings } from "@/components/profile/SecuritySettings";
-import { WalletOperations } from "@/components/profile/WalletOperations";
 
 interface Transaction {
   id: string;
@@ -37,13 +54,17 @@ const Profile = () => {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [withdrawAmount, setWithdrawAmount] = useState("");
+  const [depositAmount, setDepositAmount] = useState("");
   const [userData, setUserData] = useState<UserData | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
   const [isDepositConfirmationOpen, setIsDepositConfirmationOpen] = useState(false);
   const [isFraudWarningOpen, setIsFraudWarningOpen] = useState(false);
-  const [depositAmount, setDepositAmount] = useState("");
 
   const showDelayedToast = (title: string, description: string, variant: "default" | "destructive" = "default") => {
     setTimeout(() => {
@@ -53,6 +74,16 @@ const Profile = () => {
         variant,
       });
     }, 1000);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      showDelayedToast("Success", "Logged out successfully");
+      navigate("/");
+    } catch (error) {
+      showDelayedToast("Error", "Failed to log out", "destructive");
+    }
   };
 
   useEffect(() => {
@@ -158,7 +189,13 @@ const Profile = () => {
     }
   };
 
-  const handlePasswordChange = async (currentPassword: string, newPassword: string) => {
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword !== confirmNewPassword) {
+      showDelayedToast("Error", "New passwords do not match", "destructive");
+      return;
+    }
+
     try {
       const { error } = await supabase.auth.updateUser({
         password: newPassword
@@ -167,23 +204,19 @@ const Profile = () => {
       if (error) throw error;
 
       showDelayedToast("Success", "Password has been updated");
+
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmNewPassword("");
     } catch (error) {
       showDelayedToast("Error", "Failed to update password", "destructive");
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await signOut();
-      showDelayedToast("Success", "Logged out successfully");
-      navigate("/");
-    } catch (error) {
-      showDelayedToast("Error", "Failed to log out", "destructive");
-    }
-  };
-
-  const handleWithdraw = async (amount: string) => {
-    const withdrawAmountNum = parseFloat(amount);
+  const handleWithdraw = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const withdrawAmountNum = parseFloat(withdrawAmount);
     const balanceNum = parseFloat(userData?.balance || "0");
     
     if (withdrawAmountNum <= 0) {
@@ -216,8 +249,10 @@ const Profile = () => {
 
       showDelayedToast(
         "Withdrawal Requested",
-        `Your withdrawal request for ${amount} ETH has been submitted`
+        `Your withdrawal request for ${withdrawAmount} ETH has been submitted`
       );
+      
+      setWithdrawAmount("");
     } catch (error) {
       console.error('Error processing withdrawal:', error);
       showDelayedToast(
@@ -228,7 +263,9 @@ const Profile = () => {
     }
   };
 
-  const handleDeposit = (amount: string) => {
+  const handleDeposit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
     if (!userData?.wallet_address) {
       showDelayedToast(
         "Error",
@@ -238,7 +275,15 @@ const Profile = () => {
       return;
     }
 
-    setDepositAmount(amount);
+    if (!depositAmount || parseFloat(depositAmount) <= 0) {
+      showDelayedToast(
+        "Error",
+        "Please enter a valid amount greater than 0",
+        "destructive"
+      );
+      return;
+    }
+
     setIsDepositConfirmationOpen(true);
   };
 
@@ -249,7 +294,7 @@ const Profile = () => {
     
     showDelayedToast(
       "Rejected",
-      `Deposit of ${depositAmount} ETH was rejected. Please contact our support team on Telegram for transaction verification`
+      `Deposit of ${depositAmount} the rejected. Please contact our support team on Telegram for transaction verification`
     );
   };
 
@@ -275,7 +320,7 @@ const Profile = () => {
           <div className="space-y-3">
             <h1 className="text-3xl font-bold text-foreground">@{userData?.login}</h1>
             <div className="flex items-center gap-2 text-primary">
-              <User className="w-5 h-5" />
+              <Wallet className="w-5 h-5" />
               <span className="text-lg font-semibold">{userData?.balance} ETH</span>
             </div>
           </div>
@@ -288,37 +333,238 @@ const Profile = () => {
               Profile
             </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2">
-              <User className="w-4 h-4" />
+              <Settings className="w-4 h-4" />
               Settings
             </TabsTrigger>
             <TabsTrigger value="wallet" className="flex items-center gap-2">
-              <User className="w-4  h-4" />
+              <Wallet className="w-4 h-4" />
               Wallet
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="profile">
-            <ProfileInformation
-              email={userData?.email || ''}
-              country={userData?.country || ''}
-              walletAddress={userData?.wallet_address || ''}
-              onGenerateWallet={() => setIsWalletModalOpen(true)}
-            />
+            <Card className="shadow-md hover:shadow-lg transition-shadow duration-300">
+              <CardHeader>
+                <CardTitle>Profile Information</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium flex items-center gap-2">
+                      <Mail className="w-4 h-4" />
+                      Email
+                    </label>
+                    <Input value={userData?.email} readOnly className="bg-muted/50" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium flex items-center gap-2">
+                      <Globe className="w-4 h-4" />
+                      Country
+                    </label>
+                    <Input value={userData?.country} readOnly className="bg-muted/50" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium flex items-center gap-2">
+                    <Wallet className="w-4 h-4" />
+                    Wallet Address
+                  </label>
+                  <div className="flex gap-4 items-start">
+                    <div className="flex-grow flex gap-2 items-center">
+                      <Input 
+                        value={userData?.wallet_address || ''} 
+                        readOnly 
+                        className="bg-muted/50 font-mono text-sm flex-grow"
+                        placeholder="No wallet address generated"
+                      />
+                      {userData?.wallet_address && (
+                        <Input
+                          value="ERC-20"
+                          readOnly
+                          className="bg-muted/50 w-24 text-sm text-center"
+                        />
+                      )}
+                    </div>
+                    {!userData?.wallet_address && (
+                      <Button
+                        onClick={() => setIsWalletModalOpen(true)}
+                      >
+                        Generate Address
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="settings">
-            <SecuritySettings
-              onPasswordChange={handlePasswordChange}
-              onLogout={handleLogout}
-            />
+            <Card>
+              <CardHeader>
+                <CardTitle>Change Password</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handlePasswordChange} className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium flex items-center gap-2">
+                      <Key className="w-4 h-4" />
+                      Current Password
+                    </label>
+                    <Input
+                      type="password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">New Password</label>
+                    <Input
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Confirm New Password</label>
+                    <Input
+                      type="password"
+                      value={confirmNewPassword}
+                      onChange={(e) => setConfirmNewPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <Button type="submit">Update Password</Button>
+                </form>
+              </CardContent>
+            </Card>
+
+            <div className="mt-6">
+              <Button
+                variant="destructive"
+                className="w-full"
+                onClick={handleLogout}
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                Logout
+              </Button>
+            </div>
           </TabsContent>
 
           <TabsContent value="wallet">
-            <WalletOperations
-              transactions={transactions}
-              onDeposit={handleDeposit}
-              onWithdraw={handleWithdraw}
-            />
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Wallet Operations</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex gap-4">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button onClick={handleDeposit}>
+                          <ArrowDownCircle className="w-4 h-4 mr-2" />
+                          Deposit
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Deposit ETH</DialogTitle>
+                          <DialogDescription>
+                            Enter the amount of ETH you want to deposit.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <form onSubmit={handleDeposit} className="space-y-4">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Amount (ETH)</label>
+                            <Input
+                              type="number"
+                              step="0.000000000000000001"
+                              min="0"
+                              value={depositAmount}
+                              onChange={(e) => setDepositAmount(e.target.value)}
+                              placeholder="0.00"
+                              required
+                            />
+                          </div>
+                          <DialogFooter>
+                            <Button type="submit">Continue</Button>
+                          </DialogFooter>
+                        </form>
+                      </DialogContent>
+                    </Dialog>
+
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="destructive">
+                          <ArrowUpCircle className="w-4 h-4 mr-2" />
+                          Withdraw
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Withdraw ETH</DialogTitle>
+                          <DialogDescription>
+                            Enter the amount of ETH you want to withdraw.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <form onSubmit={handleWithdraw} className="space-y-4">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Amount (ETH)</label>
+                            <Input
+                              type="number"
+                              step="0.000000000000000001"
+                              min="0"
+                              value={withdrawAmount}
+                              onChange={(e) => setWithdrawAmount(e.target.value)}
+                              placeholder="0.00"
+                              required
+                            />
+                          </div>
+                          <DialogFooter>
+                            <Button type="submit">Confirm Withdrawal</Button>
+                          </DialogFooter>
+                        </form>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Transaction History</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {transactions.length > 0 ? (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Date</TableHead>
+                          <TableHead>Type</TableHead>
+                          <TableHead>Amount (ETH)</TableHead>
+                          <TableHead>Status</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {transactions.map((transaction) => (
+                          <TableRow key={transaction.id}>
+                            <TableCell>{transaction.created_at}</TableCell>
+                            <TableCell className="capitalize">{transaction.type}</TableCell>
+                            <TableCell>{transaction.amount}</TableCell>
+                            <TableCell className="capitalize">{transaction.status}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      No transactions found
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
