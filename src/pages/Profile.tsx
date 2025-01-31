@@ -256,7 +256,6 @@ const Profile = () => {
       return;
     }
 
-    // Continue with withdrawal if amount is valid
     toast({
       title: "Success",
       description: `Withdrawal of ${withdrawAmount} ETH initiated`,

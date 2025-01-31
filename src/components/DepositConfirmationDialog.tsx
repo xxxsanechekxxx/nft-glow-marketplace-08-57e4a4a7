@@ -119,6 +119,16 @@ const DepositConfirmationDialog = ({
                 
                 <div className="mt-4">
                   <CountdownTimer endTime={new Date(new Date().getTime() + 30 * 60000).toISOString()} />
+                </div>
+                
+                <div className="space-y-2 mt-4">
+                  <p>To send {depositAmount} ETH to the following address:</p>
+                  <div className="bg-muted p-2 rounded-md break-all font-mono">
+                    {walletAddress}
+                    <div className="mt-1 text-sm text-muted-foreground">
+                      (ERC-20)
+                    </div>
+                  </div>
                   <div className="mt-2 text-sm text-muted-foreground">
                     <div className="flex items-start gap-2">
                       <p>If you have already transferred Ethereum, but the timer has expired, the funds will be credited back to your original wallet.</p>
@@ -132,16 +142,6 @@ const DepositConfirmationDialog = ({
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="space-y-2 mt-4">
-                  <p>To send {depositAmount} ETH to the following address:</p>
-                  <div className="bg-muted p-2 rounded-md break-all font-mono">
-                    {walletAddress}
-                    <div className="mt-1 text-sm text-muted-foreground">
-                      (ERC-20)
                     </div>
                   </div>
                 </div>
@@ -201,13 +201,13 @@ const DepositConfirmationDialog = ({
                   </Button>
                 </div>
 
-                <div className="text-center mt-4">
+                <div className="text-center mt-2">
                   <Button
                     variant="link"
-                    className="text-primary"
+                    className="text-primary h-auto p-0"
                     onClick={handleTelegramHelp}
                   >
-                    Need help? <ExternalLink className="ml-1 h-3 w-3" />
+                    Need help?<ExternalLink className="ml-0.5 h-3 w-3" />
                   </Button>
                 </div>
               </>
