@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ArrowDownCircle, ArrowUpCircle } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import DepositConfirmationDialog from "@/components/DepositConfirmationDialog";
 
 interface Transaction {
   id: string;
@@ -28,17 +29,25 @@ export const WalletOperations = ({
 }: WalletOperationsProps) => {
   const [depositAmount, setDepositAmount] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
+  const [isDepositDialogOpen, setIsDepositDialogOpen] = useState(false);
+  const [showDepositConfirmation, setShowDepositConfirmation] = useState(false);
 
   const handleDeposit = (e: React.FormEvent) => {
     e.preventDefault();
-    onDeposit(depositAmount);
-    setDepositAmount("");
+    setShowDepositConfirmation(true);
+    setIsDepositDialogOpen(false);
   };
 
   const handleWithdraw = (e: React.FormEvent) => {
     e.preventDefault();
     onWithdraw(withdrawAmount);
     setWithdrawAmount("");
+  };
+
+  const handleDepositConfirm = (hash: string) => {
+    onDeposit(depositAmount);
+    setDepositAmount("");
+    setShowDepositConfirmation(false);
   };
 
   return (
@@ -49,7 +58,7 @@ export const WalletOperations = ({
         </CardHeader>
         <CardContent>
           <div className="flex gap-4">
-            <Dialog>
+            <Dialog open={isDepositDialogOpen} onOpenChange={setIsDepositDialogOpen}>
               <DialogTrigger asChild>
                 <Button>
                   <ArrowDownCircle className="w-4 h-4 mr-2" />
@@ -153,6 +162,13 @@ export const WalletOperations = ({
           )}
         </CardContent>
       </Card>
+
+      <DepositConfirmationDialog
+        isOpen={showDepositConfirmation}
+        onClose={() => setShowDepositConfirmation(false)}
+        amount={depositAmount}
+        onConfirm={handleDepositConfirm}
+      />
     </div>
   );
 };
