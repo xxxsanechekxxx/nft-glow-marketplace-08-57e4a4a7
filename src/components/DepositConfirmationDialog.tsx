@@ -30,8 +30,8 @@ const DepositConfirmationDialog = ({
     if (hash.length < 10) {
       toast({
         variant: "destructive",
-        title: "Ошибка",
-        description: "Неправильный hash, проверьте введенные данные"
+        title: "Error",
+        description: "Invalid hash, please check your input"
       });
       return false;
     }
@@ -49,8 +49,8 @@ const DepositConfirmationDialog = ({
     
     toast({
       variant: "destructive",
-      title: "Отклонено",
-      description: "Свяжитесь с поддержкой"
+      title: "Rejected",
+      description: "Please contact support"
     });
     
     onConfirm(transactionHash);
