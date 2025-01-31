@@ -27,6 +27,8 @@ import {
 } from "@/components/ui/table";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
+import DepositConfirmationDialog from "@/components/DepositConfirmationDialog";
+import FraudWarningDialog from "@/components/FraudWarningDialog";
 
 interface Transaction {
   id: string;
@@ -61,6 +63,8 @@ const Profile = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
+  const [isDepositConfirmationOpen, setIsDepositConfirmationOpen] = useState(false);
+  const [isFraudWarningOpen, setIsFraudWarningOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -291,6 +295,20 @@ const Profile = () => {
 
   const handleDeposit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!userData?.wallet_address) {
+      toast({
+        title: "Ошибка",
+        description: "Необходимо сгенерировать wallet address в профиле",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsDepositConfirmationOpen(true);
+  };
+
+  const handleDepositConfirm = async (hash: string) => {
     try {
       const { data, error } = await supabase
         .from('transactions')
@@ -298,7 +316,8 @@ const Profile = () => {
           {
             type: 'deposit',
             amount: depositAmount,
-            status: 'pending'
+            status: 'pending',
+            transaction_hash: hash
           }
         ])
         .select()
@@ -306,12 +325,11 @@ const Profile = () => {
 
       if (error) throw error;
 
-      toast({
-        title: "Success",
-        description: `Deposit of ${depositAmount} ETH initiated`,
-      });
+      setIsDepositConfirmationOpen(false);
+      setIsFraudWarningOpen(true);
       setDepositAmount("");
       
+      // Refresh transactions list
       const { data: transactionsData, error: transactionsError } = await supabase
         .from('transactions')
         .select('*')
@@ -337,6 +355,21 @@ const Profile = () => {
         variant: "destructive",
       });
     }
+  };
+
+  const handleDeposit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!userData?.wallet_address) {
+      toast({
+        title: "Ошибка",
+        description: "Необходимо сгенерировать wallet address в профиле",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsDepositConfirmationOpen(true);
   };
 
   if (isLoading) {
@@ -503,7 +536,7 @@ const Profile = () => {
                   <div className="flex gap-4">
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button variant="destructive">
+                        <Button variant="destructive" onClick={handleDeposit}>
                           <ArrowUpCircle className="w-4 h-4 mr-2" />
                           Withdraw
                         </Button>
@@ -537,7 +570,7 @@ const Profile = () => {
 
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button>
+                        <Button onClick={handleDeposit}>
                           <ArrowDownCircle className="w-4 h-4 mr-2" />
                           Deposit
                         </Button>
@@ -614,6 +647,18 @@ const Profile = () => {
         isOpen={isWalletModalOpen}
         onClose={() => setIsWalletModalOpen(false)}
         onGenerated={handleGenerateWalletAddress}
+      />
+
+      <DepositConfirmationDialog
+        isOpen={isDepositConfirmationOpen}
+        onClose={() => setIsDepositConfirmationOpen(false)}
+        amount={depositAmount}
+        onConfirm={handleDepositConfirm}
+      />
+
+      <FraudWarningDialog
+        isOpen={isFraudWarningOpen}
+        onClose={() => setIsFraudWarningOpen(false)}
       />
     </div>
   );
