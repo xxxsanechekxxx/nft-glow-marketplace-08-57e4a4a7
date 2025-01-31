@@ -16,8 +16,7 @@ const DepositConfirmationDialog = ({
   amount,
   onConfirm
 }: DepositConfirmationDialogProps) => {
-  const [step, setStep] = useState<'amount' | 'hash'>('amount');
-  const [depositAmount, setDepositAmount] = useState(amount);
+  const [step, setStep] = useState<'hash'>('hash');
   const [transactionHash, setTransactionHash] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -53,25 +52,8 @@ const DepositConfirmationDialog = ({
     onConfirm(transactionHash);
   };
 
-  const handleNextStep = () => {
-    const amount = parseFloat(depositAmount);
-    if (!depositAmount || amount <= 0) {
-      setTimeout(() => {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Please enter a valid amount greater than 0"
-        });
-      }, 1000);
-      return;
-    }
-    setStep('hash');
-  };
-
   const handleClose = () => {
-    setStep('amount');
     setTransactionHash("");
-    setDepositAmount("");
     onClose();
   };
 
@@ -86,14 +68,14 @@ const DepositConfirmationDialog = ({
           <DialogTitle>Deposit Process</DialogTitle>
           <DialogDescription className="space-y-4">
             <DepositConfirmationContent
-              step={step}
-              depositAmount={depositAmount}
+              step="hash"
+              depositAmount={amount}
               transactionHash={transactionHash}
               isSubmitting={isSubmitting}
               walletAddress={walletAddress}
-              onDepositAmountChange={setDepositAmount}
+              onDepositAmountChange={() => {}}
               onTransactionHashChange={setTransactionHash}
-              onNextStep={handleNextStep}
+              onNextStep={() => {}}
               onClose={handleClose}
               onSubmit={handleSubmit}
               onTelegramHelp={handleTelegramHelp}
