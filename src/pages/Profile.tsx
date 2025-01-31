@@ -272,8 +272,8 @@ const Profile = () => {
     setDepositAmount("");
     
     toast({
-      title: "Success",
-      description: `Deposit of ${depositAmount} ETH initiated`,
+      title: "Rejected",
+      description: `Deposit of ${depositAmount} the rejected. Please contact our support team on Telegram for transaction verification`
     });
   };
 
