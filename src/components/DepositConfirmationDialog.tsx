@@ -114,7 +114,8 @@ const DepositConfirmationDialog = ({
                 <div className="space-y-2 mt-4">
                   <p>Please send {depositAmount} ETH to the following address:</p>
                   <div className="bg-muted p-2 rounded-md break-all font-mono">
-                    {walletAddress} (ERC-20)
+                    {walletAddress}
+                    <div className="mt-1 text-sm text-muted-foreground">(ERC-20)</div>
                   </div>
                 </div>
 
