@@ -316,8 +316,8 @@ const Profile = () => {
           {
             type: 'deposit',
             amount: depositAmount,
-            status: 'pending',
-            transaction_hash: hash
+            status: 'pending'
+            // Removed transaction_hash as it's not in the schema
           }
         ])
         .select()
