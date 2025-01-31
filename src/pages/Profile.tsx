@@ -310,6 +310,15 @@ const Profile = () => {
 
   const handleDepositConfirm = async (hash: string) => {
     try {
+      if (!user?.id) {
+        toast({
+          title: "Error",
+          description: "You must be logged in to make a deposit",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const numericAmount = parseFloat(depositAmount);
       
       const { data, error } = await supabase
@@ -317,8 +326,9 @@ const Profile = () => {
         .insert([
           {
             type: 'deposit',
-            amount: numericAmount, // Convert string to number
-            status: 'pending'
+            amount: numericAmount,
+            status: 'pending',
+            user_id: user.id // Add user_id to the transaction
           }
         ])
         .select()
@@ -334,6 +344,7 @@ const Profile = () => {
       const { data: transactionsData, error: transactionsError } = await supabase
         .from('transactions')
         .select('*')
+        .eq('user_id', user.id) // Filter by user_id
         .order('created_at', { ascending: false })
         .limit(10);
 
