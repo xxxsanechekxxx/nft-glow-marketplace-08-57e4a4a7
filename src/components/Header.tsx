@@ -50,7 +50,8 @@ export const Header = () => {
             </Link>
             {user ? (
               <Link to="/profile">
-                <Button variant="outline">
+                <Button variant="outline" className="flex items-center gap-2">
+                  <User className="w-4 h-4" />
                   {user.user_metadata.login || 'Profile'}
                 </Button>
               </Link>
@@ -98,7 +99,8 @@ export const Header = () => {
               </Link>
               {user ? (
                 <Link to="/profile">
-                  <Button variant="outline" className="w-full">
+                  <Button variant="outline" className="w-full flex items-center gap-2 justify-center">
+                    <User className="w-4 h-4" />
                     {user.user_metadata.login || 'Profile'}
                   </Button>
                 </Link>
