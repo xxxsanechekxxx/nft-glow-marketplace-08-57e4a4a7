@@ -25,7 +25,7 @@ const WalletAddressModal = ({ isOpen, onClose, onGenerated }: WalletAddressModal
   useEffect(() => {
     if (isOpen && isGenerating) {
       const startTime = Date.now();
-      const duration = 30000; // 30 seconds
+      const duration = 7000; // 7 seconds
       
       const interval = setInterval(() => {
         const elapsed = Date.now() - startTime;

