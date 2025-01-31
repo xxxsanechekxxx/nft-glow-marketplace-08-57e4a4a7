@@ -453,40 +453,6 @@ const Profile = () => {
                   <div className="flex gap-4">
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button variant="destructive" onClick={handleDeposit}>
-                          <ArrowUpCircle className="w-4 h-4 mr-2" />
-                          Withdraw
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Withdraw ETH</DialogTitle>
-                          <DialogDescription>
-                            Enter the amount of ETH you want to withdraw.
-                          </DialogDescription>
-                        </DialogHeader>
-                        <form onSubmit={handleWithdraw} className="space-y-4">
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium">Amount (ETH)</label>
-                            <Input
-                              type="number"
-                              step="0.001"
-                              min="0"
-                              value={withdrawAmount}
-                              onChange={(e) => setWithdrawAmount(e.target.value)}
-                              placeholder="0.00"
-                              required
-                            />
-                          </div>
-                          <DialogFooter>
-                            <Button type="submit">Confirm Withdrawal</Button>
-                          </DialogFooter>
-                        </form>
-                      </DialogContent>
-                    </Dialog>
-
-                    <Dialog>
-                      <DialogTrigger asChild>
                         <Button onClick={handleDeposit}>
                           <ArrowDownCircle className="w-4 h-4 mr-2" />
                           Deposit
@@ -514,6 +480,40 @@ const Profile = () => {
                           </div>
                           <DialogFooter>
                             <Button type="submit">Confirm Deposit</Button>
+                          </DialogFooter>
+                        </form>
+                      </DialogContent>
+                    </Dialog>
+
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="destructive" onClick={handleWithdraw}>
+                          <ArrowUpCircle className="w-4 h-4 mr-2" />
+                          Withdraw
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Withdraw ETH</DialogTitle>
+                          <DialogDescription>
+                            Enter the amount of ETH you want to withdraw.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <form onSubmit={handleWithdraw} className="space-y-4">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Amount (ETH)</label>
+                            <Input
+                              type="number"
+                              step="0.001"
+                              min="0"
+                              value={withdrawAmount}
+                              onChange={(e) => setWithdrawAmount(e.target.value)}
+                              placeholder="0.00"
+                              required
+                            />
+                          </div>
+                          <DialogFooter>
+                            <Button type="submit">Confirm Withdrawal</Button>
                           </DialogFooter>
                         </form>
                       </DialogContent>
