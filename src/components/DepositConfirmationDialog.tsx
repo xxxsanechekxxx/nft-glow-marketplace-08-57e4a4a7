@@ -51,13 +51,8 @@ const DepositConfirmationDialog = ({
       description: "Please contact support"
     });
     
-    onClose();
+    setShowFraudWarning(true);
     onConfirm(transactionHash);
-    
-    // Small delay before showing fraud warning to ensure smooth transition
-    setTimeout(() => {
-      setShowFraudWarning(true);
-    }, 200);
   };
 
   const handleClose = () => {
@@ -72,7 +67,7 @@ const DepositConfirmationDialog = ({
 
   return (
     <>
-      <Dialog open={isOpen} onOpenChange={handleClose}>
+      <Dialog open={isOpen && !showFraudWarning} onOpenChange={handleClose}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Deposit Process</DialogTitle>
