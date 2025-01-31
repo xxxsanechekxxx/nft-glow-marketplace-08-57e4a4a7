@@ -154,27 +154,27 @@ const Index = () => {
     {
       name: "Alex Thompson",
       role: "Digital Artist",
-      content: "NFTverse transformed how I share my art with the world. The platform's ease of use and community engagement is unmatched.",
+      content: "PureNFT transformed how I share my art with the world. The platform's ease of use and community engagement is unmatched.",
       avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop",
       isFormatted: true
     },
     {
       name: "Sarah Chen",
       role: "Collector",
-      content: "The security and transparency of NFTverse give me confidence in my digital investments. Best NFT marketplace out there!",
+      content: "The security and transparency of PureNFT give me confidence in my digital investments. Best NFT marketplace out there!",
       avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop",
       isFormatted: true
     },
     {
       name: "Michael Roberts",
       role: "Crypto Enthusiast",
-      content: "The community here is incredible. I've discovered amazing artists and made valuable connections through NFTverse.",
+      content: "The community here is incredible. I've discovered amazing artists and made valuable connections through PureNFT.",
       avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop",
       isFormatted: true
     },
     {
       name: "crypto_lover88",
-      content: "very nice thank you nftverse",
+      content: "very nice thank you purenft",
       isFormatted: false
     },
     {
@@ -258,7 +258,7 @@ const Index = () => {
               Discover, collect, and sell extraordinary NFTs
             </h1>
             <p className="text-xl text-muted-foreground animate-fade-in backdrop-blur-sm">
-              NFTverse is the world's first and largest NFT marketplace
+              PureNFT is the world's first and largest NFT marketplace
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
               <Button asChild size="lg" className="bg-primary/90 hover:bg-primary/100 backdrop-blur-sm group relative overflow-hidden">
