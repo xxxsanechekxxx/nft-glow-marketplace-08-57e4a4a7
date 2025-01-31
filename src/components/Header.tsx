@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
 import { AuthModal } from './AuthModal';
 import { useAuth } from "@/hooks/useAuth";
 
@@ -57,8 +57,9 @@ export const Header = () => {
             ) : (
               <AuthModal 
                 trigger={
-                  <Button variant="outline">
-                    Authorization
+                  <Button variant="outline" className="flex items-center gap-2">
+                    <User className="w-4 h-4" />
+                    Login
                   </Button>
                 }
               />
@@ -104,8 +105,9 @@ export const Header = () => {
               ) : (
                 <AuthModal 
                   trigger={
-                    <Button variant="outline" className="w-full">
-                      Authorization
+                    <Button variant="outline" className="w-full flex items-center gap-2 justify-center">
+                      <User className="w-4 h-4" />
+                      Login
                     </Button>
                   }
                 />
