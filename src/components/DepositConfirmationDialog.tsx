@@ -63,12 +63,15 @@ const DepositConfirmationDialog = ({
   };
 
   const handleNextStep = () => {
-    if (!depositAmount || parseFloat(depositAmount) <= 0) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Please enter a valid amount"
-      });
+    const amount = parseFloat(depositAmount);
+    if (!depositAmount || amount <= 0) {
+      setTimeout(() => {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Please enter a valid amount greater than 0"
+        });
+      }, 1000);
       return;
     }
     setStep('hash');

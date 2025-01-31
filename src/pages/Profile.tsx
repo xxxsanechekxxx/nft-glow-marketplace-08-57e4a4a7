@@ -275,15 +275,7 @@ const Profile = () => {
       return;
     }
 
-    if (!depositAmount || parseFloat(depositAmount) <= 0) {
-      showDelayedToast(
-        "Error",
-        "Please enter a valid amount greater than 0",
-        "destructive"
-      );
-      return;
-    }
-
+    // Remove the validation here since it's handled in DepositConfirmationDialog
     setIsDepositConfirmationOpen(true);
   };
 
