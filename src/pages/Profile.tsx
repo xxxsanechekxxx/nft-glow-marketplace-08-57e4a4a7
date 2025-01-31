@@ -238,15 +238,6 @@ const Profile = () => {
     const withdrawAmountNum = parseFloat(withdrawAmount);
     const balanceNum = parseFloat(userData?.balance || "0");
     
-    if (withdrawAmountNum > balanceNum) {
-      toast({
-        variant: "destructive",
-        title: "Insufficient funds",
-        description: "You don't have enough balance for this withdrawal"
-      });
-      return;
-    }
-
     if (withdrawAmountNum <= 0) {
       toast({
         title: "Error",
@@ -256,11 +247,43 @@ const Profile = () => {
       return;
     }
 
-    toast({
-      title: "Success",
-      description: `Withdrawal of ${withdrawAmount} ETH initiated`,
-    });
-    setWithdrawAmount("");
+    if (withdrawAmountNum > balanceNum) {
+      toast({
+        variant: "destructive",
+        title: "Insufficient funds",
+        description: `Your balance (${balanceNum} ETH) is less than the requested withdrawal amount`
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('transactions')
+        .insert([
+          {
+            user_id: userData?.id,
+            type: 'withdraw',
+            amount: withdrawAmountNum,
+            status: 'pending'
+          }
+        ]);
+
+      if (error) throw error;
+
+      toast({
+        title: "Withdrawal Requested",
+        description: `Your withdrawal request for ${withdrawAmount} ETH has been submitted`
+      });
+      
+      setWithdrawAmount("");
+    } catch (error) {
+      console.error('Error processing withdrawal:', error);
+      toast({
+        title: "Error",
+        description: "Failed to process withdrawal. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleDeposit = (e: React.FormEvent) => {
@@ -487,7 +510,7 @@ const Profile = () => {
 
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button variant="destructive" onClick={handleWithdraw}>
+                        <Button variant="destructive">
                           <ArrowUpCircle className="w-4 h-4 mr-2" />
                           Withdraw
                         </Button>
