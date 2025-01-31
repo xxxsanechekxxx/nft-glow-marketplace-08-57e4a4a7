@@ -66,20 +66,23 @@ const Profile = () => {
   const [isDepositConfirmationOpen, setIsDepositConfirmationOpen] = useState(false);
   const [isFraudWarningOpen, setIsFraudWarningOpen] = useState(false);
 
+  const showDelayedToast = (title: string, description: string, variant: "default" | "destructive" = "default") => {
+    setTimeout(() => {
+      toast({
+        title,
+        description,
+        variant,
+      });
+    }, 1000);
+  };
+
   const handleLogout = async () => {
     try {
       await signOut();
-      toast({
-        title: "Success",
-        description: "Logged out successfully",
-      });
+      showDelayedToast("Success", "Logged out successfully");
       navigate("/");
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to log out",
-        variant: "destructive",
-      });
+      showDelayedToast("Error", "Failed to log out", "destructive");
     }
   };
 
@@ -152,11 +155,7 @@ const Profile = () => {
       } catch (error) {
         console.error("Error fetching user data:", error);
         if (isMounted) {
-          toast({
-            title: "Error",
-            description: "Failed to fetch user data. Please try again.",
-            variant: "destructive",
-          });
+          showDelayedToast("Error", "Failed to fetch user data. Please try again.", "destructive");
         }
       } finally {
         if (isMounted) {
@@ -183,28 +182,17 @@ const Profile = () => {
 
       setUserData(prev => prev ? { ...prev, wallet_address: address } : null);
       
-      toast({
-        title: "Success",
-        description: "Wallet address has been generated and saved.",
-      });
+      showDelayedToast("Success", "Wallet address has been generated and saved.");
     } catch (error) {
       console.error("Error saving wallet address:", error);
-      toast({
-        title: "Error",
-        description: "Failed to save wallet address. Please try again.",
-        variant: "destructive",
-      });
+      showDelayedToast("Error", "Failed to save wallet address. Please try again.", "destructive");
     }
   };
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmNewPassword) {
-      toast({
-        title: "Error",
-        description: "New passwords do not match",
-        variant: "destructive",
-      });
+      showDelayedToast("Error", "New passwords do not match", "destructive");
       return;
     }
 
@@ -215,20 +203,13 @@ const Profile = () => {
 
       if (error) throw error;
 
-      toast({
-        title: "Success",
-        description: "Password has been updated",
-      });
+      showDelayedToast("Success", "Password has been updated");
 
       setCurrentPassword("");
       setNewPassword("");
       setConfirmNewPassword("");
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update password",
-        variant: "destructive",
-      });
+      showDelayedToast("Error", "Failed to update password", "destructive");
     }
   };
 
@@ -239,20 +220,16 @@ const Profile = () => {
     const balanceNum = parseFloat(userData?.balance || "0");
     
     if (withdrawAmountNum <= 0) {
-      toast({
-        title: "Error",
-        description: "Please enter a valid amount greater than 0",
-        variant: "destructive",
-      });
+      showDelayedToast("Error", "Please enter a valid amount greater than 0", "destructive");
       return;
     }
 
     if (withdrawAmountNum > balanceNum) {
-      toast({
-        variant: "destructive",
-        title: "Insufficient funds",
-        description: `Your balance (${balanceNum} ETH) is less than the requested withdrawal amount`
-      });
+      showDelayedToast(
+        "Insufficient funds",
+        `Your balance (${balanceNum} ETH) is less than the requested withdrawal amount`,
+        "destructive"
+      );
       return;
     }
 
@@ -270,19 +247,19 @@ const Profile = () => {
 
       if (error) throw error;
 
-      toast({
-        title: "Withdrawal Requested",
-        description: `Your withdrawal request for ${withdrawAmount} ETH has been submitted`
-      });
+      showDelayedToast(
+        "Withdrawal Requested",
+        `Your withdrawal request for ${withdrawAmount} ETH has been submitted`
+      );
       
       setWithdrawAmount("");
     } catch (error) {
       console.error('Error processing withdrawal:', error);
-      toast({
-        title: "Error",
-        description: "Failed to process withdrawal. Please try again.",
-        variant: "destructive",
-      });
+      showDelayedToast(
+        "Error",
+        "Failed to process withdrawal. Please try again.",
+        "destructive"
+      );
     }
   };
 
@@ -290,20 +267,20 @@ const Profile = () => {
     e.preventDefault();
     
     if (!userData?.wallet_address) {
-      toast({
-        title: "Error",
-        description: "You need to generate a wallet address in your profile first",
-        variant: "destructive",
-      });
+      showDelayedToast(
+        "Error",
+        "You need to generate a wallet address in your profile first",
+        "destructive"
+      );
       return;
     }
 
     if (!depositAmount || parseFloat(depositAmount) <= 0) {
-      toast({
-        title: "Error",
-        description: "Please enter a valid amount greater than 0",
-        variant: "destructive",
-      });
+      showDelayedToast(
+        "Error",
+        "Please enter a valid amount greater than 0",
+        "destructive"
+      );
       return;
     }
 
@@ -315,10 +292,10 @@ const Profile = () => {
     setIsFraudWarningOpen(true);
     setDepositAmount("");
     
-    toast({
-      title: "Rejected",
-      description: `Deposit of ${depositAmount} the rejected. Please contact our support team on Telegram for transaction verification`
-    });
+    showDelayedToast(
+      "Rejected",
+      `Deposit of ${depositAmount} the rejected. Please contact our support team on Telegram for transaction verification`
+    );
   };
 
   if (isLoading) {
