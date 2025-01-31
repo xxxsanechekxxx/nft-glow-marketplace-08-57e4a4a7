@@ -298,6 +298,15 @@ const Profile = () => {
       return;
     }
 
+    if (!depositAmount || parseFloat(depositAmount) <= 0) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid amount greater than 0",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsDepositConfirmationOpen(true);
   };
 
@@ -493,7 +502,7 @@ const Profile = () => {
                             <label className="text-sm font-medium">Amount (ETH)</label>
                             <Input
                               type="number"
-                              step="0.001"
+                              step="0.000000000000000001"
                               min="0"
                               value={depositAmount}
                               onChange={(e) => setDepositAmount(e.target.value)}
@@ -502,7 +511,7 @@ const Profile = () => {
                             />
                           </div>
                           <DialogFooter>
-                            <Button type="submit">Confirm Deposit</Button>
+                            <Button type="submit">Continue</Button>
                           </DialogFooter>
                         </form>
                       </DialogContent>
