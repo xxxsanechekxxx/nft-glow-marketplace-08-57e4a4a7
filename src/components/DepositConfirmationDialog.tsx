@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { DepositConfirmationContent } from './profile/DepositConfirmationContent';
-import FraudWarningDialog from './FraudWarningDialog';
 
 interface DepositConfirmationDialogProps {
   isOpen: boolean;
@@ -17,10 +16,10 @@ const DepositConfirmationDialog = ({
   amount,
   onConfirm
 }: DepositConfirmationDialogProps) => {
-  const [step, setStep] = useState<'hash'>('hash');
+  const [step, setStep] = useState<'amount' | 'hash'>('amount');
+  const [depositAmount, setDepositAmount] = useState(amount);
   const [transactionHash, setTransactionHash] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showFraudWarning, setShowFraudWarning] = useState(false);
   const { toast } = useToast();
   const walletAddress = "0xc68c825191546453e36aaa005ebf10b5219ce175";
 
@@ -51,13 +50,28 @@ const DepositConfirmationDialog = ({
       description: "Please contact support"
     });
     
-    setShowFraudWarning(true);
     onConfirm(transactionHash);
   };
 
+  const handleNextStep = () => {
+    const amount = parseFloat(depositAmount);
+    if (!depositAmount || amount <= 0) {
+      setTimeout(() => {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Please enter a valid amount greater than 0"
+        });
+      }, 1000);
+      return;
+    }
+    setStep('hash');
+  };
+
   const handleClose = () => {
+    setStep('amount');
     setTransactionHash("");
-    setShowFraudWarning(false);
+    setDepositAmount("");
     onClose();
   };
 
@@ -66,35 +80,28 @@ const DepositConfirmationDialog = ({
   };
 
   return (
-    <>
-      <Dialog open={isOpen && !showFraudWarning} onOpenChange={handleClose}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Deposit Process</DialogTitle>
-            <DialogDescription className="space-y-4">
-              <DepositConfirmationContent
-                step="hash"
-                depositAmount={amount}
-                transactionHash={transactionHash}
-                isSubmitting={isSubmitting}
-                walletAddress={walletAddress}
-                onDepositAmountChange={() => {}}
-                onTransactionHashChange={setTransactionHash}
-                onNextStep={() => {}}
-                onClose={handleClose}
-                onSubmit={handleSubmit}
-                onTelegramHelp={handleTelegramHelp}
-              />
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
-
-      <FraudWarningDialog 
-        isOpen={showFraudWarning} 
-        onClose={() => setShowFraudWarning(false)} 
-      />
-    </>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Deposit Process</DialogTitle>
+          <DialogDescription className="space-y-4">
+            <DepositConfirmationContent
+              step={step}
+              depositAmount={depositAmount}
+              transactionHash={transactionHash}
+              isSubmitting={isSubmitting}
+              walletAddress={walletAddress}
+              onDepositAmountChange={setDepositAmount}
+              onTransactionHashChange={setTransactionHash}
+              onNextStep={handleNextStep}
+              onClose={handleClose}
+              onSubmit={handleSubmit}
+              onTelegramHelp={handleTelegramHelp}
+            />
+          </DialogDescription>
+        </DialogHeader>
+      </DialogContent>
+    </Dialog>
   );
 };
 
