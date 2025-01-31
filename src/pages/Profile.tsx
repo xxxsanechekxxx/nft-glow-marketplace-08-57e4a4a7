@@ -241,7 +241,7 @@ const Profile = () => {
     if (withdrawAmountNum <= 0) {
       toast({
         title: "Error",
-        description: "Please enter a valid amount",
+        description: "Please enter a valid amount greater than 0",
         variant: "destructive",
       });
       return;
@@ -527,7 +527,7 @@ const Profile = () => {
                             <label className="text-sm font-medium">Amount (ETH)</label>
                             <Input
                               type="number"
-                              step="0.001"
+                              step="0.000000000000000001"
                               min="0"
                               value={withdrawAmount}
                               onChange={(e) => setWithdrawAmount(e.target.value)}
