@@ -1,10 +1,16 @@
-import { useParams } from "react-router-dom";
-import { Link } from "react-router-dom";
-import { ArrowLeft, Share2, Heart, DollarSign, User, Info } from "lucide-react";
+import { useParams, Link } from "react-router-dom";
+import { ArrowLeft, Share2, Heart, User, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth";
+import { AuthModal } from "@/components/AuthModal";
+
+interface Property {
+  key: string;
+  value: string;
+}
 
 interface NFT {
   id: string;
@@ -13,11 +19,14 @@ interface NFT {
   price: string;
   creator: string;
   description?: string;
+  properties?: Property[];
+  token_standard?: string;
 }
 
 const NFTDetail = () => {
   const { id } = useParams();
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const { data: nft, isLoading } = useQuery({
     queryKey: ['nft', id],
@@ -33,26 +42,43 @@ const NFTDetail = () => {
     },
   });
 
-  if (isLoading) {
-    return (
-      <div className="container mx-auto px-4 pt-24">
-        <div className="text-center">Loading...</div>
-      </div>
-    );
-  }
+  const { data: userData } = useQuery({
+    queryKey: ['user-balance', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('balance')
+        .eq('user_id', user.id)
+        .single();
 
-  if (!nft) {
-    return (
-      <div className="container mx-auto px-4 pt-24">
-        <div className="text-center">NFT not found</div>
-      </div>
-    );
-  }
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
 
-  const handlePurchase = () => {
+  const handlePurchase = async () => {
+    if (!user) {
+      return;
+    }
+
+    const nftPrice = parseFloat(nft?.price || "0");
+    const userBalance = parseFloat(userData?.balance || "0");
+
+    if (userBalance < nftPrice) {
+      toast({
+        title: "Insufficient funds",
+        description: `Your balance (${userBalance} ETH) is less than the NFT price (${nftPrice} ETH)`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Here you would implement the actual purchase logic
     toast({
-      title: "Connect your wallet",
-      description: "Please connect your Ethereum wallet to make a purchase.",
+      title: "Purchase initiated",
+      description: "Processing your purchase...",
     });
   };
 
@@ -70,6 +96,22 @@ const NFTDetail = () => {
       description: "Liking NFTs will be available soon!",
     });
   };
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 pt-24">
+        <div className="text-center">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!nft) {
+    return (
+      <div className="container mx-auto px-4 pt-24">
+        <div className="text-center">NFT not found</div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 pt-24">
@@ -113,7 +155,6 @@ const NFTDetail = () => {
             style={{ animationDelay: "400ms" }}
           >
             <div className="flex items-center gap-2 text-2xl font-bold">
-              <DollarSign className="h-6 w-6" />
               <span>{nft.price} ETH</span>
             </div>
           </div>
@@ -122,12 +163,22 @@ const NFTDetail = () => {
             className="flex gap-4 animate-fade-in" 
             style={{ animationDelay: "600ms" }}
           >
-            <Button 
-              onClick={handlePurchase} 
-              className="flex-1 hover:scale-105 transition-transform duration-300"
-            >
-              Purchase Now
-            </Button>
+            {user ? (
+              <Button 
+                onClick={handlePurchase} 
+                className="flex-1 hover:scale-105 transition-transform duration-300"
+              >
+                Purchase Now
+              </Button>
+            ) : (
+              <AuthModal 
+                trigger={
+                  <Button className="flex-1">
+                    Login to Purchase
+                  </Button>
+                }
+              />
+            )}
             <Button 
               variant="outline" 
               size="icon" 
@@ -156,21 +207,25 @@ const NFTDetail = () => {
             </div>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="hover:scale-105 transition-transform duration-300">
-                <div className="text-muted-foreground">Contract Address</div>
-                <div className="font-mono">0x1234...5678</div>
-              </div>
-              <div className="hover:scale-105 transition-transform duration-300">
-                <div className="text-muted-foreground">Token ID</div>
-                <div className="font-mono">#{id}</div>
-              </div>
-              <div className="hover:scale-105 transition-transform duration-300">
                 <div className="text-muted-foreground">Token Standard</div>
-                <div>ERC-721</div>
+                <div>{nft.token_standard || 'ERC-721'}</div>
               </div>
-              <div className="hover:scale-105 transition-transform duration-300">
-                <div className="text-muted-foreground">Blockchain</div>
-                <div>Ethereum</div>
-              </div>
+              {nft.properties && nft.properties.length > 0 && (
+                <div className="col-span-2 space-y-2">
+                  <div className="text-muted-foreground">Properties</div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {nft.properties.map((prop, index) => (
+                      <div 
+                        key={index}
+                        className="p-2 rounded-lg bg-secondary/30 hover:scale-105 transition-transform duration-300"
+                      >
+                        <div className="text-xs text-muted-foreground">{prop.key}</div>
+                        <div className="font-medium">{prop.value}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
