@@ -1,15 +1,45 @@
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Share2, Heart, DollarSign, User, Info, Timer } from "lucide-react";
+import { ArrowLeft, Share2, Heart, DollarSign, User, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { NFT_DATA } from "@/data/nfts";
-import { CountdownTimer } from "@/components/CountdownTimer";
+import { supabase } from "@/lib/supabase";
+import { useQuery } from "@tanstack/react-query";
+
+interface NFT {
+  id: string;
+  name: string;
+  image: string;
+  price: string;
+  creator: string;
+  description?: string;
+}
 
 const NFTDetail = () => {
   const { id } = useParams();
   const { toast } = useToast();
-  const nft = NFT_DATA.find((n) => n.id === id);
+
+  const { data: nft, isLoading } = useQuery({
+    queryKey: ['nft', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('nfts')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) throw error;
+      return data as NFT;
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 pt-24">
+        <div className="text-center">Loading...</div>
+      </div>
+    );
+  }
 
   if (!nft) {
     return (
@@ -69,16 +99,14 @@ const NFTDetail = () => {
             </div>
           </div>
 
-          <div 
-            className="space-y-4 animate-fade-in" 
-            style={{ animationDelay: "300ms" }}
-          >
-            <div className="flex items-center gap-2">
-              <Timer className="h-4 w-4" />
-              <h2 className="text-lg font-semibold">Auction Ends In</h2>
+          {nft.description && (
+            <div 
+              className="space-y-2 animate-fade-in" 
+              style={{ animationDelay: "300ms" }}
+            >
+              <p className="text-muted-foreground">{nft.description}</p>
             </div>
-            <CountdownTimer endTime={nft.endTime} />
-          </div>
+          )}
 
           <div 
             className="p-4 rounded-lg bg-secondary/50 animate-fade-in hover:scale-105 transition-transform duration-300" 

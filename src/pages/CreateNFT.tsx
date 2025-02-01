@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2, Upload } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { Textarea } from "@/components/ui/textarea";
 
 const CreateNFT = () => {
   const navigate = useNavigate();
@@ -13,6 +15,8 @@ const CreateNFT = () => {
   const [formData, setFormData] = useState({
     name: "",
     price: "",
+    creator: "",
+    description: "",
     image: "",
   });
 
@@ -21,9 +25,16 @@ const CreateNFT = () => {
     setIsLoading(true);
 
     try {
-      // Here we would typically make an API call to create the NFT
-      // For now, we'll just show a success message
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
+      const { error } = await supabase.from('nfts').insert([
+        {
+          name: formData.name,
+          price: formData.price,
+          creator: formData.creator,
+          image: formData.image || 'https://images.unsplash.com/photo-1634973357973-f2ed2657db3c?w=800&auto=format&fit=crop',
+        }
+      ]);
+
+      if (error) throw error;
       
       toast({
         title: "Success!",
@@ -32,6 +43,7 @@ const CreateNFT = () => {
       
       navigate("/marketplace");
     } catch (error) {
+      console.error('Error creating NFT:', error);
       toast({
         title: "Error",
         description: "Failed to create NFT. Please try again.",
@@ -60,12 +72,23 @@ const CreateNFT = () => {
         
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="name">NFT Name</Label>
             <Input
               id="name"
               value={formData.name}
               onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
               placeholder="Enter NFT name"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="creator">Creator Name</Label>
+            <Input
+              id="creator"
+              value={formData.creator}
+              onChange={(e) => setFormData(prev => ({ ...prev, creator: e.target.value }))}
+              placeholder="Enter creator name"
               required
             />
           </div>
@@ -81,6 +104,17 @@ const CreateNFT = () => {
               onChange={(e) => setFormData(prev => ({ ...prev, price: e.target.value }))}
               placeholder="Enter price in ETH"
               required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="description">Description</Label>
+            <Textarea
+              id="description"
+              value={formData.description}
+              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+              placeholder="Enter NFT description"
+              className="min-h-[100px]"
             />
           </div>
 
