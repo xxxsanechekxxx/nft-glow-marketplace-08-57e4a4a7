@@ -212,7 +212,7 @@ const NFTDetail = () => {
               </div>
               {nft.properties && nft.properties.length > 0 && (
                 <div className="col-span-2 space-y-2">
-                  <div className="text-muted-foreground">Properties</div>
+                  <div className="text-lg font-semibold">Properties</div>
                   <div className="grid grid-cols-2 gap-2">
                     {nft.properties.map((prop, index) => (
                       <div 

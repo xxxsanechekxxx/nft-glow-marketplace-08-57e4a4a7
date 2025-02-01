@@ -4,7 +4,6 @@ import { Shield, Zap, Trophy, Wallet, TrendingUp, Users, Star, ArrowRight, Spark
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { NFT_DATA } from "@/data/nfts";
 import { NFTCard } from "@/components/NFTCard";
 import {
   Carousel,
@@ -13,6 +12,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/supabase";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -43,6 +44,20 @@ const Index = () => {
   const testimonialsRef = useRef(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const [showAllTestimonials, setShowAllTestimonials] = useState(false);
+
+  const { data: featuredNFTs } = useQuery({
+    queryKey: ['featured-nfts'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('nfts')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      if (error) throw error;
+      return data;
+    },
+  });
 
   useEffect(() => {
     ScrollTrigger.getAll().forEach(trigger => trigger.kill());
@@ -147,8 +162,6 @@ const Index = () => {
     { label: "Total Volume", value: "$100M+", icon: TrendingUp },
     { label: "NFTs Created", value: "1M+", icon: Star },
   ];
-
-  const featuredNFTs = NFT_DATA.slice(0, 5);
 
   const testimonials = [
     {
@@ -324,7 +337,7 @@ const Index = () => {
           
           <Carousel className="w-full max-w-5xl mx-auto">
             <CarouselContent>
-              {featuredNFTs.map((nft) => (
+              {featuredNFTs?.map((nft) => (
                 <CarouselItem key={nft.id} className="md:basis-1/2 lg:basis-1/3">
                   <div className="p-1">
                     <NFTCard {...nft} />
