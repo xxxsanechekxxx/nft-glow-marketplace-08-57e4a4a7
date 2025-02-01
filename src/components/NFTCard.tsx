@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Coins } from "lucide-react";
@@ -13,13 +13,11 @@ interface NFTCardProps {
 
 export const NFTCard = ({ id, name, image, price, creator }: NFTCardProps) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handlePurchase = (e: React.MouseEvent) => {
     e.preventDefault();
-    toast({
-      title: "Connect your wallet",
-      description: "Please connect your Ethereum wallet to make a purchase.",
-    });
+    navigate(`/nft/${id}`);
   };
 
   return (

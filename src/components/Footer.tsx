@@ -24,16 +24,6 @@ export const Footer = () => {
                   All NFTs
                 </Link>
               </li>
-              <li>
-                <a href="#" className="text-sm text-muted-foreground hover:text-primary">
-                  Art
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-sm text-muted-foreground hover:text-primary">
-                  Collectibles
-                </a>
-              </li>
             </ul>
           </div>
           
@@ -46,43 +36,45 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
-                <a href="#" className="text-sm text-muted-foreground hover:text-primary">
+                <Link to="/partners" className="text-sm text-muted-foreground hover:text-primary">
                   Partners
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-sm text-muted-foreground hover:text-primary">
+                <Link to="/blog" className="text-sm text-muted-foreground hover:text-primary">
                   Blog
+                </Link>
+              </li>
+              <li>
+                <a href="https://t.me/purenftsupport" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-primary">
+                  Support
                 </a>
               </li>
             </ul>
           </div>
           
           <div>
-            <h3 className="font-semibold mb-4">Community</h3>
-            <div className="flex space-x-4">
-              <a href="#" className="text-muted-foreground hover:text-primary">
-                <Twitter size={20} />
+            <h3 className="font-semibold mb-4">Contact</h3>
+            <div className="space-y-4">
+              <a href="mailto:contact@purenft.io" className="text-sm text-muted-foreground hover:text-primary flex items-center gap-2">
+                <Mail size={16} />
+                contact@purenft.io
               </a>
-              <a href="#" className="text-muted-foreground hover:text-primary">
-                <Instagram size={20} />
-              </a>
-              <a href="https://t.me/nftverse" className="text-muted-foreground hover:text-primary">
-                <Mail size={20} />
-              </a>
+              <div className="flex space-x-4">
+                <a href="#" className="text-muted-foreground hover:text-primary">
+                  <Twitter size={20} />
+                </a>
+                <a href="#" className="text-muted-foreground hover:text-primary">
+                  <Instagram size={20} />
+                </a>
+              </div>
             </div>
           </div>
         </div>
         
         <div className="border-t mt-12 pt-8">
-          <div className="text-center text-sm text-muted-foreground space-y-4">
+          <div className="text-center text-sm text-muted-foreground">
             <p>&copy; 2024 PureNFT. All rights reserved.</p>
-            <div className="flex items-center justify-center space-x-6">
-              <a href="mailto:contact@purenft.com" className="flex items-center gap-2 hover:text-primary">
-                <Mail size={16} />
-                <span>contact@purenft.com</span>
-              </a>
-            </div>
           </div>
         </div>
       </div>

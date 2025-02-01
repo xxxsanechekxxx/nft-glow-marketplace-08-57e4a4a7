@@ -11,6 +11,8 @@ import NFTDetail from "./pages/NFTDetail";
 import HelpCenter from "./pages/HelpCenter";
 import Profile from "./pages/Profile";
 import CreateNFT from "./pages/CreateNFT";
+import Partners from "./pages/Partners";
+import Blog from "./pages/Blog";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +32,8 @@ const App = () => (
               <Route path="/help" element={<HelpCenter />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/create-nft" element={<CreateNFT />} />
+              <Route path="/partners" element={<Partners />} />
+              <Route path="/blog" element={<Blog />} />
             </Routes>
           </main>
           <Footer />
