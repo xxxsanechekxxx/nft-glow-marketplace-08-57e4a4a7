@@ -1,11 +1,10 @@
-import { Twitter, Instagram, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export const Footer = () => {
   return (
     <footer className="bg-secondary/50 mt-20">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 rounded-full bg-primary"></div>
@@ -51,24 +50,6 @@ export const Footer = () => {
                 </a>
               </li>
             </ul>
-          </div>
-          
-          <div>
-            <h3 className="font-semibold mb-4">Contact</h3>
-            <div className="space-y-4">
-              <a href="mailto:contact@purenft.io" className="text-sm text-muted-foreground hover:text-primary flex items-center gap-2">
-                <Mail size={16} />
-                contact@purenft.io
-              </a>
-              <div className="flex space-x-4">
-                <a href="#" className="text-muted-foreground hover:text-primary">
-                  <Twitter size={20} />
-                </a>
-                <a href="#" className="text-muted-foreground hover:text-primary">
-                  <Instagram size={20} />
-                </a>
-              </div>
-            </div>
           </div>
         </div>
         
