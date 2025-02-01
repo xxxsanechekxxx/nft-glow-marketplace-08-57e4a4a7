@@ -4,14 +4,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
-import { Loader2, Upload } from "lucide-react";
+import { Loader2, Upload, Plus, Wand2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { Textarea } from "@/components/ui/textarea";
+
+interface Property {
+  key: string;
+  value: string;
+}
 
 const CreateNFT = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [properties, setProperties] = useState<Property[]>([]);
   const [formData, setFormData] = useState({
     name: "",
     price: "",
@@ -19,6 +25,32 @@ const CreateNFT = () => {
     description: "",
     image: "",
   });
+
+  const handleAddProperty = () => {
+    setProperties([...properties, { key: "", value: "" }]);
+  };
+
+  const handlePropertyChange = (index: number, field: 'key' | 'value', value: string) => {
+    const newProperties = [...properties];
+    newProperties[index][field] = value;
+    setProperties(newProperties);
+  };
+
+  const handleRemoveProperty = (index: number) => {
+    setProperties(properties.filter((_, i) => i !== index));
+  };
+
+  const generateCreatorName = () => {
+    const adjectives = ["Cosmic", "Digital", "Mystic", "Cyber", "Quantum", "Neo", "Virtual", "Crypto"];
+    const nouns = ["Artist", "Creator", "Master", "Genius", "Wizard", "Pioneer", "Visionary", "Maven"];
+    const randomAdjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+    const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
+    const randomNumber = Math.floor(Math.random() * 1000);
+    setFormData(prev => ({ 
+      ...prev, 
+      creator: `${randomAdjective}${randomNoun}${randomNumber}` 
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +62,9 @@ const CreateNFT = () => {
           name: formData.name,
           price: formData.price,
           creator: formData.creator,
+          description: formData.description,
           image: formData.image || 'https://images.unsplash.com/photo-1634973357973-f2ed2657db3c?w=800&auto=format&fit=crop',
+          properties: properties.length > 0 ? properties : null,
         }
       ]);
 
@@ -84,13 +118,24 @@ const CreateNFT = () => {
 
           <div className="space-y-2">
             <Label htmlFor="creator">Creator Name</Label>
-            <Input
-              id="creator"
-              value={formData.creator}
-              onChange={(e) => setFormData(prev => ({ ...prev, creator: e.target.value }))}
-              placeholder="Enter creator name"
-              required
-            />
+            <div className="flex gap-2">
+              <Input
+                id="creator"
+                value={formData.creator}
+                onChange={(e) => setFormData(prev => ({ ...prev, creator: e.target.value }))}
+                placeholder="Enter creator name"
+                required
+              />
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={generateCreatorName}
+                className="flex-shrink-0"
+              >
+                <Wand2 className="w-4 h-4 mr-2" />
+                Generate
+              </Button>
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -116,6 +161,48 @@ const CreateNFT = () => {
               placeholder="Enter NFT description"
               className="min-h-[100px]"
             />
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label>Properties</Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleAddProperty}
+                className="flex items-center gap-1"
+              >
+                <Plus className="w-4 h-4" />
+                Add Property
+              </Button>
+            </div>
+            <div className="space-y-3">
+              {properties.map((property, index) => (
+                <div key={index} className="flex gap-2">
+                  <Input
+                    placeholder="Property name"
+                    value={property.key}
+                    onChange={(e) => handlePropertyChange(index, 'key', e.target.value)}
+                    className="flex-1"
+                  />
+                  <Input
+                    placeholder="Value"
+                    value={property.value}
+                    onChange={(e) => handlePropertyChange(index, 'value', e.target.value)}
+                    className="flex-1"
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    onClick={() => handleRemoveProperty(index)}
+                  >
+                    ×
+                  </Button>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -152,7 +239,11 @@ const CreateNFT = () => {
                     onChange={handleImageUpload}
                     className="hidden"
                   />
-                  <Button type="button" variant="outline" onClick={() => document.getElementById("image")?.click()}>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => document.getElementById("image")?.click()}
+                  >
                     Select File
                   </Button>
                 </div>
