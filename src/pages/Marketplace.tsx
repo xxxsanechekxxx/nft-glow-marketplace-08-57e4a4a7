@@ -1,10 +1,18 @@
 import { useEffect, useState } from "react";
 import { NFTCard } from "@/components/NFTCard";
 import { useInView } from "react-intersection-observer";
-import { Loader2, Search } from "lucide-react";
+import { Loader2, Search, Sparkles, TrendingUp, Clock, Filter } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface NFT {
   id: string;
@@ -27,6 +35,7 @@ const fetchNFTs = async () => {
 const Marketplace = () => {
   const { ref, inView } = useInView();
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
   const { data: nfts, isLoading, error } = useQuery({
     queryKey: ['nfts'],
     queryFn: fetchNFTs,
@@ -36,6 +45,12 @@ const Marketplace = () => {
     nft.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     nft.creator.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const stats = [
+    { label: "Total NFTs", value: nfts?.length || 0, icon: Sparkles },
+    { label: "Trending", value: "14 Sales", icon: TrendingUp },
+    { label: "Latest Drop", value: "2h ago", icon: Clock },
+  ];
 
   if (error) {
     console.error('Error fetching NFTs:', error);
@@ -60,17 +75,53 @@ const Marketplace = () => {
               Discover and collect extraordinary NFTs from talented creators around the world
             </p>
           </div>
+
+          {/* Stats Section */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            {stats.map((stat, index) => (
+              <div
+                key={stat.label}
+                className="p-6 rounded-xl bg-background/60 backdrop-blur-sm border border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300"
+                style={{
+                  animationDelay: `${index * 0.1}s`,
+                }}
+              >
+                <div className="flex items-center justify-center space-x-4">
+                  <stat.icon className="w-6 h-6 text-primary" />
+                  <div className="text-left">
+                    <p className="text-sm text-muted-foreground">{stat.label}</p>
+                    <p className="text-2xl font-bold">{stat.value}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
           
-          <div className="max-w-md mx-auto relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
-            <Input
-              type="text"
-              placeholder="Search by name or creator..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="relative pl-10 bg-background/80 backdrop-blur-sm border-primary/20 focus:border-primary shadow-lg transition-all duration-300 hover:shadow-primary/5"
-            />
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          {/* Search and Filter Section */}
+          <div className="flex flex-col md:flex-row gap-4 max-w-4xl mx-auto">
+            <div className="flex-1 relative group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
+              <Input
+                type="text"
+                placeholder="Search by name or creator..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="relative pl-10 bg-background/80 backdrop-blur-sm border-primary/20 focus:border-primary shadow-lg transition-all duration-300 hover:shadow-primary/5"
+              />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            </div>
+            
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-[180px] bg-background/80 backdrop-blur-sm">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="newest">Newest First</SelectItem>
+                <SelectItem value="oldest">Oldest First</SelectItem>
+                <SelectItem value="price-asc">Price: Low to High</SelectItem>
+                <SelectItem value="price-desc">Price: High to Low</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
