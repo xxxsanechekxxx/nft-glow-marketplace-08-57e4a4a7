@@ -1,11 +1,12 @@
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Share2, Heart, User, Info } from "lucide-react";
+import { ArrowLeft, Share2, Heart, User, Info, Coins, Eye, Award, Gem } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { AuthModal } from "@/components/AuthModal";
+import { cn } from "@/lib/utils";
 
 interface Property {
   key: string;
@@ -59,9 +60,7 @@ const NFTDetail = () => {
   });
 
   const handlePurchase = async () => {
-    if (!user) {
-      return;
-    }
+    if (!user) return;
 
     const nftPrice = parseFloat(nft?.price || "0");
     const userBalance = parseFloat(userData?.balance || "0");
@@ -75,7 +74,6 @@ const NFTDetail = () => {
       return;
     }
 
-    // Here you would implement the actual purchase logic
     toast({
       title: "Purchase initiated",
       description: "Processing your purchase...",
@@ -100,7 +98,12 @@ const NFTDetail = () => {
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 pt-24">
-        <div className="text-center">Loading...</div>
+        <div className="text-center">
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 bg-secondary/50 rounded w-1/4 mx-auto"></div>
+            <div className="h-96 bg-secondary/50 rounded"></div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -114,27 +117,47 @@ const NFTDetail = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 pt-24">
+    <div className="container mx-auto px-4 pt-24 pb-16">
       <Link
         to="/marketplace"
-        className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 animate-fade-in"
+        className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors duration-300 mb-8 group"
       >
-        <ArrowLeft className="h-4 w-4" />
+        <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform duration-300" />
         Back to Marketplace
       </Link>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="relative aspect-square rounded-lg overflow-hidden animate-scale-in">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <div className="relative aspect-square rounded-2xl overflow-hidden animate-fade-in shadow-xl">
           <img
             src={nft.image}
             alt={nft.name}
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
           />
+          <div className="absolute top-4 right-4 flex gap-2">
+            <Button
+              variant="secondary"
+              size="icon"
+              className="backdrop-blur-md bg-secondary/80 hover:bg-secondary/90 transition-all duration-300"
+              onClick={handleShare}
+            >
+              <Share2 className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="secondary"
+              size="icon"
+              className="backdrop-blur-md bg-secondary/80 hover:bg-secondary/90 transition-all duration-300"
+              onClick={handleLike}
+            >
+              <Heart className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
-        <div className="space-y-6 animate-fade-in">
-          <div className="animate-fade-in" style={{ animationDelay: "200ms" }}>
-            <h1 className="text-4xl font-bold mb-2">{nft.name}</h1>
+        <div className="space-y-8 animate-fade-in">
+          <div className="space-y-4">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+              {nft.name}
+            </h1>
             <div className="flex items-center gap-2 text-muted-foreground">
               <User className="h-4 w-4" />
               <span>Created by {nft.creator}</span>
@@ -142,91 +165,78 @@ const NFTDetail = () => {
           </div>
 
           {nft.description && (
-            <div 
-              className="space-y-2 animate-fade-in" 
-              style={{ animationDelay: "300ms" }}
-            >
-              <p className="text-muted-foreground">{nft.description}</p>
+            <div className="space-y-2 text-muted-foreground">
+              <p>{nft.description}</p>
             </div>
           )}
 
-          <div 
-            className="p-4 rounded-lg bg-secondary/50 animate-fade-in hover:scale-105 transition-transform duration-300" 
-            style={{ animationDelay: "400ms" }}
-          >
-            <div className="flex items-center gap-2 text-2xl font-bold">
+          <div className="p-6 rounded-xl bg-secondary/20 backdrop-blur-lg border border-secondary/30 hover:border-primary/30 transition-colors duration-300">
+            <div className="flex items-center gap-2 text-2xl font-bold text-primary">
+              <Coins className="h-6 w-6" />
               <span>{nft.price} ETH</span>
             </div>
           </div>
 
-          <div 
-            className="flex gap-4 animate-fade-in" 
-            style={{ animationDelay: "600ms" }}
-          >
+          <div className="flex gap-4">
             {user ? (
               <Button 
                 onClick={handlePurchase} 
-                className="flex-1 hover:scale-105 transition-transform duration-300"
+                className="flex-1 bg-primary hover:bg-primary/90 transition-all duration-300 hover:scale-105"
+                size="lg"
               >
                 Purchase Now
               </Button>
             ) : (
               <AuthModal 
                 trigger={
-                  <Button className="flex-1">
+                  <Button className="flex-1 bg-primary hover:bg-primary/90 transition-all duration-300" size="lg">
                     Login to Purchase
                   </Button>
                 }
               />
             )}
-            <Button 
-              variant="outline" 
-              size="icon" 
-              onClick={handleShare}
-              className="hover:scale-110 transition-transform duration-300"
-            >
-              <Share2 className="h-4 w-4" />
-            </Button>
-            <Button 
-              variant="outline" 
-              size="icon" 
-              onClick={handleLike}
-              className="hover:scale-110 transition-transform duration-300"
-            >
-              <Heart className="h-4 w-4" />
-            </Button>
           </div>
 
-          <div 
-            className="space-y-4 animate-fade-in" 
-            style={{ animationDelay: "800ms" }}
-          >
+          <div className="space-y-6">
             <div className="flex items-center gap-2">
-              <Info className="h-4 w-4" />
+              <Info className="h-4 w-4 text-primary" />
               <h2 className="text-lg font-semibold">Details</h2>
             </div>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="hover:scale-105 transition-transform duration-300">
-                <div className="text-muted-foreground">Token Standard</div>
-                <div>{nft.token_standard || 'ERC-721'}</div>
-              </div>
-              {nft.properties && nft.properties.length > 0 && (
-                <div className="col-span-2 space-y-2">
-                  <div className="text-lg font-semibold">Properties</div>
-                  <div className="grid grid-cols-2 gap-2">
-                    {nft.properties.map((prop, index) => (
-                      <div 
-                        key={index}
-                        className="p-2 rounded-lg bg-secondary/30 hover:scale-105 transition-transform duration-300"
-                      >
-                        <div className="text-xs text-muted-foreground">{prop.key}</div>
-                        <div className="font-medium">{prop.value}</div>
-                      </div>
-                    ))}
-                  </div>
+            <div className="grid grid-cols-2 gap-6">
+              <div className="p-4 rounded-lg bg-secondary/20 backdrop-blur-lg border border-secondary/30 hover:border-primary/30 transition-all duration-300 hover:scale-105">
+                <div className="flex items-center gap-2 mb-2">
+                  <Award className="h-4 w-4 text-primary" />
+                  <div className="text-sm text-muted-foreground">Token Standard</div>
                 </div>
-              )}
+                <div className="font-medium">{nft.token_standard || 'ERC-721'}</div>
+              </div>
+              <div className="p-4 rounded-lg bg-secondary/20 backdrop-blur-lg border border-secondary/30 hover:border-primary/30 transition-all duration-300 hover:scale-105">
+                <div className="flex items-center gap-2 mb-2">
+                  <Eye className="h-4 w-4 text-primary" />
+                  <div className="text-sm text-muted-foreground">Chain</div>
+                </div>
+                <div className="font-medium">Ethereum</div>
+              </div>
             </div>
+            {nft.properties && nft.properties.length > 0 && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <Gem className="h-4 w-4 text-primary" />
+                  <div className="text-lg font-semibold">Properties</div>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {nft.properties.map((prop, index) => (
+                    <div 
+                      key={index}
+                      className="p-4 rounded-lg bg-secondary/20 backdrop-blur-lg border border-secondary/30 hover:border-primary/30 transition-all duration-300 hover:scale-105"
+                    >
+                      <div className="text-sm text-muted-foreground mb-1">{prop.key}</div>
+                      <div className="font-medium">{prop.value}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
