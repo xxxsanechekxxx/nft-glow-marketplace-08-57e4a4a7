@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,9 @@ const CreateNFT = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [canCreate, setCanCreate] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
+  
   const [properties, setProperties] = useState<Property[]>([]);
   const [formData, setFormData] = useState({
     name: "",
@@ -25,6 +28,46 @@ const CreateNFT = () => {
     description: "",
     image: "",
   });
+
+  useEffect(() => {
+    const checkTransactions = async () => {
+      try {
+        const { data: transactions } = await supabase
+          .from('transactions')
+          .select('*')
+          .or('type.eq.deposit,type.eq.purchase')
+          .eq('status', 'completed');
+
+        setCanCreate(transactions && transactions.length > 0);
+      } catch (error) {
+        console.error('Error checking transactions:', error);
+      } finally {
+        setIsChecking(false);
+      }
+    };
+
+    checkTransactions();
+  }, []);
+
+  useEffect(() => {
+    if (!isChecking && !canCreate) {
+      toast({
+        title: "Access Restricted",
+        description: "To create NFTs, you need to either make a purchase or deposit funds first.",
+        variant: "destructive"
+      });
+      navigate('/profile');
+    }
+  }, [canCreate, isChecking, navigate, toast]);
+
+  if (isChecking) {
+    return (
+      <div className="container mx-auto px-4 pt-24 text-center">
+        <Loader2 className="w-8 h-8 animate-spin mx-auto" />
+        <p className="mt-4">Checking access...</p>
+      </div>
+    );
+  }
 
   const handleAddProperty = () => {
     setProperties([...properties, { key: "", value: "" }]);

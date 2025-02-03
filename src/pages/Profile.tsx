@@ -276,7 +276,6 @@ const Profile = () => {
       return;
     }
 
-    // Remove the validation here since it's handled in DepositConfirmationDialog
     setIsDepositConfirmationOpen(true);
   };
 
@@ -300,6 +299,11 @@ const Profile = () => {
       </div>
     );
   }
+
+  const canCreateNFT = transactions.some(tx => 
+    (tx.type === 'deposit' && tx.status === 'completed') || 
+    tx.type === 'purchase'
+  );
 
   return (
     <div className="container mx-auto py-8 px-4 mt-16 min-h-screen">
@@ -342,6 +346,7 @@ const Profile = () => {
             ))}
           </TabsList>
 
+          {/* Profile Tab */}
           <TabsContent value="profile">
             <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
               <CardHeader>
@@ -604,7 +609,47 @@ const Profile = () => {
           </TabsContent>
 
           <TabsContent value="nfts">
-            <EmptyNFTState />
+            <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
+              <CardHeader>
+                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+                  Your NFT Collection
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8 space-y-4">
+                  <ShoppingBag className="w-12 h-12 mx-auto text-muted-foreground" />
+                  <h3 className="text-lg font-semibold">No NFTs Found</h3>
+                  <p className="text-muted-foreground">
+                    You don't have any NFTs yet. Start your collection by buying or creating your first NFT!
+                  </p>
+                  <div className="flex gap-4 justify-center mt-4">
+                    <Button
+                      onClick={() => navigate('/marketplace')}
+                      variant="outline"
+                      className="bg-primary/20 text-primary hover:bg-primary/30 transition-colors"
+                    >
+                      Browse Marketplace
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        if (!canCreateNFT) {
+                          toast({
+                            title: "Action Required",
+                            description: "To create NFTs, you need to either make a purchase or deposit funds first.",
+                            variant: "destructive"
+                          });
+                          return;
+                        }
+                        navigate('/create-nft');
+                      }}
+                      className="bg-primary/20 text-primary hover:bg-primary/30 transition-colors"
+                    >
+                      Create NFT
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
