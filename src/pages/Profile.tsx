@@ -305,26 +305,6 @@ const Profile = () => {
     tx.type === 'purchase'
   );
 
-  // Example function to update balance
-  const updateBalance = async (newBalance: number) => {
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ balance: newBalance })
-        .eq('user_id', userData?.id);
-
-      if (error) throw error;
-
-      // Update local state
-      setUserData(prev => prev ? { ...prev, balance: newBalance.toString() } : null);
-      
-      showDelayedToast("Success", "Balance has been updated");
-    } catch (error) {
-      console.error("Error updating balance:", error);
-      showDelayedToast("Error", "Failed to update balance", "destructive");
-    }
-  };
-
   return (
     <div className="container mx-auto py-8 px-4 mt-16 min-h-screen">
       <div className="max-w-4xl mx-auto space-y-8">
