@@ -331,7 +331,7 @@ const Profile = () => {
 
         <Tabs defaultValue="profile" className="w-full">
           <TabsList className="grid w-full grid-cols-4 p-1 bg-background/50 backdrop-blur-sm rounded-xl">
-            {["profile", "settings", "wallet", "nfts"].map((tab) => (
+            {["profile", "settings", "wallet", "nft"].map((tab) => (
               <TabsTrigger
                 key={tab}
                 value={tab}
@@ -340,7 +340,7 @@ const Profile = () => {
                 {tab === "profile" && <User className="w-4 h-4" />}
                 {tab === "settings" && <Settings className="w-4 h-4" />}
                 {tab === "wallet" && <Wallet className="w-4 h-4" />}
-                {tab === "nfts" && <ShoppingBag className="w-4 h-4" />}
+                {tab === "nft" && <ShoppingBag className="w-4 h-4" />}
                 {tab}
               </TabsTrigger>
             ))}
@@ -608,7 +608,7 @@ const Profile = () => {
             </div>
           </TabsContent>
 
-          <TabsContent value="nfts">
+          <TabsContent value="nft">
             <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
               <CardHeader>
                 <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
@@ -616,38 +616,7 @@ const Profile = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-8 space-y-4">
-                  <ShoppingBag className="w-12 h-12 mx-auto text-muted-foreground" />
-                  <h3 className="text-lg font-semibold">No NFTs Found</h3>
-                  <p className="text-muted-foreground">
-                    You don't have any NFTs yet. Start your collection by buying or creating your first NFT!
-                  </p>
-                  <div className="flex gap-4 justify-center mt-4">
-                    <Button
-                      onClick={() => navigate('/marketplace')}
-                      variant="outline"
-                      className="bg-primary/20 text-primary hover:bg-primary/30 transition-colors"
-                    >
-                      Browse Marketplace
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        if (!canCreateNFT) {
-                          toast({
-                            title: "Action Required",
-                            description: "To create NFTs, you need to either make a purchase or deposit funds first.",
-                            variant: "destructive"
-                          });
-                          return;
-                        }
-                        navigate('/create-nft');
-                      }}
-                      className="bg-primary/20 text-primary hover:bg-primary/30 transition-colors"
-                    >
-                      Create NFT
-                    </Button>
-                  </div>
-                </div>
+                <EmptyNFTState />
               </CardContent>
             </Card>
           </TabsContent>
