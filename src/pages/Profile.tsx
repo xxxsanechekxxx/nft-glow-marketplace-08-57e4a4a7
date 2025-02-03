@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { User, Settings, Mail, Key, LogOut, Wallet, ArrowUpCircle, ArrowDownCircle, Globe, UserRound } from "lucide-react";
+import { User, Settings, Mail, Key, LogOut, Wallet, ArrowUpCircle, ArrowDownCircle, Globe, UserRound, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import WalletAddressModal from "@/components/WalletAddressModal";
 import {
@@ -29,6 +29,7 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 import DepositConfirmationDialog from "@/components/DepositConfirmationDialog";
 import FraudWarningDialog from "@/components/FraudWarningDialog";
+import { EmptyNFTState } from "@/components/EmptyNFTState";
 
 interface Transaction {
   id: string;
@@ -325,8 +326,8 @@ const Profile = () => {
         </div>
 
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 p-1 bg-background/50 backdrop-blur-sm rounded-xl">
-            {["profile", "settings", "wallet"].map((tab) => (
+          <TabsList className="grid w-full grid-cols-4 p-1 bg-background/50 backdrop-blur-sm rounded-xl">
+            {["profile", "settings", "wallet", "nfts"].map((tab) => (
               <TabsTrigger
                 key={tab}
                 value={tab}
@@ -335,6 +336,7 @@ const Profile = () => {
                 {tab === "profile" && <User className="w-4 h-4" />}
                 {tab === "settings" && <Settings className="w-4 h-4" />}
                 {tab === "wallet" && <Wallet className="w-4 h-4" />}
+                {tab === "nfts" && <ShoppingBag className="w-4 h-4" />}
                 {tab}
               </TabsTrigger>
             ))}
@@ -599,6 +601,10 @@ const Profile = () => {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          <TabsContent value="nfts">
+            <EmptyNFTState />
           </TabsContent>
         </Tabs>
       </div>
