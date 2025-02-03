@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { User, Settings, Mail, Key, LogOut, Wallet, ArrowUpCircle, ArrowDownCircle, Globe } from "lucide-react";
+import { User, Settings, Mail, Key, LogOut, Wallet, ArrowUpCircle, ArrowDownCircle, Globe, UserRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import WalletAddressModal from "@/components/WalletAddressModal";
 import {
@@ -301,85 +301,102 @@ const Profile = () => {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4 mt-16">
+    <div className="container mx-auto py-8 px-4 mt-16 min-h-screen">
       <div className="max-w-4xl mx-auto space-y-8">
-        <div className="flex items-center gap-6 p-8 bg-card rounded-lg border shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <Avatar className="w-24 h-24 border-2 border-primary/20">
-            <AvatarFallback>
-              <User className="w-12 h-12 text-muted-foreground" />
-            </AvatarFallback>
-          </Avatar>
-          <div className="space-y-3">
-            <h1 className="text-3xl font-bold text-foreground">@{userData?.login}</h1>
-            <div className="flex items-center gap-2 text-primary">
-              <Wallet className="w-5 h-5" />
-              <span className="text-lg font-semibold">{userData?.balance} ETH</span>
+        {/* Profile Header with Gradient */}
+        <div className="relative p-8 rounded-2xl overflow-hidden animate-fade-in">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-purple-500/10 to-primary/10 animate-gradient" />
+          <div className="relative flex items-center gap-6 z-10">
+            <Avatar className="w-24 h-24 border-4 border-primary/20 animate-float shadow-xl">
+              <AvatarFallback className="bg-gradient-to-br from-primary/80 to-purple-600">
+                <UserRound className="w-12 h-12 text-white" />
+              </AvatarFallback>
+            </Avatar>
+            <div className="space-y-3">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+                @{userData?.login}
+              </h1>
+              <div className="flex items-center gap-2 text-primary animate-pulse">
+                <Wallet className="w-5 h-5" />
+                <span className="text-lg font-semibold">{userData?.balance} ETH</span>
+              </div>
             </div>
           </div>
         </div>
 
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="profile" className="flex items-center gap-2">
-              <User className="w-4 h-4" />
-              Profile
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="flex items-center gap-2">
-              <Settings className="w-4 h-4" />
-              Settings
-            </TabsTrigger>
-            <TabsTrigger value="wallet" className="flex items-center gap-2">
-              <Wallet className="w-4 h-4" />
-              Wallet
-            </TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 p-1 bg-background/50 backdrop-blur-sm rounded-xl">
+            {["profile", "settings", "wallet"].map((tab) => (
+              <TabsTrigger
+                key={tab}
+                value={tab}
+                className="flex items-center gap-2 capitalize transition-all duration-300 data-[state=active]:bg-primary/20 data-[state=active]:text-primary"
+              >
+                {tab === "profile" && <User className="w-4 h-4" />}
+                {tab === "settings" && <Settings className="w-4 h-4" />}
+                {tab === "wallet" && <Wallet className="w-4 h-4" />}
+                {tab}
+              </TabsTrigger>
+            ))}
           </TabsList>
 
           <TabsContent value="profile">
-            <Card className="shadow-md hover:shadow-lg transition-shadow duration-300">
+            <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
               <CardHeader>
-                <CardTitle>Profile Information</CardTitle>
+                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+                  Profile Information
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium flex items-center gap-2">
+                  <div className="space-y-2 group">
+                    <label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
                       <Mail className="w-4 h-4" />
                       Email
                     </label>
-                    <Input value={userData?.email} readOnly className="bg-muted/50" />
+                    <Input
+                      value={userData?.email}
+                      readOnly
+                      className="bg-background/50 border-primary/10 group-hover:border-primary/30 transition-colors"
+                    />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium flex items-center gap-2">
+                  <div className="space-y-2 group">
+                    <label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
                       <Globe className="w-4 h-4" />
                       Country
                     </label>
-                    <Input value={userData?.country} readOnly className="bg-muted/50" />
+                    <Input
+                      value={userData?.country}
+                      readOnly
+                      className="bg-background/50 border-primary/10 group-hover:border-primary/30 transition-colors"
+                    />
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium flex items-center gap-2">
+                <div className="space-y-2 group">
+                  <label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
                     <Wallet className="w-4 h-4" />
                     Wallet Address
                   </label>
                   <div className="flex gap-4 items-start">
                     <div className="flex-grow flex gap-2 items-center">
-                      <Input 
-                        value={userData?.wallet_address || ''} 
-                        readOnly 
-                        className="bg-muted/50 font-mono text-sm flex-grow"
+                      <Input
+                        value={userData?.wallet_address || ''}
+                        readOnly
+                        className="bg-background/50 font-mono text-sm border-primary/10 group-hover:border-primary/30 transition-colors"
                         placeholder="No wallet address generated"
                       />
                       {userData?.wallet_address && (
                         <Input
                           value="ERC-20"
                           readOnly
-                          className="bg-muted/50 w-24 text-sm text-center"
+                          className="bg-background/50 w-24 text-sm text-center border-primary/10"
                         />
                       )}
                     </div>
                     {!userData?.wallet_address && (
                       <Button
                         onClick={() => setIsWalletModalOpen(true)}
+                        className="bg-primary/20 text-primary hover:bg-primary/30 transition-colors"
                       >
                         Generate Address
                       </Button>
@@ -390,10 +407,13 @@ const Profile = () => {
             </Card>
           </TabsContent>
 
+          {/* Settings Tab */}
           <TabsContent value="settings">
-            <Card>
+            <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
               <CardHeader>
-                <CardTitle>Change Password</CardTitle>
+                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+                  Change Password
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handlePasswordChange} className="space-y-4">
@@ -427,7 +447,9 @@ const Profile = () => {
                       required
                     />
                   </div>
-                  <Button type="submit">Update Password</Button>
+                  <Button type="submit" className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-colors">
+                    Update Password
+                  </Button>
                 </form>
               </CardContent>
             </Card>
@@ -444,11 +466,14 @@ const Profile = () => {
             </div>
           </TabsContent>
 
+          {/* Wallet Tab */}
           <TabsContent value="wallet">
             <div className="space-y-6">
-              <Card>
+              <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
                 <CardHeader>
-                  <CardTitle>Wallet Operations</CardTitle>
+                  <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+                    Wallet Operations
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex gap-4">
@@ -523,32 +548,49 @@ const Profile = () => {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
                 <CardHeader>
-                  <CardTitle>Transaction History</CardTitle>
+                  <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+                    Transaction History
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   {transactions.length > 0 ? (
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Date</TableHead>
-                          <TableHead>Type</TableHead>
-                          <TableHead>Amount (ETH)</TableHead>
-                          <TableHead>Status</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {transactions.map((transaction) => (
-                          <TableRow key={transaction.id}>
-                            <TableCell>{transaction.created_at}</TableCell>
-                            <TableCell className="capitalize">{transaction.type}</TableCell>
-                            <TableCell>{transaction.amount}</TableCell>
-                            <TableCell className="capitalize">{transaction.status}</TableCell>
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow className="hover:bg-primary/5">
+                            <TableHead>Date</TableHead>
+                            <TableHead>Type</TableHead>
+                            <TableHead>Amount (ETH)</TableHead>
+                            <TableHead>Status</TableHead>
                           </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
+                        </TableHeader>
+                        <TableBody>
+                          {transactions.map((transaction) => (
+                            <TableRow
+                              key={transaction.id}
+                              className="hover:bg-primary/5 transition-colors"
+                            >
+                              <TableCell>{transaction.created_at}</TableCell>
+                              <TableCell className="capitalize">{transaction.type}</TableCell>
+                              <TableCell>{transaction.amount}</TableCell>
+                              <TableCell>
+                                <span className={`px-2 py-1 rounded-full text-xs ${
+                                  transaction.status === 'completed'
+                                    ? 'bg-green-500/20 text-green-500'
+                                    : transaction.status === 'pending'
+                                    ? 'bg-yellow-500/20 text-yellow-500'
+                                    : 'bg-red-500/20 text-red-500'
+                                }`}>
+                                  {transaction.status}
+                                </span>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
                   ) : (
                     <div className="text-center py-8 text-muted-foreground">
                       No transactions found
