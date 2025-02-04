@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Loader2, Upload, Plus, Wand2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,6 +19,7 @@ const CreateNFT = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [canCreate, setCanCreate] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
+  const [userBalance, setUserBalance] = useState("0");
   
   const [properties, setProperties] = useState<Property[]>([]);
   const [formData, setFormData] = useState({
@@ -30,30 +31,44 @@ const CreateNFT = () => {
   });
 
   useEffect(() => {
-    const checkTransactions = async () => {
+    const checkAccess = async () => {
       try {
+        // Check transactions
         const { data: transactions } = await supabase
           .from('transactions')
           .select('*')
           .or('type.eq.deposit,type.eq.purchase')
           .eq('status', 'completed');
 
-        setCanCreate(transactions && transactions.length > 0);
+        // Get user balance
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('balance')
+          .single();
+
+        const balance = profile?.balance || "0";
+        setUserBalance(balance);
+
+        // Can create if has transactions or balance >= 1 ETH
+        setCanCreate(
+          (transactions && transactions.length > 0) || 
+          (parseFloat(balance) >= 1)
+        );
       } catch (error) {
-        console.error('Error checking transactions:', error);
+        console.error('Error checking access:', error);
       } finally {
         setIsChecking(false);
       }
     };
 
-    checkTransactions();
+    checkAccess();
   }, []);
 
   useEffect(() => {
     if (!isChecking && !canCreate) {
       toast({
         title: "Access Restricted",
-        description: "To create NFTs, you need to either make a purchase or deposit funds first.",
+        description: "To create NFTs, you need to either make a purchase, deposit funds first, or have at least 1 ETH in your balance.",
         variant: "destructive"
       });
       navigate('/profile');
@@ -186,7 +201,7 @@ const CreateNFT = () => {
             <Input
               id="price"
               type="number"
-              step="0.01"
+              step="0.00001"
               min="0"
               value={formData.price}
               onChange={(e) => setFormData(prev => ({ ...prev, price: e.target.value }))}

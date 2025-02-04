@@ -12,7 +12,9 @@ export const CountdownTimer = ({ endTime }: CountdownTimerProps) => {
 
   useEffect(() => {
     const calculateTimeLeft = () => {
-      const difference = new Date(endTime).getTime() - new Date().getTime();
+      const storedEndTime = localStorage.getItem('countdownEndTime');
+      const targetTime = storedEndTime || endTime;
+      const difference = new Date(targetTime).getTime() - new Date().getTime();
       
       if (difference > 0) {
         const minutes = Math.floor((difference / 1000 / 60) % 60);
@@ -25,39 +27,29 @@ export const CountdownTimer = ({ endTime }: CountdownTimerProps) => {
       }
     };
 
-    // Initial calculation
-    calculateTimeLeft();
-    
     // Store the end time in localStorage
     localStorage.setItem('countdownEndTime', endTime);
     
+    // Initial calculation
+    calculateTimeLeft();
+    
+    // Set up interval for updates
     const timer = setInterval(calculateTimeLeft, 1000);
+
+    // Handle visibility change
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        calculateTimeLeft();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
       clearInterval(timer);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [endTime]);
-
-  useEffect(() => {
-    // Check for stored end time when component mounts
-    const storedEndTime = localStorage.getItem('countdownEndTime');
-    if (storedEndTime) {
-      const now = new Date().getTime();
-      const endTimeDate = new Date(storedEndTime).getTime();
-      
-      if (endTimeDate > now) {
-        // If stored end time is in the future, use it
-        const difference = endTimeDate - now;
-        const minutes = Math.floor((difference / 1000 / 60) % 60);
-        const seconds = Math.floor((difference / 1000) % 60);
-        
-        setTimeLeft({
-          minutes,
-          seconds
-        });
-      }
-    }
-  }, []);
 
   return (
     <div className="grid grid-cols-2 gap-2 text-center animate-fade-in">
