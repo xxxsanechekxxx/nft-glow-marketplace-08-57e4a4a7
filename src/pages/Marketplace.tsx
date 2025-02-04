@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { NFTCard } from "@/components/NFTCard";
 import { useInView } from "react-intersection-observer";
-import { Loader2, Search, Sparkles, TrendingUp, Clock } from "lucide-react";
+import { Loader2, Search, Sparkles, TrendingUp, Clock, Filter } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
 import {
   Select,
   SelectContent,
@@ -23,67 +22,24 @@ interface NFT {
   creator: string;
 }
 
-const ITEMS_PER_PAGE = 5; // Reduced from 10 to 5 to minimize timeout risk
-
 const fetchNFTs = async () => {
-  console.log("Fetching NFTs...");
-  try {
-    const { data, error } = await supabase
-      .from('nfts')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(ITEMS_PER_PAGE);
+  const { data, error } = await supabase
+    .from('nfts')
+    .select('*')
+    .order('created_at', { ascending: false });
 
-    if (error) {
-      console.error('Supabase error:', error);
-      if (error.code === '57014') {
-        throw new Error('Request timed out. Please try again in a few moments.');
-      }
-      throw error;
-    }
-
-    if (!data) {
-      throw new Error('No data received from the server');
-    }
-
-    console.log("Fetched NFTs:", data);
-    return data as NFT[];
-  } catch (error) {
-    console.error('Error in fetchNFTs:', error);
-    if (error instanceof Error) {
-      if (error.message === 'Failed to fetch') {
-        throw new Error('Unable to connect to the server. Please check your internet connection and try again.');
-      }
-      throw error;
-    }
-    throw new Error('An unexpected error occurred');
-  }
+  if (error) throw error;
+  return data as NFT[];
 };
 
 const Marketplace = () => {
   const { ref, inView } = useInView();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("newest");
-  const { toast } = useToast();
-  
-  const { data: nfts, isLoading, error, refetch } = useQuery({
+  const { data: nfts, isLoading, error } = useQuery({
     queryKey: ['nfts'],
     queryFn: fetchNFTs,
-    retry: 1, // Reduced retries since we're handling timeouts explicitly
-    retryDelay: 2000,
-    staleTime: 30000, // Cache results for 30 seconds
   });
-
-  useEffect(() => {
-    if (error) {
-      console.error('Query error:', error);
-      toast({
-        title: "Error loading NFTs",
-        description: error instanceof Error ? error.message : "Please try again later.",
-        variant: "destructive",
-      });
-    }
-  }, [error, toast]);
 
   const filteredNFTs = nfts?.filter(nft => 
     nft.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -97,19 +53,11 @@ const Marketplace = () => {
   ];
 
   if (error) {
+    console.error('Error fetching NFTs:', error);
     return (
       <div className="container mx-auto px-4 pt-24">
-        <div className="text-center space-y-4">
-          <p className="text-xl text-red-500">
-            {error instanceof Error ? error.message : "Error loading NFTs"}
-          </p>
-          <Button 
-            onClick={() => refetch()}
-            variant="outline"
-            className="mt-4"
-          >
-            Try Again
-          </Button>
+        <div className="text-center text-red-500">
+          Error loading NFTs. Please try again later.
         </div>
       </div>
     );
