@@ -23,16 +23,22 @@ interface NFT {
   creator: string;
 }
 
+const ITEMS_PER_PAGE = 10;
+
 const fetchNFTs = async () => {
   console.log("Fetching NFTs...");
   try {
     const { data, error } = await supabase
       .from('nfts')
       .select('*')
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .limit(ITEMS_PER_PAGE);
 
     if (error) {
       console.error('Supabase error:', error);
+      if (error.code === '57014') {
+        throw new Error('Request timed out. Please try again.');
+      }
       throw error;
     }
 
@@ -50,23 +56,19 @@ const Marketplace = () => {
   const [sortBy, setSortBy] = useState("newest");
   const { toast } = useToast();
   
-  const { data: nfts, isLoading, error } = useQuery({
+  const { data: nfts, isLoading, error, refetch } = useQuery({
     queryKey: ['nfts'],
     queryFn: fetchNFTs,
-    meta: {
-      errorMessage: "Failed to load NFTs"
-    },
-    retry: 3,
-    retryDelay: 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 
-  // Handle errors with useEffect
   useEffect(() => {
     if (error) {
       console.error('Query error:', error);
       toast({
         title: "Error loading NFTs",
-        description: "Please try again later or contact support if the problem persists.",
+        description: error instanceof Error ? error.message : "Please try again later.",
         variant: "destructive",
       });
     }
@@ -84,18 +86,18 @@ const Marketplace = () => {
   ];
 
   if (error) {
-    console.error('Error fetching NFTs:', error);
     return (
       <div className="container mx-auto px-4 pt-24">
         <div className="text-center space-y-4">
           <p className="text-xl text-red-500">
-            Error loading NFTs. Please try again later.
+            {error instanceof Error ? error.message : "Error loading NFTs"}
           </p>
           <Button 
-            onClick={() => window.location.reload()}
+            onClick={() => refetch()}
             variant="outline"
+            className="mt-4"
           >
-            Retry
+            Try Again
           </Button>
         </div>
       </div>

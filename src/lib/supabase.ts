@@ -16,4 +16,10 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       'Content-Type': 'application/json',
     },
   },
+  realtime: {
+    timeout: 20000
+  },
+  queries: {
+    timeout: 30000
+  }
 });
