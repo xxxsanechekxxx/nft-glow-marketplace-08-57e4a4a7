@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { NFTCard } from "@/components/NFTCard";
 import { useInView } from "react-intersection-observer";
-import { Loader2, Search, Sparkles, TrendingUp, Clock, Filter } from "lucide-react";
+import { Loader2, Search, Sparkles, TrendingUp, Clock } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
@@ -53,15 +53,24 @@ const Marketplace = () => {
   const { data: nfts, isLoading, error } = useQuery({
     queryKey: ['nfts'],
     queryFn: fetchNFTs,
-    onError: (error) => {
+    meta: {
+      errorMessage: "Failed to load NFTs"
+    },
+    retry: 3,
+    retryDelay: 1000,
+  });
+
+  // Handle errors with useEffect
+  useEffect(() => {
+    if (error) {
       console.error('Query error:', error);
       toast({
         title: "Error loading NFTs",
         description: "Please try again later or contact support if the problem persists.",
         variant: "destructive",
       });
-    },
-  });
+    }
+  }, [error, toast]);
 
   const filteredNFTs = nfts?.filter(nft => 
     nft.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
