@@ -33,6 +33,8 @@ const CreateNFT = () => {
   useEffect(() => {
     const checkAccess = async () => {
       try {
+        console.log("Checking access conditions...");
+        
         // Check transactions
         const { data: transactions } = await supabase
           .from('transactions')
@@ -47,13 +49,17 @@ const CreateNFT = () => {
           .single();
 
         const balance = profile?.balance || "0";
+        console.log("User balance:", balance, "ETH");
         setUserBalance(balance);
 
         // Can create if has transactions or balance >= 1 ETH
-        setCanCreate(
-          (transactions && transactions.length > 0) || 
-          (parseFloat(balance) >= 1)
-        );
+        const hasValidBalance = parseFloat(balance) >= 1;
+        const hasValidTransactions = transactions && transactions.length > 0;
+        
+        console.log("Has valid balance:", hasValidBalance);
+        console.log("Has valid transactions:", hasValidTransactions);
+        
+        setCanCreate(hasValidBalance || hasValidTransactions);
       } catch (error) {
         console.error('Error checking access:', error);
       } finally {

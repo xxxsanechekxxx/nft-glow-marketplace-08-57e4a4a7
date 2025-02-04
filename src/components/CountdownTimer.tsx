@@ -27,8 +27,10 @@ export const CountdownTimer = ({ endTime }: CountdownTimerProps) => {
       }
     };
 
-    // Store the end time in localStorage
-    localStorage.setItem('countdownEndTime', endTime);
+    // Store the end time in localStorage when component mounts
+    if (!localStorage.getItem('countdownEndTime')) {
+      localStorage.setItem('countdownEndTime', endTime);
+    }
     
     // Initial calculation
     calculateTimeLeft();
