@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { AuthModal } from "./AuthModal";
+import AuthModal from "./AuthModal";
 import { Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -68,7 +68,7 @@ export const Header = () => {
         </div>
       )}
 
-      <AuthModal trigger={<></>} />
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
     </header>
   );
 };
