@@ -7,16 +7,15 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
-  },
-  db: {
-    schema: 'public'
+    detectSessionInUrl: true
   },
   global: {
     headers: {
       'Content-Type': 'application/json',
+      'Accept': 'application/json',
     },
   },
-  realtime: {
-    timeout: 20000
+  db: {
+    schema: 'public'
   }
 });

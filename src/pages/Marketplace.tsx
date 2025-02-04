@@ -42,11 +42,21 @@ const fetchNFTs = async () => {
       throw error;
     }
 
+    if (!data) {
+      throw new Error('No data received from the server');
+    }
+
     console.log("Fetched NFTs:", data);
     return data as NFT[];
   } catch (error) {
     console.error('Error in fetchNFTs:', error);
-    throw error;
+    if (error instanceof Error) {
+      if (error.message === 'Failed to fetch') {
+        throw new Error('Unable to connect to the server. Please check your internet connection and try again.');
+      }
+      throw error;
+    }
+    throw new Error('An unexpected error occurred');
   }
 };
 
