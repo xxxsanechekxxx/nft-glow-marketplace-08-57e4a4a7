@@ -12,10 +12,7 @@ export const CountdownTimer = ({ endTime }: CountdownTimerProps) => {
 
   useEffect(() => {
     const calculateTimeLeft = () => {
-      const storedEndTime = localStorage.getItem('countdownEndTime');
-      const targetTime = storedEndTime ? new Date(storedEndTime).getTime() : new Date(endTime).getTime();
-      const now = new Date().getTime();
-      const difference = targetTime - now;
+      const difference = new Date(endTime).getTime() - new Date().getTime();
       
       if (difference > 0) {
         const minutes = Math.floor((difference / 1000 / 60) % 60);
@@ -25,31 +22,42 @@ export const CountdownTimer = ({ endTime }: CountdownTimerProps) => {
           minutes,
           seconds
         });
-
-        // Store end time in localStorage if not already stored
-        if (!storedEndTime) {
-          localStorage.setItem('countdownEndTime', endTime);
-        }
-      } else {
-        // Clear localStorage when timer expires
-        localStorage.removeItem('countdownEndTime');
       }
     };
 
     // Initial calculation
     calculateTimeLeft();
     
-    // Update timer every second
+    // Store the end time in localStorage
+    localStorage.setItem('countdownEndTime', endTime);
+    
     const timer = setInterval(calculateTimeLeft, 1000);
-
-    // Use Page Visibility API to ensure timer continues in background
-    document.addEventListener('visibilitychange', calculateTimeLeft);
 
     return () => {
       clearInterval(timer);
-      document.removeEventListener('visibilitychange', calculateTimeLeft);
     };
   }, [endTime]);
+
+  useEffect(() => {
+    // Check for stored end time when component mounts
+    const storedEndTime = localStorage.getItem('countdownEndTime');
+    if (storedEndTime) {
+      const now = new Date().getTime();
+      const endTimeDate = new Date(storedEndTime).getTime();
+      
+      if (endTimeDate > now) {
+        // If stored end time is in the future, use it
+        const difference = endTimeDate - now;
+        const minutes = Math.floor((difference / 1000 / 60) % 60);
+        const seconds = Math.floor((difference / 1000) % 60);
+        
+        setTimeLeft({
+          minutes,
+          seconds
+        });
+      }
+    }
+  }, []);
 
   return (
     <div className="grid grid-cols-2 gap-2 text-center animate-fade-in">

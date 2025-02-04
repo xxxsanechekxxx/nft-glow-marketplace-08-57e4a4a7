@@ -1,74 +1,123 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Link, useLocation } from "react-router-dom";
+import { Menu, X, User } from "lucide-react";
+import { AuthModal } from './AuthModal';
 import { useAuth } from "@/hooks/useAuth";
-import AuthModal from "./AuthModal";
-import { Menu } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const location = useLocation();
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
-              <span className="text-primary font-bold">P</span>
-            </div>
-            <span className="font-bold text-xl">PURE</span>
+            <div className="w-8 h-8 rounded-full bg-primary animate-pulse"></div>
+            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-400">
+              PureNFT
+            </span>
           </Link>
 
-          <nav className="hidden md:flex space-x-4">
-            <Link to="/marketplace" className={cn("text-lg", { "text-primary": location.pathname === "/marketplace" })}>
+          <nav className="hidden md:flex items-center space-x-8">
+            <Link 
+              to="/" 
+              className={`text-sm hover:text-primary transition-colors relative ${
+                isActive('/') ? 'text-primary' : ''
+              }`}
+            >
+              Home
+              {isActive('/') && (
+                <div className="absolute bottom-[-20px] left-0 w-full h-[2px] bg-primary" />
+              )}
+            </Link>
+            <Link 
+              to="/marketplace" 
+              className={`text-sm hover:text-primary transition-colors relative ${
+                isActive('/marketplace') ? 'text-primary' : ''
+              }`}
+            >
               Marketplace
+              {isActive('/marketplace') && (
+                <div className="absolute bottom-[-20px] left-0 w-full h-[2px] bg-primary" />
+              )}
             </Link>
-            <Link to="/create-nft" className={cn("text-lg", { "text-primary": location.pathname === "/create-nft" })}>
-              Create NFT
-            </Link>
-            <Link to="/profile" className={cn("text-lg", { "text-primary": location.pathname === "/profile" })}>
-              Profile
-            </Link>
+            {user ? (
+              <Link to="/profile">
+                <Button variant="outline" className="flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  {user.user_metadata.login || 'Profile'}
+                </Button>
+              </Link>
+            ) : (
+              <AuthModal 
+                trigger={
+                  <Button variant="outline" className="flex items-center gap-2">
+                    <User className="w-4 h-4" />
+                    Login
+                  </Button>
+                }
+              />
+            )}
           </nav>
 
-          <div className="flex items-center space-x-4">
-            {user ? (
-              <>
-                <Button onClick={signOut}>Logout</Button>
-              </>
-            ) : (
-              <Button onClick={() => setIsAuthModalOpen(true)}>Login</Button>
-            )}
-            <button onClick={toggleMenu} className="md:hidden">
-              <Menu className="w-6 h-6" />
-            </button>
-          </div>
+          <button
+            className="md:hidden"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? <X /> : <Menu />}
+          </button>
         </div>
       </div>
 
+      {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="absolute top-16 left-0 right-0 bg-background shadow-lg">
-          <nav className="flex flex-col space-y-2 p-4">
-            <Link to="/marketplace" className="text-lg" onClick={() => setIsMenuOpen(false)}>
-              Marketplace
-            </Link>
-            <Link to="/create-nft" className="text-lg" onClick={() => setIsMenuOpen(false)}>
-              Create NFT
-            </Link>
-            <Link to="/profile" className="text-lg" onClick={() => setIsMenuOpen(false)}>
-              Profile
-            </Link>
-          </nav>
+        <div className="md:hidden absolute top-16 left-0 right-0 bg-background border-b animate-fade-in">
+          <div className="container mx-auto px-4 py-4">
+            <nav className="flex flex-col space-y-4">
+              <Link 
+                to="/" 
+                className={`text-sm hover:text-primary transition-colors ${
+                  isActive('/') ? 'text-primary' : ''
+                }`}
+              >
+                Home
+              </Link>
+              <Link 
+                to="/marketplace" 
+                className={`text-sm hover:text-primary transition-colors ${
+                  isActive('/marketplace') ? 'text-primary' : ''
+                }`}
+              >
+                Marketplace
+              </Link>
+              {user ? (
+                <Link to="/profile">
+                  <Button variant="outline" className="w-full flex items-center gap-2 justify-center">
+                    <User className="w-4 h-4" />
+                    {user.user_metadata.login || 'Profile'}
+                  </Button>
+                </Link>
+              ) : (
+                <AuthModal 
+                  trigger={
+                    <Button variant="outline" className="w-full flex items-center gap-2 justify-center">
+                      <User className="w-4 h-4" />
+                      Login
+                    </Button>
+                  }
+                />
+              )}
+            </nav>
+          </div>
         </div>
       )}
-
-      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
     </header>
   );
 };

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { Loader2, Upload, Plus, Wand2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { Textarea } from "@/components/ui/textarea";
@@ -30,33 +30,23 @@ const CreateNFT = () => {
   });
 
   useEffect(() => {
-    const checkAccess = async () => {
+    const checkTransactions = async () => {
       try {
-        // Check transactions
         const { data: transactions } = await supabase
           .from('transactions')
           .select('*')
           .or('type.eq.deposit,type.eq.purchase')
           .eq('status', 'completed');
 
-        // Check balance
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('balance')
-          .single();
-
-        const hasBalance = profile?.balance >= 1;
-        const hasTransactions = transactions && transactions.length > 0;
-
-        setCanCreate(hasBalance || hasTransactions);
+        setCanCreate(transactions && transactions.length > 0);
       } catch (error) {
-        console.error('Error checking access:', error);
+        console.error('Error checking transactions:', error);
       } finally {
         setIsChecking(false);
       }
     };
 
-    checkAccess();
+    checkTransactions();
   }, []);
 
   useEffect(() => {
@@ -196,8 +186,8 @@ const CreateNFT = () => {
             <Input
               id="price"
               type="number"
-              step="0.00001"
-              min="0.00001"
+              step="0.01"
+              min="0"
               value={formData.price}
               onChange={(e) => setFormData(prev => ({ ...prev, price: e.target.value }))}
               placeholder="Enter price in ETH"
