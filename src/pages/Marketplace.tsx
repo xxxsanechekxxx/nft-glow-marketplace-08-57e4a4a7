@@ -23,7 +23,7 @@ interface NFT {
   creator: string;
 }
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 5; // Reduced from 10 to 5 to minimize timeout risk
 
 const fetchNFTs = async () => {
   console.log("Fetching NFTs...");
@@ -37,7 +37,7 @@ const fetchNFTs = async () => {
     if (error) {
       console.error('Supabase error:', error);
       if (error.code === '57014') {
-        throw new Error('Request timed out. Please try again.');
+        throw new Error('Request timed out. Please try again in a few moments.');
       }
       throw error;
     }
@@ -59,8 +59,9 @@ const Marketplace = () => {
   const { data: nfts, isLoading, error, refetch } = useQuery({
     queryKey: ['nfts'],
     queryFn: fetchNFTs,
-    retry: 2,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
+    retry: 1, // Reduced retries since we're handling timeouts explicitly
+    retryDelay: 2000,
+    staleTime: 30000, // Cache results for 30 seconds
   });
 
   useEffect(() => {

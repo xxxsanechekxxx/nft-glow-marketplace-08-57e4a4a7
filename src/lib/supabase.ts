@@ -18,8 +18,5 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   },
   realtime: {
     timeout: 20000
-  },
-  queries: {
-    timeout: 30000
   }
 });
