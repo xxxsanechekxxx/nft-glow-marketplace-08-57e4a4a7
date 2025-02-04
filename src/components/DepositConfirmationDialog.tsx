@@ -77,7 +77,10 @@ const DepositConfirmationDialog = ({
     setStep('hash');
   };
 
-  const handleClose = () => {
+  const handleClose = (shouldResetTimer: boolean = false) => {
+    if (shouldResetTimer) {
+      localStorage.removeItem('countdownEndTime');
+    }
     setStep('amount');
     setTransactionHash("");
     setDepositAmount("");
@@ -89,7 +92,7 @@ const DepositConfirmationDialog = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
+    <Dialog open={isOpen} onOpenChange={() => handleClose(false)}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Deposit Process</DialogTitle>
@@ -184,7 +187,7 @@ const DepositConfirmationDialog = ({
                   <Button 
                     variant="outline"
                     className="flex-1"
-                    onClick={handleClose}
+                    onClick={() => handleClose(true)}
                   >
                     Cancel transaction
                   </Button>
