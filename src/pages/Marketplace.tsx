@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { NFTCard } from "@/components/NFTCard";
 import { useInView } from "react-intersection-observer";
-import { Loader2, Search, Sparkles, TrendingUp, Clock, Filter } from "lucide-react";
+import { Loader2, Search, Sparkles, TrendingUp, Clock } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Select,
   SelectContent,
@@ -23,23 +24,53 @@ interface NFT {
 }
 
 const fetchNFTs = async () => {
-  const { data, error } = await supabase
-    .from('nfts')
-    .select('*')
-    .order('created_at', { ascending: false });
+  console.log("Fetching NFTs...");
+  try {
+    const { data, error } = await supabase
+      .from('nfts')
+      .select('*')
+      .order('created_at', { ascending: false });
 
-  if (error) throw error;
-  return data as NFT[];
+    if (error) {
+      console.error('Supabase error:', error);
+      throw error;
+    }
+
+    console.log("Fetched NFTs:", data);
+    return data as NFT[];
+  } catch (error) {
+    console.error('Error in fetchNFTs:', error);
+    throw error;
+  }
 };
 
 const Marketplace = () => {
   const { ref, inView } = useInView();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("newest");
+  const { toast } = useToast();
+  
   const { data: nfts, isLoading, error } = useQuery({
     queryKey: ['nfts'],
     queryFn: fetchNFTs,
+    meta: {
+      errorMessage: "Failed to load NFTs"
+    },
+    retry: 3,
+    retryDelay: 1000,
   });
+
+  // Handle errors with useEffect
+  useEffect(() => {
+    if (error) {
+      console.error('Query error:', error);
+      toast({
+        title: "Error loading NFTs",
+        description: "Please try again later or contact support if the problem persists.",
+        variant: "destructive",
+      });
+    }
+  }, [error, toast]);
 
   const filteredNFTs = nfts?.filter(nft => 
     nft.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -56,8 +87,16 @@ const Marketplace = () => {
     console.error('Error fetching NFTs:', error);
     return (
       <div className="container mx-auto px-4 pt-24">
-        <div className="text-center text-red-500">
-          Error loading NFTs. Please try again later.
+        <div className="text-center space-y-4">
+          <p className="text-xl text-red-500">
+            Error loading NFTs. Please try again later.
+          </p>
+          <Button 
+            onClick={() => window.location.reload()}
+            variant="outline"
+          >
+            Retry
+          </Button>
         </div>
       </div>
     );
