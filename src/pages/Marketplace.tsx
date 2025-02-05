@@ -1,9 +1,6 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { NFTCard } from "@/components/NFTCard";
-import { useInView } from "react-intersection-observer";
 import { Loader2, Search, Sparkles, TrendingUp, Clock } from "lucide-react";
-import { supabase } from "@/lib/supabase";
-import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,13 +11,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { fetchNFTs } from "@/data/nfts";
+import { useQuery } from "@tanstack/react-query";
 
 const Marketplace = () => {
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("newest");
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['nfts', page],
     queryFn: () => fetchNFTs(page),
     staleTime: 30000,
@@ -41,6 +39,11 @@ const Marketplace = () => {
   const loadMore = () => {
     setPage(prev => prev + 1);
   };
+
+  // Reset page when search query changes
+  useEffect(() => {
+    setPage(1);
+  }, [searchQuery]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background/50">
@@ -102,10 +105,15 @@ const Marketplace = () => {
           </div>
         </div>
 
-        {isLoading ? (
+        {isLoading && page === 1 ? (
           <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
             <Loader2 className="h-12 w-12 animate-spin text-primary" />
             <p className="text-muted-foreground animate-pulse">Loading amazing NFTs...</p>
+          </div>
+        ) : error ? (
+          <div className="text-center py-16 space-y-4">
+            <p className="text-2xl font-semibold text-destructive">Error loading NFTs</p>
+            <Button onClick={() => refetch()}>Try Again</Button>
           </div>
         ) : (
           <>
