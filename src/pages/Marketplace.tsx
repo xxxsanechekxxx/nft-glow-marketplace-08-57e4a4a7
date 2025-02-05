@@ -20,11 +20,11 @@ const Marketplace = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("newest");
 
-  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['nfts', page],
     queryFn: () => fetchNFTs(page),
-    keepPreviousData: true,
-    staleTime: 30000, // Кэшируем данные на 30 секунд
+    staleTime: 30000,
+    placeholderData: (previousData) => previousData,
   });
 
   const filteredNFTs = data?.nfts?.filter(nft => 
@@ -39,9 +39,7 @@ const Marketplace = () => {
   ];
 
   const loadMore = () => {
-    if (!isFetchingNextPage) {
-      setPage(prev => prev + 1);
-    }
+    setPage(prev => prev + 1);
   };
 
   return (
@@ -125,14 +123,14 @@ const Marketplace = () => {
               ))}
             </div>
 
-            {hasNextPage && (
+            {data?.hasMore && (
               <div className="flex justify-center mt-12">
                 <Button
                   onClick={loadMore}
-                  disabled={isFetchingNextPage}
+                  disabled={isLoading}
                   className="px-8"
                 >
-                  {isFetchingNextPage ? (
+                  {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Loading...
