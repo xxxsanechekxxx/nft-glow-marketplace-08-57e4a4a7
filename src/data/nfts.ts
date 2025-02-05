@@ -241,7 +241,13 @@ export const NFT_DATA = [
   },
 ];
 
-export const fetchNFTs = (page: number, limit: number = 8) => {
+export interface NFTsResponse {
+  nfts: typeof NFT_DATA;
+  hasMore: boolean;
+  total: number;
+}
+
+export const fetchNFTs = (page: number, limit: number = 8): NFTsResponse => {
   const start = (page - 1) * limit;
   const end = start + limit;
   const hasMore = end < NFT_DATA.length;

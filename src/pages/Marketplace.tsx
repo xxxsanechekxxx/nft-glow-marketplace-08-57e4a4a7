@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { NFTCard } from "@/components/NFTCard";
 import { useInView } from "react-intersection-observer";
-import { Loader2, Search, Sparkles, TrendingUp, Clock, Filter } from "lucide-react";
+import { Loader2, Search, Sparkles, TrendingUp, Clock } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
@@ -13,55 +13,36 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-interface NFT {
-  id: string;
-  name: string;
-  image: string;
-  price: string;
-  creator: string;
-}
-
-const fetchNFTs = async () => {
-  const { data, error } = await supabase
-    .from('nfts')
-    .select('*')
-    .order('created_at', { ascending: false });
-
-  if (error) throw error;
-  return data as NFT[];
-};
+import { fetchNFTs } from "@/data/nfts";
 
 const Marketplace = () => {
-  const { ref, inView } = useInView();
+  const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("newest");
-  const { data: nfts, isLoading, error } = useQuery({
-    queryKey: ['nfts'],
-    queryFn: fetchNFTs,
+
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useQuery({
+    queryKey: ['nfts', page],
+    queryFn: () => fetchNFTs(page),
+    keepPreviousData: true,
+    staleTime: 30000, // Кэшируем данные на 30 секунд
   });
 
-  const filteredNFTs = nfts?.filter(nft => 
+  const filteredNFTs = data?.nfts?.filter(nft => 
     nft.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     nft.creator.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const stats = [
-    { label: "Total NFTs", value: nfts?.length || 0, icon: Sparkles },
+    { label: "Total NFTs", value: data?.total || 0, icon: Sparkles },
     { label: "Trending", value: "14 Sales", icon: TrendingUp },
     { label: "Latest Drop", value: "2h ago", icon: Clock },
   ];
 
-  if (error) {
-    console.error('Error fetching NFTs:', error);
-    return (
-      <div className="container mx-auto px-4 pt-24">
-        <div className="text-center text-red-500">
-          Error loading NFTs. Please try again later.
-        </div>
-      </div>
-    );
-  }
+  const loadMore = () => {
+    if (!isFetchingNextPage) {
+      setPage(prev => prev + 1);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background/50">
@@ -76,7 +57,6 @@ const Marketplace = () => {
             </p>
           </div>
 
-          {/* Stats Section */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {stats.map((stat, index) => (
               <div
@@ -97,7 +77,6 @@ const Marketplace = () => {
             ))}
           </div>
           
-          {/* Search and Filter Section */}
           <div className="flex flex-col md:flex-row gap-4 max-w-4xl mx-auto">
             <div className="flex-1 relative group">
               <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
@@ -131,19 +110,40 @@ const Marketplace = () => {
             <p className="text-muted-foreground animate-pulse">Loading amazing NFTs...</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {filteredNFTs?.map((nft, index) => (
-              <div
-                key={nft.id}
-                className="opacity-0 animate-[fadeIn_1.2s_ease-out_forwards] hover:translate-y-[-4px] transition-transform duration-300"
-                style={{
-                  animationDelay: `${index * 0.15}s`,
-                }}
-              >
-                <NFTCard {...nft} />
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {filteredNFTs?.map((nft, index) => (
+                <div
+                  key={nft.id}
+                  className="opacity-0 animate-[fadeIn_1.2s_ease-out_forwards] hover:translate-y-[-4px] transition-transform duration-300"
+                  style={{
+                    animationDelay: `${index * 0.15}s`,
+                  }}
+                >
+                  <NFTCard {...nft} />
+                </div>
+              ))}
+            </div>
+
+            {hasNextPage && (
+              <div className="flex justify-center mt-12">
+                <Button
+                  onClick={loadMore}
+                  disabled={isFetchingNextPage}
+                  className="px-8"
+                >
+                  {isFetchingNextPage ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Loading...
+                    </>
+                  ) : (
+                    'Show More'
+                  )}
+                </Button>
               </div>
-            ))}
-          </div>
+            )}
+          </>
         )}
 
         {filteredNFTs?.length === 0 && !isLoading && (
@@ -152,8 +152,6 @@ const Marketplace = () => {
             <p className="text-muted-foreground/60">Try adjusting your search criteria</p>
           </div>
         )}
-
-        <div ref={ref} className="w-full flex justify-center py-8" />
       </div>
     </div>
   );
