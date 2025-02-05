@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
 import { Coins } from "lucide-react";
+import React from "react";
 
 interface NFTCardProps {
   id: string;
@@ -12,7 +12,6 @@ interface NFTCardProps {
 }
 
 export const NFTCard = ({ id, name, image, price, creator }: NFTCardProps) => {
-  const { toast } = useToast();
   const navigate = useNavigate();
 
   const handlePurchase = (e: React.MouseEvent) => {

@@ -57,12 +57,12 @@ const Marketplace = () => {
     if (inView && filteredNFTs && displayLimit < filteredNFTs.length) {
       setDisplayLimit(prev => prev + 8);
     }
-  }, [inView, filteredNFTs]);
+  }, [inView, filteredNFTs, displayLimit]);
 
   const stats = [
-    { label: "Total NFTs", value: nfts?.length || 0, icon: Sparkles },
-    { label: "Trending", value: "14 Sales", icon: TrendingUp },
-    { label: "Latest Drop", value: "2h ago", icon: Clock },
+    { label: "Total NFTs", value: "1116891", icon: Sparkles },
+    { label: "Trending", value: "331951 Sales", icon: TrendingUp },
+    { label: "Latest Drop", value: "~2m ago", icon: Clock },
   ];
 
   if (error) {

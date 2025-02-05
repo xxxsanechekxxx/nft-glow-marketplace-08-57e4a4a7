@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -93,12 +93,12 @@ const Profile = () => {
     const fetchUserData = async () => {
       try {
         setIsLoading(true);
-        console.log("Fetching user data...");
+        
         
         const { data: { user: currentUser }, error: authError } = await supabase.auth.getUser();
         
         if (authError) {
-          console.error("Auth error:", authError);
+          
           throw authError;
         }
 
@@ -107,7 +107,7 @@ const Profile = () => {
           return;
         }
 
-        console.log("Current user:", currentUser);
+        
 
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
@@ -116,7 +116,7 @@ const Profile = () => {
           .single();
 
         if (profileError) {
-          console.error("Profile error:", profileError);
+          
           throw profileError;
         }
 
@@ -255,7 +255,6 @@ const Profile = () => {
       
       setWithdrawAmount("");
     } catch (error) {
-      console.error('Error processing withdrawal:', error);
       showDelayedToast(
         "Error",
         "Failed to process withdrawal. Please try again.",
@@ -279,7 +278,7 @@ const Profile = () => {
     setIsDepositConfirmationOpen(true);
   };
 
-  const handleDepositConfirm = (hash: string) => {
+  const handleDepositConfirm = () => {
     setIsDepositConfirmationOpen(false);
     setIsFraudWarningOpen(true);
     setDepositAmount("");
@@ -299,11 +298,6 @@ const Profile = () => {
       </div>
     );
   }
-
-  const canCreateNFT = transactions.some(tx => 
-    (tx.type === 'deposit' && tx.status === 'completed') || 
-    tx.type === 'purchase'
-  );
 
   return (
     <div className="container mx-auto py-8 px-4 mt-16 min-h-screen">
