@@ -5,8 +5,6 @@ import { Loader2, Search, Sparkles, TrendingUp, Clock } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
 import {
   Select,
   SelectContent,
@@ -24,58 +22,42 @@ interface NFT {
 }
 
 const fetchNFTs = async () => {
-  console.log("Fetching NFTs...");
-  try {
-    const { data, error } = await supabase
-      .from('nfts')
-      .select('*')
-      .order('created_at', { ascending: false });
+  const { data, error } = await supabase
+    .from('nfts')
+    .select('*')
+    .order('created_at', { ascending: false });
 
-    if (error) {
-      console.error('Supabase error:', error);
-      throw error;
-    }
-
-    console.log("Fetched NFTs:", data);
-    return data as NFT[];
-  } catch (error) {
-    console.error('Error in fetchNFTs:', error);
-    throw error;
-  }
+  if (error) throw error;
+  return data as NFT[];
 };
 
 const Marketplace = () => {
   const { ref, inView } = useInView();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("newest");
-  const { toast } = useToast();
-  
+  const [displayLimit, setDisplayLimit] = useState(8);
+
   const { data: nfts, isLoading, error } = useQuery({
     queryKey: ['nfts'],
     queryFn: fetchNFTs,
-    meta: {
-      errorMessage: "Failed to load NFTs"
-    },
-    retry: 3,
-    retryDelay: 1000,
+    staleTime: 60000,
+    retry: 1,
+    refetchOnWindowFocus: false,
+    gcTime: 300000, // Changed from cacheTime to gcTime
   });
-
-  // Handle errors with useEffect
-  useEffect(() => {
-    if (error) {
-      console.error('Query error:', error);
-      toast({
-        title: "Error loading NFTs",
-        description: "Please try again later or contact support if the problem persists.",
-        variant: "destructive",
-      });
-    }
-  }, [error, toast]);
 
   const filteredNFTs = nfts?.filter(nft => 
     nft.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     nft.creator.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const displayedNFTs = filteredNFTs?.slice(0, displayLimit);
+
+  useEffect(() => {
+    if (inView && filteredNFTs && displayLimit < filteredNFTs.length) {
+      setDisplayLimit(prev => prev + 8);
+    }
+  }, [inView, filteredNFTs]);
 
   const stats = [
     { label: "Total NFTs", value: nfts?.length || 0, icon: Sparkles },
@@ -87,16 +69,8 @@ const Marketplace = () => {
     console.error('Error fetching NFTs:', error);
     return (
       <div className="container mx-auto px-4 pt-24">
-        <div className="text-center space-y-4">
-          <p className="text-xl text-red-500">
-            Error loading NFTs. Please try again later.
-          </p>
-          <Button 
-            onClick={() => window.location.reload()}
-            variant="outline"
-          >
-            Retry
-          </Button>
+        <div className="text-center text-red-500">
+          Error loading NFTs. Please try again later.
         </div>
       </div>
     );
@@ -115,7 +89,6 @@ const Marketplace = () => {
             </p>
           </div>
 
-          {/* Stats Section */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {stats.map((stat, index) => (
               <div
@@ -136,7 +109,6 @@ const Marketplace = () => {
             ))}
           </div>
           
-          {/* Search and Filter Section */}
           <div className="flex flex-col md:flex-row gap-4 max-w-4xl mx-auto">
             <div className="flex-1 relative group">
               <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
@@ -165,18 +137,18 @@ const Marketplace = () => {
         </div>
 
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-            <Loader2 className="h-12 w-12 animate-spin text-primary" />
-            <p className="text-muted-foreground animate-pulse">Loading amazing NFTs...</p>
+          <div className="flex flex-col items-center justify-center min-h-[200px] space-y-4">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="text-muted-foreground">Loading NFTs...</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {filteredNFTs?.map((nft, index) => (
+            {displayedNFTs?.map((nft, index) => (
               <div
                 key={nft.id}
-                className="opacity-0 animate-[fadeIn_1.2s_ease-out_forwards] hover:translate-y-[-4px] transition-transform duration-300"
+                className="opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]"
                 style={{
-                  animationDelay: `${index * 0.15}s`,
+                  animationDelay: `${index * 0.1}s`,
                 }}
               >
                 <NFTCard {...nft} />
