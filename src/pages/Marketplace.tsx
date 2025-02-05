@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { NFTCard } from "@/components/NFTCard";
 import { useInView } from "react-intersection-observer";
-import { Loader2, Search, Sparkles, TrendingUp, Clock, Filter } from "lucide-react";
+import { Loader2, Search, Sparkles, TrendingUp, Clock } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -26,7 +25,8 @@ const fetchNFTs = async () => {
   const { data, error } = await supabase
     .from('nfts')
     .select('*')
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
+    .limit(8);
 
   if (error) throw error;
   return data as NFT[];
@@ -36,9 +36,14 @@ const Marketplace = () => {
   const { ref, inView } = useInView();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("newest");
+
+  // Оптимизированный запрос с кэшированием на 30 секунд
   const { data: nfts, isLoading, error } = useQuery({
     queryKey: ['nfts'],
     queryFn: fetchNFTs,
+    staleTime: 30000, // Кэширование на 30 секунд
+    retry: 1, // Уменьшаем количество повторных попыток
+    refetchOnWindowFocus: false, // Отключаем автоматическое обновление при фокусе окна
   });
 
   const filteredNFTs = nfts?.filter(nft => 
@@ -126,18 +131,18 @@ const Marketplace = () => {
         </div>
 
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-            <Loader2 className="h-12 w-12 animate-spin text-primary" />
-            <p className="text-muted-foreground animate-pulse">Loading amazing NFTs...</p>
+          <div className="flex flex-col items-center justify-center min-h-[200px] space-y-4">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="text-muted-foreground">Loading NFTs...</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {filteredNFTs?.map((nft, index) => (
               <div
                 key={nft.id}
-                className="opacity-0 animate-[fadeIn_1.2s_ease-out_forwards] hover:translate-y-[-4px] transition-transform duration-300"
+                className="opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]"
                 style={{
-                  animationDelay: `${index * 0.15}s`,
+                  animationDelay: `${index * 0.1}s`,
                 }}
               >
                 <NFTCard {...nft} />
