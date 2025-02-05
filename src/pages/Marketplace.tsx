@@ -25,8 +25,7 @@ const fetchNFTs = async () => {
   const { data, error } = await supabase
     .from('nfts')
     .select('*')
-    .order('created_at', { ascending: false })
-    .limit(8);
+    .order('created_at', { ascending: false });
 
   if (error) throw error;
   return data as NFT[];
@@ -36,20 +35,28 @@ const Marketplace = () => {
   const { ref, inView } = useInView();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("newest");
+  const [displayLimit, setDisplayLimit] = useState(12);
 
-  // Оптимизированный запрос с кэшированием на 30 секунд
   const { data: nfts, isLoading, error } = useQuery({
     queryKey: ['nfts'],
     queryFn: fetchNFTs,
-    staleTime: 30000, // Кэширование на 30 секунд
-    retry: 1, // Уменьшаем количество повторных попыток
-    refetchOnWindowFocus: false, // Отключаем автоматическое обновление при фокусе окна
+    staleTime: 30000,
+    retry: 1,
+    refetchOnWindowFocus: false,
   });
 
   const filteredNFTs = nfts?.filter(nft => 
     nft.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     nft.creator.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const displayedNFTs = filteredNFTs?.slice(0, displayLimit);
+
+  useEffect(() => {
+    if (inView && filteredNFTs && displayLimit < filteredNFTs.length) {
+      setDisplayLimit(prev => prev + 8);
+    }
+  }, [inView, filteredNFTs]);
 
   const stats = [
     { label: "Total NFTs", value: nfts?.length || 0, icon: Sparkles },
@@ -81,7 +88,6 @@ const Marketplace = () => {
             </p>
           </div>
 
-          {/* Stats Section */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {stats.map((stat, index) => (
               <div
@@ -102,7 +108,6 @@ const Marketplace = () => {
             ))}
           </div>
           
-          {/* Search and Filter Section */}
           <div className="flex flex-col md:flex-row gap-4 max-w-4xl mx-auto">
             <div className="flex-1 relative group">
               <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
@@ -137,7 +142,7 @@ const Marketplace = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {filteredNFTs?.map((nft, index) => (
+            {displayedNFTs?.map((nft, index) => (
               <div
                 key={nft.id}
                 className="opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]"
