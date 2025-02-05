@@ -35,15 +35,15 @@ const Marketplace = () => {
   const { ref, inView } = useInView();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("newest");
-  const [displayLimit, setDisplayLimit] = useState(8); // Changed initial limit to 8
+  const [displayLimit, setDisplayLimit] = useState(8);
 
   const { data: nfts, isLoading, error } = useQuery({
     queryKey: ['nfts'],
     queryFn: fetchNFTs,
-    staleTime: 60000, // Increased cache time to 1 minute
+    staleTime: 60000,
     retry: 1,
     refetchOnWindowFocus: false,
-    cacheTime: 300000, // Cache successful responses for 5 minutes
+    gcTime: 300000, // Changed from cacheTime to gcTime
   });
 
   const filteredNFTs = nfts?.filter(nft => 
