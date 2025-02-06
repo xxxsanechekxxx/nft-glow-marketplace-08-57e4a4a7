@@ -12,7 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
 
 interface NFT {
   id: string;
@@ -32,18 +31,6 @@ const fetchNFTs = async () => {
   return data as NFT[];
 };
 
-const NFTSkeleton = () => (
-  <div className="space-y-3">
-    <Skeleton className="h-[200px] w-full rounded-lg" />
-    <Skeleton className="h-4 w-3/4" />
-    <Skeleton className="h-4 w-1/2" />
-    <div className="flex justify-between items-center">
-      <Skeleton className="h-4 w-1/4" />
-      <Skeleton className="h-8 w-24" />
-    </div>
-  </div>
-);
-
 const Marketplace = () => {
   useEffect(() => {
     document.title = "PureNFT - Marketplace";
@@ -60,11 +47,10 @@ const Marketplace = () => {
   const { data: nfts, isLoading, error } = useQuery({
     queryKey: ['nfts'],
     queryFn: fetchNFTs,
-    staleTime: 300000, // 5 minutes
-    gcTime: 3600000, // 1 hour
-    retry: 3,
-    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+    staleTime: 60000,
+    retry: 1,
     refetchOnWindowFocus: false,
+    gcTime: 300000, // Changed from cacheTime to gcTime
   });
 
   const filteredNFTs = nfts?.filter(nft => 
@@ -158,10 +144,9 @@ const Marketplace = () => {
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {Array.from({ length: 8 }).map((_, index) => (
-              <NFTSkeleton key={index} />
-            ))}
+          <div className="flex flex-col items-center justify-center min-h-[200px] space-y-4">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="text-muted-foreground">Loading NFTs...</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
