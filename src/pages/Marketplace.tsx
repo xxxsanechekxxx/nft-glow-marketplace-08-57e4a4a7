@@ -22,14 +22,20 @@ interface NFT {
   created_at: string;
 }
 
-const fetchNFTs = async () => {
-  const { data, error } = await supabase
+const ITEMS_PER_PAGE = 8;
+
+const fetchNFTs = async ({ pageParam = 0 }) => {
+  const from = pageParam * ITEMS_PER_PAGE;
+  const to = from + ITEMS_PER_PAGE - 1;
+
+  const { data, error, count } = await supabase
     .from('nfts')
-    .select('*')
+    .select('*', { count: 'exact' })
+    .range(from, to)
     .order('created_at', { ascending: false });
 
   if (error) throw error;
-  return data as NFT[];
+  return { data, count };
 };
 
 const Marketplace = () => {
@@ -43,15 +49,14 @@ const Marketplace = () => {
   const { ref, inView } = useInView();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("newest");
-  const [displayLimit, setDisplayLimit] = useState(8);
+  const [page, setPage] = useState(0);
 
-  const { data: nfts, isLoading, error } = useQuery({
-    queryKey: ['nfts'],
-    queryFn: fetchNFTs,
-    staleTime: 60000,
-    retry: 1,
-    refetchOnWindowFocus: false,
-    gcTime: 300000,
+  const { data: nftsData, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useQuery({
+    queryKey: ['nfts', page],
+    queryFn: () => fetchNFTs({ pageParam: page }),
+    staleTime: 300000, // 5 minutes
+    gcTime: 3600000, // 1 hour
+    keepPreviousData: true,
   });
 
   const sortNFTs = (nftsToSort: NFT[]) => {
@@ -77,19 +82,21 @@ const Marketplace = () => {
     }
   };
 
+  const nfts = nftsData?.data || [];
+
   const filteredNFTs = nfts?.filter(nft => 
     nft.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     nft.creator.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const sortedAndFilteredNFTs = filteredNFTs ? sortNFTs(filteredNFTs) : [];
-  const displayedNFTs = sortedAndFilteredNFTs.slice(0, displayLimit);
 
   useEffect(() => {
-    if (inView && filteredNFTs && displayLimit < filteredNFTs.length) {
-      setDisplayLimit(prev => prev + 8);
+    if (inView && !isLoading && !isFetchingNextPage && hasNextPage) {
+      setPage(prev => prev + 1);
+      fetchNextPage();
     }
-  }, [inView, filteredNFTs, displayLimit]);
+  }, [inView, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage]);
 
   const stats = [
     { label: "Total NFTs", value: "1116891", icon: Sparkles },
@@ -175,7 +182,7 @@ const Marketplace = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {displayedNFTs?.map((nft, index) => (
+            {sortedAndFilteredNFTs?.map((nft, index) => (
               <div
                 key={nft.id}
                 className="opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]"
@@ -196,7 +203,13 @@ const Marketplace = () => {
           </div>
         )}
 
-        <div ref={ref} className="w-full flex justify-center py-8" />
+        {(isLoading || isFetchingNextPage) && (
+          <div className="flex justify-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        )}
+
+        <div ref={ref} className="w-full h-20" />
       </div>
     </div>
   );
