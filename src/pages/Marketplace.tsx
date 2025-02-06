@@ -61,6 +61,7 @@ const Marketplace = () => {
     queryKey: ['nfts'],
     queryFn: fetchNFTs,
     getNextPageParam: (lastPage) => lastPage.nextPage,
+    initialPageParam: 0,
     staleTime: 300000, // 5 minutes
     gcTime: 3600000, // 1 hour
   });
@@ -208,7 +209,7 @@ const Marketplace = () => {
           </div>
         )}
 
-        {(isLoading || isFetchingNextPage) && (
+        {isFetchingNextPage && (
           <div className="flex justify-center py-8">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
