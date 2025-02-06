@@ -18,6 +18,13 @@ import { NFTCard } from "@/components/NFTCard";
 gsap.registerPlugin(ScrollTrigger);
 
 const Index = () => {
+  useEffect(() => {
+    document.title = "PureNFT - Home";
+    return () => {
+      document.title = "PureNFT";
+    };
+  }, []);
+
   const heroRef = useRef(null);
   const statsRef = useRef(null);
   const featuredRef = useRef(null);

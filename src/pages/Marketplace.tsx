@@ -32,6 +32,13 @@ const fetchNFTs = async () => {
 };
 
 const Marketplace = () => {
+  useEffect(() => {
+    document.title = "PureNFT - Marketplace";
+    return () => {
+      document.title = "PureNFT";
+    };
+  }, []);
+
   const { ref, inView } = useInView();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("newest");
