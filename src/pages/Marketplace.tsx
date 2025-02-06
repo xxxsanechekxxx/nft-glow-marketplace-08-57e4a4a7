@@ -19,6 +19,7 @@ interface NFT {
   image: string;
   price: string;
   creator: string;
+  created_at: string;
 }
 
 const fetchNFTs = async () => {
@@ -50,15 +51,39 @@ const Marketplace = () => {
     staleTime: 60000,
     retry: 1,
     refetchOnWindowFocus: false,
-    gcTime: 300000, // Changed from cacheTime to gcTime
+    gcTime: 300000,
   });
+
+  const sortNFTs = (nftsToSort: NFT[]) => {
+    switch (sortBy) {
+      case "newest":
+        return [...nftsToSort].sort((a, b) => 
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+      case "oldest":
+        return [...nftsToSort].sort((a, b) => 
+          new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        );
+      case "price-asc":
+        return [...nftsToSort].sort((a, b) => 
+          parseFloat(a.price) - parseFloat(b.price)
+        );
+      case "price-desc":
+        return [...nftsToSort].sort((a, b) => 
+          parseFloat(b.price) - parseFloat(a.price)
+        );
+      default:
+        return nftsToSort;
+    }
+  };
 
   const filteredNFTs = nfts?.filter(nft => 
     nft.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     nft.creator.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const displayedNFTs = filteredNFTs?.slice(0, displayLimit);
+  const sortedAndFilteredNFTs = filteredNFTs ? sortNFTs(filteredNFTs) : [];
+  const displayedNFTs = sortedAndFilteredNFTs.slice(0, displayLimit);
 
   useEffect(() => {
     if (inView && filteredNFTs && displayLimit < filteredNFTs.length) {
@@ -164,7 +189,7 @@ const Marketplace = () => {
           </div>
         )}
 
-        {filteredNFTs?.length === 0 && !isLoading && (
+        {sortedAndFilteredNFTs.length === 0 && !isLoading && (
           <div className="text-center py-16 space-y-4">
             <p className="text-2xl font-semibold text-muted-foreground">No NFTs found</p>
             <p className="text-muted-foreground/60">Try adjusting your search criteria</p>
