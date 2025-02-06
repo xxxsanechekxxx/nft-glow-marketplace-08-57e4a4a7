@@ -3,7 +3,7 @@ import { NFTCard } from "@/components/NFTCard";
 import { useInView } from "react-intersection-observer";
 import { Loader2, Search, Sparkles, TrendingUp, Clock } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -35,7 +35,7 @@ const fetchNFTs = async ({ pageParam = 0 }) => {
     .order('created_at', { ascending: false });
 
   if (error) throw error;
-  return { data, count };
+  return { data, count, nextPage: to < (count || 0) ? pageParam + 1 : undefined };
 };
 
 const Marketplace = () => {
@@ -49,14 +49,20 @@ const Marketplace = () => {
   const { ref, inView } = useInView();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("newest");
-  const [page, setPage] = useState(0);
 
-  const { data: nftsData, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useQuery({
-    queryKey: ['nfts', page],
-    queryFn: () => fetchNFTs({ pageParam: page }),
+  const {
+    data,
+    isLoading,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useInfiniteQuery({
+    queryKey: ['nfts'],
+    queryFn: fetchNFTs,
+    getNextPageParam: (lastPage) => lastPage.nextPage,
     staleTime: 300000, // 5 minutes
     gcTime: 3600000, // 1 hour
-    keepPreviousData: true,
   });
 
   const sortNFTs = (nftsToSort: NFT[]) => {
@@ -82,9 +88,9 @@ const Marketplace = () => {
     }
   };
 
-  const nfts = nftsData?.data || [];
+  const allNFTs = data?.pages.flatMap(page => page.data) || [];
 
-  const filteredNFTs = nfts?.filter(nft => 
+  const filteredNFTs = allNFTs.filter(nft => 
     nft.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     nft.creator.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -93,7 +99,6 @@ const Marketplace = () => {
 
   useEffect(() => {
     if (inView && !isLoading && !isFetchingNextPage && hasNextPage) {
-      setPage(prev => prev + 1);
       fetchNextPage();
     }
   }, [inView, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage]);
@@ -174,7 +179,7 @@ const Marketplace = () => {
             </Select>
           </div>
         </div>
-
+        
         {isLoading ? (
           <div className="flex flex-col items-center justify-center min-h-[200px] space-y-4">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
