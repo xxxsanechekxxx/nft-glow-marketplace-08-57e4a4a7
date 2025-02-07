@@ -445,24 +445,26 @@ const Profile = () => {
             <div className="space-y-6">
               <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
                 <CardHeader>
-                  <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent flex items-center gap-2">
-                    <span>Wallet Operations</span>
-                    <div className="text-sm font-normal flex items-center gap-1">
-                      <span>My Limits - 0 / 5</span>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <HelpCircle className="w-4 h-4" />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="max-w-xs">
-                              Due to the fact that you have only recently created your account,
-                              we are forced to limit the number of orders that you can join.
-                              This limit is updated every month.
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                  <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+                    <div className="flex items-center gap-2">
+                      <span>Wallet Operations</span>
+                      <div className="text-sm font-normal text-foreground flex items-center gap-1">
+                        <span className="opacity-80">My Limits - 0 / 5</span>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <HelpCircle className="w-4 h-4 opacity-60 hover:opacity-100 transition-opacity" />
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-[300px]">
+                              <p>
+                                Due to the fact that you have only recently created your account,
+                                we are forced to limit the number of orders that you can join.
+                                This limit is updated every month.
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
                     </div>
                   </CardTitle>
                 </CardHeader>
