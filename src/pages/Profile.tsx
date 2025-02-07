@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { User, Settings, Mail, Key, LogOut, Wallet, ArrowUpCircle, ArrowDownCircle, Globe, UserRound, ShoppingBag } from "lucide-react";
+import { User, Settings, Mail, Key, LogOut, Wallet, ArrowUpCircle, ArrowDownCircle, Globe, UserRound, ShoppingBag, HelpCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import WalletAddressModal from "@/components/WalletAddressModal";
 import {
@@ -30,6 +30,12 @@ import { useAuth } from "@/hooks/useAuth";
 import DepositConfirmationDialog from "@/components/DepositConfirmationDialog";
 import FraudWarningDialog from "@/components/FraudWarningDialog";
 import { EmptyNFTState } from "@/components/EmptyNFTState";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Transaction {
   id: string;
@@ -94,11 +100,9 @@ const Profile = () => {
       try {
         setIsLoading(true);
         
-        
         const { data: { user: currentUser }, error: authError } = await supabase.auth.getUser();
         
         if (authError) {
-          
           throw authError;
         }
 
@@ -107,8 +111,6 @@ const Profile = () => {
           return;
         }
 
-        
-
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('*')
@@ -116,7 +118,6 @@ const Profile = () => {
           .single();
 
         if (profileError) {
-          
           throw profileError;
         }
 
@@ -315,9 +316,11 @@ const Profile = () => {
               <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
                 @{userData?.login}
               </h1>
-              <div className="flex items-center gap-2 text-primary animate-pulse">
-                <Wallet className="w-5 h-5" />
-                <span className="text-lg font-semibold">{userData?.balance} ETH</span>
+              <div className="flex items-center gap-2">
+                <Wallet className="w-5 h-5 text-white" />
+                <span className="text-lg font-semibold text-white">
+                  {Number(userData?.balance || 0).toFixed(1)} ETH
+                </span>
               </div>
             </div>
           </div>
@@ -600,8 +603,22 @@ const Profile = () => {
                 </CardContent>
               </Card>
             </div>
+            <div className="flex items-center gap-2 p-4 bg-background/60 rounded-lg border border-primary/10">
+              <span className="text-white font-medium">My Limits - 0 / 5</span>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <HelpCircle className="w-4 h-4 text-muted-foreground hover:text-primary cursor-help transition-colors" />
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs">
+                    <p>Due to the fact that you have only recently created your account, we are forced to limit the number of orders that you can join. This limit is updated every month.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
           </TabsContent>
 
+          {/* NFT Tab */}
           <TabsContent value="nft">
             <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
               <CardHeader>
