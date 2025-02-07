@@ -5,9 +5,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { User, Settings, Mail, Key, LogOut, Wallet, ArrowUpCircle, ArrowDownCircle, Globe, UserRound, ShoppingBag } from "lucide-react";
+import { User, Settings, Mail, Key, LogOut, Wallet, ArrowUpCircle, ArrowDownCircle, Globe, UserRound, ShoppingBag, HelpCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import WalletAddressModal from "@/components/WalletAddressModal";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -25,6 +26,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 import DepositConfirmationDialog from "@/components/DepositConfirmationDialog";
@@ -49,6 +56,7 @@ interface UserData {
   balance: string;
   wallet_address?: string;
   erc20_address?: string;
+  hide_nickname?: boolean;
 }
 
 const Profile = () => {
@@ -66,6 +74,7 @@ const Profile = () => {
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
   const [isDepositConfirmationOpen, setIsDepositConfirmationOpen] = useState(false);
   const [isFraudWarningOpen, setIsFraudWarningOpen] = useState(false);
+  const [hideNickname, setHideNickname] = useState(false);
 
   const showDelayedToast = (title: string, description: string, variant: "default" | "destructive" = "default") => {
     setTimeout(() => {
@@ -93,21 +102,13 @@ const Profile = () => {
     const fetchUserData = async () => {
       try {
         setIsLoading(true);
-        
-        
         const { data: { user: currentUser }, error: authError } = await supabase.auth.getUser();
         
-        if (authError) {
-          
-          throw authError;
-        }
-
+        if (authError) throw authError;
         if (!currentUser) {
           console.log("No user found");
           return;
         }
-
-        
 
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
@@ -115,10 +116,7 @@ const Profile = () => {
           .eq('user_id', currentUser.id)
           .single();
 
-        if (profileError) {
-          
-          throw profileError;
-        }
+        if (profileError) throw profileError;
 
         const { data: transactionsData, error: transactionsError } = await supabase
           .from('transactions')
@@ -131,8 +129,6 @@ const Profile = () => {
           throw transactionsError;
         }
 
-        console.log("Profile data:", profileData);
-        
         if (isMounted && currentUser) {
           setUserData({
             id: currentUser.id,
@@ -140,9 +136,11 @@ const Profile = () => {
             login: profileData?.login || currentUser.user_metadata?.login || '',
             country: profileData?.country || currentUser.user_metadata?.country || '',
             avatar_url: null,
-            balance: profileData?.balance?.toString() || "0.0",
-            wallet_address: profileData?.wallet_address || ''
+            balance: Number(profileData?.balance || 0).toFixed(1),
+            wallet_address: profileData?.wallet_address || '',
+            hide_nickname: profileData?.hide_nickname || false
           });
+          setHideNickname(profileData?.hide_nickname || false);
 
           setTransactions(transactionsData?.map(tx => ({
             id: tx.id,
@@ -171,6 +169,30 @@ const Profile = () => {
       isMounted = false;
     };
   }, [toast]);
+
+  const handleHideNicknameChange = async (checked: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ hide_nickname: checked })
+        .eq('user_id', userData?.id);
+
+      if (error) throw error;
+
+      setHideNickname(checked);
+      showDelayedToast(
+        "Success",
+        `Nickname visibility ${checked ? 'hidden' : 'visible'}`
+      );
+    } catch (error) {
+      console.error("Error updating nickname visibility:", error);
+      showDelayedToast(
+        "Error",
+        "Failed to update nickname visibility",
+        "destructive"
+      );
+    }
+  };
 
   const handleGenerateWalletAddress = async (address: string) => {
     try {
@@ -302,7 +324,6 @@ const Profile = () => {
   return (
     <div className="container mx-auto py-8 px-4 mt-16 min-h-screen">
       <div className="max-w-4xl mx-auto space-y-8">
-        {/* Profile Header with Gradient */}
         <div className="relative p-8 rounded-2xl overflow-hidden animate-fade-in">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-purple-500/10 to-primary/10 animate-gradient" />
           <div className="relative flex items-center gap-6 z-10">
@@ -315,9 +336,9 @@ const Profile = () => {
               <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
                 @{userData?.login}
               </h1>
-              <div className="flex items-center gap-2 text-primary animate-pulse">
-                <Wallet className="w-5 h-5" />
-                <span className="text-lg font-semibold">{userData?.balance} ETH</span>
+              <div className="flex items-center gap-2">
+                <Wallet className="w-5 h-5 text-white" />
+                <span className="text-lg font-semibold text-white">{userData?.balance} ETH</span>
               </div>
             </div>
           </div>
@@ -340,7 +361,6 @@ const Profile = () => {
             ))}
           </TabsList>
 
-          {/* Profile Tab */}
           <TabsContent value="profile">
             <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
               <CardHeader>
@@ -404,76 +424,46 @@ const Profile = () => {
                     )}
                   </div>
                 </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="hide-nickname"
+                    checked={hideNickname}
+                    onCheckedChange={handleHideNicknameChange}
+                  />
+                  <label
+                    htmlFor="hide-nickname"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Hide my nickname from other users
+                  </label>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
 
-          {/* Settings Tab */}
-          <TabsContent value="settings">
-            <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
-              <CardHeader>
-                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
-                  Change Password
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handlePasswordChange} className="space-y-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium flex items-center gap-2">
-                      <Key className="w-4 h-4" />
-                      Current Password
-                    </label>
-                    <Input
-                      type="password"
-                      value={currentPassword}
-                      onChange={(e) => setCurrentPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">New Password</label>
-                    <Input
-                      type="password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Confirm New Password</label>
-                    <Input
-                      type="password"
-                      value={confirmNewPassword}
-                      onChange={(e) => setConfirmNewPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <Button type="submit" className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-colors">
-                    Update Password
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-
-            <div className="mt-6">
-              <Button
-                variant="destructive"
-                className="w-full"
-                onClick={handleLogout}
-              >
-                <LogOut className="w-4 h-4 mr-2" />
-                Logout
-              </Button>
-            </div>
-          </TabsContent>
-
-          {/* Wallet Tab */}
           <TabsContent value="wallet">
             <div className="space-y-6">
               <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
                 <CardHeader>
-                  <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
-                    Wallet Operations
+                  <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent flex items-center gap-2">
+                    <span>Wallet Operations</span>
+                    <div className="text-sm font-normal flex items-center gap-1">
+                      <span>My Limits - 0 / 5</span>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <HelpCircle className="w-4 h-4" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="max-w-xs">
+                              Due to the fact that you have only recently created your account,
+                              we are forced to limit the number of orders that you can join.
+                              This limit is updated every month.
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
