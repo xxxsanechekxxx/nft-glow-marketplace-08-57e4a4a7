@@ -72,6 +72,7 @@ const Profile = () => {
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
   const [isDepositConfirmationOpen, setIsDepositConfirmationOpen] = useState(false);
   const [isFraudWarningOpen, setIsFraudWarningOpen] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
 
   const showDelayedToast = (title: string, description: string, variant: "default" | "destructive" = "default") => {
     setTimeout(() => {
@@ -290,6 +291,23 @@ const Profile = () => {
     );
   };
 
+  const handleEmailChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      const { error } = await supabase.auth.updateUser({
+        email: newEmail
+      });
+
+      if (error) throw error;
+
+      showDelayedToast("Success", "Email update request has been sent. Please check your new email for verification.");
+      setNewEmail("");
+    } catch (error) {
+      showDelayedToast("Error", "Failed to update email", "destructive");
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="container mx-auto py-8 px-4 mt-16">
@@ -416,45 +434,66 @@ const Profile = () => {
             <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
               <CardHeader>
                 <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
-                  Change Password
+                  Account Settings
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handlePasswordChange} className="space-y-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium flex items-center gap-2">
-                      <Key className="w-4 h-4" />
-                      Current Password
-                    </label>
-                    <Input
-                      type="password"
-                      value={currentPassword}
-                      onChange={(e) => setCurrentPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">New Password</label>
-                    <Input
-                      type="password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Confirm New Password</label>
-                    <Input
-                      type="password"
-                      value={confirmNewPassword}
-                      onChange={(e) => setConfirmNewPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <Button type="submit" className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-colors">
-                    Update Password
-                  </Button>
-                </form>
+                <div className="space-y-6">
+                  <form onSubmit={handleEmailChange} className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium flex items-center gap-2">
+                        <Mail className="w-4 h-4" />
+                        New Email
+                      </label>
+                      <Input
+                        type="email"
+                        value={newEmail}
+                        onChange={(e) => setNewEmail(e.target.value)}
+                        placeholder="Enter new email address"
+                        required
+                      />
+                    </div>
+                    <Button type="submit" className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-colors">
+                      Update Email
+                    </Button>
+                  </form>
+
+                  <form onSubmit={handlePasswordChange} className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium flex items-center gap-2">
+                        <Key className="w-4 h-4" />
+                        Current Password
+                      </label>
+                      <Input
+                        type="password"
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">New Password</label>
+                      <Input
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Confirm New Password</label>
+                      <Input
+                        type="password"
+                        value={confirmNewPassword}
+                        onChange={(e) => setConfirmNewPassword(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <Button type="submit" className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-colors">
+                      Update Password
+                    </Button>
+                  </form>
+                </div>
               </CardContent>
             </Card>
 
