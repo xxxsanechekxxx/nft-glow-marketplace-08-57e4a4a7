@@ -174,6 +174,46 @@ const Profile = () => {
     };
   }, [toast]);
 
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleEmailChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateEmail(newEmail)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase.auth.updateUser({
+        email: newEmail,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Email update request has been sent. Please check your new email for verification.",
+      });
+      
+      setNewEmail("");
+    } catch (error: any) {
+      console.error("Email update error:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update email",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleGenerateWalletAddress = async (address: string) => {
     try {
       const { error } = await supabase
@@ -289,23 +329,6 @@ const Profile = () => {
       "Rejected",
       `Deposit of ${depositAmount} the rejected. Please contact our support team on Telegram for transaction verification`
     );
-  };
-
-  const handleEmailChange = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    try {
-      const { error } = await supabase.auth.updateUser({
-        email: newEmail
-      });
-
-      if (error) throw error;
-
-      showDelayedToast("Success", "Email update request has been sent. Please check your new email for verification.");
-      setNewEmail("");
-    } catch (error) {
-      showDelayedToast("Error", "Failed to update email", "destructive");
-    }
   };
 
   if (isLoading) {
@@ -451,9 +474,13 @@ const Profile = () => {
                         onChange={(e) => setNewEmail(e.target.value)}
                         placeholder="Enter new email address"
                         required
+                        className="bg-background/50 border-primary/10 group-hover:border-primary/30 transition-colors"
                       />
                     </div>
-                    <Button type="submit" className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-colors">
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-colors"
+                    >
                       Update Email
                     </Button>
                   </form>
