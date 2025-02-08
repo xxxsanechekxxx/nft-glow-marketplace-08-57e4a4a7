@@ -1,3 +1,4 @@
+
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -49,7 +50,18 @@ const Index = () => {
     
     gsap.fromTo(heroRef.current,
       { opacity: 0, y: 100 },
-      { opacity: 1, y: 0, duration: 1, ease: "power3.out" }
+      { 
+        opacity: 1, 
+        y: 0, 
+        duration: 1.5, 
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: "top center",
+          end: "bottom center",
+          toggleActions: "play none none reverse"
+        }
+      }
     );
 
     gsap.fromTo(statsRef.current,
@@ -57,24 +69,28 @@ const Index = () => {
       {
         opacity: 1,
         scale: 1,
-        duration: 0.8,
+        duration: 1.2,
+        ease: "back.out(1.7)",
         scrollTrigger: {
           trigger: statsRef.current,
           start: "top 80%",
+          end: "bottom center",
           toggleActions: "play none none reverse"
         }
       }
     );
 
     gsap.fromTo(featuredRef.current,
-      { opacity: 0, y: 30 },
+      { opacity: 0, y: 50 },
       {
         opacity: 1,
         y: 0,
-        duration: 0.8,
+        duration: 1,
+        ease: "power2.out",
         scrollTrigger: {
           trigger: featuredRef.current,
-          start: "top 80%",
+          start: "top 75%",
+          end: "bottom center",
           toggleActions: "play none none reverse"
         }
       }
@@ -85,10 +101,12 @@ const Index = () => {
       {
         opacity: 1,
         y: 0,
-        duration: 0.8,
+        duration: 1,
+        ease: "power2.out",
         scrollTrigger: {
           trigger: howItWorksRef.current,
-          start: "top 80%",
+          start: "top 75%",
+          end: "bottom center",
           toggleActions: "play none none reverse"
         }
       }
@@ -101,22 +119,28 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
-      <div ref={heroRef}>
+      <div ref={heroRef} className="relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-background/80 pointer-events-none"></div>
         <HeroSection />
       </div>
 
-      <div ref={howItWorksRef}>
+      <div ref={howItWorksRef} className="relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-purple-500/5 to-pink-500/5 pointer-events-none"></div>
         <HowItWorksSection />
       </div>
 
-      <div ref={statsRef}>
+      <div ref={statsRef} className="relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-purple-500/5 via-primary/5 to-pink-500/5 pointer-events-none"></div>
         <StatsSection />
       </div>
 
       <div ref={featuredRef} className="py-24 bg-background relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent"></div>
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[120px] animate-pulse"></div>
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-[120px] animate-pulse delay-700"></div>
+        </div>
         <div className="container mx-auto px-4 relative">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-400">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-400 to-pink-500 animate-fade-in">
             Featured Collections
           </h2>
           
@@ -130,8 +154,8 @@ const Index = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="bg-background/80 backdrop-blur-sm border-primary/20" />
-            <CarouselNext className="bg-background/80 backdrop-blur-sm border-primary/20" />
+            <CarouselPrevious className="bg-background/80 backdrop-blur-sm border-primary/20 hover:bg-primary/20 transition-colors duration-300" />
+            <CarouselNext className="bg-background/80 backdrop-blur-sm border-primary/20 hover:bg-primary/20 transition-colors duration-300" />
           </Carousel>
         </div>
       </div>
