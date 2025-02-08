@@ -783,7 +783,7 @@ const Profile = () => {
             </div>
           </TabsContent>
 
-          <TabsContent value="nft">
+          <TabsContent value="NFT">
             <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
               <CardHeader>
                 <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
