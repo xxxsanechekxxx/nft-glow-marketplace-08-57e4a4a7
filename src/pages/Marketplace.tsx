@@ -63,8 +63,8 @@ const Marketplace = () => {
     queryFn: fetchNFTs,
     getNextPageParam: (lastPage) => lastPage.nextPage,
     initialPageParam: 0,
-    staleTime: 300000, // 5 minutes
-    gcTime: 3600000, // 1 hour
+    staleTime: 300000,
+    gcTime: 3600000,
   });
 
   const sortNFTs = (nftsToSort: NFT[]) => {
@@ -91,12 +91,10 @@ const Marketplace = () => {
   };
 
   const allNFTs = data?.pages.flatMap(page => page.data) || [];
-
   const filteredNFTs = allNFTs.filter(nft => 
     nft.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     nft.creator.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
   const sortedAndFilteredNFTs = filteredNFTs ? sortNFTs(filteredNFTs) : [];
 
   useEffect(() => {
@@ -106,13 +104,12 @@ const Marketplace = () => {
   }, [inView, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage]);
 
   const stats = [
-    { label: "Total NFTs", value: "1116891", icon: Sparkles },
-    { label: "Trending", value: "331951 Sales", icon: TrendingUp },
+    { label: "Total NFTs", value: "1,116,891", icon: Sparkles },
+    { label: "Trending", value: "331,951 Sales", icon: TrendingUp },
     { label: "Latest Drop", value: "~2m ago", icon: Clock },
   ];
 
   if (error) {
-    console.error('Error fetching NFTs:', error);
     return (
       <div className="container mx-auto px-4 pt-24">
         <div className="text-center text-red-500">
@@ -123,11 +120,11 @@ const Marketplace = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background/80 to-background/50">
+    <div className="min-h-screen bg-[linear-gradient(to_bottom,hsl(var(--background))_0%,hsl(var(--background))_50%,rgba(123,97,255,0.05)_100%)]">
       <div className="container mx-auto px-4 pt-24 pb-16">
-        <div className="text-center mb-16 space-y-8 opacity-0 animate-[fadeIn_1s_ease-out_forwards]">
-          <div className="space-y-4">
-            <h1 className="text-6xl font-bold bg-gradient-to-r from-primary via-purple-500 to-pink-500 text-transparent bg-clip-text animate-[gradient_8s_linear_infinite] bg-[length:200%_200%]">
+        <div className="text-center mb-16 space-y-8">
+          <div className="space-y-4 opacity-0 animate-[fadeIn_1s_ease-out_forwards]">
+            <h1 className="text-7xl font-bold bg-gradient-to-r from-primary via-purple-500 to-pink-500 text-transparent bg-clip-text animate-[gradient_8s_linear_infinite] bg-[length:200%_200%] drop-shadow-sm">
               NFT Marketplace
             </h1>
             <p className="text-xl text-muted-foreground/80 max-w-2xl mx-auto leading-relaxed">
@@ -139,39 +136,44 @@ const Marketplace = () => {
             {stats.map((stat, index) => (
               <div
                 key={stat.label}
-                className="p-6 rounded-xl bg-background/60 backdrop-blur-sm border border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-700 group"
+                className="relative group"
                 style={{
                   animationDelay: `${index * 200}ms`,
                   opacity: 0,
                   animation: "fadeIn 1s ease-out forwards",
                 }}
               >
-                <div className="flex items-center justify-center space-x-4">
-                  <stat.icon className="w-6 h-6 text-primary transition-transform duration-700 group-hover:scale-110 group-hover:rotate-6" />
-                  <div className="text-left">
-                    <p className="text-sm text-muted-foreground transition-colors duration-700 group-hover:text-primary/80">{stat.label}</p>
-                    <p className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">{stat.value}</p>
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
+                <div className="relative p-6 rounded-xl bg-background/60 backdrop-blur-sm border border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-700">
+                  <div className="flex items-center justify-center space-x-4">
+                    <stat.icon className="w-8 h-8 text-primary transition-all duration-700 group-hover:scale-110 group-hover:rotate-6" />
+                    <div className="text-left">
+                      <p className="text-sm font-medium text-muted-foreground transition-colors duration-700 group-hover:text-primary/80">{stat.label}</p>
+                      <p className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">{stat.value}</p>
+                    </div>
                   </div>
                 </div>
               </div>
             ))}
           </div>
           
-          <div className="flex flex-col md:flex-row gap-4 max-w-4xl mx-auto">
+          <div className="flex flex-col md:flex-row gap-4 max-w-4xl mx-auto opacity-0 animate-[fadeIn_1s_ease-out_forwards] animation-delay-500">
             <div className="flex-1 relative group">
               <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
-              <Input
-                type="text"
-                placeholder="Search by name or creator..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="relative pl-10 bg-background/80 backdrop-blur-sm border-primary/20 focus:border-primary shadow-lg transition-all duration-700 hover:shadow-primary/5"
-              />
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors duration-700 group-hover:text-primary" />
+              <div className="relative">
+                <Input
+                  type="text"
+                  placeholder="Search by name or creator..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 bg-background/80 backdrop-blur-sm border-primary/20 focus:border-primary shadow-lg transition-all duration-700 hover:shadow-primary/5"
+                />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors duration-700 group-hover:text-primary" />
+              </div>
             </div>
             
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-[180px] bg-background/80 backdrop-blur-sm border-primary/20 transition-all duration-700 hover:border-primary">
+              <SelectTrigger className="w-[180px] bg-background/80 backdrop-blur-sm border-primary/20 transition-all duration-700 hover:border-primary shadow-lg">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
               <SelectContent className="bg-background/95 backdrop-blur-md border-primary/20">
@@ -186,7 +188,10 @@ const Marketplace = () => {
         
         {isLoading ? (
           <div className="flex flex-col items-center justify-center min-h-[200px] space-y-4">
-            <Loader2 className="h-8 w-8 animate-[spin_2s_linear_infinite] text-primary" />
+            <div className="relative">
+              <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-full blur-md animate-pulse" />
+              <Loader2 className="h-8 w-8 animate-[spin_2s_linear_infinite] text-primary relative" />
+            </div>
             <p className="text-muted-foreground animate-pulse">Loading NFTs...</p>
           </div>
         ) : (
@@ -207,6 +212,10 @@ const Marketplace = () => {
 
         {sortedAndFilteredNFTs.length === 0 && !isLoading && (
           <div className="text-center py-16 space-y-4 animate-fade-in">
+            <div className="relative inline-block">
+              <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-full blur-md" />
+              <Search className="w-12 h-12 text-muted-foreground" />
+            </div>
             <p className="text-2xl font-semibold text-muted-foreground">No NFTs found</p>
             <p className="text-muted-foreground/60">Try adjusting your search criteria</p>
           </div>
@@ -214,7 +223,10 @@ const Marketplace = () => {
 
         {isFetchingNextPage && (
           <div className="flex justify-center py-8">
-            <Loader2 className="h-8 w-8 animate-[spin_2s_linear_infinite] text-primary" />
+            <div className="relative">
+              <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-full blur-md animate-pulse" />
+              <Loader2 className="h-8 w-8 animate-[spin_2s_linear_infinite] text-primary relative" />
+            </div>
           </div>
         )}
 
