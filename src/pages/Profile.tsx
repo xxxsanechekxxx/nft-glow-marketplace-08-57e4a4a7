@@ -596,9 +596,6 @@ const Profile = () => {
                         <h2 className="text-5xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
                           {Number(userData?.balance || 0).toFixed(2)} ETH
                         </h2>
-                        <p className="text-sm text-muted-foreground">
-                          ≈ ${(Number(userData?.balance || 0) * 3450).toFixed(2)} USD
-                        </p>
                       </div>
                     </div>
                   </div>
