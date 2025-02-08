@@ -56,6 +56,7 @@ interface UserData {
   wallet_address?: string;
   erc20_address?: string;
   created_at: string;
+  verified: boolean;
 }
 
 interface TransactionTotals {
@@ -168,7 +169,8 @@ const Profile = () => {
             avatar_url: null,
             balance: profileData?.balance?.toString() || "0.0",
             wallet_address: profileData?.wallet_address || '',
-            created_at: currentUser.created_at
+            created_at: currentUser.created_at,
+            verified: profileData?.verified || false
           });
 
           setTransactions(transactionsData?.map(tx => ({
@@ -450,6 +452,23 @@ const Profile = () => {
                       />
                       <Globe className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                     </div>
+                  </div>
+                </div>
+                <div className="space-y-2 group">
+                  <label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
+                    <HelpCircle className="w-4 h-4" />
+                    Verification Status
+                  </label>
+                  <div className="relative overflow-hidden rounded-lg transition-all duration-300 group-hover:shadow-lg">
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="bg-background/50 border border-primary/10 group-hover:border-primary/30 transition-colors rounded-lg p-3 pl-10 flex items-center">
+                      {userData?.verified ? (
+                        <span className="text-green-500 font-medium">Verified</span>
+                      ) : (
+                        <span className="text-yellow-500 font-medium">Not Verified</span>
+                      )}
+                    </div>
+                    <HelpCircle className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                   </div>
                 </div>
                 <div className="space-y-2 group">

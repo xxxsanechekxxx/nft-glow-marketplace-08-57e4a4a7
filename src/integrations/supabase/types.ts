@@ -50,6 +50,7 @@ export type Database = {
           id: string
           login: string
           user_id: string
+          verified: boolean
           wallet_address: string | null
         }
         Insert: {
@@ -59,6 +60,7 @@ export type Database = {
           id?: string
           login: string
           user_id: string
+          verified?: boolean
           wallet_address?: string | null
         }
         Update: {
@@ -68,6 +70,7 @@ export type Database = {
           id?: string
           login?: string
           user_id?: string
+          verified?: boolean
           wallet_address?: string | null
         }
         Relationships: []
