@@ -344,7 +344,6 @@ const Profile = () => {
   return (
     <div className="container mx-auto py-8 px-4 mt-16 min-h-screen">
       <div className="max-w-4xl mx-auto space-y-8">
-        {/* Profile Header with Gradient */}
         <div className="relative p-8 rounded-2xl overflow-hidden animate-fade-in">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-purple-500/10 to-primary/10 animate-gradient" />
           <div className="relative flex items-center gap-6 z-10">
@@ -384,7 +383,6 @@ const Profile = () => {
             ))}
           </TabsList>
 
-          {/* Profile Tab */}
           <TabsContent value="profile">
             <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
               <CardHeader>
@@ -452,7 +450,6 @@ const Profile = () => {
             </Card>
           </TabsContent>
 
-          {/* Settings Tab */}
           <TabsContent value="settings">
             <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
               <CardHeader>
@@ -536,22 +533,43 @@ const Profile = () => {
             </div>
           </TabsContent>
 
-          {/* Wallet Tab */}
           <TabsContent value="wallet">
             <div className="space-y-6">
+              <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-gradient-to-r from-primary/10 via-purple-500/10 to-primary/10">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-2">
+                      <p className="text-sm text-muted-foreground">Total Balance</p>
+                      <h2 className="text-4xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+                        {Number(userData?.balance || 0).toFixed(2)} ETH
+                      </h2>
+                    </div>
+                    <div className="p-4 rounded-full bg-primary/20">
+                      <Wallet className="w-8 h-8 text-primary" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
               <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
                 <CardHeader>
-                  <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+                  <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent flex items-center gap-2">
+                    <Wallet className="w-6 h-6" />
                     Wallet Operations
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button onClick={handleDeposit}>
-                          <ArrowDownCircle className="w-4 h-4 mr-2" />
-                          Deposit
+                        <Button 
+                          onClick={handleDeposit}
+                          className="w-full bg-primary/20 hover:bg-primary/30 text-primary flex items-center justify-center gap-2 p-6 h-auto"
+                        >
+                          <div className="flex flex-col items-center">
+                            <ArrowDownCircle className="w-8 h-8 mb-2" />
+                            <span className="text-lg font-semibold">Deposit</span>
+                          </div>
                         </Button>
                       </DialogTrigger>
                       <DialogContent>
@@ -583,9 +601,14 @@ const Profile = () => {
 
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button variant="destructive">
-                          <ArrowUpCircle className="w-4 h-4 mr-2" />
-                          Withdraw
+                        <Button 
+                          variant="destructive"
+                          className="w-full flex items-center justify-center gap-2 p-6 h-auto bg-opacity-20 hover:bg-opacity-30"
+                        >
+                          <div className="flex flex-col items-center">
+                            <ArrowUpCircle className="w-8 h-8 mb-2" />
+                            <span className="text-lg font-semibold">Withdraw</span>
+                          </div>
                         </Button>
                       </DialogTrigger>
                       <DialogContent>
@@ -619,8 +642,9 @@ const Profile = () => {
               </Card>
 
               <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
-                <CardHeader>
-                  <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent flex items-center gap-2">
+                    <ArrowUpCircle className="w-6 h-6 rotate-45" />
                     Transaction History
                   </CardTitle>
                 </CardHeader>
@@ -643,7 +667,18 @@ const Profile = () => {
                               className="hover:bg-primary/5 transition-colors"
                             >
                               <TableCell>{transaction.created_at}</TableCell>
-                              <TableCell className="capitalize">{transaction.type}</TableCell>
+                              <TableCell className="capitalize flex items-center gap-2">
+                                {transaction.type === 'deposit' && (
+                                  <ArrowDownCircle className="w-4 h-4 text-green-500" />
+                                )}
+                                {transaction.type === 'withdraw' && (
+                                  <ArrowUpCircle className="w-4 h-4 text-red-500" />
+                                )}
+                                {transaction.type === 'purchase' && (
+                                  <ShoppingBag className="w-4 h-4 text-blue-500" />
+                                )}
+                                {transaction.type}
+                              </TableCell>
                               <TableCell>{transaction.amount}</TableCell>
                               <TableCell>
                                 <span className={`px-2 py-1 rounded-full text-xs ${
@@ -669,7 +704,7 @@ const Profile = () => {
                 </CardContent>
               </Card>
             </div>
-            <div className="flex items-center gap-2 p-4 bg-background/60 rounded-lg border border-primary/10">
+            <div className="flex items-center gap-2 p-4 mt-4 bg-background/60 rounded-lg border border-primary/10">
               <span className="text-white font-medium">My Limits - 0 / 5</span>
               <TooltipProvider>
                 <Tooltip>
@@ -684,7 +719,6 @@ const Profile = () => {
             </div>
           </TabsContent>
 
-          {/* NFT Tab */}
           <TabsContent value="nft">
             <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
               <CardHeader>
