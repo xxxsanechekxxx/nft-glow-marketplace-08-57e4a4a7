@@ -118,31 +118,35 @@ const NFTDetail = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 pt-24 pb-16 relative">
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-primary/5 to-secondary/5 blur-3xl -z-10" />
+    <div className="container mx-auto px-4 pt-24 pb-16 relative min-h-[90vh]">
+      {/* Enhanced background gradients */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-purple-500/10 via-pink-500/5 to-secondary/10 blur-3xl -z-10" />
+      <div className="absolute inset-0 bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-primary/5 via-secondary/5 to-purple-500/5 blur-3xl -z-10" />
       
       <Link
         to="/marketplace"
-        className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors duration-300 mb-8 group bg-secondary/20 px-4 py-2 rounded-full backdrop-blur-sm hover:bg-secondary/30"
+        className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-all duration-300 mb-8 group bg-white/5 px-6 py-2.5 rounded-full backdrop-blur-xl hover:bg-white/10 border border-white/10 hover:border-primary/20 shadow-lg hover:shadow-primary/20"
       >
         <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform duration-300" />
         Back to Marketplace
       </Link>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
         <div className="relative group">
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-primary/20 rounded-2xl blur-2xl -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          <div className="relative aspect-square rounded-2xl overflow-hidden animate-fade-in shadow-2xl border border-white/10 group-hover:border-primary/20 transition-colors duration-300">
+          {/* Enhanced image container */}
+          <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 via-purple-500/20 to-pink-500/20 rounded-2xl blur-2xl group-hover:opacity-75 transition-all duration-500 -z-10 opacity-0 group-hover:opacity-100" />
+          <div className="relative aspect-square rounded-2xl overflow-hidden animate-fade-in shadow-2xl border border-white/10 group-hover:border-primary/20 transition-all duration-500">
             <img
               src={nft.image}
               alt={nft.name}
-              className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+              className="w-full h-full object-cover transition-all duration-700 hover:scale-110 group-hover:saturate-150"
             />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20 group-hover:opacity-0 transition-opacity duration-500" />
             <div className="absolute top-4 right-4 flex gap-2">
               <Button
                 variant="secondary"
                 size="icon"
-                className="backdrop-blur-md bg-background/20 hover:bg-background/40 transition-all duration-300"
+                className="backdrop-blur-xl bg-white/10 hover:bg-white/20 transition-all duration-300 border border-white/20 hover:border-primary/20 shadow-lg hover:shadow-primary/20"
                 onClick={handleShare}
               >
                 <Share2 className="h-4 w-4" />
@@ -150,7 +154,7 @@ const NFTDetail = () => {
               <Button
                 variant="secondary"
                 size="icon"
-                className="backdrop-blur-md bg-background/20 hover:bg-background/40 transition-all duration-300"
+                className="backdrop-blur-xl bg-white/10 hover:bg-white/20 transition-all duration-300 border border-white/20 hover:border-primary/20 shadow-lg hover:shadow-primary/20"
                 onClick={handleLike}
               >
                 <Heart className="h-4 w-4" />
@@ -161,25 +165,27 @@ const NFTDetail = () => {
 
         <div className="space-y-8 animate-fade-in">
           <div className="space-y-4">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-purple-400 to-primary bg-clip-text text-transparent animate-gradient bg-300% pb-2">
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-primary via-purple-400 to-pink-500 bg-clip-text text-transparent animate-gradient bg-300% pb-2">
               {nft.name}
             </h1>
-            <div className="flex items-center gap-2 text-muted-foreground bg-secondary/20 px-4 py-2 rounded-full backdrop-blur-sm inline-block">
+            <div className="flex items-center gap-2 text-muted-foreground bg-white/5 px-6 py-3 rounded-full backdrop-blur-xl border border-white/10 hover:border-primary/20 transition-all duration-300 hover:bg-white/10 inline-block shadow-lg hover:shadow-primary/20">
               <User className="h-4 w-4" />
               <span>Created by {nft.creator}</span>
             </div>
           </div>
 
           {nft.description && (
-            <div className="space-y-2 text-muted-foreground backdrop-blur-sm bg-secondary/10 p-6 rounded-xl border border-secondary/20">
-              <p>{nft.description}</p>
+            <div className="space-y-2 text-muted-foreground backdrop-blur-xl bg-white/5 p-8 rounded-2xl border border-white/10 hover:border-primary/20 transition-all duration-300 hover:bg-white/10 shadow-lg hover:shadow-primary/20">
+              <p className="leading-relaxed">{nft.description}</p>
             </div>
           )}
 
-          <div className="p-6 rounded-xl bg-gradient-to-br from-background/40 to-secondary/20 backdrop-blur-lg border border-white/10 hover:border-primary/20 transition-all duration-300 group">
-            <div className="flex items-center gap-2 text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400">
-              <Coins className="h-6 w-6 text-primary" />
-              <span>{nft.price} ETH</span>
+          <div className="p-8 rounded-2xl bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl border border-white/10 hover:border-primary/20 transition-all duration-300 group hover:shadow-xl hover:shadow-primary/20">
+            <div className="flex items-center gap-3 text-3xl font-bold">
+              <Coins className="h-8 w-8 text-primary animate-pulse" />
+              <span className="bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+                {nft.price} ETH
+              </span>
             </div>
           </div>
 
@@ -187,7 +193,7 @@ const NFTDetail = () => {
             {user ? (
               <Button 
                 onClick={handlePurchase} 
-                className="flex-1 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 transition-all duration-300 hover:scale-[1.02] animate-shimmer"
+                className="flex-1 bg-gradient-to-r from-primary via-purple-500 to-pink-500 hover:from-primary/90 hover:via-purple-500/90 hover:to-pink-500/90 transition-all duration-500 hover:scale-[1.02] animate-shimmer shadow-lg hover:shadow-primary/20 text-lg py-6"
                 size="lg"
               >
                 Purchase Now
@@ -195,7 +201,7 @@ const NFTDetail = () => {
             ) : (
               <AuthModal 
                 trigger={
-                  <Button className="flex-1 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 transition-all duration-300" size="lg">
+                  <Button className="flex-1 bg-gradient-to-r from-primary via-purple-500 to-pink-500 hover:from-primary/90 hover:via-purple-500/90 hover:to-pink-500/90 transition-all duration-500 shadow-lg hover:shadow-primary/20 text-lg py-6" size="lg">
                     Login to Purchase
                   </Button>
                 }
@@ -205,39 +211,39 @@ const NFTDetail = () => {
 
           <div className="space-y-6">
             <div className="flex items-center gap-2">
-              <Info className="h-4 w-4 text-primary" />
-              <h2 className="text-lg font-semibold">Details</h2>
+              <Info className="h-5 w-5 text-primary" />
+              <h2 className="text-xl font-semibold">Details</h2>
             </div>
             <div className="grid grid-cols-2 gap-6">
-              <div className="p-4 rounded-lg bg-secondary/10 backdrop-blur-lg border border-white/10 hover:border-primary/20 transition-all duration-300 hover:scale-[1.02]">
+              <div className="p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-primary/20 transition-all duration-300 hover:scale-[1.02] hover:bg-white/10 group shadow-lg hover:shadow-primary/20">
                 <div className="flex items-center gap-2 mb-2">
-                  <Award className="h-4 w-4 text-primary" />
+                  <Award className="h-5 w-5 text-primary group-hover:scale-110 transition-transform duration-300" />
                   <div className="text-sm text-muted-foreground">Token Standard</div>
                 </div>
-                <div className="font-medium">{nft.token_standard || 'ERC-721'}</div>
+                <div className="font-medium text-lg">{nft.token_standard || 'ERC-721'}</div>
               </div>
-              <div className="p-4 rounded-lg bg-secondary/10 backdrop-blur-lg border border-white/10 hover:border-primary/20 transition-all duration-300 hover:scale-[1.02]">
+              <div className="p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-primary/20 transition-all duration-300 hover:scale-[1.02] hover:bg-white/10 group shadow-lg hover:shadow-primary/20">
                 <div className="flex items-center gap-2 mb-2">
-                  <Eye className="h-4 w-4 text-primary" />
+                  <Eye className="h-5 w-5 text-primary group-hover:scale-110 transition-transform duration-300" />
                   <div className="text-sm text-muted-foreground">Chain</div>
                 </div>
-                <div className="font-medium">Ethereum</div>
+                <div className="font-medium text-lg">Ethereum</div>
               </div>
             </div>
             {nft.properties && nft.properties.length > 0 && (
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div className="flex items-center gap-2">
-                  <Gem className="h-4 w-4 text-primary" />
-                  <div className="text-lg font-semibold">Properties</div>
+                  <Gem className="h-5 w-5 text-primary" />
+                  <div className="text-xl font-semibold">Properties</div>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {nft.properties.map((prop, index) => (
                     <div 
                       key={index}
-                      className="p-4 rounded-lg bg-secondary/10 backdrop-blur-lg border border-white/10 hover:border-primary/20 transition-all duration-300 hover:scale-[1.02]"
+                      className="p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-primary/20 transition-all duration-300 hover:scale-[1.02] hover:bg-white/10 group shadow-lg hover:shadow-primary/20"
                     >
-                      <div className="text-sm text-muted-foreground mb-1">{prop.key}</div>
-                      <div className="font-medium">{prop.value}</div>
+                      <div className="text-sm text-muted-foreground mb-2">{prop.key}</div>
+                      <div className="font-medium text-lg">{prop.value}</div>
                     </div>
                   ))}
                 </div>
