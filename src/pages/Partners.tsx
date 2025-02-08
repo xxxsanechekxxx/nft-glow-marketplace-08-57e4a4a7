@@ -6,25 +6,25 @@ const Partners = () => {
   const partners = [
     {
       name: "Crypto Exchange Hub",
-      description: "Ведущая криптовалютная биржа, обеспечивающая безопасные и быстрые транзакции для NFT.",
+      description: "Leading cryptocurrency exchange providing secure and fast transactions for NFTs.",
       type: "Exchange Partner",
       icon: Building2,
     },
     {
       name: "Digital Art Gallery",
-      description: "Эксклюзивная онлайн-галерея, представляющая работы талантливых цифровых художников.",
+      description: "Exclusive online gallery showcasing works of talented digital artists.",
       type: "Art Partner",
       icon: Building,
     },
     {
       name: "BlockTech Solutions",
-      description: "Инновационная блокчейн-компания, предоставляющая технологическую инфраструктуру.",
+      description: "Innovative blockchain company providing technological infrastructure.",
       type: "Technology Partner",
       icon: Globe,
     },
     {
       name: "NFT Innovators",
-      description: "Пионеры в области NFT-технологий, создающие уникальные решения для цифрового искусства.",
+      description: "Pioneers in NFT technology creating unique solutions for digital art.",
       type: "Innovation Partner",
       icon: Handshake,
     }
@@ -44,7 +44,7 @@ const Partners = () => {
             transition={{ duration: 0.6 }}
             className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent"
           >
-            Наши Партнеры
+            Our Partners
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -52,7 +52,7 @@ const Partners = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-xl text-muted-foreground max-w-2xl mx-auto"
           >
-            Вместе мы создаем будущее цифрового искусства и технологий NFT
+            Together we are creating the future of digital art and NFT technology
           </motion.p>
         </div>
 
@@ -96,17 +96,19 @@ const Partners = () => {
           transition={{ duration: 0.6, delay: 0.6 }}
           className="mt-16 text-center"
         >
-          <h2 className="text-2xl font-semibold mb-4 text-foreground/90">Станьте Нашим Партнером</h2>
+          <h2 className="text-2xl font-semibold mb-4 text-foreground/90">Become Our Partner</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
-            Мы всегда открыты для новых партнерств и возможностей сотрудничества. 
-            Свяжитесь с нами, чтобы узнать больше о партнерской программе.
+            We are always open to new partnerships and collaboration opportunities.
+            Contact us to learn more about our partnership program.
           </p>
           <a 
-            href="mailto:partners@purenit.com" 
+            href="https://t.me/purenftsupport" 
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center px-6 py-3 rounded-xl bg-primary/10 hover:bg-primary/20 border border-primary/20 hover:border-primary/30 text-primary transition-all duration-300 group"
           >
             <Handshake className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform duration-300" />
-            Связаться с Нами
+            Contact Us
           </a>
         </motion.div>
       </div>
