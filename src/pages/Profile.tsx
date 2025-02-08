@@ -571,14 +571,6 @@ const Profile = () => {
                           ≈ ${(Number(userData?.balance || 0) * 3450).toFixed(2)} USD
                         </p>
                       </div>
-                      <div className="flex gap-2 text-xs text-muted-foreground">
-                        <span className="px-2 py-1 rounded-full bg-primary/20 text-white">
-                          {Number(transactionTotals.total_deposits).toFixed(2)} ETH Deposits
-                        </span>
-                        <span className="px-2 py-1 rounded-full bg-destructive/20 text-white">
-                          {Number(transactionTotals.total_withdrawals).toFixed(2)} ETH Withdrawals
-                        </span>
-                      </div>
                     </div>
                     <div className="p-6 rounded-2xl bg-gradient-to-br from-primary/30 to-purple-500/30 backdrop-blur-md animate-float">
                       <Wallet className="w-16 h-16 text-white" strokeWidth={1.5} />
