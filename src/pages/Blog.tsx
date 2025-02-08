@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Calendar, User, Clock } from "lucide-react";
@@ -12,7 +11,7 @@ const blogPosts = [
     date: "March 15, 2024",
     readTime: "5 min read",
     category: "Technology",
-    image: "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&q=80&w=800",
   },
   {
     id: 2,
@@ -22,7 +21,7 @@ const blogPosts = [
     date: "March 12, 2024",
     readTime: "7 min read",
     category: "Guide",
-    image: "https://images.unsplash.com/photo-1559336197-ded8aaa244bc?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=800",
   },
   {
     id: 3,
@@ -32,7 +31,7 @@ const blogPosts = [
     date: "March 10, 2024",
     readTime: "6 min read",
     category: "Security",
-    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1639322537228-f710d846310a?auto=format&fit=crop&q=80&w=800",
   },
   {
     id: 4,
@@ -42,7 +41,7 @@ const blogPosts = [
     date: "March 8, 2024",
     readTime: "8 min read",
     category: "Market",
-    image: "https://images.unsplash.com/photo-1569242840510-5c2efa57c638?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1640340434855-6084b1f4901c?auto=format&fit=crop&q=80&w=800",
   },
   {
     id: 5,
@@ -52,7 +51,7 @@ const blogPosts = [
     date: "March 5, 2024",
     readTime: "10 min read",
     category: "Gaming",
-    image: "https://images.unsplash.com/photo-1560419015-7c427e8ae5ba?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1642006953663-06f0387d5969?auto=format&fit=crop&q=80&w=800",
   },
   {
     id: 6,
@@ -62,7 +61,7 @@ const blogPosts = [
     date: "March 3, 2024",
     readTime: "9 min read",
     category: "Environment",
-    image: "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&q=80&w=800",
   },
   {
     id: 7,
@@ -72,7 +71,7 @@ const blogPosts = [
     date: "March 1, 2024",
     readTime: "6 min read",
     category: "Security",
-    image: "https://images.unsplash.com/photo-1510915228340-29c85a43dcfe?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1641580529558-a89642aef810?auto=format&fit=crop&q=80&w=800",
   },
   {
     id: 8,
@@ -82,7 +81,7 @@ const blogPosts = [
     date: "February 28, 2024",
     readTime: "7 min read",
     category: "Guide",
-    image: "https://images.unsplash.com/photo-1561998338-13ad7883b20f?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1640340434855-6084b1f4901c?auto=format&fit=crop&q=80&w=800",
   },
   {
     id: 9,
@@ -92,7 +91,7 @@ const blogPosts = [
     date: "February 25, 2024",
     readTime: "8 min read",
     category: "Technology",
-    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1642006953663-06f0387d5969?auto=format&fit=crop&q=80&w=800",
   }
 ];
 
