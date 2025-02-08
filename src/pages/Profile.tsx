@@ -466,7 +466,7 @@ const Profile = () => {
                       />
                       <Wallet className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                       {userData?.wallet_address && (
-                        <div className="bg-primary/20 px-3 py-1.5 rounded-md text-sm text-primary font-medium animate-pulse">
+                        <div className="bg-primary/20 px-3 py-1.5 rounded-md text-sm text-primary font-medium min-w-[80px] text-center">
                           ERC-20
                         </div>
                       )}
