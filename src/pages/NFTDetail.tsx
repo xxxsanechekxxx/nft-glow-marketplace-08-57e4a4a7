@@ -1,4 +1,3 @@
-
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Share2, Heart, User, Info, Eye, Award, Gem } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -119,7 +118,6 @@ const NFTDetail = () => {
 
   return (
     <div className="container mx-auto px-4 pt-24 pb-16 relative min-h-[90vh]">
-      {/* Enhanced background gradients */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-purple-500/10 via-pink-500/5 to-secondary/10 blur-3xl -z-10" />
       <div className="absolute inset-0 bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-primary/5 via-secondary/5 to-purple-500/5 blur-3xl -z-10" />
       
@@ -133,7 +131,6 @@ const NFTDetail = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
         <div className="relative group">
-          {/* Enhanced image container */}
           <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 via-purple-500/20 to-pink-500/20 rounded-2xl blur-2xl group-hover:opacity-75 transition-all duration-500 -z-10 opacity-0 group-hover:opacity-100" />
           <div className="relative aspect-square rounded-2xl overflow-hidden animate-fade-in shadow-2xl border border-white/10 group-hover:border-primary/20 transition-all duration-500">
             <img
@@ -182,14 +179,14 @@ const NFTDetail = () => {
 
           <div className="p-8 rounded-2xl bg-gradient-to-r from-[rgba(147,39,143,0.1)] to-[rgba(234,172,232,0.1)] backdrop-blur-xl border border-white/20 hover:border-primary/30 group">
             <div className="flex items-center gap-3 text-3xl font-bold">
+              <span className="bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+                {nft.price}
+              </span>
               <img 
                 src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
                 alt="ETH"
                 className="h-8 w-8 text-primary"
               />
-              <span className="bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
-                {nft.price}
-              </span>
             </div>
           </div>
 
