@@ -35,13 +35,13 @@ export const NFTCard = ({ id, name, image, price, creator }: NFTCardProps) => {
             <h3 className="font-semibold text-lg transition-colors duration-700 group-hover:text-primary line-clamp-1">{name}</h3>
             <p className="text-sm text-muted-foreground line-clamp-1">by {creator}</p>
             <div className="flex items-center justify-between mt-4">
-              <span className="text-sm font-medium flex items-center text-white">
+              <span className="text-sm font-medium flex items-center gap-1.5 text-white">
+                {price}
                 <img 
                   src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
                   alt="ETH"
-                  className="h-4 w-4 mr-1"
+                  className="h-4 w-4"
                 />
-                {price}
               </span>
               <Button 
                 onClick={handlePurchase} 
@@ -58,4 +58,3 @@ export const NFTCard = ({ id, name, image, price, creator }: NFTCardProps) => {
     </Link>
   );
 };
-

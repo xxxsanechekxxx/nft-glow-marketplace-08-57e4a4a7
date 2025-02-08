@@ -595,13 +595,13 @@ const Profile = () => {
                     <div className="space-y-4">
                       <p className="text-sm text-muted-foreground">Available Balance</p>
                       <div className="space-y-2">
-                        <h2 className="text-5xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
+                        <h2 className="text-5xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-1.5">
+                          {Number(userData?.balance || 0).toFixed(2)}
                           <img 
                             src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
                             alt="ETH"
                             className="h-10 w-10"
                           />
-                          {Number(userData?.balance || 0).toFixed(2)}
                         </h2>
                       </div>
                     </div>
