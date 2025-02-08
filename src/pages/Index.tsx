@@ -49,30 +49,14 @@ const Index = () => {
     ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     
     gsap.fromTo(heroRef.current,
-      { opacity: 0, y: 100 },
+      { opacity: 0, y: 50 },
       { 
         opacity: 1, 
         y: 0, 
-        duration: 1.5, 
-        ease: "power3.out",
+        duration: 2, 
+        ease: "power2.out",
         scrollTrigger: {
           trigger: heroRef.current,
-          start: "top center",
-          end: "bottom center",
-          toggleActions: "play none none reverse"
-        }
-      }
-    );
-
-    gsap.fromTo(statsRef.current,
-      { opacity: 0, scale: 0.9 },
-      {
-        opacity: 1,
-        scale: 1,
-        duration: 1.2,
-        ease: "back.out(1.7)",
-        scrollTrigger: {
-          trigger: statsRef.current,
           start: "top 80%",
           end: "bottom center",
           toggleActions: "play none none reverse"
@@ -80,16 +64,32 @@ const Index = () => {
       }
     );
 
+    gsap.fromTo(statsRef.current,
+      { opacity: 0, scale: 0.95 },
+      {
+        opacity: 1,
+        scale: 1,
+        duration: 1.8,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: statsRef.current,
+          start: "top 85%",
+          end: "bottom center",
+          toggleActions: "play none none reverse"
+        }
+      }
+    );
+
     gsap.fromTo(featuredRef.current,
-      { opacity: 0, y: 50 },
+      { opacity: 0, y: 30 },
       {
         opacity: 1,
         y: 0,
-        duration: 1,
+        duration: 1.5,
         ease: "power2.out",
         scrollTrigger: {
           trigger: featuredRef.current,
-          start: "top 75%",
+          start: "top 80%",
           end: "bottom center",
           toggleActions: "play none none reverse"
         }
@@ -97,15 +97,15 @@ const Index = () => {
     );
 
     gsap.fromTo(howItWorksRef.current,
-      { opacity: 0, y: 50 },
+      { opacity: 0, y: 30 },
       {
         opacity: 1,
         y: 0,
-        duration: 1,
+        duration: 1.5,
         ease: "power2.out",
         scrollTrigger: {
           trigger: howItWorksRef.current,
-          start: "top 75%",
+          start: "top 80%",
           end: "bottom center",
           toggleActions: "play none none reverse"
         }
