@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,6 +14,7 @@ import Profile from "./pages/Profile";
 import CreateNFT from "./pages/CreateNFT";
 import Partners from "./pages/Partners";
 import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +36,7 @@ const App = () => (
               <Route path="/create-nft" element={<CreateNFT />} />
               <Route path="/partners" element={<Partners />} />
               <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:id" element={<BlogPost />} />
             </Routes>
           </main>
           <Footer />
