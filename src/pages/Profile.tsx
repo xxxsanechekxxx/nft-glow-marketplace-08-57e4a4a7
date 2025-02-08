@@ -697,7 +697,7 @@ const Profile = () => {
 
               <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
                 <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-2">
+                  <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
                     <ArrowUpCircle className="w-6 h-6 rotate-45" />
                     Transaction History
                   </CardTitle>
