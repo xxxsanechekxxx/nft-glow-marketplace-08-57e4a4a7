@@ -389,26 +389,48 @@ const Profile = () => {
         </div>
 
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 p-1 bg-background/50 backdrop-blur-sm rounded-xl border border-primary/10">
-            {["profile", "settings", "wallet", "nft"].map((tab) => (
-              <TabsTrigger
-                key={tab}
-                value={tab}
-                className="flex items-center gap-2 capitalize transition-all duration-300 data-[state=active]:bg-primary/20 data-[state=active]:text-primary"
-              >
-                {tab === "profile" && <User className="w-4 h-4" />}
-                {tab === "settings" && <Settings className="w-4 h-4" />}
-                {tab === "wallet" && <Wallet className="w-4 h-4" />}
-                {tab === "nft" && <ShoppingBag className="w-4 h-4" />}
-                {tab}
-              </TabsTrigger>
-            ))}
+          <TabsList className="grid w-full grid-cols-4 p-1.5 bg-background/50 backdrop-blur-sm rounded-xl border border-primary/10 mb-6">
+            <TabsTrigger
+              value="profile"
+              className="flex items-center gap-2 transition-all duration-300 data-[state=active]:bg-primary/20 data-[state=active]:text-primary relative overflow-hidden group"
+            >
+              <User className="w-4 h-4" />
+              <span className="relative z-10">Profile</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </TabsTrigger>
+            <TabsTrigger
+              value="settings"
+              className="flex items-center gap-2 transition-all duration-300 data-[state=active]:bg-primary/20 data-[state=active]:text-primary relative overflow-hidden group"
+            >
+              <Settings className="w-4 h-4" />
+              <span className="relative z-10">Settings</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </TabsTrigger>
+            <TabsTrigger
+              value="wallet"
+              className="flex items-center gap-2 transition-all duration-300 data-[state=active]:bg-primary/20 data-[state=active]:text-primary relative overflow-hidden group"
+            >
+              <Wallet className="w-4 h-4" />
+              <span className="relative z-10">Wallet</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </TabsTrigger>
+            <TabsTrigger
+              value="nft"
+              className="flex items-center gap-2 transition-all duration-300 data-[state=active]:bg-primary/20 data-[state=active]:text-primary relative overflow-hidden group"
+            >
+              <ShoppingBag className="w-4 h-4" />
+              <span className="relative z-10">NFT</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="profile">
             <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
-              <CardHeader>
-                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+              <CardHeader className="space-y-2">
+                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary/20">
+                    <UserRound className="w-6 h-6 text-primary" />
+                  </div>
                   Profile Information
                 </CardTitle>
               </CardHeader>
@@ -419,22 +441,28 @@ const Profile = () => {
                       <Mail className="w-4 h-4" />
                       Email
                     </label>
-                    <Input
-                      value={userData?.email}
-                      readOnly
-                      className="bg-background/50 border-primary/10 group-hover:border-primary/30 transition-colors"
-                    />
+                    <div className="relative">
+                      <Input
+                        value={userData?.email}
+                        readOnly
+                        className="bg-background/50 border-primary/10 group-hover:border-primary/30 transition-colors pl-10"
+                      />
+                      <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                    </div>
                   </div>
                   <div className="space-y-2 group">
                     <label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
                       <Globe className="w-4 h-4" />
                       Country
                     </label>
-                    <Input
-                      value={userData?.country}
-                      readOnly
-                      className="bg-background/50 border-primary/10 group-hover:border-primary/30 transition-colors"
-                    />
+                    <div className="relative">
+                      <Input
+                        value={userData?.country}
+                        readOnly
+                        className="bg-background/50 border-primary/10 group-hover:border-primary/30 transition-colors pl-10"
+                      />
+                      <Globe className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                    </div>
                   </div>
                 </div>
                 <div className="space-y-2 group">
@@ -443,26 +471,26 @@ const Profile = () => {
                     Wallet Address
                   </label>
                   <div className="flex gap-4 items-start">
-                    <div className="flex-grow flex gap-2 items-center">
+                    <div className="flex-grow flex gap-2 items-center relative">
                       <Input
                         value={userData?.wallet_address || ''}
                         readOnly
-                        className="bg-background/50 font-mono text-sm border-primary/10 group-hover:border-primary/30 transition-colors"
+                        className="bg-background/50 font-mono text-sm border-primary/10 group-hover:border-primary/30 transition-colors pl-10"
                         placeholder="No wallet address generated"
                       />
+                      <Wallet className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                       {userData?.wallet_address && (
-                        <Input
-                          value="ERC-20"
-                          readOnly
-                          className="bg-background/50 w-24 text-sm text-center border-primary/10"
-                        />
+                        <div className="bg-primary/20 px-3 py-1.5 rounded-md text-sm text-primary font-medium">
+                          ERC-20
+                        </div>
                       )}
                     </div>
                     {!userData?.wallet_address && (
                       <Button
                         onClick={() => setIsWalletModalOpen(true)}
-                        className="bg-primary/20 text-primary hover:bg-primary/30 transition-colors"
+                        className="bg-primary/20 text-primary hover:bg-primary/30 transition-colors flex items-center gap-2"
                       >
+                        <Wallet className="w-4 h-4" />
                         Generate Address
                       </Button>
                     )}
@@ -474,27 +502,33 @@ const Profile = () => {
 
           <TabsContent value="settings">
             <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
-              <CardHeader>
-                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+              <CardHeader className="space-y-2">
+                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary/20">
+                    <Settings className="w-6 h-6 text-primary" />
+                  </div>
                   Account Settings
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
-                  <form onSubmit={handleEmailChange} className="space-y-4">
+                  <form onSubmit={handleEmailChange} className="space-y-4 p-4 rounded-lg bg-primary/5 border border-primary/10">
                     <div className="space-y-2">
                       <label className="text-sm font-medium flex items-center gap-2">
-                        <Mail className="w-4 h-4" />
+                        <Mail className="w-4 h-4 text-primary" />
                         New Email
                       </label>
-                      <Input
-                        type="email"
-                        value={newEmail}
-                        onChange={(e) => setNewEmail(e.target.value)}
-                        placeholder="Enter new email address"
-                        required
-                        className="bg-background/50 border-primary/10 group-hover:border-primary/30 transition-colors"
-                      />
+                      <div className="relative">
+                        <Input
+                          type="email"
+                          value={newEmail}
+                          onChange={(e) => setNewEmail(e.target.value)}
+                          placeholder="Enter new email address"
+                          required
+                          className="bg-background/50 border-primary/10 group-hover:border-primary/30 transition-colors pl-10"
+                        />
+                        <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                      </div>
                     </div>
                     <Button 
                       type="submit" 
@@ -504,39 +538,54 @@ const Profile = () => {
                     </Button>
                   </form>
 
-                  <form onSubmit={handlePasswordChange} className="space-y-4">
+                  <form onSubmit={handlePasswordChange} className="space-y-4 p-4 rounded-lg bg-primary/5 border border-primary/10">
                     <div className="space-y-2">
                       <label className="text-sm font-medium flex items-center gap-2">
-                        <Key className="w-4 h-4" />
+                        <Key className="w-4 h-4 text-primary" />
                         Current Password
                       </label>
-                      <Input
-                        type="password"
-                        value={currentPassword}
-                        onChange={(e) => setCurrentPassword(e.target.value)}
-                        required
-                        className="bg-background/50 border-primary/10"
-                      />
+                      <div className="relative">
+                        <Input
+                          type="password"
+                          value={currentPassword}
+                          onChange={(e) => setCurrentPassword(e.target.value)}
+                          required
+                          className="bg-background/50 border-primary/10 pl-10"
+                        />
+                        <Key className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                      </div>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">New Password</label>
-                      <Input
-                        type="password"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        required
-                        className="bg-background/50 border-primary/10"
-                      />
+                      <label className="text-sm font-medium flex items-center gap-2">
+                        <Key className="w-4 h-4 text-primary" />
+                        New Password
+                      </label>
+                      <div className="relative">
+                        <Input
+                          type="password"
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          required
+                          className="bg-background/50 border-primary/10 pl-10"
+                        />
+                        <Key className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                      </div>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">Confirm New Password</label>
-                      <Input
-                        type="password"
-                        value={confirmNewPassword}
-                        onChange={(e) => setConfirmNewPassword(e.target.value)}
-                        required
-                        className="bg-background/50 border-primary/10"
-                      />
+                      <label className="text-sm font-medium flex items-center gap-2">
+                        <Key className="w-4 h-4 text-primary" />
+                        Confirm New Password
+                      </label>
+                      <div className="relative">
+                        <Input
+                          type="password"
+                          value={confirmNewPassword}
+                          onChange={(e) => setConfirmNewPassword(e.target.value)}
+                          required
+                          className="bg-background/50 border-primary/10 pl-10"
+                        />
+                        <Key className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                      </div>
                     </div>
                     <Button type="submit" className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-colors">
                       Update Password
@@ -549,10 +598,10 @@ const Profile = () => {
             <div className="mt-6">
               <Button
                 variant="destructive"
-                className="w-full"
+                className="w-full hover:bg-destructive/90 transition-colors flex items-center justify-center gap-2"
                 onClick={handleLogout}
               >
-                <LogOut className="w-4 h-4 mr-2" />
+                <LogOut className="w-4 h-4" />
                 Logout
               </Button>
             </div>
