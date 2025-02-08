@@ -225,9 +225,9 @@ const NFTDetail = () => {
               <div className="p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-primary/20 transition-all duration-300 hover:scale-[1.02] hover:bg-white/10 group shadow-lg hover:shadow-primary/20">
                 <div className="flex items-center gap-2 mb-2">
                   <Eye className="h-5 w-5 text-primary group-hover:scale-110 transition-transform duration-300" />
-                  <div className="text-sm text-muted-foreground">Rarity</div>
+                  <div className="text-sm text-muted-foreground">Chain</div>
                 </div>
-                <div className="font-medium text-lg">Legendary</div>
+                <div className="font-medium text-lg">Ethereum</div>
               </div>
             </div>
             {nft.properties && nft.properties.length > 0 && (
