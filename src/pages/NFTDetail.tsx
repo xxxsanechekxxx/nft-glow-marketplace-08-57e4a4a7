@@ -188,7 +188,7 @@ const NFTDetail = () => {
                 className="h-8 w-8 text-primary animate-pulse"
               />
               <span className="bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
-                {nft.price} ETH
+                {nft.price}
               </span>
             </div>
           </div>
