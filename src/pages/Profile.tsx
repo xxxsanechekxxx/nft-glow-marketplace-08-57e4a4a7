@@ -365,24 +365,23 @@ const Profile = () => {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4 mt-16 min-h-screen">
+    <div className="container mx-auto py-8 px-4 mt-16 min-h-screen bg-gradient-to-b from-background to-background/50">
       <div className="max-w-4xl mx-auto space-y-8">
-        <div className="relative p-8 rounded-2xl overflow-hidden animate-fade-in">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-purple-500/10 to-primary/10 animate-gradient" />
+        <div className="relative p-8 rounded-2xl overflow-hidden bg-gradient-to-r from-purple-500/10 via-primary/5 to-purple-500/10 border border-primary/10 backdrop-blur-sm shadow-xl">
           <div className="relative flex items-center gap-6 z-10">
-            <Avatar className="w-24 h-24 border-4 border-primary/20 animate-float shadow-xl">
-              <AvatarFallback className="bg-gradient-to-br from-primary/80 to-purple-600">
-                <UserRound className="w-12 h-12 text-white" />
+            <Avatar className="w-24 h-24 border-4 border-primary/20 shadow-xl ring-2 ring-purple-500/20 transition-all duration-300 hover:ring-purple-500/40">
+              <AvatarFallback className="bg-gradient-to-br from-primary/80 to-purple-600 text-white">
+                <UserRound className="w-12 h-12" />
               </AvatarFallback>
             </Avatar>
             <div className="space-y-3">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
                 @{userData?.login}
               </h1>
-              <div className="flex items-center gap-2">
-                <Wallet className="w-5 h-5 text-white" />
-                <span className="text-lg font-semibold text-white">
-                  {Number(userData?.balance || 0).toFixed(1)} ETH
+              <div className="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full backdrop-blur-sm border border-primary/20">
+                <Wallet className="w-5 h-5 text-primary" />
+                <span className="text-lg font-semibold text-primary">
+                  {Number(userData?.balance || 0).toFixed(2)} ETH
                 </span>
               </div>
             </div>
@@ -390,7 +389,7 @@ const Profile = () => {
         </div>
 
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 p-1 bg-background/50 backdrop-blur-sm rounded-xl">
+          <TabsList className="grid w-full grid-cols-4 p-1 bg-background/50 backdrop-blur-sm rounded-xl border border-primary/10">
             {["profile", "settings", "wallet", "nft"].map((tab) => (
               <TabsTrigger
                 key={tab}
@@ -409,7 +408,7 @@ const Profile = () => {
           <TabsContent value="profile">
             <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
               <CardHeader>
-                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
                   Profile Information
                 </CardTitle>
               </CardHeader>
@@ -476,7 +475,7 @@ const Profile = () => {
           <TabsContent value="settings">
             <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
               <CardHeader>
-                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
                   Account Settings
                 </CardTitle>
               </CardHeader>
@@ -516,6 +515,7 @@ const Profile = () => {
                         value={currentPassword}
                         onChange={(e) => setCurrentPassword(e.target.value)}
                         required
+                        className="bg-background/50 border-primary/10"
                       />
                     </div>
                     <div className="space-y-2">
@@ -525,6 +525,7 @@ const Profile = () => {
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         required
+                        className="bg-background/50 border-primary/10"
                       />
                     </div>
                     <div className="space-y-2">
@@ -534,6 +535,7 @@ const Profile = () => {
                         value={confirmNewPassword}
                         onChange={(e) => setConfirmNewPassword(e.target.value)}
                         required
+                        className="bg-background/50 border-primary/10"
                       />
                     </div>
                     <Button type="submit" className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-colors">
@@ -558,16 +560,16 @@ const Profile = () => {
 
           <TabsContent value="wallet">
             <div className="space-y-6">
-              <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-gradient-to-br from-primary/20 via-purple-500/20 to-primary/20">
+              <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
                 <CardContent className="p-8">
                   <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                     <div className="space-y-4">
                       <p className="text-sm text-muted-foreground">Available Balance</p>
                       <div className="space-y-2">
-                        <h2 className="text-5xl font-bold text-white tracking-tight">
+                        <h2 className="text-5xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
                           {Number(userData?.balance || 0).toFixed(2)} ETH
                         </h2>
-                        <p className="text-sm text-muted-foreground/80">
+                        <p className="text-sm text-muted-foreground">
                           ≈ ${(Number(userData?.balance || 0) * 3450).toFixed(2)} USD
                         </p>
                       </div>
@@ -592,7 +594,7 @@ const Profile = () => {
                       </div>
                     </Button>
                   </DialogTrigger>
-                  <DialogContent>
+                  <DialogContent className="bg-background/95 backdrop-blur-xl border-primary/10">
                     <DialogHeader>
                       <DialogTitle>Deposit ETH</DialogTitle>
                       <DialogDescription>
@@ -610,10 +612,11 @@ const Profile = () => {
                           onChange={(e) => setDepositAmount(e.target.value)}
                           placeholder="0.00"
                           required
+                          className="bg-background/50 border-primary/10"
                         />
                       </div>
                       <DialogFooter>
-                        <Button type="submit">Continue</Button>
+                        <Button type="submit" className="bg-primary/20 text-primary hover:bg-primary/30">Continue</Button>
                       </DialogFooter>
                     </form>
                   </DialogContent>
@@ -634,7 +637,7 @@ const Profile = () => {
                       </div>
                     </Button>
                   </DialogTrigger>
-                  <DialogContent>
+                  <DialogContent className="bg-background/95 backdrop-blur-xl border-primary/10">
                     <DialogHeader>
                       <DialogTitle>Withdraw ETH</DialogTitle>
                       <DialogDescription>
@@ -652,10 +655,13 @@ const Profile = () => {
                           onChange={(e) => setWithdrawAmount(e.target.value)}
                           placeholder="0.00"
                           required
+                          className="bg-background/50 border-primary/10"
                         />
                       </div>
                       <DialogFooter>
-                        <Button type="submit">Confirm Withdrawal</Button>
+                        <Button type="submit" className="bg-destructive/20 text-destructive hover:bg-destructive/30">
+                          Confirm Withdrawal
+                        </Button>
                       </DialogFooter>
                     </form>
                   </DialogContent>
@@ -664,7 +670,7 @@ const Profile = () => {
 
               <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
                 <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent flex items-center gap-2">
+                  <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-2">
                     <ArrowUpCircle className="w-6 h-6 rotate-45" />
                     Transaction History
                   </CardTitle>
@@ -725,25 +731,12 @@ const Profile = () => {
                 </CardContent>
               </Card>
             </div>
-            <div className="flex items-center gap-2 p-4 mt-4 bg-background/60 rounded-lg border border-primary/10">
-              <span className="text-white font-medium">My Limits - 0 / 5</span>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <HelpCircle className="w-4 h-4 text-muted-foreground hover:text-primary cursor-help transition-colors" />
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-xs">
-                    <p>Due to the fact that you have only recently created your account, we are forced to limit the number of orders that you can join. This limit is updated every month.</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
           </TabsContent>
 
           <TabsContent value="nft">
             <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
               <CardHeader>
-                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
                   Your NFT Collection
                 </CardTitle>
               </CardHeader>
