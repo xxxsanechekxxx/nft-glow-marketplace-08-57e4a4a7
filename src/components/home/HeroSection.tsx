@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, Star, Sparkles, Rocket } from "lucide-react";
+import { ArrowRight, Sparkles, Rocket } from "lucide-react";
 
 export const HeroSection = () => {
   return (
@@ -13,17 +13,17 @@ export const HeroSection = () => {
       
       {/* Enhanced animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-10 w-40 h-40 bg-primary/20 rounded-full blur-[100px] animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-56 h-56 bg-purple-500/20 rounded-full blur-[100px] animate-pulse delay-1000"></div>
-        <div className="absolute top-40 right-20 w-32 h-32 bg-pink-500/20 rounded-full blur-[100px] animate-pulse delay-500"></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-[120px] animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/20 rounded-full blur-[150px] animate-pulse delay-1000"></div>
+        <div className="absolute top-40 right-20 w-64 h-64 bg-pink-500/20 rounded-full blur-[130px] animate-pulse delay-500"></div>
       </div>
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center space-y-8">
           {/* Enhanced badge with glass effect */}
-          <div className="inline-block animate-bounce bg-primary/20 backdrop-blur-sm rounded-full px-6 py-2 text-sm mb-8 flex items-center gap-2 border border-primary/20 shadow-lg">
-            <Sparkles className="w-4 h-4 text-primary" /> 
-            <span className="bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+          <div className="inline-block animate-bounce bg-primary/20 backdrop-blur-sm rounded-full px-6 py-2 text-sm mb-8 flex items-center gap-2 border border-primary/20 shadow-lg hover:bg-primary/30 transition-colors">
+            <Sparkles className="w-4 h-4 text-primary animate-pulse" /> 
+            <span className="bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent font-semibold">
               Welcome to the Future of Digital Art
             </span>
           </div>
@@ -34,34 +34,28 @@ export const HeroSection = () => {
           </h1>
 
           {/* Enhanced subheading with glass effect */}
-          <p className="text-xl md:text-2xl text-muted-foreground animate-fade-in backdrop-blur-sm max-w-2xl mx-auto leading-relaxed">
-            PureNFT is the world's first and largest NFT marketplace
+          <p className="text-xl md:text-2xl text-muted-foreground/90 animate-fade-in backdrop-blur-sm max-w-2xl mx-auto leading-relaxed">
+            PureNFT is the world's first and largest NFT marketplace with unique digital assets waiting to be discovered
           </p>
 
-          {/* Enhanced buttons with glass effect and animations */}
-          <div className="flex flex-col sm:flex-row gap-6 justify-center animate-fade-in pt-8">
+          {/* Single enhanced button with glass effect and animations */}
+          <div className="flex justify-center animate-fade-in pt-8">
             <Button 
               asChild 
               size="lg" 
-              className="bg-primary hover:bg-primary/90 backdrop-blur-sm group relative overflow-hidden h-14 px-8 text-lg"
+              className="bg-primary/90 hover:bg-primary backdrop-blur-sm group relative overflow-hidden h-14 px-8 text-lg shadow-lg hover:shadow-primary/20 transition-all duration-500"
             >
               <Link to="/marketplace" className="flex items-center gap-3">
-                <Rocket className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                <Rocket className="w-5 h-5 group-hover:rotate-12 transition-transform duration-500" />
                 <span className="relative z-10">Explore NFTs</span>
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                <div className="absolute inset-0 bg-gradient-to-r from-primary via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-r from-primary via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               </Link>
             </Button>
-
-            <Button 
-              variant="outline" 
-              size="lg" 
-              className="backdrop-blur-sm border-primary/20 hover:bg-primary/10 group h-14 px-8 text-lg"
-            >
-              Create Collection
-              <Star className="w-5 h-5 ml-2 group-hover:rotate-45 transition-transform text-primary" />
-            </Button>
           </div>
+
+          {/* Added decorative elements */}
+          <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-32 h-32 bg-gradient-to-t from-primary/10 to-transparent blur-2xl"></div>
         </div>
       </div>
     </div>
