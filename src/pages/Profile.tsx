@@ -55,6 +55,7 @@ interface UserData {
   balance: string;
   wallet_address?: string;
   erc20_address?: string;
+  created_at: string;
 }
 
 interface TransactionTotals {
@@ -166,7 +167,8 @@ const Profile = () => {
             country: profileData?.country || currentUser.user_metadata?.country || '',
             avatar_url: null,
             balance: profileData?.balance?.toString() || "0.0",
-            wallet_address: profileData?.wallet_address || ''
+            wallet_address: profileData?.wallet_address || '',
+            created_at: currentUser.created_at
           });
 
           setTransactions(transactionsData?.map(tx => ({
