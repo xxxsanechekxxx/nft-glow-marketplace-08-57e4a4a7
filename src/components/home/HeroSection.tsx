@@ -20,7 +20,7 @@ export const HeroSection = () => {
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center space-y-8">
-          <div className="inline-block animate-bounce bg-primary/20 backdrop-blur-sm rounded-full px-6 py-2 text-sm mb-8 flex items-center gap-2 border border-primary/20 shadow-lg hover:bg-primary/30 transition-colors duration-500">
+          <div className="inline-block animate-[bounce_3s_ease-in-out_infinite] bg-primary/20 backdrop-blur-sm rounded-full px-6 py-2 text-sm mb-8 flex items-center gap-2 border border-primary/20 shadow-lg hover:bg-primary/30 transition-colors duration-500">
             <Sparkles className="w-4 h-4 text-primary animate-pulse" /> 
             <span className="bg-gradient-to-r from-primary via-purple-400 to-pink-500 bg-clip-text text-transparent font-semibold">
               Welcome to the Future of Digital Art
@@ -58,4 +58,3 @@ export const HeroSection = () => {
     </div>
   );
 };
-
