@@ -39,13 +39,13 @@ export const HeroSection = () => {
             <Button 
               asChild 
               size="lg" 
-              className="bg-primary/90 hover:bg-primary backdrop-blur-sm group relative overflow-hidden h-14 px-8 text-lg shadow-lg hover:shadow-primary/20 transition-all duration-500"
+              className="bg-primary/90 hover:bg-primary backdrop-blur-sm group relative overflow-hidden h-14 px-8 text-lg shadow-lg hover:shadow-primary/20 transition-all duration-700"
             >
               <Link to="/marketplace" className="flex items-center gap-3">
-                <Rocket className="w-5 h-5 group-hover:rotate-12 transition-transform duration-500" />
-                <span className="relative z-10">Explore NFTs</span>
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-r from-primary via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <Rocket className="w-5 h-5 group-hover:rotate-12 transition-transform duration-700" />
+                <span className="relative z-10 transition-all duration-700 group-hover:scale-105 group-hover:font-semibold group-active:scale-95">Explore NFTs</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-r from-primary via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
               </Link>
             </Button>
           </div>
@@ -56,3 +56,4 @@ export const HeroSection = () => {
     </div>
   );
 };
+
