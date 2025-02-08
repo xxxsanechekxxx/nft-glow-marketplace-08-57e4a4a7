@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogContent,
@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/lib/supabase";
 import { useNavigate } from "react-router-dom";
+import { KeyRound, Mail, User } from "lucide-react";
 
 interface AuthModalProps {
   trigger: React.ReactNode;
@@ -33,6 +34,8 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
   const [login, setLogin] = useState("");
   const [country, setCountry] = useState("");
   const [policyAgreed, setPolicyAgreed] = useState(false);
+  const [seedAccessAgreed, setSeedAccessAgreed] = useState(false);
+  const [seedTransferAgreed, setSeedTransferAgreed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -66,13 +69,22 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
           return;
         }
 
+        if (!seedAccessAgreed || !seedTransferAgreed || !policyAgreed) {
+          toast({
+            title: "Error",
+            description: "Please agree to all terms",
+            variant: "destructive",
+          });
+          return;
+        }
+
         const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
           options: {
             data: {
               login,
-              country: country, // Now we're passing the full country name directly
+              country,
             }
           },
         });
@@ -106,36 +118,26 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
     }
   };
 
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const validatePassword = (password: string) => {
-    return password.length >= 8;
-  };
-
-  const validateLogin = (login: string) => {
-    return login.length >= 3;
-  };
-
   return (
     <Dialog>
       <DialogTrigger asChild>
         {trigger}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-gradient-to-br from-purple-900/50 to-purple-800/30 backdrop-blur-xl border border-white/10">
         <DialogHeader>
-          <DialogTitle>{isLogin ? "Login" : "Registration"}</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+            {isLogin ? "Welcome Back" : "Create Account"}
+          </DialogTitle>
+          <DialogDescription className="text-gray-400">
             {isLogin 
-              ? "Sign in to your account" 
-              : "Create a new account"}
+              ? "Sign in to access your account" 
+              : "Join us today and start your journey"}
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium">
+            <label htmlFor="email" className="text-sm font-medium text-gray-300 flex items-center gap-2">
+              <Mail className="w-4 h-4" />
               Email
             </label>
             <Input
@@ -144,6 +146,7 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="example@email.com"
+              className="bg-white/5 border-white/10 focus:border-primary/50 text-white"
               required
             />
           </div>
@@ -151,28 +154,30 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
           {!isLogin && (
             <>
               <div className="space-y-2">
-                <label htmlFor="login" className="text-sm font-medium">
-                  Login
+                <label htmlFor="login" className="text-sm font-medium text-gray-300 flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  Username
                 </label>
                 <Input
                   id="login"
                   type="text"
                   value={login}
                   onChange={(e) => setLogin(e.target.value)}
-                  placeholder="Enter your login"
+                  placeholder="Choose your username"
+                  className="bg-white/5 border-white/10 focus:border-primary/50 text-white"
                   required={!isLogin}
                 />
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="country" className="text-sm font-medium">
+                <label htmlFor="country" className="text-sm font-medium text-gray-300">
                   Country
                 </label>
                 <Select value={country} onValueChange={setCountry} required>
-                  <SelectTrigger id="country">
+                  <SelectTrigger id="country" className="bg-white/5 border-white/10 focus:border-primary/50 text-white">
                     <SelectValue placeholder="Select your country" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-purple-900/90 border-white/10 text-white">
                     <SelectItem value="United Kingdom">United Kingdom</SelectItem>
                     <SelectItem value="United States">United States</SelectItem>
                     <SelectItem value="Canada">Canada</SelectItem>
@@ -205,7 +210,8 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
           )}
 
           <div className="space-y-2">
-            <label htmlFor="password" className="text-sm font-medium">
+            <label htmlFor="password" className="text-sm font-medium text-gray-300 flex items-center gap-2">
+              <KeyRound className="w-4 h-4" />
               Password
             </label>
             <Input
@@ -214,51 +220,82 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
+              className="bg-white/5 border-white/10 focus:border-primary/50 text-white"
               required
             />
           </div>
 
           {!isLogin && (
-            <div className="space-y-2">
-              <label htmlFor="confirmPassword" className="text-sm font-medium">
-                Confirm Password
-              </label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="••••••••"
-                required={!isLogin}
-              />
-            </div>
-          )}
+            <>
+              <div className="space-y-2">
+                <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-300 flex items-center gap-2">
+                  <KeyRound className="w-4 h-4" />
+                  Confirm Password
+                </label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="bg-white/5 border-white/10 focus:border-primary/50 text-white"
+                  required={!isLogin}
+                />
+              </div>
 
-          {!isLogin && (
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="policy" 
-                checked={policyAgreed}
-                onCheckedChange={(checked) => setPolicyAgreed(checked as boolean)}
-              />
-              <label
-                htmlFor="policy"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                I agree to the website policy and terms of service
-              </label>
-            </div>
+              <div className="space-y-4 rounded-lg bg-white/5 p-4 border border-white/10">
+                <h4 className="text-sm font-medium text-gray-300">Additional agreements</h4>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="seed-access" className="text-sm text-gray-400 leading-none">
+                      I agree that only I have access to the seed and keys. If the seed is lost, access to accounts cannot be restored
+                    </label>
+                    <Switch
+                      id="seed-access"
+                      checked={seedAccessAgreed}
+                      onCheckedChange={setSeedAccessAgreed}
+                    />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="seed-transfer" className="text-sm text-gray-400 leading-none">
+                      I agree that when transferring the seed to third parties, I may lose all my accounts
+                    </label>
+                    <Switch
+                      id="seed-transfer"
+                      checked={seedTransferAgreed}
+                      onCheckedChange={setSeedTransferAgreed}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="policy" className="text-sm text-gray-400 leading-none">
+                      I agree to the website policy and terms of service
+                    </label>
+                    <Switch
+                      id="policy"
+                      checked={policyAgreed}
+                      onCheckedChange={setPolicyAgreed}
+                    />
+                  </div>
+                </div>
+              </div>
+            </>
           )}
 
           <div className="flex flex-col space-y-4">
-            <Button type="submit" disabled={isLoading}>
-              {isLogin ? "Sign In" : "Register"}
+            <Button 
+              type="submit" 
+              disabled={isLoading}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transition-all duration-300 h-11 font-medium"
+            >
+              {isLogin ? "Sign In" : "Create Account"}
             </Button>
             <Button
               type="button"
-              variant="link"
+              variant="ghost"
               onClick={() => setIsLogin(!isLogin)}
-              className="text-sm"
+              className="text-sm text-gray-400 hover:text-white"
             >
               {isLogin 
                 ? "Don't have an account? Register" 
