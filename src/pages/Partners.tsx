@@ -1,5 +1,5 @@
 
-import { Building2, Building, Globe, HandShake } from "lucide-react";
+import { Building2, Building, Globe, Handshake } from "lucide-react";
 import { motion } from "framer-motion";
 
 const Partners = () => {
@@ -26,7 +26,7 @@ const Partners = () => {
       name: "NFT Innovators",
       description: "Пионеры в области NFT-технологий, создающие уникальные решения для цифрового искусства.",
       type: "Innovation Partner",
-      icon: HandShake,
+      icon: Handshake,
     }
   ];
 
@@ -105,7 +105,7 @@ const Partners = () => {
             href="mailto:partners@purenit.com" 
             className="inline-flex items-center px-6 py-3 rounded-xl bg-primary/10 hover:bg-primary/20 border border-primary/20 hover:border-primary/30 text-primary transition-all duration-300 group"
           >
-            <HandShake className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform duration-300" />
+            <Handshake className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform duration-300" />
             Связаться с Нами
           </a>
         </motion.div>
@@ -115,4 +115,3 @@ const Partners = () => {
 };
 
 export default Partners;
-
