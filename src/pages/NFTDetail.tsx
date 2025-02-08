@@ -1,6 +1,6 @@
 
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Share2, Heart, User, Info, Coins, Eye, Award, Gem } from "lucide-react";
+import { ArrowLeft, Share2, Heart, User, Info, Eye, Award, Gem } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/lib/supabase";
@@ -182,7 +182,11 @@ const NFTDetail = () => {
 
           <div className="p-8 rounded-2xl bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl border border-white/10 hover:border-primary/20 transition-all duration-300 group hover:shadow-xl hover:shadow-primary/20">
             <div className="flex items-center gap-3 text-3xl font-bold">
-              <Coins className="h-8 w-8 text-primary animate-pulse" />
+              <img 
+                src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                alt="ETH"
+                className="h-8 w-8 text-primary animate-pulse"
+              />
               <span className="bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
                 {nft.price} ETH
               </span>
@@ -225,9 +229,9 @@ const NFTDetail = () => {
               <div className="p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-primary/20 transition-all duration-300 hover:scale-[1.02] hover:bg-white/10 group shadow-lg hover:shadow-primary/20">
                 <div className="flex items-center gap-2 mb-2">
                   <Eye className="h-5 w-5 text-primary group-hover:scale-110 transition-transform duration-300" />
-                  <div className="text-sm text-muted-foreground">Chain</div>
+                  <div className="text-sm text-muted-foreground">Rarity</div>
                 </div>
-                <div className="font-medium text-lg">Ethereum</div>
+                <div className="font-medium text-lg">Legendary</div>
               </div>
             </div>
             {nft.properties && nft.properties.length > 0 && (
