@@ -1,7 +1,7 @@
 
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, Calendar, User, Clock } from "lucide-react";
+import { Calendar, User, Clock } from "lucide-react";
 
 const blogPosts = [
   {
@@ -34,6 +34,66 @@ const blogPosts = [
     category: "Security",
     image: "https://images.unsplash.com/photo-1639322537228-f710d846310a?auto=format&fit=crop&q=80&w=800",
   },
+  {
+    id: 4,
+    title: "The Rise of Digital Art Marketplaces",
+    excerpt: "How online platforms are revolutionizing the way we buy, sell, and trade digital art.",
+    author: "Emma Wilson",
+    date: "March 8, 2024",
+    readTime: "8 min read",
+    category: "Market",
+    image: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=800",
+  },
+  {
+    id: 5,
+    title: "NFT Gaming: A New Era of Entertainment",
+    excerpt: "Discover how NFTs are transforming the gaming industry and creating new opportunities for players.",
+    author: "David Park",
+    date: "March 5, 2024",
+    readTime: "10 min read",
+    category: "Gaming",
+    image: "https://images.unsplash.com/photo-1616626178496-ae17a1c0235c?auto=format&fit=crop&q=80&w=800",
+  },
+  {
+    id: 6,
+    title: "The Environmental Impact of NFTs",
+    excerpt: "An in-depth analysis of the environmental concerns surrounding NFTs and potential solutions.",
+    author: "Lisa Green",
+    date: "March 3, 2024",
+    readTime: "9 min read",
+    category: "Environment",
+    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800",
+  },
+  {
+    id: 7,
+    title: "NFT Authentication and Verification",
+    excerpt: "Understanding the technical aspects of NFT verification and avoiding fraud.",
+    author: "James Chen",
+    date: "March 1, 2024",
+    readTime: "6 min read",
+    category: "Security",
+    image: "https://images.unsplash.com/photo-1639322537064-8d99d3c6480b?auto=format&fit=crop&q=80&w=800",
+  },
+  {
+    id: 8,
+    title: "Digital Art Curation Strategies",
+    excerpt: "Expert tips on building and maintaining a valuable digital art collection.",
+    author: "Maria Rodriguez",
+    date: "February 28, 2024",
+    readTime: "7 min read",
+    category: "Guide",
+    image: "https://images.unsplash.com/photo-1618172193763-c511deb635ca?auto=format&fit=crop&q=80&w=800",
+  },
+  {
+    id: 9,
+    title: "The Future of Digital Ownership",
+    excerpt: "How blockchain technology is redefining ownership in the digital age.",
+    author: "Thomas Wright",
+    date: "February 25, 2024",
+    readTime: "8 min read",
+    category: "Technology",
+    image: "https://images.unsplash.com/photo-1639762681053-c47ac3c3f458?auto=format&fit=crop&q=80&w=800",
+  }
 ];
 
 const Blog = () => {
@@ -120,23 +180,6 @@ const Blog = () => {
             </motion.div>
           ))}
         </div>
-
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="mt-16 text-center"
-        >
-          <a 
-            href="https://t.me/purenftsupport" 
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center px-6 py-3 rounded-xl bg-primary/10 hover:bg-primary/20 border border-primary/20 hover:border-primary/30 text-primary transition-all duration-300 group"
-          >
-            <span>Subscribe to Updates</span>
-            <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
-          </a>
-        </motion.div>
       </div>
     </div>
   );
