@@ -180,12 +180,12 @@ const NFTDetail = () => {
             </div>
           )}
 
-          <div className="p-8 rounded-2xl bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl border border-white/10 hover:border-primary/20 transition-all duration-300 group hover:shadow-xl hover:shadow-primary/20">
+          <div className="p-8 rounded-2xl bg-gradient-to-r from-[rgba(147,39,143,0.1)] to-[rgba(234,172,232,0.1)] backdrop-blur-xl border border-white/20 hover:border-primary/30 group">
             <div className="flex items-center gap-3 text-3xl font-bold">
               <img 
                 src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
                 alt="ETH"
-                className="h-8 w-8 text-primary animate-pulse"
+                className="h-8 w-8 text-primary"
               />
               <span className="bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
                 {nft.price}
