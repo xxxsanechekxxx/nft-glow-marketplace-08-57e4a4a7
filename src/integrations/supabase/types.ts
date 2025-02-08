@@ -107,7 +107,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_transaction_totals: {
+        Args: {
+          user_uuid: string
+        }
+        Returns: {
+          total_deposits: number
+          total_withdrawals: number
+        }[]
+      }
     }
     Enums: {
       transaction_status: "pending" | "completed" | "failed"

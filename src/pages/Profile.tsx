@@ -57,6 +57,11 @@ interface UserData {
   erc20_address?: string;
 }
 
+interface TransactionTotals {
+  total_deposits: number;
+  total_withdrawals: number;
+}
+
 const Profile = () => {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
@@ -73,6 +78,10 @@ const Profile = () => {
   const [isDepositConfirmationOpen, setIsDepositConfirmationOpen] = useState(false);
   const [isFraudWarningOpen, setIsFraudWarningOpen] = useState(false);
   const [newEmail, setNewEmail] = useState("");
+  const [transactionTotals, setTransactionTotals] = useState<TransactionTotals>({
+    total_deposits: 0,
+    total_withdrawals: 0
+  });
 
   const showDelayedToast = (title: string, description: string, variant: "default" | "destructive" = "default") => {
     setTimeout(() => {
@@ -110,6 +119,20 @@ const Profile = () => {
         if (!currentUser) {
           console.log("No user found");
           return;
+        }
+
+        const { data: totalsData, error: totalsError } = await supabase
+          .rpc('get_user_transaction_totals', {
+            user_uuid: currentUser.id
+          });
+
+        if (totalsError) {
+          console.error("Error fetching transaction totals:", totalsError);
+          throw totalsError;
+        }
+
+        if (totalsData) {
+          setTransactionTotals(totalsData);
         }
 
         const { data: profileData, error: profileError } = await supabase
@@ -667,14 +690,14 @@ const Profile = () => {
                           <ArrowUpCircle className="w-4 h-4 text-green-500" />
                           Total Deposits
                         </div>
-                        <p className="text-2xl font-bold text-white">5.43 ETH</p>
+                        <p className="text-2xl font-bold text-white">{Number(transactionTotals.total_deposits).toFixed(2)} ETH</p>
                       </div>
                       <div className="p-4 rounded-xl bg-destructive/10">
                         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                           <ArrowDownCircle className="w-4 h-4 text-red-500" />
                           Total Withdrawals
                         </div>
-                        <p className="text-2xl font-bold text-white">2.12 ETH</p>
+                        <p className="text-2xl font-bold text-white">{Number(transactionTotals.total_withdrawals).toFixed(2)} ETH</p>
                       </div>
                     </div>
                   </CardContent>
