@@ -572,9 +572,6 @@ const Profile = () => {
                         </p>
                       </div>
                     </div>
-                    <div className="p-6 rounded-2xl bg-gradient-to-br from-primary/30 to-purple-500/30 backdrop-blur-md animate-float">
-                      <Wallet className="w-16 h-16 text-white" strokeWidth={1.5} />
-                    </div>
                   </div>
                 </CardContent>
               </Card>
