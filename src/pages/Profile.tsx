@@ -558,150 +558,119 @@ const Profile = () => {
 
           <TabsContent value="wallet">
             <div className="space-y-6">
-              <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-gradient-to-r from-primary/20 via-purple-500/20 to-primary/20">
+              <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-gradient-to-br from-primary/20 via-purple-500/20 to-primary/20">
                 <CardContent className="p-8">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-3">
-                      <p className="text-sm text-muted-foreground">Total Balance</p>
-                      <div className="flex items-center gap-3">
-                        <h2 className="text-4xl font-bold text-white">
+                  <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                    <div className="space-y-4">
+                      <p className="text-sm text-muted-foreground">Available Balance</p>
+                      <div className="space-y-2">
+                        <h2 className="text-5xl font-bold text-white tracking-tight">
                           {Number(userData?.balance || 0).toFixed(2)} ETH
                         </h2>
-                        <div className="flex items-center gap-1 text-sm text-emerald-400">
-                          <ArrowUpCircle className="w-4 h-4" />
-                          +2.5%
-                        </div>
+                        <p className="text-sm text-muted-foreground/80">
+                          ≈ ${(Number(userData?.balance || 0) * 3450).toFixed(2)} USD
+                        </p>
                       </div>
-                      <p className="text-sm text-muted-foreground">
-                        ≈ ${(Number(userData?.balance || 0) * 3450).toFixed(2)} USD
-                      </p>
+                      <div className="flex gap-2 text-xs text-muted-foreground">
+                        <span className="px-2 py-1 rounded-full bg-primary/20 text-white">
+                          {Number(transactionTotals.total_deposits).toFixed(2)} ETH Deposits
+                        </span>
+                        <span className="px-2 py-1 rounded-full bg-destructive/20 text-white">
+                          {Number(transactionTotals.total_withdrawals).toFixed(2)} ETH Withdrawals
+                        </span>
+                      </div>
                     </div>
-                    <div className="p-6 rounded-2xl bg-gradient-to-br from-primary/30 to-purple-500/30 backdrop-blur-md">
-                      <Wallet className="w-12 h-12 text-white" strokeWidth={1.5} />
+                    <div className="p-6 rounded-2xl bg-gradient-to-br from-primary/30 to-purple-500/30 backdrop-blur-md animate-float">
+                      <Wallet className="w-16 h-16 text-white" strokeWidth={1.5} />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Card className="border-primary/10 shadow-lg transition-all duration-300 backdrop-blur-sm bg-background/60">
-                  <CardHeader>
-                    <CardTitle className="text-xl font-semibold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
-                      Quick Actions
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button 
-                          onClick={handleDeposit}
-                          className="w-full bg-primary/20 hover:bg-primary/30 text-primary flex items-center gap-3 p-6 h-auto group"
-                        >
-                          <div className="p-3 rounded-xl bg-primary/20 group-hover:bg-primary/30 transition-colors">
-                            <ArrowDownCircle className="w-6 h-6" />
-                          </div>
-                          <div className="flex flex-col items-start">
-                            <span className="text-lg font-semibold">Deposit</span>
-                            <span className="text-sm text-muted-foreground">Add funds to your wallet</span>
-                          </div>
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Deposit ETH</DialogTitle>
-                          <DialogDescription>
-                            Enter the amount of ETH you want to deposit.
-                          </DialogDescription>
-                        </DialogHeader>
-                        <form onSubmit={handleDeposit} className="space-y-4">
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium">Amount (ETH)</label>
-                            <Input
-                              type="number"
-                              step="0.000000000000000001"
-                              min="0"
-                              value={depositAmount}
-                              onChange={(e) => setDepositAmount(e.target.value)}
-                              placeholder="0.00"
-                              required
-                            />
-                          </div>
-                          <DialogFooter>
-                            <Button type="submit">Continue</Button>
-                          </DialogFooter>
-                        </form>
-                      </DialogContent>
-                    </Dialog>
-
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button 
-                          variant="destructive"
-                          className="w-full flex items-center gap-3 p-6 h-auto bg-destructive/20 hover:bg-destructive/30 group"
-                        >
-                          <div className="p-3 rounded-xl bg-destructive/20 group-hover:bg-destructive/30 transition-colors">
-                            <ArrowUpCircle className="w-6 h-6" />
-                          </div>
-                          <div className="flex flex-col items-start">
-                            <span className="text-lg font-semibold">Withdraw</span>
-                            <span className="text-sm text-muted-foreground">Transfer funds to your wallet</span>
-                          </div>
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Withdraw ETH</DialogTitle>
-                          <DialogDescription>
-                            Enter the amount of ETH you want to withdraw.
-                          </DialogDescription>
-                        </DialogHeader>
-                        <form onSubmit={handleWithdraw} className="space-y-4">
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium">Amount (ETH)</label>
-                            <Input
-                              type="number"
-                              step="0.000000000000000001"
-                              min="0"
-                              value={withdrawAmount}
-                              onChange={(e) => setWithdrawAmount(e.target.value)}
-                              placeholder="0.00"
-                              required
-                            />
-                          </div>
-                          <DialogFooter>
-                            <Button type="submit">Confirm Withdrawal</Button>
-                          </DialogFooter>
-                        </form>
-                      </DialogContent>
-                    </Dialog>
-                  </CardContent>
-                </Card>
-
-                <Card className="border-primary/10 shadow-lg transition-all duration-300 backdrop-blur-sm bg-background/60">
-                  <CardHeader>
-                    <CardTitle className="text-xl font-semibold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
-                      Quick Stats
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="p-4 rounded-xl bg-primary/10">
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                          <ArrowUpCircle className="w-4 h-4 text-green-500" />
-                          Total Deposits
-                        </div>
-                        <p className="text-2xl font-bold text-white">{Number(transactionTotals.total_deposits).toFixed(2)} ETH</p>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button 
+                      onClick={handleDeposit}
+                      className="w-full bg-primary/20 hover:bg-primary/30 text-primary flex items-center gap-3 p-6 h-auto group"
+                    >
+                      <div className="p-3 rounded-xl bg-primary/20 group-hover:bg-primary/30 transition-colors">
+                        <ArrowDownCircle className="w-6 h-6" />
                       </div>
-                      <div className="p-4 rounded-xl bg-destructive/10">
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                          <ArrowDownCircle className="w-4 h-4 text-red-500" />
-                          Total Withdrawals
-                        </div>
-                        <p className="text-2xl font-bold text-white">{Number(transactionTotals.total_withdrawals).toFixed(2)} ETH</p>
+                      <div className="flex flex-col items-start">
+                        <span className="text-lg font-semibold">Deposit</span>
+                        <span className="text-sm text-muted-foreground">Add funds to your wallet</span>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Deposit ETH</DialogTitle>
+                      <DialogDescription>
+                        Enter the amount of ETH you want to deposit.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleDeposit} className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Amount (ETH)</label>
+                        <Input
+                          type="number"
+                          step="0.000000000000000001"
+                          min="0"
+                          value={depositAmount}
+                          onChange={(e) => setDepositAmount(e.target.value)}
+                          placeholder="0.00"
+                          required
+                        />
+                      </div>
+                      <DialogFooter>
+                        <Button type="submit">Continue</Button>
+                      </DialogFooter>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button 
+                      variant="destructive"
+                      className="w-full flex items-center gap-3 p-6 h-auto bg-destructive/20 hover:bg-destructive/30 group"
+                    >
+                      <div className="p-3 rounded-xl bg-destructive/20 group-hover:bg-destructive/30 transition-colors">
+                        <ArrowUpCircle className="w-6 h-6" />
+                      </div>
+                      <div className="flex flex-col items-start">
+                        <span className="text-lg font-semibold">Withdraw</span>
+                        <span className="text-sm text-muted-foreground">Transfer funds to your wallet</span>
+                      </div>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Withdraw ETH</DialogTitle>
+                      <DialogDescription>
+                        Enter the amount of ETH you want to withdraw.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleWithdraw} className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Amount (ETH)</label>
+                        <Input
+                          type="number"
+                          step="0.000000000000000001"
+                          min="0"
+                          value={withdrawAmount}
+                          onChange={(e) => setWithdrawAmount(e.target.value)}
+                          placeholder="0.00"
+                          required
+                        />
+                      </div>
+                      <DialogFooter>
+                        <Button type="submit">Confirm Withdrawal</Button>
+                      </DialogFooter>
+                    </form>
+                  </DialogContent>
+                </Dialog>
               </div>
 
               <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
