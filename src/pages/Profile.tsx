@@ -535,40 +535,51 @@ const Profile = () => {
 
           <TabsContent value="wallet">
             <div className="space-y-6">
-              <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-gradient-to-r from-primary/10 via-purple-500/10 to-primary/10">
-                <CardContent className="p-6">
+              <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-gradient-to-r from-primary/20 via-purple-500/20 to-primary/20">
+                <CardContent className="p-8">
                   <div className="flex items-center justify-between">
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       <p className="text-sm text-muted-foreground">Total Balance</p>
-                      <h2 className="text-4xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
-                        {Number(userData?.balance || 0).toFixed(2)} ETH
-                      </h2>
+                      <div className="flex items-center gap-3">
+                        <h2 className="text-4xl font-bold text-white">
+                          {Number(userData?.balance || 0).toFixed(2)} ETH
+                        </h2>
+                        <div className="flex items-center gap-1 text-sm text-emerald-400">
+                          <ArrowUpCircle className="w-4 h-4" />
+                          +2.5%
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        ≈ ${(Number(userData?.balance || 0) * 3450).toFixed(2)} USD
+                      </p>
                     </div>
-                    <div className="p-4 rounded-full bg-primary/20">
-                      <Wallet className="w-8 h-8 text-primary" />
+                    <div className="p-6 rounded-2xl bg-gradient-to-br from-primary/30 to-purple-500/30 backdrop-blur-md">
+                      <Wallet className="w-12 h-12 text-white" strokeWidth={1.5} />
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
-                <CardHeader>
-                  <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent flex items-center gap-2">
-                    <Wallet className="w-6 h-6" />
-                    Wallet Operations
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Card className="border-primary/10 shadow-lg transition-all duration-300 backdrop-blur-sm bg-background/60">
+                  <CardHeader>
+                    <CardTitle className="text-xl font-semibold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+                      Quick Actions
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
                     <Dialog>
                       <DialogTrigger asChild>
                         <Button 
                           onClick={handleDeposit}
-                          className="w-full bg-primary/20 hover:bg-primary/30 text-primary flex items-center justify-center gap-2 p-6 h-auto"
+                          className="w-full bg-primary/20 hover:bg-primary/30 text-primary flex items-center gap-3 p-6 h-auto group"
                         >
-                          <div className="flex flex-col items-center">
-                            <ArrowDownCircle className="w-8 h-8 mb-2" />
+                          <div className="p-3 rounded-xl bg-primary/20 group-hover:bg-primary/30 transition-colors">
+                            <ArrowDownCircle className="w-6 h-6" />
+                          </div>
+                          <div className="flex flex-col items-start">
                             <span className="text-lg font-semibold">Deposit</span>
+                            <span className="text-sm text-muted-foreground">Add funds to your wallet</span>
                           </div>
                         </Button>
                       </DialogTrigger>
@@ -603,11 +614,14 @@ const Profile = () => {
                       <DialogTrigger asChild>
                         <Button 
                           variant="destructive"
-                          className="w-full flex items-center justify-center gap-2 p-6 h-auto bg-opacity-20 hover:bg-opacity-30"
+                          className="w-full flex items-center gap-3 p-6 h-auto bg-destructive/20 hover:bg-destructive/30 group"
                         >
-                          <div className="flex flex-col items-center">
-                            <ArrowUpCircle className="w-8 h-8 mb-2" />
+                          <div className="p-3 rounded-xl bg-destructive/20 group-hover:bg-destructive/30 transition-colors">
+                            <ArrowUpCircle className="w-6 h-6" />
+                          </div>
+                          <div className="flex flex-col items-start">
                             <span className="text-lg font-semibold">Withdraw</span>
+                            <span className="text-sm text-muted-foreground">Transfer funds to your wallet</span>
                           </div>
                         </Button>
                       </DialogTrigger>
@@ -637,9 +651,35 @@ const Profile = () => {
                         </form>
                       </DialogContent>
                     </Dialog>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-primary/10 shadow-lg transition-all duration-300 backdrop-blur-sm bg-background/60">
+                  <CardHeader>
+                    <CardTitle className="text-xl font-semibold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+                      Quick Stats
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="p-4 rounded-xl bg-primary/10">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                          <ArrowUpCircle className="w-4 h-4 text-green-500" />
+                          Total Deposits
+                        </div>
+                        <p className="text-2xl font-bold text-white">5.43 ETH</p>
+                      </div>
+                      <div className="p-4 rounded-xl bg-destructive/10">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                          <ArrowDownCircle className="w-4 h-4 text-red-500" />
+                          Total Withdrawals
+                        </div>
+                        <p className="text-2xl font-bold text-white">2.12 ETH</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
 
               <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
                 <CardHeader className="flex flex-row items-center justify-between">
