@@ -382,9 +382,9 @@ const Profile = () => {
                 @{userData?.login}
               </h1>
               <div className="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full backdrop-blur-sm border border-primary/20">
-                <Wallet className="w-5 h-5 text-primary" />
+                <UserRound className="w-5 h-5 text-primary" />
                 <span className="text-lg font-semibold text-primary">
-                  {Number(userData?.balance || 0).toFixed(2)} ETH
+                  PureNFT user since {new Date(userData?.created_at || '').toLocaleDateString()}
                 </span>
               </div>
             </div>
