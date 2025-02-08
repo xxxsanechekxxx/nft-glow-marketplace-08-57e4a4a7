@@ -21,8 +21,8 @@ export const Header = () => {
       <div className="container mx-auto px-4 relative">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center space-x-2 group">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-purple-400 animate-pulse group-hover:scale-110 transition-transform duration-300"></div>
-            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-400 to-pink-500 group-hover:opacity-80 transition-opacity">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-purple-400 animate-[pulse_3s_ease-in-out_infinite] group-hover:scale-110 transition-transform duration-500"></div>
+            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-400 to-pink-500 group-hover:opacity-80 transition-opacity duration-500">
               PureNFT
             </span>
           </Link>
@@ -125,3 +125,4 @@ export const Header = () => {
     </header>
   );
 };
+
