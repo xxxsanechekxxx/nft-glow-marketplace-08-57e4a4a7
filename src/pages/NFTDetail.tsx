@@ -1,3 +1,4 @@
+
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Share2, Heart, User, Info, Eye, Award, Gem } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -176,19 +177,6 @@ const NFTDetail = () => {
               <p className="leading-relaxed">{nft.description}</p>
             </div>
           )}
-
-          <div className="p-8 rounded-2xl bg-gradient-to-r from-[rgba(147,39,143,0.1)] to-[rgba(234,172,232,0.1)] backdrop-blur-xl border border-white/20 hover:border-primary/30 group">
-            <div className="flex items-center gap-1.5 text-3xl font-bold">
-              <img 
-                src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
-                alt="ETH"
-                className="h-8 w-8 text-primary"
-              />
-              <span className="bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
-                {nft.price}
-              </span>
-            </div>
-          </div>
 
           <div className="flex gap-4">
             {user ? (
