@@ -1,4 +1,3 @@
-
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Share2, Heart, User, Info, Eye, Award, Gem } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -203,20 +202,13 @@ const NFTDetail = () => {
               <Info className="h-5 w-5 text-primary" />
               <h2 className="text-xl font-semibold">Details</h2>
             </div>
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6">
               <div className="p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-primary/20 transition-all duration-300 hover:scale-[1.02] hover:bg-white/10 group shadow-lg hover:shadow-primary/20">
                 <div className="flex items-center gap-2 mb-2">
                   <Award className="h-5 w-5 text-primary group-hover:scale-110 transition-transform duration-300" />
                   <div className="text-sm text-muted-foreground">Token Standard</div>
                 </div>
                 <div className="font-medium text-lg">{nft.token_standard || 'ERC-721'}</div>
-              </div>
-              <div className="p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-primary/20 transition-all duration-300 hover:scale-[1.02] hover:bg-white/10 group shadow-lg hover:shadow-primary/20">
-                <div className="flex items-center gap-2 mb-2">
-                  <Eye className="h-5 w-5 text-primary group-hover:scale-110 transition-transform duration-300" />
-                  <div className="text-sm text-muted-foreground">Rarity</div>
-                </div>
-                <div className="font-medium text-lg">Legendary</div>
               </div>
             </div>
             {nft.properties && nft.properties.length > 0 && (
