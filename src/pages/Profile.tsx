@@ -1016,10 +1016,11 @@ const Profile = () => {
                       </div>
                       <h3 className="font-semibold">Address</h3>
                     </div>
-                    {userData?.kyc_status === 'identity_submitted' && (
+                    {(userData?.kyc_status === 'identity_submitted' || userData?.kyc_status === 'not_started') && (
                       <Button 
                         onClick={continueKYCVerification}
                         className="w-full bg-primary/20 hover:bg-primary/30 text-primary"
+                        disabled={userData?.kyc_status === 'not_started'}
                       >
                         Continue Verification
                       </Button>
