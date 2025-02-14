@@ -7,8 +7,8 @@ const HelpCenter = () => {
   const faqs = [
     {
       icon: <Wallet className="w-5 h-5" />,
-      question: "How do I connect my wallet?",
-      answer: "To connect your wallet, click the 'Connect Wallet' button in the top right corner. We support major Web3 wallets including MetaMask, WalletConnect, and Coinbase Wallet. Make sure your wallet is configured for the Ethereum network."
+      question: "How do I generate my wallet?",
+      answer: "To generate your wallet, click the 'Generate Wallet' button in your profile. After that, you will have your own account to deposit/withdraw funds."
     },
     {
       icon: <ShieldCheck className="w-5 h-5" />,
