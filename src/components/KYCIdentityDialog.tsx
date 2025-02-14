@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { Upload, Shield } from "lucide-react";
 
 interface KYCIdentityDialogProps {
@@ -22,6 +22,11 @@ interface KYCIdentityDialogProps {
 const KYCIdentityDialog = ({ isOpen, onClose, onSuccess, userId }: KYCIdentityDialogProps) => {
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
+
+  const handleUploadClick = () => {
+    // Programmatically click the hidden file input
+    document.getElementById('identity-doc-upload')?.click();
+  };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -91,24 +96,23 @@ const KYCIdentityDialog = ({ isOpen, onClose, onSuccess, userId }: KYCIdentityDi
                 Maximum file size: 5MB
               </p>
             </div>
-            <label htmlFor="identity-doc-upload">
-              <input
-                id="identity-doc-upload"
-                type="file"
-                className="hidden"
-                accept=".jpg,.jpeg,.png,.pdf"
-                onChange={handleFileUpload}
-                disabled={isUploading}
-              />
-              <Button 
-                variant="outline" 
-                className="mt-2"
-                disabled={isUploading}
-              >
-                <Upload className="w-4 h-4 mr-2" />
-                {isUploading ? "Uploading..." : "Upload Document"}
-              </Button>
-            </label>
+            <input
+              id="identity-doc-upload"
+              type="file"
+              className="hidden"
+              accept=".jpg,.jpeg,.png,.pdf"
+              onChange={handleFileUpload}
+              disabled={isUploading}
+            />
+            <Button 
+              variant="outline" 
+              className="mt-2"
+              disabled={isUploading}
+              onClick={handleUploadClick}
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              {isUploading ? "Uploading..." : "Upload Document"}
+            </Button>
           </div>
         </div>
       </DialogContent>
