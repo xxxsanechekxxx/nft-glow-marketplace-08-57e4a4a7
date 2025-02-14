@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -831,4 +832,64 @@ const Profile = () => {
 
           <TabsContent value="wallet">
             <div className="space-y-6">
-              <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur
+              <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
+                <CardHeader className="space-y-2">
+                  <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-primary/20">
+                      <Wallet className="w-6 h-6 text-primary" />
+                    </div>
+                    Wallet Details
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {/* Add your wallet content here */}
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="verification">
+            <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
+              <CardHeader className="space-y-2">
+                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary/20">
+                    <Shield className="w-6 h-6 text-primary" />
+                  </div>
+                  KYC Verification
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Add your verification content here */}
+                {renderVerificationStatus()}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="nft">
+            <EmptyNFTState />
+          </TabsContent>
+        </Tabs>
+
+        <WalletAddressModal 
+          isOpen={isWalletModalOpen} 
+          onClose={() => setIsWalletModalOpen(false)}
+          onGenerated={handleGenerateWalletAddress}
+        />
+
+        <DepositConfirmationDialog
+          isOpen={isDepositConfirmationOpen}
+          onClose={() => setIsDepositConfirmationOpen(false)}
+          onConfirm={handleDepositConfirm}
+          amount={depositAmount}
+        />
+
+        <FraudWarningDialog
+          isOpen={isFraudWarningOpen}
+          onClose={() => setIsFraudWarningOpen(false)}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default Profile;
