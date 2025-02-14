@@ -1,3 +1,4 @@
+<lov-code>
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -486,8 +487,9 @@ const Profile = () => {
   return (
     <div className="container mx-auto py-8 px-4 mt-16 min-h-screen bg-gradient-to-b from-background via-background/80 to-background/60">
       <div className="max-w-4xl mx-auto space-y-8">
+        {/* Profile Card */}
         <div className="relative p-8 rounded-2xl overflow-hidden bg-gradient-to-r from-purple-500/10 via-primary/5 to-purple-500/10 border border-primary/10 backdrop-blur-sm shadow-xl">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 animate-gradient"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 animate-gradient" />
           <div className="relative flex items-center gap-6 z-10">
             <div className="relative group">
               <input
@@ -523,6 +525,7 @@ const Profile = () => {
           </div>
         </div>
 
+        {/* Tabs */}
         <Tabs defaultValue="profile" className="w-full">
           <TabsList className="grid w-full grid-cols-5 p-1.5 bg-background/50 backdrop-blur-sm rounded-xl border border-primary/10 mb-6">
             {["profile", "settings", "wallet", "verification", "nft"].map((tab) => (
@@ -542,6 +545,7 @@ const Profile = () => {
             ))}
           </TabsList>
 
+          {/* Profile Content */}
           <TabsContent value="profile">
             <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
               <CardHeader className="space-y-2">
@@ -639,6 +643,7 @@ const Profile = () => {
             </Card>
           </TabsContent>
 
+          {/* Settings Content */}
           <TabsContent value="settings">
             <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
               <CardHeader className="space-y-2">
@@ -737,6 +742,7 @@ const Profile = () => {
             </div>
           </TabsContent>
 
+          {/* Wallet Content */}
           <TabsContent value="wallet">
             <div className="space-y-6">
               <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
@@ -812,6 +818,4 @@ const Profile = () => {
                       <div className="p-3 rounded-xl bg-destructive/20 group-hover:bg-destructive/30 transition-colors">
                         <ArrowUpCircle className="w-6 h-6" />
                       </div>
-                      <div className="flex flex-col items-start">
-                        <span className="text-lg font-semibold">Withdraw</span>
-                        <span className="text-sm text-muted-foreground">Send funds
+                      <div className="flex flex-
