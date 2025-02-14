@@ -1,8 +1,9 @@
+<lov-code>
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { User, Settings, Mail, Key, LogOut, Wallet, ArrowUpCircle, ArrowDownCircle, Globe, UserRound, ShoppingBag, HelpCircle } from "lucide-react";
@@ -166,7 +167,7 @@ const Profile = () => {
             email: currentUser.email || '',
             login: profileData?.login || currentUser.user_metadata?.login || '',
             country: profileData?.country || currentUser.user_metadata?.country || '',
-            avatar_url: null,
+            avatar_url: profileData?.avatar_url || null,
             balance: profileData?.balance?.toString() || "0.0",
             wallet_address: profileData?.wallet_address || '',
             created_at: currentUser.created_at,
@@ -358,6 +359,49 @@ const Profile = () => {
     );
   };
 
+  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !userData?.id) return;
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${userData.id}/${crypto.randomUUID()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file, {
+          upsert: true,
+        });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: publicUrl })
+        .eq('user_id', userData.id);
+
+      if (updateError) throw updateError;
+
+      setUserData(prev => prev ? { ...prev, avatar_url: publicUrl } : null);
+      
+      toast({
+        title: "Success",
+        description: "Avatar updated successfully",
+      });
+    } catch (error) {
+      console.error("Error uploading avatar:", error);
+      toast({
+        title: "Error",
+        description: "Failed to upload avatar",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="container mx-auto py-8 px-4 mt-16">
@@ -374,21 +418,36 @@ const Profile = () => {
         <div className="relative p-8 rounded-2xl overflow-hidden bg-gradient-to-r from-purple-500/10 via-primary/5 to-purple-500/10 border border-primary/10 backdrop-blur-sm shadow-xl">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 animate-gradient"></div>
           <div className="relative flex items-center gap-6 z-10">
-            <Avatar className="w-24 h-24 border-4 border-primary/20 shadow-xl ring-2 ring-purple-500/20 transition-all duration-300 hover:ring-purple-500/40">
-              <AvatarFallback className="bg-gradient-to-br from-primary/80 to-purple-600 text-white">
-                <UserRound className="w-12 h-12" />
-              </AvatarFallback>
-            </Avatar>
-            <div className="space-y-3">
+            <div className="relative group">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarUpload}
+                className="hidden"
+                id="avatar-upload"
+              />
+              <label 
+                htmlFor="avatar-upload" 
+                className="cursor-pointer block relative"
+              >
+                <Avatar className="w-24 h-24 border-4 border-primary/20 shadow-xl ring-2 ring-purple-500/20 transition-all duration-300 group-hover:ring-purple-500/40">
+                  {userData?.avatar_url ? (
+                    <AvatarImage src={userData.avatar_url} alt={userData.login} />
+                  ) : (
+                    <AvatarFallback className="bg-gradient-to-br from-primary/80 to-purple-600 text-white">
+                      <UserRound className="w-12 h-12" />
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+                <div className="absolute inset-0 bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                  <p className="text-white text-xs font-medium">Change Avatar</p>
+                </div>
+              </label>
+            </div>
+            <div>
               <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
                 @{userData?.login}
               </h1>
-              <div className="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full backdrop-blur-sm border border-primary/20">
-                <UserRound className="w-5 h-5 text-primary" />
-                <span className="text-lg font-semibold text-primary">
-                  PureNFT user since {new Date(userData?.created_at || '').toLocaleDateString()}
-                </span>
-              </div>
             </div>
           </div>
         </div>
@@ -730,93 +789,4 @@ const Profile = () => {
                     <div className="overflow-x-auto">
                       <Table>
                         <TableHeader>
-                          <TableRow className="hover:bg-primary/5">
-                            <TableHead>Date</TableHead>
-                            <TableHead>Type</TableHead>
-                            <TableHead>Amount (ETH)</TableHead>
-                            <TableHead>Status</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {transactions.map((transaction) => (
-                            <TableRow
-                              key={transaction.id}
-                              className="hover:bg-primary/5 transition-colors"
-                            >
-                              <TableCell>{transaction.created_at}</TableCell>
-                              <TableCell className="capitalize flex items-center gap-2">
-                                {transaction.type === 'deposit' && (
-                                  <ArrowDownCircle className="w-4 h-4 text-green-500" />
-                                )}
-                                {transaction.type === 'withdraw' && (
-                                  <ArrowUpCircle className="w-4 h-4 text-red-500" />
-                                )}
-                                {transaction.type === 'purchase' && (
-                                  <ShoppingBag className="w-4 h-4 text-blue-500" />
-                                )}
-                                {transaction.type}
-                              </TableCell>
-                              <TableCell>{transaction.amount}</TableCell>
-                              <TableCell>
-                                <span className={`px-2 py-1 rounded-full text-xs ${
-                                  transaction.status === 'completed'
-                                    ? 'bg-green-500/20 text-green-500'
-                                    : transaction.status === 'pending'
-                                    ? 'bg-yellow-500/20 text-yellow-500'
-                                    : 'bg-red-500/20 text-red-500'
-                                }`}>
-                                  {transaction.status}
-                                </span>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </div>
-                  ) : (
-                    <div className="text-center py-8 text-muted-foreground">
-                      No transactions found
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="nft">
-            <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
-              <CardHeader>
-                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
-                  Your NFT Collection
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <EmptyNFTState />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
-
-      <WalletAddressModal
-        isOpen={isWalletModalOpen}
-        onClose={() => setIsWalletModalOpen(false)}
-        onGenerated={handleGenerateWalletAddress}
-      />
-
-      <DepositConfirmationDialog
-        isOpen={isDepositConfirmationOpen}
-        onClose={() => setIsDepositConfirmationOpen(false)}
-        amount={depositAmount}
-        onConfirm={handleDepositConfirm}
-      />
-
-      <FraudWarningDialog
-        isOpen={isFraudWarningOpen}
-        onClose={() => setIsFraudWarningOpen(false)}
-      />
-    </div>
-  );
-};
-
-export default Profile;
+                          <TableRow className="hover:bg-
