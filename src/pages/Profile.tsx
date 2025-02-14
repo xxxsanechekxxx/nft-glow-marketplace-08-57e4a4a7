@@ -125,7 +125,7 @@ const Profile = () => {
       const { error } = await supabase
         .from('profiles')
         .update({ kyc_status: 'not_started' })
-        .eq('user_id', userData?.id);
+        .eq('user_id', user?.id);
 
       if (error) throw error;
 
