@@ -26,9 +26,9 @@ export const Footer = () => {
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-[150px] animate-pulse delay-700"></div>
       </div>
       
-      <div className="container mx-auto px-4 py-16 relative">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-          <div className="space-y-6">
+      <div className="container mx-auto px-4 py-12 relative">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="space-y-4">
             <div className="flex items-center space-x-2 group">
               <div className="w-8 h-8 rounded-full bg-[#9b87f5] group-hover:scale-110 transition-transform duration-300"></div>
               <span className="text-2xl font-bold text-[#9b87f5]">
@@ -66,11 +66,11 @@ export const Footer = () => {
             </div>
           </div>
           
-          <div className="space-y-6">
+          <div className="space-y-4">
             <h3 className="text-xl font-semibold text-[#9b87f5]">
               Marketplace
             </h3>
-            <ul className="space-y-4">
+            <ul className="space-y-3">
               <li>
                 <Link 
                   to="/marketplace" 
@@ -79,22 +79,14 @@ export const Footer = () => {
                   All NFTs
                 </Link>
               </li>
-              <li>
-                <Link 
-                  to="/jobs" 
-                  className="text-[#8E9196] hover:text-[#9b87f5] transition-colors duration-300"
-                >
-                  Jobs
-                </Link>
-              </li>
             </ul>
           </div>
           
-          <div className="space-y-6">
+          <div className="space-y-4">
             <h3 className="text-xl font-semibold text-[#9b87f5]">
               Resources
             </h3>
-            <ul className="space-y-4">
+            <ul className="space-y-3">
               <li>
                 <Link 
                   to="/help" 
@@ -117,14 +109,6 @@ export const Footer = () => {
                   className="text-[#8E9196] hover:text-[#9b87f5] transition-colors duration-300"
                 >
                   Blog
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/submit-ticket" 
-                  className="text-[#8E9196] hover:text-[#9b87f5] transition-colors duration-300"
-                >
-                  Submit Ticket
                 </Link>
               </li>
               <li>
