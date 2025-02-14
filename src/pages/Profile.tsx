@@ -67,7 +67,7 @@ interface TransactionTotals {
 
 const Profile = () => {
   const { user, signOut } = useAuth();
-  const { toast } } = useToast();
+  const { toast } = useToast();
   const navigate = useNavigate();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -789,4 +789,4 @@ const Profile = () => {
                     <div className="overflow-x-auto">
                       <Table>
                         <TableHeader>
-                          <TableRow className="hover:bg
+                          <TableRow className="hover:bg-
