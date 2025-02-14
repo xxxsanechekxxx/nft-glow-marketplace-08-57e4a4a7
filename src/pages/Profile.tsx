@@ -5,7 +5,23 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { User, Settings, Mail, Key, LogOut, Wallet, ArrowUpCircle, ArrowDownCircle, Globe, UserRound, ShoppingBag, HelpCircle } from "lucide-react";
+import { 
+  User, 
+  Settings, 
+  Mail, 
+  Key, 
+  LogOut, 
+  Wallet, 
+  ArrowUpCircle, 
+  ArrowDownCircle, 
+  Globe, 
+  UserRound, 
+  ShoppingBag, 
+  HelpCircle,
+  Shield,
+  FileCheck,
+  BadgeCheck
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import WalletAddressModal from "@/components/WalletAddressModal";
 import {
@@ -96,6 +112,31 @@ const Profile = () => {
       navigate("/");
     } catch (error) {
       showDelayedToast("Error", "Failed to log out", "destructive");
+    }
+  };
+
+  const startKYCVerification = async () => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ verified: true })
+        .eq('user_id', userData?.id);
+
+      if (error) throw error;
+
+      setUserData(prev => prev ? { ...prev, verified: true } : null);
+      
+      toast({
+        title: "Verification Started",
+        description: "Your verification request has been submitted. Our team will review your documents shortly.",
+      });
+    } catch (error) {
+      console.error("Error starting verification:", error);
+      toast({
+        title: "Error",
+        description: "Failed to start verification process. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -453,8 +494,8 @@ const Profile = () => {
         </div>
 
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 p-1.5 bg-background/50 backdrop-blur-sm rounded-xl border border-primary/10 mb-6">
-            {["profile", "settings", "wallet", "nft"].map((tab) => (
+          <TabsList className="grid w-full grid-cols-5 p-1.5 bg-background/50 backdrop-blur-sm rounded-xl border border-primary/10 mb-6">
+            {["profile", "settings", "wallet", "verification", "nft"].map((tab) => (
               <TabsTrigger
                 key={tab}
                 value={tab}
@@ -463,6 +504,7 @@ const Profile = () => {
                 {tab === "profile" && <User className="w-4 h-4" />}
                 {tab === "settings" && <Settings className="w-4 h-4" />}
                 {tab === "wallet" && <Wallet className="w-4 h-4" />}
+                {tab === "verification" && <Shield className="w-4 h-4" />}
                 {tab === "nft" && <ShoppingBag className="w-4 h-4" />}
                 <span className="relative z-10 capitalize">{tab}</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -842,17 +884,90 @@ const Profile = () => {
             </div>
           </TabsContent>
 
-          <TabsContent value="nft">
+          <TabsContent value="verification">
             <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
-              <CardHeader>
-                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
-                  Your NFT Collection
+              <CardHeader className="space-y-2">
+                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary/20">
+                    <Shield className="w-6 h-6 text-primary" />
+                  </div>
+                  Account Verification
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <EmptyNFTState />
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4 p-4 rounded-lg bg-primary/5 border border-primary/10">
+                    <div className="p-3 rounded-full bg-primary/20">
+                      {userData?.verified ? (
+                        <BadgeCheck className="w-6 h-6 text-green-500" />
+                      ) : (
+                        <FileCheck className="w-6 h-6 text-yellow-500" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold">
+                        {userData?.verified ? "Verified Account" : "Verification Required"}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {userData?.verified 
+                          ? "Your account has been verified. You have access to all features."
+                          : "Complete KYC verification to unlock all features and increase your trading limits."}
+                      </p>
+                    </div>
+                    <div>
+                      {!userData?.verified && (
+                        <Button
+                          onClick={startKYCVerification}
+                          className="bg-primary/20 text-primary hover:bg-primary/30 transition-colors flex items-center gap-2"
+                        >
+                          <Shield className="w-4 h-4" />
+                          Start Verification
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+
+                  {!userData?.verified && (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {[
+                        {
+                          title: "Identity Verification",
+                          icon: <User className="w-5 h-5" />,
+                          description: "Verify your identity with government-issued ID"
+                        },
+                        {
+                          title: "Address Verification",
+                          icon: <Globe className="w-5 h-5" />,
+                          description: "Confirm your residential address"
+                        },
+                        {
+                          title: "Document Review",
+                          icon: <FileCheck className="w-5 h-5" />,
+                          description: "Our team will review your submitted documents"
+                        }
+                      ].map((step, index) => (
+                        <div
+                          key={step.title}
+                          className="p-4 rounded-lg bg-primary/5 border border-primary/10 space-y-2"
+                        >
+                          <div className="p-2 rounded-lg bg-primary/20 w-fit">
+                            {step.icon}
+                          </div>
+                          <h4 className="font-medium">{step.title}</h4>
+                          <p className="text-sm text-muted-foreground">
+                            {step.description}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="nft">
+            <EmptyNFTState />
           </TabsContent>
         </Tabs>
       </div>
