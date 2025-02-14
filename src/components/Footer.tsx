@@ -1,7 +1,23 @@
 
 import { Link } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 export const Footer = () => {
+  const handleSubscribe = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get('email');
+    
+    // Hardcoded success message
+    toast.success("Thanks for subscribing!", {
+      description: "You've been added to our newsletter list.",
+    });
+    
+    // Reset the form
+    e.currentTarget.reset();
+  };
+
   return (
     <footer className="relative mt-20 overflow-hidden bg-[#0B0D17]">
       <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-secondary/5 to-background"></div>
@@ -26,6 +42,24 @@ export const Footer = () => {
               <h4 className="text-sm font-semibold text-[#9b87f5]">
                 Stay connected with us
               </h4>
+              <form onSubmit={handleSubscribe} className="relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-[#9b87f5]/20 to-purple-500/20 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+                <div className="relative flex gap-2">
+                  <Input
+                    type="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    required
+                    className="bg-background/60 border-[#9b87f5]/20 focus:border-[#9b87f5] transition-all"
+                  />
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-[#9b87f5] text-white rounded-md hover:bg-[#8874e8] transition-colors duration-300"
+                  >
+                    Subscribe
+                  </button>
+                </div>
+              </form>
               <div className="flex items-center space-x-4">
                 {/* Add social links here */}
               </div>
