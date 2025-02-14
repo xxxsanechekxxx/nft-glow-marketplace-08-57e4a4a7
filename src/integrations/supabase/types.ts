@@ -52,7 +52,7 @@ export type Database = {
           kyc_address_doc: string | null
           kyc_identity_doc: string | null
           kyc_rejection_reason: string | null
-          kyc_status: string | null
+          kyc_status: Database["public"]["Enums"]["kyc_status_type"] | null
           login: string
           user_id: string
           verified: boolean
@@ -67,7 +67,7 @@ export type Database = {
           kyc_address_doc?: string | null
           kyc_identity_doc?: string | null
           kyc_rejection_reason?: string | null
-          kyc_status?: string | null
+          kyc_status?: Database["public"]["Enums"]["kyc_status_type"] | null
           login: string
           user_id: string
           verified?: boolean
@@ -82,7 +82,7 @@ export type Database = {
           kyc_address_doc?: string | null
           kyc_identity_doc?: string | null
           kyc_rejection_reason?: string | null
-          kyc_status?: string | null
+          kyc_status?: Database["public"]["Enums"]["kyc_status_type"] | null
           login?: string
           user_id?: string
           verified?: boolean
