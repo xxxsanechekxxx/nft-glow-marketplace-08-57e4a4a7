@@ -30,7 +30,6 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
@@ -244,10 +243,16 @@ const Profile = () => {
         {userData?.kyc_status === 'not_started' && (
           <Button
             onClick={startKYCVerification}
-            className="w-full bg-gradient-to-r from-purple-500/20 via-primary/20 to-purple-500/20 hover:from-purple-500/30 hover:via-primary/30 hover:to-purple-500/30 text-primary transition-all duration-300 border border-primary/20 shadow-lg hover:shadow-primary/10 flex items-center justify-center gap-3 py-6 group"
+            className="w-full relative group overflow-hidden bg-gradient-to-r from-purple-500/10 via-primary/20 to-purple-500/10 hover:from-purple-500/20 hover:via-primary/30 hover:to-purple-500/20 text-primary/90 hover:text-primary transition-all duration-500 shadow-lg hover:shadow-purple-500/10 border border-primary/20 backdrop-blur-sm py-6"
           >
-            <Shield className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
-            <span className="text-lg">Begin Verification Process</span>
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl" />
+            <div className="relative flex items-center justify-center gap-3">
+              <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors duration-500">
+                <Shield className="w-5 h-5 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12" />
+              </div>
+              <span className="text-lg font-medium tracking-wide">Start Identity Verification</span>
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
           </Button>
         )}
 
