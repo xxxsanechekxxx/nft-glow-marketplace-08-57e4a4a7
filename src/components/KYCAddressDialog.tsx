@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -22,6 +21,12 @@ interface KYCAddressDialogProps {
 const KYCAddressDialog = ({ isOpen, onClose, onSuccess, userId }: KYCAddressDialogProps) => {
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (!isOpen) {
+      setIsUploading(false);
+    }
+  }, [isOpen]);
 
   const handleUploadClick = () => {
     document.getElementById('address-doc-upload')?.click();
@@ -76,8 +81,16 @@ const KYCAddressDialog = ({ isOpen, onClose, onSuccess, userId }: KYCAddressDial
     }
   };
 
+  const handleDialogClose = () => {
+    const fileInput = document.getElementById('address-doc-upload') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+    onClose();
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleDialogClose}>
       <DialogContent className="sm:max-w-[425px] bg-gradient-to-b from-background via-background/95 to-background/90 backdrop-blur-xl border-primary/20">
         <DialogHeader>
           <div className="mx-auto bg-primary/10 p-3 rounded-full w-fit">
