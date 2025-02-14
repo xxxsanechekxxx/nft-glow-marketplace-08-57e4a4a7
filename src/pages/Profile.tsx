@@ -158,6 +158,18 @@ const Profile = () => {
     });
   };
 
+  const continueKYCVerification = () => {
+    if (!user?.id) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to continue verification",
+        variant: "destructive",
+      });
+      return;
+    }
+    setIsAddressDialogOpen(true);
+  };
+
   useEffect(() => {
     let isMounted = true;
 
@@ -1006,7 +1018,7 @@ const Profile = () => {
                     </div>
                     {userData?.kyc_status === 'identity_submitted' && (
                       <Button 
-                        onClick={() => setIsAddressDialogOpen(true)}
+                        onClick={continueKYCVerification}
                         className="w-full bg-primary/20 hover:bg-primary/30 text-primary"
                       >
                         Continue Verification
