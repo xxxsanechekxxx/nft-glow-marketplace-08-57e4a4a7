@@ -140,9 +140,11 @@ const Index = () => {
           <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-[120px] animate-pulse delay-700"></div>
         </div>
         <div className="container mx-auto px-4 relative">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-400 to-pink-500 animate-fade-in">
-            Featured Collections
-          </h2>
+          <div className="min-h-[100px] flex items-center justify-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-400 to-pink-500 animate-fade-in py-6">
+              Featured Collections
+            </h2>
+          </div>
           
           <Carousel className="w-full max-w-5xl mx-auto">
             <CarouselContent>

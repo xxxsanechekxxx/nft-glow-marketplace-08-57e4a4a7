@@ -38,14 +38,16 @@ const Partners = () => {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] animate-pulse"></div>
           </div>
           
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent"
-          >
-            Our Partners
-          </motion.h1>
+          <div className="min-h-[100px] flex items-center justify-center">
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent py-6"
+            >
+              Our Partners
+            </motion.h1>
+          </div>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -96,7 +98,9 @@ const Partners = () => {
           transition={{ duration: 0.6, delay: 0.6 }}
           className="mt-16 text-center"
         >
-          <h2 className="text-2xl font-semibold mb-4 text-foreground/90">Become Our Partner</h2>
+          <div className="min-h-[80px] flex items-center justify-center">
+            <h2 className="text-2xl font-semibold mb-4 text-foreground/90 py-6">Become Our Partner</h2>
+          </div>
           <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
             We are always open to new partnerships and collaboration opportunities.
             Contact us to learn more about our partnership program.
