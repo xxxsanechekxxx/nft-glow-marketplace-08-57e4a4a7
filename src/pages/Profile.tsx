@@ -1,4 +1,3 @@
-<lov-code>
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -832,4 +831,4 @@ const Profile = () => {
 
           <TabsContent value="wallet">
             <div className="space-y-6">
-              <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300
+              <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur
