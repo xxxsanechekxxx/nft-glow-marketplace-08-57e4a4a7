@@ -46,6 +46,8 @@ import { useAuth } from "@/hooks/useAuth";
 import DepositConfirmationDialog from "@/components/DepositConfirmationDialog";
 import FraudWarningDialog from "@/components/FraudWarningDialog";
 import { EmptyNFTState } from "@/components/EmptyNFTState";
+import KYCIdentityDialog from "@/components/KYCIdentityDialog";
+import KYCAddressDialog from "@/components/KYCAddressDialog";
 
 interface Transaction {
   id: string;
@@ -67,6 +69,7 @@ interface UserData {
   erc20_address?: string;
   created_at: string;
   verified: boolean;
+  kyc_status?: string;
 }
 
 interface TransactionTotals {
@@ -94,6 +97,8 @@ const Profile = () => {
     total_deposits: 0,
     total_withdrawals: 0
   });
+  const [isIdentityDialogOpen, setIsIdentityDialogOpen] = useState(false);
+  const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
 
   const showDelayedToast = (title: string, description: string, variant: "default" | "destructive" = "default") => {
     setTimeout(() => {
@@ -119,17 +124,13 @@ const Profile = () => {
     try {
       const { error } = await supabase
         .from('profiles')
-        .update({ verified: true })
+        .update({ kyc_status: 'not_started' })
         .eq('user_id', userData?.id);
 
       if (error) throw error;
 
-      setUserData(prev => prev ? { ...prev, verified: true } : null);
-      
-      toast({
-        title: "Verification Started",
-        description: "Your verification request has been submitted. Our team will review your documents shortly.",
-      });
+      setUserData(prev => prev ? { ...prev, kyc_status: 'not_started' } : null);
+      setIsIdentityDialogOpen(true);
     } catch (error) {
       console.error("Error starting verification:", error);
       toast({
@@ -138,6 +139,19 @@ const Profile = () => {
         variant: "destructive",
       });
     }
+  };
+
+  const handleIdentitySuccess = () => {
+    setUserData(prev => prev ? { ...prev, kyc_status: 'identity_submitted' } : null);
+    setIsAddressDialogOpen(true);
+  };
+
+  const handleAddressSuccess = async () => {
+    setUserData(prev => prev ? { ...prev, kyc_status: 'under_review' } : null);
+    toast({
+      title: "Verification In Progress",
+      description: "Your documents have been submitted and are under review.",
+    });
   };
 
   useEffect(() => {
@@ -205,7 +219,8 @@ const Profile = () => {
             balance: profileData?.balance?.toString() || "0.0",
             wallet_address: profileData?.wallet_address || '',
             created_at: currentUser.created_at,
-            verified: profileData?.verified || false
+            verified: profileData?.verified || false,
+            kyc_status: profileData?.kyc_status || 'not_started'
           });
 
           setTransactions(transactionsData?.map(tx => ({
@@ -988,6 +1003,20 @@ const Profile = () => {
       <FraudWarningDialog
         isOpen={isFraudWarningOpen}
         onClose={() => setIsFraudWarningOpen(false)}
+      />
+
+      <KYCIdentityDialog
+        isOpen={isIdentityDialogOpen}
+        onClose={() => setIsIdentityDialogOpen(false)}
+        onSuccess={handleIdentitySuccess}
+        userId={userData?.id || ''}
+      />
+
+      <KYCAddressDialog
+        isOpen={isAddressDialogOpen}
+        onClose={() => setIsAddressDialogOpen(false)}
+        onSuccess={handleAddressSuccess}
+        userId={userData?.id || ''}
       />
     </div>
   );
