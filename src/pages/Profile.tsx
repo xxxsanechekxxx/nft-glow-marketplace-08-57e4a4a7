@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -144,12 +143,10 @@ const Profile = () => {
     }
   };
 
-  const handleIdentitySuccess = () => {
-    setIsIdentityDialogOpen(false); // Close the identity dialog first
+  const handleIdentitySuccess = async () => {
+    setIsIdentityDialogOpen(false);
     setUserData(prev => prev ? { ...prev, kyc_status: 'identity_submitted' } : null);
-    setTimeout(() => {
-      setIsAddressDialogOpen(true); // Open address dialog with a small delay
-    }, 100);
+    setIsAddressDialogOpen(true);
   };
 
   const handleAddressSuccess = async () => {
@@ -1007,6 +1004,14 @@ const Profile = () => {
                       </div>
                       <h3 className="font-semibold">Address</h3>
                     </div>
+                    {userData?.kyc_status === 'identity_submitted' && (
+                      <Button 
+                        onClick={() => setIsAddressDialogOpen(true)}
+                        className="w-full bg-primary/20 hover:bg-primary/30 text-primary"
+                      >
+                        Continue Verification
+                      </Button>
+                    )}
                   </div>
 
                   <div className={`p-6 rounded-xl border transition-all duration-300 space-y-4 ${
@@ -1030,7 +1035,6 @@ const Profile = () => {
                     </div>
                   </div>
                 </div>
-
               </CardContent>
             </Card>
           </TabsContent>
