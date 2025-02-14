@@ -155,80 +155,134 @@ const Profile = () => {
     const statusConfig = {
       'not_started': {
         color: 'text-yellow-500',
-        icon: <Shield className="w-6 h-6" />,
+        bgColor: 'bg-yellow-500/10',
+        borderColor: 'border-yellow-500/20',
+        icon: <Shield className="w-8 h-8" />,
         progress: 0,
-        label: 'Not Started'
+        label: 'Not Started',
+        description: 'Begin your verification process to unlock full platform features'
       },
       'identity_submitted': {
         color: 'text-blue-500',
-        icon: <FileCheck className="w-6 h-6" />,
+        bgColor: 'bg-blue-500/10',
+        borderColor: 'border-blue-500/20',
+        icon: <FileCheck className="w-8 h-8" />,
         progress: 33,
-        label: 'Identity Submitted'
+        label: 'Identity Submitted',
+        description: 'Your identity documents are under initial review'
       },
       'address_submitted': {
         color: 'text-blue-500',
-        icon: <FileCheck className="w-6 h-6" />,
+        bgColor: 'bg-blue-500/10',
+        borderColor: 'border-blue-500/20',
+        icon: <FileCheck className="w-8 h-8" />,
         progress: 66,
-        label: 'Address Submitted'
+        label: 'Address Submitted',
+        description: 'Your address verification is being processed'
       },
       'under_review': {
         color: 'text-orange-500',
-        icon: <HelpCircle className="w-6 h-6" />,
+        bgColor: 'bg-orange-500/10',
+        borderColor: 'border-orange-500/20',
+        icon: <HelpCircle className="w-8 h-8" />,
         progress: 80,
-        label: 'Under Review'
+        label: 'Under Review',
+        description: 'Final verification check in progress'
       },
       'verified': {
         color: 'text-green-500',
-        icon: <BadgeCheck className="w-6 h-6" />,
+        bgColor: 'bg-green-500/10',
+        borderColor: 'border-green-500/20',
+        icon: <BadgeCheck className="w-8 h-8" />,
         progress: 100,
-        label: 'Verified'
+        label: 'Verified',
+        description: 'Your account is fully verified'
       },
       'rejected': {
         color: 'text-red-500',
-        icon: <AlertCircle className="w-6 h-6" />,
+        bgColor: 'bg-red-500/10',
+        borderColor: 'border-red-500/20',
+        icon: <AlertCircle className="w-8 h-8" />,
         progress: 0,
-        label: 'Rejected'
+        label: 'Rejected',
+        description: 'Verification unsuccessful. Please contact support'
       }
     };
 
     const config = statusConfig[userData?.kyc_status || 'not_started'];
 
     return (
-      <div className="space-y-6">
-        <div className="p-6 rounded-xl bg-primary/5 border border-primary/10 backdrop-blur-sm">
-          <div className="flex items-center gap-3 mb-4">
-            <div className={`p-2 rounded-lg bg-primary/10 ${config.color}`}>
-              {config.icon}
+      <div className="space-y-8">
+        <div className="p-8 rounded-2xl bg-gradient-to-br from-purple-500/5 via-primary/10 to-purple-500/5 border border-primary/10 backdrop-blur-sm">
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
+            <div className={`p-4 rounded-2xl ${config.bgColor} ${config.borderColor} border-2`}>
+              <div className={`${config.color}`}>
+                {config.icon}
+              </div>
             </div>
-            <div>
-              <h3 className="text-lg font-semibold">KYC Status</h3>
-              <p className={`${config.color} font-medium`}>
-                {config.label}
-              </p>
+            <div className="space-y-4 flex-1">
+              <div>
+                <h3 className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+                  KYC Status: <span className={`${config.color}`}>{config.label}</span>
+                </h3>
+                <p className="text-muted-foreground mt-1">{config.description}</p>
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Verification Progress</span>
+                  <span className={`${config.color} font-medium`}>{config.progress}%</span>
+                </div>
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-primary/10 to-purple-500/10 blur-md"></div>
+                  <Progress value={config.progress} className="h-2 relative z-10" />
+                </div>
+              </div>
             </div>
           </div>
-          <Progress value={config.progress} className="h-2 bg-primary/10" />
         </div>
 
         {userData?.kyc_status === 'not_started' && (
           <Button
             onClick={startKYCVerification}
-            className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-colors flex items-center justify-center gap-2 group relative overflow-hidden"
+            className="w-full bg-gradient-to-r from-purple-500/20 via-primary/20 to-purple-500/20 hover:from-purple-500/30 hover:via-primary/30 hover:to-purple-500/30 text-primary transition-all duration-300 border border-primary/20 shadow-lg hover:shadow-primary/10 flex items-center justify-center gap-3 py-6 group"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <Shield className="w-4 h-4 relative z-10" />
-            <span className="relative z-10">Begin Verification</span>
+            <Shield className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
+            <span className="text-lg">Begin Verification Process</span>
           </Button>
         )}
 
         {userData?.kyc_status === 'rejected' && userData?.kyc_rejection_reason && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
+          <Alert variant="destructive" className="bg-red-500/10 border-red-500/20">
+            <AlertCircle className="h-5 w-5" />
+            <AlertDescription className="text-base">
               Rejection reason: {userData.kyc_rejection_reason}
             </AlertDescription>
           </Alert>
         )}
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {['Identity', 'Address', 'Verification'].map((step, index) => (
+            <div
+              key={step}
+              className={`p-6 rounded-xl border ${
+                config.progress >= index * 33 ? config.borderColor : 'border-primary/10'
+              } bg-gradient-to-br from-purple-500/5 via-primary/10 to-purple-500/5`}
+            >
+              <div className="flex items-center gap-3">
+                <div className={`p-2 rounded-lg ${
+                  config.progress >= index * 33 ? config.bgColor : 'bg-primary/10'
+                }`}>
+                  {config.progress >= index * 33 ? (
+                    <BadgeCheck className={`w-5 h-5 ${config.color}`} />
+                  ) : (
+                    <Shield className="w-5 h-5 text-primary/60" />
+                  )}
+                </div>
+                <h4 className="font-medium">{step}</h4>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   };
