@@ -62,8 +62,10 @@ const KYCAddressDialog = ({ isOpen, onClose, onSuccess, userId }: KYCAddressDial
         description: "Address document uploaded successfully",
       });
 
+      // Важно: сначала вызываем onSuccess, затем onClose
       await onSuccess();
       onClose();
+      
     } catch (error) {
       console.error("Error uploading address document:", error);
       toast({
@@ -76,8 +78,15 @@ const KYCAddressDialog = ({ isOpen, onClose, onSuccess, userId }: KYCAddressDial
     }
   };
 
+  const handleDialogClose = async () => {
+    // Убедимся, что если диалог закрывается во время загрузки, мы не выполняем никаких действий
+    if (!isUploading) {
+      onClose();
+    }
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleDialogClose}>
       <DialogContent className="sm:max-w-[425px] bg-gradient-to-b from-background via-background/95 to-background/90 backdrop-blur-xl border-primary/20">
         <DialogHeader>
           <div className="mx-auto bg-primary/10 p-3 rounded-full w-fit">
