@@ -1,6 +1,7 @@
 
 import { NFTCard } from "@/components/NFTCard";
 import { Loader2, Search } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface NFT {
   id: string;
@@ -50,7 +51,7 @@ export const NFTGrid = ({
   }
 
   return (
-    <>
+    <ScrollArea className="h-[calc(100vh-400px)] rounded-lg border border-primary/10 p-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {nfts.map((nft, index) => (
           <div
@@ -75,6 +76,6 @@ export const NFTGrid = ({
       )}
 
       <div ref={lastElementRef} className="w-full h-20" />
-    </>
+    </ScrollArea>
   );
 };

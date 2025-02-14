@@ -128,7 +128,7 @@ const Marketplace = () => {
             setSortBy={setSortBy}
           />
         </div>
-        
+
         <NFTGrid
           nfts={sortedAndFilteredNFTs}
           isLoading={isLoading}
