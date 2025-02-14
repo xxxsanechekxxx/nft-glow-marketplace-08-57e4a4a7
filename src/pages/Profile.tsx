@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { User, Settings, Mail, Key, LogOut, Wallet, ArrowUpCircle, ArrowDownCircle, Globe, UserRound, ShoppingBag, HelpCircle } from "lucide-react";
@@ -30,12 +30,6 @@ import { useAuth } from "@/hooks/useAuth";
 import DepositConfirmationDialog from "@/components/DepositConfirmationDialog";
 import FraudWarningDialog from "@/components/FraudWarningDialog";
 import { EmptyNFTState } from "@/components/EmptyNFTState";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 interface Transaction {
   id: string;
@@ -241,21 +235,46 @@ const Profile = () => {
     }
   };
 
-  const handleGenerateWalletAddress = async (address: string) => {
+  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !userData?.id) return;
+
     try {
-      const { error } = await supabase
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${userData.id}/${crypto.randomUUID()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file, {
+          upsert: true,
+        });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      const { error: updateError } = await supabase
         .from('profiles')
-        .update({ wallet_address: address })
-        .eq('user_id', userData?.id);
+        .update({ avatar_url: publicUrl })
+        .eq('user_id', userData.id);
 
-      if (error) throw error;
+      if (updateError) throw updateError;
 
-      setUserData(prev => prev ? { ...prev, wallet_address: address } : null);
+      setUserData(prev => prev ? { ...prev, avatar_url: publicUrl } : null);
       
-      showDelayedToast("Success", "Wallet address has been generated and saved.");
+      toast({
+        title: "Success",
+        description: "Avatar updated successfully",
+      });
     } catch (error) {
-      console.error("Error saving wallet address:", error);
-      showDelayedToast("Error", "Failed to save wallet address. Please try again.", "destructive");
+      console.error("Error uploading avatar:", error);
+      toast({
+        title: "Error",
+        description: "Failed to upload avatar",
+        variant: "destructive",
+      });
     }
   };
 
@@ -374,21 +393,36 @@ const Profile = () => {
         <div className="relative p-8 rounded-2xl overflow-hidden bg-gradient-to-r from-purple-500/10 via-primary/5 to-purple-500/10 border border-primary/10 backdrop-blur-sm shadow-xl">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 animate-gradient"></div>
           <div className="relative flex items-center gap-6 z-10">
-            <Avatar className="w-24 h-24 border-4 border-primary/20 shadow-xl ring-2 ring-purple-500/20 transition-all duration-300 hover:ring-purple-500/40">
-              <AvatarFallback className="bg-gradient-to-br from-primary/80 to-purple-600 text-white">
-                <UserRound className="w-12 h-12" />
-              </AvatarFallback>
-            </Avatar>
-            <div className="space-y-3">
+            <div className="relative group">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarUpload}
+                className="hidden"
+                id="avatar-upload"
+              />
+              <label 
+                htmlFor="avatar-upload" 
+                className="cursor-pointer block relative"
+              >
+                <Avatar className="w-24 h-24 border-4 border-primary/20 shadow-xl ring-2 ring-purple-500/20 transition-all duration-300 group-hover:ring-purple-500/40">
+                  {userData?.avatar_url ? (
+                    <AvatarImage src={userData.avatar_url} alt={userData.login} />
+                  ) : (
+                    <AvatarFallback className="bg-gradient-to-br from-primary/80 to-purple-600 text-white">
+                      <UserRound className="w-12 h-12" />
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+                <div className="absolute inset-0 bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                  <p className="text-white text-xs font-medium">Change Avatar</p>
+                </div>
+              </label>
+            </div>
+            <div>
               <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
                 @{userData?.login}
               </h1>
-              <div className="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full backdrop-blur-sm border border-primary/20">
-                <UserRound className="w-5 h-5 text-primary" />
-                <span className="text-lg font-semibold text-primary">
-                  PureNFT user since {new Date(userData?.created_at || '').toLocaleDateString()}
-                </span>
-              </div>
             </div>
           </div>
         </div>
