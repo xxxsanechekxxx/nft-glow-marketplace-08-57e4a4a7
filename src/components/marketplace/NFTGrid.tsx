@@ -51,31 +51,44 @@ export const NFTGrid = ({
   }
 
   return (
-    <ScrollArea className="h-[calc(100vh-400px)] rounded-lg border border-primary/10 p-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        {nfts.map((nft, index) => (
-          <div
-            key={nft.id}
-            className="opacity-0 animate-[fadeIn_1s_ease-out_forwards] hover:translate-y-[-4px] transition-transform duration-700"
-            style={{
-              animationDelay: `${index * 200}ms`,
-            }}
-          >
-            <NFTCard {...nft} />
-          </div>
-        ))}
+    <div className="relative">
+      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-purple-500/5 to-pink-500/5 rounded-xl blur-2xl" />
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[100px] animate-pulse" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-[100px] animate-pulse delay-700" />
       </div>
-
-      {isFetchingNextPage && (
-        <div className="flex justify-center py-8">
-          <div className="relative">
-            <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-full blur-md animate-pulse" />
-            <Loader2 className="h-8 w-8 animate-[spin_2s_linear_infinite] text-primary relative" />
+      
+      <ScrollArea className="h-[calc(100vh-400px)] rounded-xl backdrop-blur-sm border border-primary/20 shadow-[0_0_15px_rgba(0,0,0,0.1)] relative">
+        <div className="p-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {nfts.map((nft, index) => (
+              <div
+                key={nft.id}
+                className="opacity-0 animate-[fadeIn_1s_ease-out_forwards] group"
+                style={{
+                  animationDelay: `${index * 200}ms`,
+                }}
+              >
+                <div className="relative transition-transform duration-700 group-hover:translate-y-[-8px] group-hover:scale-[1.02]">
+                  <div className="absolute -inset-2 bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                  <NFTCard {...nft} />
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
-      )}
 
-      <div ref={lastElementRef} className="w-full h-20" />
-    </ScrollArea>
+          {isFetchingNextPage && (
+            <div className="flex justify-center py-12">
+              <div className="relative">
+                <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-full blur-md animate-pulse" />
+                <Loader2 className="h-8 w-8 animate-[spin_2s_linear_infinite] text-primary relative" />
+              </div>
+            </div>
+          )}
+
+          <div ref={lastElementRef} className="w-full h-20" />
+        </div>
+      </ScrollArea>
+    </div>
   );
 };
