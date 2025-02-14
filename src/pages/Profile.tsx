@@ -745,12 +745,121 @@ const Profile = () => {
           </TabsContent>
 
           <TabsContent value="wallet">
+            <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
+              <CardContent className="p-8">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                  <div className="space-y-4">
+                    <p className="text-sm text-muted-foreground">Available Balance</p>
+                    <div className="space-y-2">
+                      <h2 className="text-5xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-1.5">
+                        <img 
+                          src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                          alt="ETH"
+                          className="h-10 w-10"
+                        />
+                        {Number(userData?.balance || 0).toFixed(2)}
+                      </h2>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button 
+                        className="w-full bg-primary/20 hover:bg-primary/30 text-primary flex items-center gap-3 p-6 h-auto group"
+                      >
+                        <div className="p-3 rounded-xl bg-primary/20 group-hover:bg-primary/30 transition-colors">
+                          <ArrowDownCircle className="w-6 h-6" />
+                        </div>
+                        <div className="flex flex-col items-start">
+                          <span className="text-lg font-semibold">Deposit</span>
+                          <span className="text-sm text-muted-foreground">Add funds to your wallet</span>
+                        </div>
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-background/95 backdrop-blur-xl border-primary/10">
+                      <DialogHeader>
+                        <DialogTitle>Deposit ETH</DialogTitle>
+                        <DialogDescription>
+                          Enter the amount of ETH you want to deposit.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <form onSubmit={handleDeposit} className="space-y-4">
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium">Amount (ETH)</label>
+                          <Input
+                            type="number"
+                            step="0.000000000000000001"
+                            min="0"
+                            value={depositAmount}
+                            onChange={(e) => setDepositAmount(e.target.value)}
+                            placeholder="0.00"
+                            required
+                            className="bg-background/50 border-primary/10"
+                          />
+                        </div>
+                        <DialogFooter>
+                          <Button type="submit" className="bg-primary/20 text-primary hover:bg-primary/30">Continue</Button>
+                        </DialogFooter>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
+
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button 
+                        variant="destructive"
+                        className="w-full flex items-center gap-3 p-6 h-auto bg-destructive/20 hover:bg-destructive/30 group"
+                      >
+                        <div className="p-3 rounded-xl bg-destructive/20 group-hover:bg-destructive/30 transition-colors">
+                          <ArrowUpCircle className="w-6 h-6" />
+                        </div>
+                        <div className="flex flex-col items-start">
+                          <span className="text-lg font-semibold">Withdraw</span>
+                          <span className="text-sm text-muted-foreground">Withdraw funds to your wallet</span>
+                        </div>
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-background/95 backdrop-blur-xl border-primary/10">
+                      <DialogHeader>
+                        <DialogTitle>Withdraw ETH</DialogTitle>
+                        <DialogDescription>
+                          Enter the amount of ETH you want to withdraw.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <form onSubmit={handleWithdraw} className="space-y-4">
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium">Amount (ETH)</label>
+                          <Input
+                            type="number"
+                            step="0.000000000000000001"
+                            min="0"
+                            value={withdrawAmount}
+                            onChange={(e) => setWithdrawAmount(e.target.value)}
+                            placeholder="0.00"
+                            required
+                            className="bg-background/50 border-primary/10"
+                          />
+                        </div>
+                        <DialogFooter>
+                          <Button type="submit" className="bg-primary/20 text-primary hover:bg-primary/30">Continue</Button>
+                        </DialogFooter>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="verification">
             <div className="space-y-6">
               <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
                 <CardContent className="p-8">
                   <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                     <div className="space-y-4">
-                      <p className="text-sm text-muted-foreground">Available Balance</p>
+                      <p className="text-sm text-muted-foreground">Verification Status</p>
                       <div className="space-y-2">
                         <h2 className="text-5xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-1.5">
                           <img 
@@ -765,55 +874,50 @@ const Profile = () => {
                   </div>
                 </CardContent>
               </Card>
+            </div>
+          </TabsContent>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button 
-                      onClick={handleDeposit}
-                      className="w-full bg-primary/20 hover:bg-primary/30 text-primary flex items-center gap-3 p-6 h-auto group"
-                    >
-                      <div className="p-3 rounded-xl bg-primary/20 group-hover:bg-primary/30 transition-colors">
-                        <ArrowDownCircle className="w-6 h-6" />
-                      </div>
-                      <div className="flex flex-col items-start">
-                        <span className="text-lg font-semibold">Deposit</span>
-                        <span className="text-sm text-muted-foreground">Add funds to your wallet</span>
-                      </div>
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="bg-background/95 backdrop-blur-xl border-primary/10">
-                    <DialogHeader>
-                      <DialogTitle>Deposit ETH</DialogTitle>
-                      <DialogDescription>
-                        Enter the amount of ETH you want to deposit.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <form onSubmit={handleDeposit} className="space-y-4">
+          <TabsContent value="nft">
+            <div className="space-y-6">
+              <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
+                <CardContent className="p-8">
+                  <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                    <div className="space-y-4">
+                      <p className="text-sm text-muted-foreground">NFTs</p>
                       <div className="space-y-2">
-                        <label className="text-sm font-medium">Amount (ETH)</label>
-                        <Input
-                          type="number"
-                          step="0.000000000000000001"
-                          min="0"
-                          value={depositAmount}
-                          onChange={(e) => setDepositAmount(e.target.value)}
-                          placeholder="0.00"
-                          required
-                          className="bg-background/50 border-primary/10"
-                        />
+                        <h2 className="text-5xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-1.5">
+                          <img 
+                            src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                            alt="ETH"
+                            className="h-10 w-10"
+                          />
+                          {Number(userData?.balance || 0).toFixed(2)}
+                        </h2>
                       </div>
-                      <DialogFooter>
-                        <Button type="submit" className="bg-primary/20 text-primary hover:bg-primary/30">Continue</Button>
-                      </DialogFooter>
-                    </form>
-                  </DialogContent>
-                </Dialog>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
 
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button 
-                      variant="destructive"
-                      className="w-full flex items-center gap-3 p-6 h-auto bg-destructive/20 hover:bg-destructive/30 group"
-                    >
-                      <div className="p-3 rounded-xl bg-destructive/20 group-hover:bg
+        <KYCIdentityDialog 
+          isOpen={isIdentityDialogOpen}
+          onClose={() => setIsIdentityDialogOpen(false)}
+          onSuccess={handleIdentitySuccess}
+          userId={user?.id || ''}
+        />
+
+        <KYCAddressDialog
+          isOpen={isAddressDialogOpen}
+          onClose={handleAddressClose}
+          onSuccess={handleAddressSuccess}
+          userId={user?.id || ''}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default Profile;
