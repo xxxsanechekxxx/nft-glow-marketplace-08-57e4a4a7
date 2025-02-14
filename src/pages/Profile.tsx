@@ -270,35 +270,45 @@ const Profile = () => {
           throw transactionsError;
         }
 
-        console.log("Profile data:", profileData);
-        
+        console.log("Profile data:", profileData); // Добавляем лог для отладки
+
         if (isMounted && currentUser) {
-          setUserData({
+          const userData: UserData = {
             id: currentUser.id,
             email: currentUser.email || '',
             login: profileData?.login || currentUser.user_metadata?.login || '',
             country: profileData?.country || currentUser.user_metadata?.country || '',
-            avatar_url: null,
+            avatar_url: profileData?.avatar_url || null,
             balance: profileData?.balance?.toString() || "0.0",
             wallet_address: profileData?.wallet_address || '',
+            erc20_address: profileData?.erc20_address || undefined,
             created_at: currentUser.created_at,
             verified: profileData?.verified || false,
             kyc_status: profileData?.kyc_status || 'not_started'
-          });
+          };
 
-          setTransactions(transactionsData?.map(tx => ({
-            id: tx.id,
-            type: tx.type,
-            amount: tx.amount.toString(),
-            created_at: new Date(tx.created_at).toISOString().split('T')[0],
-            status: tx.status,
-            item: tx.item
-          })) || []);
+          console.log("Setting user data with avatar:", userData.avatar_url); // Добавляем лог для отладки
+          setUserData(userData);
+
+          if (transactionsData) {
+            setTransactions(transactionsData.map(tx => ({
+              id: tx.id,
+              type: tx.type,
+              amount: tx.amount.toString(),
+              created_at: new Date(tx.created_at).toISOString().split('T')[0],
+              status: tx.status,
+              item: tx.item
+            })));
+          }
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
         if (isMounted) {
-          showDelayedToast("Error", "Failed to fetch user data. Please try again.", "destructive");
+          toast({
+            title: "Error",
+            description: "Failed to fetch user data",
+            variant: "destructive",
+          });
         }
       } finally {
         if (isMounted) {
