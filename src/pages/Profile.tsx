@@ -813,3 +813,76 @@ const Profile = () => {
                         <span className="text-lg font-semibold">Withdraw</span>
                         <span className="text-sm text-muted-foreground">Withdraw funds from your wallet</span>
                       </div>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="bg-background/95 backdrop-blur-xl border-primary/10">
+                    <DialogHeader>
+                      <DialogTitle>Withdraw ETH</DialogTitle>
+                      <DialogDescription>
+                        Enter the amount of ETH you want to withdraw.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleWithdraw} className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Amount (ETH)</label>
+                        <Input
+                          type="number"
+                          step="0.000000000000000001"
+                          min="0"
+                          value={withdrawAmount}
+                          onChange={(e) => setWithdrawAmount(e.target.value)}
+                          placeholder="0.00"
+                          required
+                          className="bg-background/50 border-primary/10"
+                        />
+                      </div>
+                      <DialogFooter>
+                        <Button type="submit" className="bg-destructive/20 text-destructive hover:bg-destructive/30">
+                          Withdraw
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
+
+        <KYCIdentityDialog 
+          isOpen={isIdentityDialogOpen}
+          onClose={() => setIsIdentityDialogOpen(false)}
+          onSuccess={handleIdentitySuccess}
+          userId={userData?.id || ''}
+        />
+
+        <KYCAddressDialog
+          isOpen={isAddressDialogOpen}
+          onClose={() => setIsAddressDialogOpen(false)}
+          onSuccess={handleAddressSuccess}
+          userId={userData?.id || ''}
+        />
+
+        <WalletAddressModal
+          isOpen={isWalletModalOpen}
+          onClose={() => setIsWalletModalOpen(false)}
+          onGenerated={handleGenerateWalletAddress}
+        />
+
+        <DepositConfirmationDialog
+          isOpen={isDepositConfirmationOpen}
+          onClose={() => setIsDepositConfirmationOpen(false)}
+          onConfirm={handleDepositConfirm}
+          amount={depositAmount}
+        />
+
+        <FraudWarningDialog
+          isOpen={isFraudWarningOpen}
+          onClose={() => setIsFraudWarningOpen(false)}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default Profile;
