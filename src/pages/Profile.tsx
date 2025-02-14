@@ -521,46 +521,79 @@ const Profile = () => {
       'not_started': {
         color: 'text-yellow-500',
         icon: <Shield className="w-6 h-6" />,
-        progress: 0
+        progress: 0,
+        label: 'Not Started'
       },
       'identity_submitted': {
         color: 'text-blue-500',
         icon: <FileCheck className="w-6 h-6" />,
-        progress: 33
+        progress: 33,
+        label: 'Identity Submitted'
       },
       'address_submitted': {
         color: 'text-blue-500',
         icon: <FileCheck className="w-6 h-6" />,
-        progress: 66
+        progress: 66,
+        label: 'Address Submitted'
       },
       'under_review': {
         color: 'text-orange-500',
         icon: <HelpCircle className="w-6 h-6" />,
-        progress: 80
+        progress: 80,
+        label: 'Under Review'
       },
       'verified': {
         color: 'text-green-500',
         icon: <BadgeCheck className="w-6 h-6" />,
-        progress: 100
+        progress: 100,
+        label: 'Verified'
       },
       'rejected': {
         color: 'text-red-500',
         icon: <AlertCircle className="w-6 h-6" />,
-        progress: 0
+        progress: 0,
+        label: 'Rejected'
       }
     };
 
     const config = statusConfig[userData?.kyc_status || 'not_started'];
 
     return (
-      <div className="space-y-4">
-        <div className={`flex items-center gap-2 ${config.color}`}>
-          {config.icon}
-          <span className="capitalize font-medium">
-            {(userData?.kyc_status || 'not_started').replace(/_/g, ' ')}
-          </span>
+      <div className="space-y-6">
+        <div className="p-6 rounded-xl bg-primary/5 border border-primary/10 backdrop-blur-sm">
+          <div className="flex items-center gap-3 mb-4">
+            <div className={`p-2 rounded-lg bg-primary/10 ${config.color}`}>
+              {config.icon}
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold">KYC Status</h3>
+              <p className={`${config.color} font-medium`}>
+                {config.label}
+              </p>
+            </div>
+          </div>
+          <Progress value={config.progress} className="h-2 bg-primary/10" />
         </div>
-        <Progress value={config.progress} className="h-2" />
+
+        {!userData?.verified && (
+          <Button
+            onClick={startKYCVerification}
+            className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-colors flex items-center justify-center gap-2 group relative overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <Shield className="w-4 h-4 relative z-10" />
+            <span className="relative z-10">Begin Verification</span>
+          </Button>
+        )}
+
+        {userData?.kyc_status === 'rejected' && userData?.kyc_rejection_reason && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              Rejection reason: {userData.kyc_rejection_reason}
+            </AlertDescription>
+          </Alert>
+        )}
       </div>
     );
   };
@@ -857,30 +890,8 @@ const Profile = () => {
                   KYC Verification
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent>
                 {renderVerificationStatus()}
-                
-                {!userData?.verified && (
-                  <div className="mt-6">
-                    <Button
-                      onClick={startKYCVerification}
-                      className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-colors flex items-center justify-center gap-2 group relative overflow-hidden"
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      <Shield className="w-4 h-4 relative z-10" />
-                      <span className="relative z-10">Начать верификацию</span>
-                    </Button>
-                  </div>
-                )}
-
-                {userData?.kyc_status === 'rejected' && userData?.kyc_rejection_reason && (
-                  <Alert variant="destructive" className="mt-4">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>
-                      Причина отказа: {userData.kyc_rejection_reason}
-                    </AlertDescription>
-                  </Alert>
-                )}
               </CardContent>
             </Card>
           </TabsContent>
