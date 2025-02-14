@@ -49,6 +49,10 @@ export type Database = {
           country: string | null
           created_at: string
           id: string
+          kyc_address_doc: string | null
+          kyc_identity_doc: string | null
+          kyc_rejection_reason: string | null
+          kyc_status: string | null
           login: string
           user_id: string
           verified: boolean
@@ -60,6 +64,10 @@ export type Database = {
           country?: string | null
           created_at?: string
           id?: string
+          kyc_address_doc?: string | null
+          kyc_identity_doc?: string | null
+          kyc_rejection_reason?: string | null
+          kyc_status?: string | null
           login: string
           user_id: string
           verified?: boolean
@@ -71,6 +79,10 @@ export type Database = {
           country?: string | null
           created_at?: string
           id?: string
+          kyc_address_doc?: string | null
+          kyc_identity_doc?: string | null
+          kyc_rejection_reason?: string | null
+          kyc_status?: string | null
           login?: string
           user_id?: string
           verified?: boolean
