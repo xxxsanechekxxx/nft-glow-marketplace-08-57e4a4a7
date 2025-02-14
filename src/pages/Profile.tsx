@@ -144,23 +144,65 @@ const Profile = () => {
   };
 
   const handleIdentitySuccess = async () => {
-    setIsIdentityDialogOpen(false);
-    setUserData(prev => prev ? { ...prev, kyc_status: 'identity_submitted' } : null);
-    setIsAddressDialogOpen(true);
+    try {
+      const { data: profileData, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', user?.id)
+        .single();
+
+      if (error) throw error;
+
+      setUserData(prev => prev ? {
+        ...prev,
+        kyc_status: profileData.kyc_status,
+      } : null);
+
+      setIsIdentityDialogOpen(false);
+      setIsAddressDialogOpen(true);
+    } catch (error) {
+      console.error("Error updating profile data:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update profile status",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleAddressSuccess = async () => {
-    setIsAddressDialogOpen(false);
-    setUserData(prev => prev ? { ...prev, kyc_status: 'under_review' } : null);
-    toast({
-      title: "Verification In Progress",
-      description: "Your documents have been submitted and are under review.",
-    });
+    try {
+      const { data: profileData, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', user?.id)
+        .single();
+
+      if (error) throw error;
+
+      setUserData(prev => prev ? {
+        ...prev,
+        kyc_status: profileData.kyc_status,
+      } : null);
+
+      setIsAddressDialogOpen(false);
+      
+      toast({
+        title: "Verification In Progress",
+        description: "Your documents have been submitted and are under review.",
+      });
+    } catch (error) {
+      console.error("Error updating profile data:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update profile status",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleAddressClose = () => {
     setIsAddressDialogOpen(false);
-    setUserData(prev => prev ? { ...prev, kyc_status: 'identity_submitted' } : null);
   };
 
   const continueKYCVerification = () => {
