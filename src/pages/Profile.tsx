@@ -1,4 +1,3 @@
-<lov-code>
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -818,4 +817,145 @@ const Profile = () => {
                       <div className="p-3 rounded-xl bg-destructive/20 group-hover:bg-destructive/30 transition-colors">
                         <ArrowUpCircle className="w-6 h-6" />
                       </div>
-                      <div className="flex flex-
+                      <div className="flex flex-col items-start">
+                        <span className="text-lg font-semibold">Withdraw</span>
+                        <span className="text-sm text-muted-foreground">Send funds to external wallet</span>
+                      </div>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="bg-background/95 backdrop-blur-xl border-primary/10">
+                    <DialogHeader>
+                      <DialogTitle>Withdraw ETH</DialogTitle>
+                      <DialogDescription>
+                        Enter the amount of ETH you want to withdraw.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleWithdraw} className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Amount (ETH)</label>
+                        <Input
+                          type="number"
+                          step="0.000000000000000001"
+                          min="0"
+                          value={withdrawAmount}
+                          onChange={(e) => setWithdrawAmount(e.target.value)}
+                          placeholder="0.00"
+                          required
+                          className="bg-background/50 border-primary/10"
+                        />
+                      </div>
+                      <DialogFooter>
+                        <Button type="submit" className="bg-primary/20 text-primary hover:bg-primary/30">Continue</Button>
+                      </DialogFooter>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* Verification Content */}
+          <TabsContent value="verification">
+            <div className="space-y-6">
+              <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
+                <CardContent className="p-8">
+                  <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                    <div className="space-y-4">
+                      <p className="text-sm text-muted-foreground">Verification Status</p>
+                      <div className="space-y-2">
+                        <h2 className="text-5xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-1.5">
+                          <img 
+                            src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                            alt="ETH"
+                            className="h-10 w-10"
+                          />
+                          {Number(userData?.balance || 0).toFixed(2)}
+                        </h2>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button 
+                      onClick={startKYCVerification}
+                      className="w-full bg-primary/20 hover:bg-primary/30 text-primary flex items-center gap-3 p-6 h-auto group"
+                    >
+                      <div className="p-3 rounded-xl bg-primary/20 group-hover:bg-primary/30 transition-colors">
+                        <Shield className="w-6 h-6" />
+                      </div>
+                      <div className="flex flex-col items-start">
+                        <span className="text-lg font-semibold">Start Verification</span>
+                        <span className="text-sm text-muted-foreground">Complete your KYC process</span>
+                      </div>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="bg-background/95 backdrop-blur-xl border-primary/10">
+                    <DialogHeader>
+                      <DialogTitle>Start KYC Verification</DialogTitle>
+                      <DialogDescription>
+                        Complete your KYC process to access more features.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <Button 
+                        onClick={continueKYCVerification}
+                        className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-colors group relative overflow-hidden"
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <span className="relative z-10">Continue</span>
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* NFT Content */}
+          <TabsContent value="nft">
+            <EmptyNFTState />
+          </TabsContent>
+        </Tabs>
+
+        {/* Modals */}
+        <KYCIdentityDialog 
+          isOpen={isIdentityDialogOpen}
+          onClose={() => setIsIdentityDialogOpen(false)}
+          onSuccess={handleIdentitySuccess}
+          userId={user?.id || ''}
+        />
+
+        <KYCAddressDialog
+          isOpen={isAddressDialogOpen}
+          onClose={() => setIsAddressDialogOpen(false)}
+          onSuccess={handleAddressSuccess}
+          userId={user?.id || ''}
+        />
+
+        <WalletAddressModal
+          isOpen={isWalletModalOpen}
+          onClose={() => setIsWalletModalOpen(false)}
+          onGenerated={handleGenerateWalletAddress}
+        />
+
+        <DepositConfirmationDialog
+          isOpen={isDepositConfirmationOpen}
+          onClose={() => setIsDepositConfirmationOpen(false)}
+          onConfirm={handleDepositConfirm}
+          amount={depositAmount}
+        />
+
+        <FraudWarningDialog
+          isOpen={isFraudWarningOpen}
+          onClose={() => setIsFraudWarningOpen(false)}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default Profile;
