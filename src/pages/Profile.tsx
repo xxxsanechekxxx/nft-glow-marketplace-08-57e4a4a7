@@ -158,6 +158,11 @@ const Profile = () => {
     });
   };
 
+  const handleAddressClose = () => {
+    setIsAddressDialogOpen(false);
+    setUserData(prev => prev ? { ...prev, kyc_status: 'identity_submitted' } : null);
+  };
+
   const continueKYCVerification = () => {
     if (!user?.id) {
       toast({
@@ -1085,7 +1090,7 @@ const Profile = () => {
 
       <KYCAddressDialog
         isOpen={isAddressDialogOpen}
-        onClose={() => setIsAddressDialogOpen(false)}
+        onClose={handleAddressClose}
         onSuccess={handleAddressSuccess}
         userId={user?.id || ''}
       />
