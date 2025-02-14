@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -9,23 +8,19 @@ export const Footer = () => {
     const formData = new FormData(e.currentTarget);
     const email = formData.get('email');
     
-    // Hardcoded success message
     toast.success("Thanks for subscribing!", {
       description: "You've been added to our newsletter list.",
     });
     
-    // Reset the form
     e.currentTarget.reset();
   };
 
   return (
-    <footer className="relative mt-20 overflow-hidden bg-[#0B0D17]">
+    <footer className="relative mt-20 pb-4 overflow-hidden bg-[#0B0D17]">
       <div className="absolute inset-0">
-        {/* Enhanced gradient background */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#9b87f5]/10 via-purple-500/5 to-background"></div>
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWI4N2Y1IiBzdHJva2Utd2lkdGg9IjAuMiIgLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiIC8+PC9zdmc+')] opacity-5"></div>
         
-        {/* Animated gradient orbs */}
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#9b87f5]/10 rounded-full blur-[100px] animate-pulse"></div>
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[100px] animate-pulse delay-700"></div>
       </div>
