@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
-import { FileUpload, Upload } from 'lucide-react';
+import { Upload } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
 
@@ -101,7 +101,7 @@ const KYCIdentityDialog = ({ isOpen, onClose, onSuccess, userId }: KYCIdentityDi
                 onChange={handleFileUpload}
                 disabled={isUploading}
               />
-              <FileUpload className="w-10 h-10 mx-auto mb-4 text-primary/60" />
+              <Upload className="w-10 h-10 mx-auto mb-4 text-primary/60" />
               <p className="text-sm text-muted-foreground">
                 Click to upload or drag and drop
               </p>
