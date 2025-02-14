@@ -136,6 +136,13 @@ export type Database = {
       }
     }
     Enums: {
+      kyc_status_type:
+        | "not_started"
+        | "identity_submitted"
+        | "address_submitted"
+        | "under_review"
+        | "verified"
+        | "rejected"
       transaction_status: "pending" | "completed" | "failed"
       transaction_type: "deposit" | "withdraw" | "purchase"
     }
