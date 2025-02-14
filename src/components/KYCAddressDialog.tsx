@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -14,7 +15,7 @@ import { Upload, Home, FileCheck } from "lucide-react";
 interface KYCAddressDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => Promise<void>;
+  onSuccess: () => void;
   userId: string;
 }
 
@@ -67,7 +68,7 @@ const KYCAddressDialog = ({ isOpen, onClose, onSuccess, userId }: KYCAddressDial
         description: "Address document uploaded successfully",
       });
 
-      await onSuccess();
+      onSuccess();
       onClose();
     } catch (error) {
       console.error("Error uploading address document:", error);
