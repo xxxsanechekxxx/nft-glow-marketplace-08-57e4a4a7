@@ -120,9 +120,16 @@ const Profile = () => {
     }
   };
 
-  const startKYCVerification = async () => {
+  const startKYCVerification = () => {
     try {
-      if (!user?.id) return;
+      if (!user?.id) {
+        toast({
+          title: "Error",
+          description: "You must be logged in to start verification",
+          variant: "destructive",
+        });
+        return;
+      }
       
       setIsIdentityDialogOpen(true);
     } catch (error) {
@@ -136,11 +143,15 @@ const Profile = () => {
   };
 
   const handleIdentitySuccess = () => {
+    setIsIdentityDialogOpen(false); // Close the identity dialog first
     setUserData(prev => prev ? { ...prev, kyc_status: 'identity_submitted' } : null);
-    setIsAddressDialogOpen(true);
+    setTimeout(() => {
+      setIsAddressDialogOpen(true); // Open address dialog with a small delay
+    }, 100);
   };
 
   const handleAddressSuccess = async () => {
+    setIsAddressDialogOpen(false);
     setUserData(prev => prev ? { ...prev, kyc_status: 'under_review' } : null);
     toast({
       title: "Verification In Progress",

@@ -59,7 +59,6 @@ const KYCIdentityDialog = ({ isOpen, onClose, onSuccess, userId }: KYCIdentityDi
       });
 
       onSuccess();
-      onClose();
     } catch (error) {
       console.error("Error uploading identity document:", error);
       toast({
