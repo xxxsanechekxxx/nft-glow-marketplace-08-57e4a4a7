@@ -1018,11 +1018,11 @@ const Profile = () => {
                     </div>
                     {(userData?.kyc_status === 'identity_submitted' || userData?.kyc_status === 'not_started') && (
                       <Button 
-                        onClick={continueKYCVerification}
+                        onClick={() => setIsAddressDialogOpen(true)}
                         className="w-full bg-primary/20 hover:bg-primary/30 text-primary"
                         disabled={userData?.kyc_status === 'not_started'}
                       >
-                        Continue Verification
+                        Submit Address Documents
                       </Button>
                     )}
                   </div>
