@@ -29,7 +29,7 @@ export const HowItWorksSection = () => {
       </div>
 
       <div className="container mx-auto px-4 relative">
-        <h2 className="text-4xl md:text-5xl font-bold text-center mb-20 bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-400 to-pink-500 animate-fade-in drop-shadow-lg p-10">
+        <h2 className="text-4xl md:text-5xl font-bold text-center mb-20 bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-400 to-pink-500 animate-fade-in drop-shadow-lg py-10">
           How It Works
         </h2>
         
@@ -47,9 +47,11 @@ export const HowItWorksSection = () => {
                   <step.icon className="w-12 h-12 text-primary group-hover:rotate-6 transition-all duration-700" />
                 </div>
                 
-                <h3 className="text-2xl font-semibold text-center mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-400 to-pink-500 p-10">
-                  {step.title}
-                </h3>
+                <div className="min-h-[80px] flex items-center justify-center">
+                  <h3 className="text-2xl font-semibold text-center mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-400 to-pink-500 py-6">
+                    {step.title}
+                  </h3>
+                </div>
                 
                 <p className="text-muted-foreground text-center text-lg leading-relaxed group-hover:text-primary/80 transition-colors duration-700">
                   {step.description}
