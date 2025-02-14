@@ -1,62 +1,95 @@
+
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card } from "@/components/ui/card";
+import { MessageSquare, Mail, FileCheck, ShieldCheck, Wallet, DollarSign, HelpCircle } from "lucide-react";
 
 const HelpCenter = () => {
   const faqs = [
     {
-      question: "What is an NFT?",
-      answer: "An NFT (Non-Fungible Token) is a unique digital asset that represents ownership of a specific item or piece of content on the blockchain. Unlike cryptocurrencies, each NFT is unique and cannot be replaced with something else of equal value."
+      icon: <Wallet className="w-5 h-5" />,
+      question: "How do I connect my wallet?",
+      answer: "To connect your wallet, click the 'Connect Wallet' button in the top right corner. We support major Web3 wallets including MetaMask, WalletConnect, and Coinbase Wallet. Make sure your wallet is configured for the Ethereum network."
     },
     {
-      question: "How do I buy an NFT?",
-      answer: "To buy an NFT on our platform, you'll need to connect your wallet, browse our marketplace, and when you find an NFT you like, click the 'Buy Now' or 'Place Bid' button. Follow the prompts to complete your purchase."
+      icon: <ShieldCheck className="w-5 h-5" />,
+      question: "How does the verification process work?",
+      answer: "Our verification process consists of two steps: identity verification and address verification. You'll need to provide valid government-issued ID and proof of address (utility bill or bank statement). This helps ensure platform security and compliance with regulations."
     },
     {
-      question: "What wallets do you support?",
-      answer: "We support major Web3 wallets including MetaMask, WalletConnect, and Coinbase Wallet. Make sure your wallet is connected to the Ethereum network to interact with our platform."
+      icon: <DollarSign className="w-5 h-5" />,
+      question: "What are the fees for buying and selling NFTs?",
+      answer: "Our platform charges a small service fee for transactions. The exact fee amount will be displayed before you confirm any purchase or sale. Additionally, there are gas fees for transactions on the Ethereum network, which vary depending on network congestion."
     },
     {
-      question: "How do I sell my NFT?",
-      answer: "To sell your NFT, you'll need to connect your wallet, go to your profile, select the NFT you want to sell, and click 'List for Sale'. You can then set your price and listing duration."
+      icon: <FileCheck className="w-5 h-5" />,
+      question: "What types of NFTs are supported?",
+      answer: "We support all ERC-721 and ERC-1155 standard NFTs on the Ethereum network. This includes digital art, collectibles, gaming items, and more. All NFTs must comply with our content guidelines and terms of service."
     },
     {
-      question: "Are there any fees?",
-      answer: "Yes, there are gas fees for transactions on the Ethereum network, and our platform charges a small service fee. The exact amounts will be displayed before you confirm any transaction."
+      icon: <HelpCircle className="w-5 h-5" />,
+      question: "How can I ensure my NFT purchase is secure?",
+      answer: "All transactions on our platform are secured by smart contracts and the Ethereum blockchain. We implement rigorous security measures and verify all sellers. Always check the NFT contract address and seller's verification status before making a purchase."
     }
   ];
 
   return (
-    <div className="container mx-auto px-4 py-16">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-8 bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-400">
-          Help Center
-        </h1>
-        
-        <Card className="p-6 mb-8 bg-secondary/5 backdrop-blur-sm border border-primary/10">
-          <h2 className="text-2xl font-semibold mb-4">Need Help?</h2>
-          <p className="text-muted-foreground mb-4">
-            Find answers to common questions about NFTs, our marketplace, and how to get started.
-          </p>
-          <p className="text-muted-foreground">
-            Can't find what you're looking for? Contact our support team at{" "}
-            <a href="mailto:support@nftverse.com" className="text-primary hover:underline">
-              support@nftverse.com
-            </a>
-          </p>
-        </Card>
+    <div className="min-h-screen bg-gradient-to-b from-background via-background/95 to-background/90">
+      <div className="container mx-auto px-4 py-16">
+        <div className="max-w-4xl mx-auto space-y-8">
+          <div className="text-center space-y-4">
+            <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-400">
+              How can we help?
+            </h1>
+            <p className="text-muted-foreground max-w-lg mx-auto">
+              Find answers to common questions about our NFT marketplace, or get in touch with our support team.
+            </p>
+          </div>
+          
+          <Card className="p-8 bg-secondary/5 backdrop-blur-sm border border-primary/10">
+            <div className="space-y-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-full bg-primary/10">
+                  <MessageSquare className="w-6 h-6 text-primary" />
+                </div>
+                <h2 className="text-2xl font-semibold">Contact Support</h2>
+              </div>
+              <p className="text-muted-foreground">
+                Our support team is available 24/7 to help you with any questions or issues you may have.
+              </p>
+              <div className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors">
+                <Mail className="w-5 h-5" />
+                <a href="mailto:support@purenft.io" className="hover:underline">
+                  support@purenft.io
+                </a>
+              </div>
+            </div>
+          </Card>
 
-        <Accordion type="single" collapsible className="space-y-4">
-          {faqs.map((faq, index) => (
-            <AccordionItem key={index} value={`item-${index}`} className="bg-secondary/5 backdrop-blur-sm border border-primary/10">
-              <AccordionTrigger className="px-4 hover:no-underline hover:bg-primary/5">
-                {faq.question}
-              </AccordionTrigger>
-              <AccordionContent className="px-4 text-muted-foreground">
-                {faq.answer}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
+          <div className="grid gap-4">
+            <h2 className="text-2xl font-semibold">Frequently Asked Questions</h2>
+            <Accordion type="single" collapsible className="space-y-4">
+              {faqs.map((faq, index) => (
+                <AccordionItem 
+                  key={index} 
+                  value={`item-${index}`} 
+                  className="bg-secondary/5 backdrop-blur-sm border border-primary/10 rounded-lg overflow-hidden"
+                >
+                  <AccordionTrigger className="px-4 hover:no-underline hover:bg-primary/5 data-[state=open]:bg-primary/5 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <div className="p-1.5 rounded-full bg-primary/10">
+                        {faq.icon}
+                      </div>
+                      <span>{faq.question}</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="px-4 pb-4 pt-2 text-muted-foreground leading-relaxed">
+                    {faq.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </div>
       </div>
     </div>
   );
