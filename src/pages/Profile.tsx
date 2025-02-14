@@ -377,6 +377,31 @@ const Profile = () => {
     );
   };
 
+  const handleGenerateWalletAddress = async (address: string) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ wallet_address: address })
+        .eq('user_id', userData?.id);
+
+      if (error) throw error;
+
+      setUserData(prev => prev ? { ...prev, wallet_address: address } : null);
+      
+      toast({
+        title: "Success",
+        description: "Wallet address has been generated and saved.",
+      });
+    } catch (error) {
+      console.error("Error saving wallet address:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save wallet address. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="container mx-auto py-8 px-4 mt-16">
