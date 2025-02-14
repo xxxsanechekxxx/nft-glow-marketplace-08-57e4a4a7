@@ -3,8 +3,8 @@ import { Wallet, Star, Shield } from "lucide-react";
 
 const steps = [
   {
-    title: "Connect Your Wallet",
-    description: "Link your crypto wallet to start buying and selling NFTs securely on our platform.",
+    title: "Generate Your Wallet",
+    description: "Generate your crypto wallet to start buying and selling NFTs securely on our platform.",
     icon: Wallet
   },
   {

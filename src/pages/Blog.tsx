@@ -98,7 +98,7 @@ const blogPosts = [
 
 const Blog = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background/95 to-background/90">
+    <div className="min-h-screen pb-8 bg-gradient-to-b from-background via-background/95 to-background/90">
       <div className="container mx-auto px-4 pt-24 pb-16">
         <div className="text-center mb-16 relative">
           <div className="absolute inset-0 -z-10">
