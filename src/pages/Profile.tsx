@@ -1,4 +1,3 @@
-<lov-code>
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -815,4 +814,4 @@ const Profile = () => {
                       </div>
                       <div className="flex flex-col items-start">
                         <span className="text-lg font-semibold">Withdraw</span>
-                        <span className="text-sm text-muted-foreground
+                        <span className="text-sm text-muted-foreground">Send funds
