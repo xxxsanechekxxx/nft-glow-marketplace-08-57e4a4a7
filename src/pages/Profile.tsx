@@ -1,4 +1,4 @@
-<lov-code>
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,7 +21,8 @@ import {
   HelpCircle,
   Shield,
   FileCheck,
-  BadgeCheck
+  BadgeCheck,
+  AlertCircle
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import WalletAddressModal from "@/components/WalletAddressModal";
@@ -31,6 +32,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
@@ -48,7 +50,6 @@ import FraudWarningDialog from "@/components/FraudWarningDialog";
 import { EmptyNFTState } from "@/components/EmptyNFTState";
 import KYCIdentityDialog from "@/components/KYCIdentityDialog";
 import KYCAddressDialog from "@/components/KYCAddressDialog";
-import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 
@@ -244,16 +245,10 @@ const Profile = () => {
         {userData?.kyc_status === 'not_started' && (
           <Button
             onClick={startKYCVerification}
-            className="w-full relative group overflow-hidden bg-gradient-to-r from-purple-500/10 via-primary/20 to-purple-500/10 hover:from-purple-500/20 hover:via-primary/30 hover:to-purple-500/20 text-primary/90 hover:text-primary transition-all duration-500 shadow-lg hover:shadow-purple-500/10 border border-primary/20 backdrop-blur-sm py-6"
+            className="w-full bg-primary/20 hover:bg-primary/30 text-primary font-medium py-6 text-lg transition-colors"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl" />
-            <div className="relative flex items-center justify-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors duration-500">
-                <Shield className="w-5 h-5 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12" />
-              </div>
-              <span className="text-lg font-medium tracking-wide">Start Identity Verification</span>
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
+            <Shield className="w-5 h-5 mr-2" />
+            Start Identity Verification
           </Button>
         )}
 
@@ -346,8 +341,6 @@ const Profile = () => {
           throw transactionsError;
         }
 
-        console.log("Profile data:", profileData);
-        
         if (isMounted && currentUser) {
           setUserData({
             id: currentUser.id,
@@ -375,7 +368,11 @@ const Profile = () => {
       } catch (error) {
         console.error("Error fetching user data:", error);
         if (isMounted) {
-          showDelayedToast("Error", "Failed to fetch user data. Please try again.", "destructive");
+          toast({
+            title: "Error",
+            description: "Failed to fetch user data. Please try again.",
+            variant: "destructive",
+          });
         }
       } finally {
         if (isMounted) {
@@ -667,128 +664,196 @@ const Profile = () => {
             ))}
           </TabsList>
 
-          <TabsContent value="profile">
-            <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
-              <CardHeader className="space-y-2">
-                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-primary/20">
-                    <UserRound className="w-6 h-6 text-primary" />
-                  </div>
-                  Profile Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2 group">
-                    <label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
-                      <Mail className="w-4 h-4" />
-                      Email
-                    </label>
-                    <div className="relative overflow-hidden rounded-lg transition-all duration-300 group-hover:shadow-lg">
-                      <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      <Input
-                        value={userData?.email}
-                        readOnly
-                        className="bg-background/50 border-primary/10 group-hover:border-primary/30 transition-colors pl-10"
-                      />
-                      <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <TabsContent value="wallet">
+            <div className="space-y-6">
+              <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
+                <CardContent className="p-8">
+                  <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                    <div className="space-y-4">
+                      <p className="text-sm text-muted-foreground">Available Balance</p>
+                      <div className="space-y-2">
+                        <h2 className="text-5xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-1.5">
+                          <img
+                            src="/eth-logo.svg"
+                            alt="ETH"
+                            className="w-8 h-8"
+                          />
+                          {userData?.balance || "0.0"} ETH
+                        </h2>
+                      </div>
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button
+                            className="flex-1 bg-primary/20 text-primary hover:bg-primary/30 transition-colors flex items-center justify-center gap-2"
+                          >
+                            <ArrowUpCircle className="w-4 h-4" />
+                            Deposit
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Deposit ETH</DialogTitle>
+                            <DialogDescription>
+                              Enter the amount you want to deposit
+                            </DialogDescription>
+                          </DialogHeader>
+                          <form onSubmit={handleDeposit} className="space-y-4">
+                            <div className="space-y-2">
+                              <Input
+                                type="number"
+                                value={depositAmount}
+                                onChange={(e) => setDepositAmount(e.target.value)}
+                                placeholder="Amount in ETH"
+                                step="0.01"
+                                min="0"
+                                required
+                                className="bg-background/50"
+                              />
+                            </div>
+                            <DialogFooter>
+                              <Button type="submit">
+                                Confirm Deposit
+                              </Button>
+                            </DialogFooter>
+                          </form>
+                        </DialogContent>
+                      </Dialog>
+
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button
+                            className="flex-1 bg-primary/20 text-primary hover:bg-primary/30 transition-colors flex items-center justify-center gap-2"
+                          >
+                            <ArrowDownCircle className="w-4 h-4" />
+                            Withdraw
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Withdraw ETH</DialogTitle>
+                            <DialogDescription>
+                              Enter the amount you want to withdraw
+                            </DialogDescription>
+                          </DialogHeader>
+                          <form onSubmit={handleWithdraw} className="space-y-4">
+                            <div className="space-y-2">
+                              <Input
+                                type="number"
+                                value={withdrawAmount}
+                                onChange={(e) => setWithdrawAmount(e.target.value)}
+                                placeholder="Amount in ETH"
+                                step="0.01"
+                                min="0"
+                                required
+                                className="bg-background/50"
+                              />
+                            </div>
+                            <DialogFooter>
+                              <Button type="submit">
+                                Confirm Withdrawal
+                              </Button>
+                            </DialogFooter>
+                          </form>
+                        </DialogContent>
+                      </Dialog>
                     </div>
                   </div>
-                  <div className="space-y-2 group">
-                    <label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
-                      <Globe className="w-4 h-4" />
-                      Country
-                    </label>
-                    <div className="relative overflow-hidden rounded-lg transition-all duration-300 group-hover:shadow-lg">
-                      <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      <Input
-                        value={userData?.country}
-                        readOnly
-                        className="bg-background/50 border-primary/10 group-hover:border-primary/30 transition-colors pl-10"
-                      />
-                      <Globe className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                    </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-primary/10">
+                <CardHeader>
+                  <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+                    Transaction History
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="rounded-md border border-primary/10">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="hover:bg-primary/5">
+                          <TableHead>Type</TableHead>
+                          <TableHead>Amount</TableHead>
+                          <TableHead>Date</TableHead>
+                          <TableHead>Status</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {transactions.map((tx) => (
+                          <TableRow key={tx.id} className="hover:bg-primary/5">
+                            <TableCell className="font-medium capitalize">
+                              <div className="flex items-center gap-2">
+                                {tx.type === 'deposit' && <ArrowUpCircle className="w-4 h-4 text-green-500" />}
+                                {tx.type === 'withdraw' && <ArrowDownCircle className="w-4 h-4 text-red-500" />}
+                                {tx.type}
+                              </div>
+                            </TableCell>
+                            <TableCell className="font-mono">
+                              {tx.amount} ETH
+                            </TableCell>
+                            <TableCell>{tx.created_at}</TableCell>
+                            <TableCell>
+                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                tx.status === 'completed' ? 'bg-green-500/10 text-green-500' :
+                                tx.status === 'pending' ? 'bg-yellow-500/10 text-yellow-500' :
+                                'bg-red-500/10 text-red-500'
+                              }`}>
+                                {tx.status}
+                              </span>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
                   </div>
-                </div>
-                <div className="space-y-2 group">
-                  <label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
-                    <HelpCircle className="w-4 h-4" />
-                    Verification Status
-                  </label>
-                  <div className="relative overflow-hidden rounded-lg transition-all duration-300 group-hover:shadow-lg">
-                    <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div className="bg-background/50 border border-primary/10 group-hover:border-primary/30 transition-colors rounded-lg p-3 pl-10 flex items-center">
-                      {userData?.verified ? (
-                        <span className="text-green-500 font-medium">Verified</span>
-                      ) : (
-                        <span className="text-yellow-500 font-medium">Not Verified</span>
-                      )}
-                    </div>
-                    <HelpCircle className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  </div>
-                </div>
-                <div className="space-y-2 group">
-                  <label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
-                    <Wallet className="w-4 h-4" />
-                    Wallet Address
-                  </label>
-                  <div className="flex gap-4 items-start">
-                    <div className="flex-grow flex gap-2 items-center relative overflow-hidden rounded-lg transition-all duration-300 group-hover:shadow-lg">
-                      <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      <Input
-                        value={userData?.wallet_address || ''}
-                        readOnly
-                        className="bg-background/50 font-mono text-sm border-primary/10 group-hover:border-primary/30 transition-colors pl-10"
-                        placeholder="No wallet address generated"
-                      />
-                      <Wallet className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                      {userData?.wallet_address && (
-                        <div className="bg-primary/20 px-3 py-1.5 rounded-md text-sm text-primary font-medium min-w-[80px] text-center">
-                          ERC-20
-                        </div>
-                      )}
-                    </div>
-                    {!userData?.wallet_address && (
-                      <Button
-                        onClick={() => setIsWalletModalOpen(true)}
-                        className="bg-primary/20 text-primary hover:bg-primary/30 transition-colors flex items-center gap-2 group relative overflow-hidden"
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        <Wallet className="w-4 h-4 relative z-10" />
-                        <span className="relative z-10">Generate Address</span>
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
-          <TabsContent value="settings">
-            <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
-              <CardHeader className="space-y-2">
-                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-primary/20">
-                    <Settings className="w-6 h-6 text-primary" />
-                  </div>
-                  Account Settings
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  <form onSubmit={handleEmailChange} className="space-y-4 p-6 rounded-xl bg-primary/5 border border-primary/10 backdrop-blur-sm transition-all duration-300 hover:shadow-lg">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium flex items-center gap-2">
-                        <Mail className="w-4 h-4 text-primary" />
-                        New Email
-                      </label>
-                      <div className="relative">
-                        <Input
-                          type="email"
-                          value={newEmail}
-                          onChange={(e) => setNewEmail(e.target.value)}
-                          placeholder="Enter new email address"
-                          required
-                          className="bg-background/50 border-primary/10 group-hover:border-primary/30 transition-colors pl-10"
-                        />
-                        <Mail className="w-4
+          <TabsContent value="verification">
+            {renderVerificationStatus()}
+          </TabsContent>
+
+          <TabsContent value="nft">
+            <EmptyNFTState />
+          </TabsContent>
+        </Tabs>
+
+        <WalletAddressModal
+          isOpen={isWalletModalOpen}
+          onClose={() => setIsWalletModalOpen(false)}
+          onGenerated={handleGenerateWalletAddress}
+        />
+
+        <DepositConfirmationDialog
+          isOpen={isDepositConfirmationOpen}
+          onClose={() => setIsDepositConfirmationOpen(false)}
+          onConfirm={handleDepositConfirm}
+          amount={depositAmount}
+        />
+
+        <FraudWarningDialog
+          isOpen={isFraudWarningOpen}
+          onClose={() => setIsFraudWarningOpen(false)}
+        />
+
+        <KYCIdentityDialog
+          isOpen={isIdentityDialogOpen}
+          onClose={() => setIsIdentityDialogOpen(false)}
+          onSuccess={handleIdentitySuccess}
+        />
+
+        <KYCAddressDialog
+          isOpen={isAddressDialogOpen}
+          onClose={() => setIsAddressDialogOpen(false)}
+          onSuccess={handleAddressSuccess}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default Profile;
