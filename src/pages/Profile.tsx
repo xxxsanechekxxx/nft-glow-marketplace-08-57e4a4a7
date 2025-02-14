@@ -122,14 +122,8 @@ const Profile = () => {
 
   const startKYCVerification = async () => {
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ kyc_status: 'not_started' })
-        .eq('user_id', user?.id);
-
-      if (error) throw error;
-
-      setUserData(prev => prev ? { ...prev, kyc_status: 'not_started' } : null);
+      if (!user?.id) return;
+      
       setIsIdentityDialogOpen(true);
     } catch (error) {
       console.error("Error starting verification:", error);
@@ -930,7 +924,7 @@ const Profile = () => {
                       </p>
                     </div>
                     <div>
-                      {!userData?.verified && (
+                      {!userData?.verified && userData?.kyc_status !== 'under_review' && (
                         <Button
                           onClick={startKYCVerification}
                           className="bg-primary/20 text-primary hover:bg-primary/30 transition-colors flex items-center gap-2"
@@ -942,38 +936,15 @@ const Profile = () => {
                     </div>
                   </div>
 
-                  {!userData?.verified && (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {[
-                        {
-                          title: "Identity Verification",
-                          icon: <User className="w-5 h-5" />,
-                          description: "Verify your identity with government-issued ID"
-                        },
-                        {
-                          title: "Address Verification",
-                          icon: <Globe className="w-5 h-5" />,
-                          description: "Confirm your residential address"
-                        },
-                        {
-                          title: "Document Review",
-                          icon: <FileCheck className="w-5 h-5" />,
-                          description: "Our team will review your submitted documents"
-                        }
-                      ].map((step, index) => (
-                        <div
-                          key={step.title}
-                          className="p-4 rounded-lg bg-primary/5 border border-primary/10 space-y-2"
-                        >
-                          <div className="p-2 rounded-lg bg-primary/20 w-fit">
-                            {step.icon}
-                          </div>
-                          <h4 className="font-medium">{step.title}</h4>
-                          <p className="text-sm text-muted-foreground">
-                            {step.description}
-                          </p>
-                        </div>
-                      ))}
+                  {userData?.kyc_status === 'under_review' && (
+                    <div className="p-4 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                      <div className="flex items-center gap-2 text-yellow-500">
+                        <FileCheck className="w-5 h-5" />
+                        <p className="font-medium">Verification in progress</p>
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        Your documents are being reviewed. This process typically takes 1-2 business days.
+                      </p>
                     </div>
                   )}
                 </div>
@@ -1009,14 +980,14 @@ const Profile = () => {
         isOpen={isIdentityDialogOpen}
         onClose={() => setIsIdentityDialogOpen(false)}
         onSuccess={handleIdentitySuccess}
-        userId={userData?.id || ''}
+        userId={user?.id || ''}
       />
 
       <KYCAddressDialog
         isOpen={isAddressDialogOpen}
         onClose={() => setIsAddressDialogOpen(false)}
         onSuccess={handleAddressSuccess}
-        userId={userData?.id || ''}
+        userId={user?.id || ''}
       />
     </div>
   );
