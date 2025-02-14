@@ -1,4 +1,3 @@
-<lov-code>
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -465,7 +464,7 @@ const Profile = () => {
                 {tab === "wallet" && <Wallet className="w-4 h-4" />}
                 {tab === "nft" && <ShoppingBag className="w-4 h-4" />}
                 <span className="relative z-10 capitalize">{tab}</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </TabsTrigger>
             ))}
           </TabsList>
@@ -789,4 +788,4 @@ const Profile = () => {
                     <div className="overflow-x-auto">
                       <Table>
                         <TableHeader>
-                          <TableRow className="hover:bg-
+                          <TableRow className="hover:bg-muted/5
