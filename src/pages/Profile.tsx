@@ -90,7 +90,6 @@ const Profile = () => {
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [depositAmount, setDepositAmount] = useState("");
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
   const [isDepositConfirmationOpen, setIsDepositConfirmationOpen] = useState(false);
@@ -205,13 +204,15 @@ const Profile = () => {
           throw profileError;
         }
 
+        console.log("Profile data:", profileData);
+
         if (isMounted && currentUser) {
           setUserData({
             id: currentUser.id,
             email: currentUser.email || '',
             login: profileData?.login || currentUser.user_metadata?.login || '',
             country: profileData?.country || currentUser.user_metadata?.country || '',
-            avatar_url: profileData?.avatar_url,
+            avatar_url: profileData?.avatar_url || null,
             balance: profileData?.balance?.toString() || "0.0",
             wallet_address: profileData?.wallet_address || '',
             created_at: currentUser.created_at,
@@ -290,7 +291,7 @@ const Profile = () => {
       const fileExt = file.name.split('.').pop();
       const filePath = `${userData.id}/${crypto.randomUUID()}.${fileExt}`;
 
-      const { error: uploadError, data } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(filePath, file, {
           upsert: true,
