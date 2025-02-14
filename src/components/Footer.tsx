@@ -135,7 +135,7 @@ export const Footer = () => {
                     <span className="absolute -inset-1 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 h-px bg-gradient-to-r from-[#9b87f5]/50 to-purple-500/50"></span>
                     Telegram Support
                   </span>
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
