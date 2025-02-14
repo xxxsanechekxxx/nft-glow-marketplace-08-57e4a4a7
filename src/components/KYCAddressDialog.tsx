@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -15,19 +15,13 @@ import { Upload, Home, FileCheck } from "lucide-react";
 interface KYCAddressDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: () => Promise<void>;
   userId: string;
 }
 
 const KYCAddressDialog = ({ isOpen, onClose, onSuccess, userId }: KYCAddressDialogProps) => {
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
-
-  useEffect(() => {
-    if (!isOpen) {
-      setIsUploading(false);
-    }
-  }, [isOpen]);
 
   const handleUploadClick = () => {
     document.getElementById('address-doc-upload')?.click();
@@ -68,7 +62,7 @@ const KYCAddressDialog = ({ isOpen, onClose, onSuccess, userId }: KYCAddressDial
         description: "Address document uploaded successfully",
       });
 
-      onSuccess();
+      await onSuccess();
       onClose();
     } catch (error) {
       console.error("Error uploading address document:", error);
@@ -82,16 +76,8 @@ const KYCAddressDialog = ({ isOpen, onClose, onSuccess, userId }: KYCAddressDial
     }
   };
 
-  const handleDialogClose = () => {
-    const fileInput = document.getElementById('address-doc-upload') as HTMLInputElement;
-    if (fileInput) {
-      fileInput.value = '';
-    }
-    onClose();
-  };
-
   return (
-    <Dialog open={isOpen} onOpenChange={handleDialogClose}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px] bg-gradient-to-b from-background via-background/95 to-background/90 backdrop-blur-xl border-primary/20">
         <DialogHeader>
           <div className="mx-auto bg-primary/10 p-3 rounded-full w-fit">
