@@ -812,4 +812,123 @@ const Profile = () => {
                       <div className="space-y-2">
                         <h2 className="text-5xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-1.5">
                           <img
-                            src="/
+                            src="/eth-logo.svg"
+                            alt="ETH"
+                            className="w-8 h-8"
+                          />
+                          {userData?.balance || "0.0"} ETH
+                        </h2>
+                      </div>
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                      <Button
+                        onClick={handleDeposit}
+                        className="flex-1 bg-primary/20 text-primary hover:bg-primary/30 transition-colors flex items-center justify-center gap-2 group relative overflow-hidden"
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <ArrowUpCircle className="w-4 h-4 relative z-10" />
+                        <span className="relative z-10">Deposit</span>
+                      </Button>
+                      <Button
+                        onClick={handleWithdraw}
+                        className="flex-1 bg-primary/20 text-primary hover:bg-primary/30 transition-colors flex items-center justify-center gap-2 group relative overflow-hidden"
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <ArrowDownCircle className="w-4 h-4 relative z-10" />
+                        <span className="relative z-10">Withdraw</span>
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-primary/10">
+                <CardHeader>
+                  <CardTitle>Transaction History</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="rounded-md border">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Type</TableHead>
+                          <TableHead>Amount</TableHead>
+                          <TableHead>Date</TableHead>
+                          <TableHead>Status</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {transactions.map((tx) => (
+                          <TableRow key={tx.id}>
+                            <TableCell className="font-medium capitalize">{tx.type}</TableCell>
+                            <TableCell>{tx.amount} ETH</TableCell>
+                            <TableCell>{tx.created_at}</TableCell>
+                            <TableCell className="capitalize">{tx.status}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="verification">
+            <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-background/60">
+              <CardHeader className="space-y-2">
+                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary/20">
+                    <Shield className="w-6 h-6 text-primary" />
+                  </div>
+                  KYC Verification
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {renderVerificationStatus()}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="nft">
+            <EmptyNFTState />
+          </TabsContent>
+        </Tabs>
+
+        <KYCIdentityDialog
+          isOpen={isIdentityDialogOpen}
+          onClose={() => setIsIdentityDialogOpen(false)}
+          onSuccess={handleIdentitySuccess}
+          userId={userData?.id || ''}
+        />
+
+        <KYCAddressDialog
+          isOpen={isAddressDialogOpen}
+          onClose={() => setIsAddressDialogOpen(false)}
+          onSuccess={handleAddressSuccess}
+          userId={userData?.id || ''}
+        />
+
+        <WalletAddressModal
+          isOpen={isWalletModalOpen}
+          onClose={() => setIsWalletModalOpen(false)}
+          onGenerated={handleGenerateWalletAddress}
+        />
+
+        <DepositConfirmationDialog
+          isOpen={isDepositConfirmationOpen}
+          onClose={() => setIsDepositConfirmationOpen(false)}
+          onConfirm={handleDepositConfirm}
+          amount={depositAmount}
+        />
+
+        <FraudWarningDialog
+          isOpen={isFraudWarningOpen}
+          onClose={() => setIsFraudWarningOpen(false)}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default Profile;
