@@ -27,9 +27,11 @@ export const HeroSection = () => {
             </span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-bold leading-tight bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-400 to-pink-500 animate-fade-in drop-shadow-2xl">
-            Discover, collect, and sell extraordinary NFTs
-          </h1>
+          <div className="min-h-[100px] flex items-center justify-center">
+            <h1 className="text-5xl md:text-7xl font-bold leading-tight bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-400 to-pink-500 animate-fade-in drop-shadow-2xl py-6">
+              Discover, collect, and sell extraordinary NFTs
+            </h1>
+          </div>
 
           <p className="text-xl md:text-2xl text-muted-foreground/90 animate-fade-in backdrop-blur-sm max-w-2xl mx-auto leading-relaxed">
             PureNFT is the world's first and largest NFT marketplace with unique digital assets waiting to be discovered
