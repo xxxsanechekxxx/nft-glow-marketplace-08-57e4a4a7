@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -836,7 +835,7 @@ const Profile = () => {
                 <CardHeader className="space-y-2">
                   <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
                     <div className="p-2 rounded-lg bg-primary/20">
-                      <Wallet className="w-6 h-6 text-primary" />
+                      <Wallet className="w-6 h-4 text-primary" />
                     </div>
                     Wallet Details
                   </CardTitle>
@@ -859,8 +858,29 @@ const Profile = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                {/* Add your verification content here */}
                 {renderVerificationStatus()}
+                
+                {!userData?.verified && (
+                  <div className="mt-6">
+                    <Button
+                      onClick={startKYCVerification}
+                      className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-colors flex items-center justify-center gap-2 group relative overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <Shield className="w-4 h-4 relative z-10" />
+                      <span className="relative z-10">Начать верификацию</span>
+                    </Button>
+                  </div>
+                )}
+
+                {userData?.kyc_status === 'rejected' && userData?.kyc_rejection_reason && (
+                  <Alert variant="destructive" className="mt-4">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      Причина отказа: {userData.kyc_rejection_reason}
+                    </AlertDescription>
+                  </Alert>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
