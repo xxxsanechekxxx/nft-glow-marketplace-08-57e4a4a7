@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
-import { FileUpload, Shield } from "lucide-react";
+import { Upload, Shield } from "lucide-react";
 
 interface KYCIdentityDialogProps {
   isOpen: boolean;
@@ -106,7 +106,7 @@ const KYCIdentityDialog = ({ isOpen, onClose, onSuccess, userId }: KYCIdentityDi
                 className="mt-2"
                 disabled={isUploading}
               >
-                <FileUpload className="w-4 h-4 mr-2" />
+                <Upload className="w-4 h-4 mr-2" />
                 {isUploading ? "Uploading..." : "Upload Document"}
               </Button>
             </label>
