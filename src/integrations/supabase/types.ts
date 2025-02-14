@@ -44,7 +44,6 @@ export type Database = {
       }
       profiles: {
         Row: {
-          avatar_url: string | null
           balance: number | null
           country: string | null
           created_at: string
@@ -55,7 +54,6 @@ export type Database = {
           wallet_address: string | null
         }
         Insert: {
-          avatar_url?: string | null
           balance?: number | null
           country?: string | null
           created_at?: string
@@ -66,7 +64,6 @@ export type Database = {
           wallet_address?: string | null
         }
         Update: {
-          avatar_url?: string | null
           balance?: number | null
           country?: string | null
           created_at?: string
