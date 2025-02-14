@@ -195,20 +195,6 @@ const Profile = () => {
           return;
         }
 
-        const { data: totalsData, error: totalsError } = await supabase
-          .rpc('get_user_transaction_totals', {
-            user_uuid: currentUser.id
-          });
-
-        if (totalsError) {
-          console.error("Error fetching transaction totals:", totalsError);
-          throw totalsError;
-        }
-
-        if (totalsData) {
-          setTransactionTotals(totalsData);
-        }
-
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('*')
@@ -219,46 +205,28 @@ const Profile = () => {
           throw profileError;
         }
 
-        const { data: transactionsData, error: transactionsError } = await supabase
-          .from('transactions')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(10);
-
-        if (transactionsError) {
-          console.error("Transactions error:", transactionsError);
-          throw transactionsError;
-        }
-
-        console.log("Profile data:", profileData);
-        
         if (isMounted && currentUser) {
           setUserData({
             id: currentUser.id,
             email: currentUser.email || '',
             login: profileData?.login || currentUser.user_metadata?.login || '',
             country: profileData?.country || currentUser.user_metadata?.country || '',
-            avatar_url: null,
+            avatar_url: profileData?.avatar_url,
             balance: profileData?.balance?.toString() || "0.0",
             wallet_address: profileData?.wallet_address || '',
             created_at: currentUser.created_at,
             verified: profileData?.verified || false,
             kyc_status: profileData?.kyc_status || 'not_started'
           });
-
-          setTransactions(transactionsData?.map(tx => ({
-            id: tx.id,
-            type: tx.type,
-            amount: tx.amount.toString(),
-            created_at: new Date(tx.created_at).toISOString().split('T')[0],
-            status: tx.status,
-            item: tx.item
-          })) || []);
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
         if (isMounted) {
-          showDelayedToast("Error", "Failed to fetch user data. Please try again.", "destructive");
+          toast({
+            title: "Error",
+            description: "Failed to fetch user data",
+            variant: "destructive",
+          });
         }
       } finally {
         if (isMounted) {
@@ -322,7 +290,7 @@ const Profile = () => {
       const fileExt = file.name.split('.').pop();
       const filePath = `${userData.id}/${crypto.randomUUID()}.${fileExt}`;
 
-      const { error: uploadError } = await supabase.storage
+      const { error: uploadError, data } = await supabase.storage
         .from('avatars')
         .upload(filePath, file, {
           upsert: true,
@@ -510,7 +478,10 @@ const Profile = () => {
               <label htmlFor="avatar-upload" className="cursor-pointer block relative">
                 <Avatar className="w-24 h-24 border-4 border-primary/20 shadow-xl ring-2 ring-purple-500/20 transition-all duration-300 group-hover:ring-purple-500/40">
                   {userData?.avatar_url ? (
-                    <AvatarImage src={userData.avatar_url} alt={userData.login} />
+                    <AvatarImage 
+                      src={userData.avatar_url} 
+                      alt={userData.login || 'User avatar'} 
+                    />
                   ) : (
                     <AvatarFallback className="bg-gradient-to-br from-primary/80 to-purple-600 text-white">
                       <UserRound className="w-12 h-12" />
