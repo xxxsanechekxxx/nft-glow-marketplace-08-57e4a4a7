@@ -110,8 +110,8 @@ const Marketplace = () => {
     <div className="min-h-screen bg-[linear-gradient(to_bottom,hsl(var(--background))_0%,hsl(var(--background))_50%,rgba(123,97,255,0.05)_100%)]">
       <div className="container mx-auto px-4 pt-24 pb-16">
         <div className="text-center mb-16 space-y-8">
-          <div className="space-y-4 opacity-0 animate-[fadeIn_1s_ease-out_forwards]">
-            <h1 className="text-7xl font-bold bg-gradient-to-r from-primary via-purple-500 to-pink-500 text-transparent bg-clip-text animate-[gradient_8s_linear_infinite] bg-[length:200%_200%] drop-shadow-sm">
+          <div className="space-y-4 opacity-0 animate-[fadeIn_1s_ease-out_forwards] min-h-[120px] flex flex-col items-center justify-center">
+            <h1 className="text-7xl font-bold bg-gradient-to-r from-primary via-purple-500 to-pink-500 text-transparent bg-clip-text animate-[gradient_8s_linear_infinite] bg-[length:200%_200%] drop-shadow-sm py-6">
               NFT Marketplace
             </h1>
             <p className="text-xl text-muted-foreground/80 max-w-2xl mx-auto leading-relaxed">
