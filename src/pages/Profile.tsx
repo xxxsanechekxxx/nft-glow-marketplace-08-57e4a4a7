@@ -1,4 +1,3 @@
-<lov-code>
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -73,6 +72,7 @@ interface UserData {
   created_at: string;
   verified: boolean;
   kyc_status?: string;
+  kyc_rejection_reason?: string;
 }
 
 interface TransactionTotals {
@@ -494,8 +494,10 @@ const Profile = () => {
   return (
     <div className="container mx-auto py-8 px-4 mt-16 min-h-screen bg-gradient-to-b from-background via-background/80 to-background/60">
       <div className="max-w-4xl mx-auto space-y-8">
+        
+        {/* Profile Card */}
         <div className="relative p-8 rounded-2xl overflow-hidden bg-gradient-to-r from-purple-500/10 via-primary/5 to-purple-500/10 border border-primary/10 backdrop-blur-sm shadow-xl">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 animate-gradient"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 animate-gradient" />
           <div className="relative flex items-center gap-6 z-10">
             <div className="relative group">
               <input
@@ -505,10 +507,7 @@ const Profile = () => {
                 className="hidden"
                 id="avatar-upload"
               />
-              <label 
-                htmlFor="avatar-upload" 
-                className="cursor-pointer block relative"
-              >
+              <label htmlFor="avatar-upload" className="cursor-pointer block relative">
                 <Avatar className="w-24 h-24 border-4 border-primary/20 shadow-xl ring-2 ring-purple-500/20 transition-all duration-300 group-hover:ring-purple-500/40">
                   {userData?.avatar_url ? (
                     <AvatarImage src={userData.avatar_url} alt={userData.login} />
@@ -817,4 +816,4 @@ const Profile = () => {
                       variant="destructive"
                       className="w-full flex items-center gap-3 p-6 h-auto bg-destructive/20 hover:bg-destructive/30 group"
                     >
-                      <div className="p-3 rounded-xl bg-destructive/20 group-hover:bg-destructive/30 transition-colors
+                      <div className="p-3 rounded-xl bg-destructive/20 group-hover:bg
