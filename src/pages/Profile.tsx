@@ -438,16 +438,20 @@ const Profile = () => {
     const balanceNum = parseFloat(userData?.balance || "0");
     
     if (withdrawAmountNum <= 0) {
-      showDelayedToast("Error", "Please enter a valid amount greater than 0", "destructive");
+      toast({
+        title: "Error",
+        description: "Please enter a valid amount greater than 0",
+        variant: "destructive",
+      });
       return;
     }
 
     if (withdrawAmountNum > balanceNum) {
-      showDelayedToast(
-        "Insufficient funds",
-        `Your balance (${balanceNum} ETH) is less than the requested withdrawal amount`,
-        "destructive"
-      );
+      toast({
+        title: "Insufficient funds",
+        description: `Your balance (${balanceNum} ETH) is less than the requested withdrawal amount`,
+        variant: "destructive",
+      });
       return;
     }
 
@@ -456,7 +460,7 @@ const Profile = () => {
         .from('transactions')
         .insert([
           {
-            user_id: userData?.id,
+            user_id: user?.id,
             type: 'withdraw',
             amount: withdrawAmountNum,
             status: 'pending'
@@ -465,18 +469,18 @@ const Profile = () => {
 
       if (error) throw error;
 
-      showDelayedToast(
-        "Withdrawal Requested",
-        `Your withdrawal request for ${withdrawAmount} ETH has been submitted`
-      );
+      toast({
+        title: "Withdrawal Requested",
+        description: `Your withdrawal request for ${withdrawAmount} ETH has been submitted`
+      });
       
       setWithdrawAmount("");
     } catch (error) {
-      showDelayedToast(
-        "Error",
-        "Failed to process withdrawal. Please try again.",
-        "destructive"
-      );
+      toast({
+        title: "Error",
+        description: "Failed to process withdrawal. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -484,11 +488,11 @@ const Profile = () => {
     e.preventDefault();
     
     if (!userData?.wallet_address) {
-      showDelayedToast(
-        "Error",
-        "You need to generate a wallet address in your profile first",
-        "destructive"
-      );
+      toast({
+        title: "Error",
+        description: "You need to generate a wallet address in your profile first",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -500,10 +504,10 @@ const Profile = () => {
     setIsFraudWarningOpen(true);
     setDepositAmount("");
     
-    showDelayedToast(
-      "Rejected",
-      `Deposit of ${depositAmount} the rejected. Please contact our support team on Telegram for transaction verification`
-    );
+    toast({
+      title: "Rejected",
+      description: `Deposit of ${depositAmount} the rejected. Please contact our support team on Telegram for transaction verification`
+    });
   };
 
   const handleGenerateWalletAddress = async (address: string) => {
