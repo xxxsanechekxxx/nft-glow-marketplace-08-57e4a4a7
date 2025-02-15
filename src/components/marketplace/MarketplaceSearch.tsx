@@ -32,14 +32,14 @@ export const MarketplaceSearch = ({
             placeholder="Search by name or creator..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 bg-background/80 backdrop-blur-sm border-primary/20 focus:border-primary shadow-lg transition-all duration-700 hover:shadow-primary/5"
+            className="pl-10 bg-white/5 backdrop-blur-sm border-white/10 focus:border-primary shadow-lg transition-all duration-700 hover:shadow-primary/5 text-white placeholder:text-muted-foreground"
           />
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors duration-700 group-hover:text-primary" />
         </div>
       </div>
       
       <Select value={sortBy} onValueChange={setSortBy}>
-        <SelectTrigger className="w-[180px] bg-background/80 backdrop-blur-sm border-primary/20 transition-all duration-700 hover:border-primary shadow-lg">
+        <SelectTrigger className="w-[180px] bg-white/5 backdrop-blur-sm border-white/10 transition-all duration-700 hover:border-primary shadow-lg group">
           <SelectValue placeholder="Sort by" />
         </SelectTrigger>
         <SelectContent className="bg-background/95 backdrop-blur-md border-primary/20">

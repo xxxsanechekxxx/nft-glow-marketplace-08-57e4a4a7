@@ -107,11 +107,14 @@ const Marketplace = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(to_bottom,hsl(var(--background))_0%,hsl(var(--background))_50%,rgba(123,97,255,0.05)_100%)]">
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-b from-background via-background/80 to-background/60">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-purple-500/10 via-pink-500/5 to-primary/10 blur-3xl -z-10" />
+      <div className="absolute inset-0 bg-[conic-gradient(at_bottom_left,_var(--tw-gradient-stops))] from-primary/5 via-purple-500/5 to-pink-500/5 blur-3xl -z-10" />
+      
       <div className="container mx-auto px-4 pt-24 pb-16">
         <div className="text-center mb-16 space-y-8">
-          <div className="space-y-4 opacity-0 animate-[fadeIn_1s_ease-out_forwards] min-h-[120px] flex flex-col items-center justify-center">
-            <h1 className="text-7xl font-bold bg-gradient-to-r from-primary via-purple-500 to-pink-500 text-transparent bg-clip-text animate-[gradient_8s_linear_infinite] bg-[length:200%_200%] drop-shadow-sm py-6">
+          <div className="space-y-4 opacity-0 animate-[fadeIn_1s_ease-out_forwards] min-h-[120px] flex flex-col items-center justify-center relative">
+            <h1 className="text-7xl font-bold bg-gradient-to-r from-white via-primary to-purple-500 bg-clip-text text-transparent animate-gradient bg-300% drop-shadow-sm py-6">
               NFT Marketplace
             </h1>
             <p className="text-xl text-muted-foreground/80 max-w-2xl mx-auto leading-relaxed">
