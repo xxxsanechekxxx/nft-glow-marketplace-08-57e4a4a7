@@ -822,28 +822,60 @@ const Profile = () => {
               </Card>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Button 
-                  onClick={handleDeposit}
-                  className="w-full bg-primary/20 hover:bg-primary/30 text-primary flex items-center gap-3 p-6 h-auto group relative overflow-hidden"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <div className="p-3 rounded-xl bg-primary/20 group-hover:bg-primary/30 transition-colors">
-                    <ArrowDownCircle className="w-6 h-6" />
-                  </div>
-                  <div className="flex flex-col items-start">
-                    <span className="text-lg font-semibold">Deposit</span>
-                    <span className="text-sm text-muted-foreground">Add funds to your wallet</span>
-                  </div>
-                </Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button 
+                      className="w-full bg-primary/20 hover:bg-primary/30 text-primary flex items-center gap-3 p-6 h-auto group relative overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <div className="p-3 rounded-xl bg-primary/20 group-hover:bg-primary/30 transition-colors">
+                        <ArrowDownCircle className="w-6 h-6" />
+                      </div>
+                      <div className="flex flex-col items-start">
+                        <span className="text-lg font-semibold">Deposit</span>
+                        <span className="text-sm text-muted-foreground">Add funds to your wallet</span>
+                      </div>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md bg-background/95 backdrop-blur-xl border border-primary/10">
+                    <DialogHeader>
+                      <DialogTitle className="text-xl font-bold text-primary">Deposit</DialogTitle>
+                      <DialogDescription>
+                        Add funds to your wallet
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-primary/80">
+                          Amount (ETH)
+                        </label>
+                        <Input
+                          type="number"
+                          step="0.0001"
+                          min="0.0001"
+                          value={depositAmount}
+                          onChange={(e) => setDepositAmount(e.target.value)}
+                          placeholder="Enter amount"
+                          className="bg-background/40 border-primary/20 focus:border-primary/40"
+                        />
+                      </div>
+                      <Button 
+                        onClick={handleDeposit}
+                        className="w-full bg-primary/20 hover:bg-primary/30 text-primary"
+                      >
+                        Continue
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
 
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button 
-                      variant="destructive"
-                      className="w-full flex items-center gap-3 p-6 h-auto bg-destructive/20 hover:bg-destructive/30 group relative overflow-hidden"
+                      className="w-full bg-primary/20 hover:bg-primary/30 text-primary flex items-center gap-3 p-6 h-auto group relative overflow-hidden"
                     >
-                      <div className="absolute inset-0 bg-gradient-to-r from-destructive/10 to-red-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      <div className="p-3 rounded-xl bg-destructive/20 group-hover:bg-destructive/30 transition-colors">
+                      <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <div className="p-3 rounded-xl bg-primary/20 group-hover:bg-primary/30 transition-colors">
                         <ArrowUpCircle className="w-6 h-6" />
                       </div>
                       <div className="flex flex-col items-start">
