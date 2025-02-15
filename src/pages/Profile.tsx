@@ -825,10 +825,10 @@ const Profile = () => {
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button 
-                      className="w-full bg-green-500/20 hover:bg-green-500/30 text-green-500 flex items-center gap-3 p-6 h-auto group relative overflow-hidden"
+                      className="w-full bg-primary/20 hover:bg-primary/30 text-primary flex items-center gap-3 p-6 h-auto group relative overflow-hidden"
                     >
-                      <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-green-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      <div className="p-3 rounded-xl bg-green-500/20 group-hover:bg-green-500/30 transition-colors">
+                      <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <div className="p-3 rounded-xl bg-primary/20 group-hover:bg-primary/30 transition-colors">
                         <ArrowDownCircle className="w-6 h-6" />
                       </div>
                       <div className="flex flex-col items-start">
@@ -837,16 +837,16 @@ const Profile = () => {
                       </div>
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="sm:max-w-md bg-background/95 backdrop-blur-xl border border-green-500/10">
+                  <DialogContent className="sm:max-w-md bg-background/95 backdrop-blur-xl border border-primary/10">
                     <DialogHeader>
-                      <DialogTitle className="text-xl font-bold text-green-500">Deposit</DialogTitle>
+                      <DialogTitle className="text-xl font-bold text-primary">Deposit</DialogTitle>
                       <DialogDescription>
                         Add funds to your wallet
                       </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-green-500/80">
+                        <label className="text-sm font-medium text-primary/80">
                           Amount (ETH)
                         </label>
                         <Input
@@ -856,12 +856,12 @@ const Profile = () => {
                           value={depositAmount}
                           onChange={(e) => setDepositAmount(e.target.value)}
                           placeholder="Enter amount"
-                          className="bg-background/40 border-green-500/20 focus:border-green-500/40"
+                          className="bg-background/40 border-primary/20 focus:border-primary/40"
                         />
                       </div>
                       <Button 
                         onClick={handleDeposit}
-                        className="w-full bg-green-500/20 hover:bg-green-500/30 text-green-500"
+                        className="w-full bg-primary/20 hover:bg-primary/30 text-primary"
                       >
                         Continue
                       </Button>
@@ -872,10 +872,10 @@ const Profile = () => {
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button 
-                      className="w-full bg-destructive/20 hover:bg-destructive/30 text-destructive flex items-center gap-3 p-6 h-auto group relative overflow-hidden"
+                      className="w-full bg-primary/20 hover:bg-primary/30 text-primary flex items-center gap-3 p-6 h-auto group relative overflow-hidden"
                     >
-                      <div className="absolute inset-0 bg-gradient-to-r from-destructive/10 to-red-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      <div className="p-3 rounded-xl bg-destructive/20 group-hover:bg-destructive/30 transition-colors">
+                      <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <div className="p-3 rounded-xl bg-primary/20 group-hover:bg-primary/30 transition-colors">
                         <ArrowUpCircle className="w-6 h-6" />
                       </div>
                       <div className="flex flex-col items-start">
@@ -884,16 +884,16 @@ const Profile = () => {
                       </div>
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="sm:max-w-md bg-background/95 backdrop-blur-xl border border-destructive/10">
+                  <DialogContent className="sm:max-w-md bg-background/95 backdrop-blur-xl border border-primary/10">
                     <DialogHeader>
-                      <DialogTitle className="text-xl font-bold text-destructive">Withdraw</DialogTitle>
+                      <DialogTitle className="text-xl font-bold text-primary">Withdraw</DialogTitle>
                       <DialogDescription>
                         Transfer funds to your wallet
                       </DialogDescription>
                     </DialogHeader>
                     <form onSubmit={handleWithdraw} className="space-y-4">
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-destructive/80">
+                        <label className="text-sm font-medium text-primary/80">
                           Amount (ETH)
                         </label>
                         <Input
@@ -903,12 +903,12 @@ const Profile = () => {
                           value={withdrawAmount}
                           onChange={(e) => setWithdrawAmount(e.target.value)}
                           placeholder="Enter amount"
-                          className="bg-background/40 border-destructive/20 focus:border-destructive/40"
+                          className="bg-background/40 border-primary/20 focus:border-primary/40"
                         />
                       </div>
                       <Button 
                         type="submit"
-                        className="w-full bg-destructive/20 hover:bg-destructive/30 text-destructive"
+                        className="w-full bg-primary/20 hover:bg-primary/30 text-primary"
                       >
                         Confirm Withdrawal
                       </Button>
