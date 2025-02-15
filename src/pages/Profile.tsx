@@ -836,20 +836,53 @@ const Profile = () => {
                   </div>
                 </Button>
 
-                <Button 
-                  variant="destructive"
-                  className="w-full flex items-center gap-3 p-6 h-auto bg-destructive/20 hover:bg-destructive/30 group relative overflow-hidden"
-                  onClick={() => {/* handle withdraw click */}}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-destructive/10 to-red-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <div className="p-3 rounded-xl bg-destructive/20 group-hover:bg-destructive/30 transition-colors">
-                    <ArrowUpCircle className="w-6 h-6" />
-                  </div>
-                  <div className="flex flex-col items-start">
-                    <span className="text-lg font-semibold">Withdraw</span>
-                    <span className="text-sm text-muted-foreground">Transfer funds to your wallet</span>
-                  </div>
-                </Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button 
+                      variant="destructive"
+                      className="w-full flex items-center gap-3 p-6 h-auto bg-destructive/20 hover:bg-destructive/30 group relative overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-destructive/10 to-red-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <div className="p-3 rounded-xl bg-destructive/20 group-hover:bg-destructive/30 transition-colors">
+                        <ArrowUpCircle className="w-6 h-6" />
+                      </div>
+                      <div className="flex flex-col items-start">
+                        <span className="text-lg font-semibold">Withdraw</span>
+                        <span className="text-sm text-muted-foreground">Transfer funds to your wallet</span>
+                      </div>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md bg-background/95 backdrop-blur-xl border border-primary/10">
+                    <DialogHeader>
+                      <DialogTitle className="text-xl font-bold text-primary">Withdraw</DialogTitle>
+                      <DialogDescription>
+                        Transfer funds to your wallet
+                      </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleWithdraw} className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-primary/80">
+                          Amount (ETH)
+                        </label>
+                        <Input
+                          type="number"
+                          step="0.0001"
+                          min="0.0001"
+                          value={withdrawAmount}
+                          onChange={(e) => setWithdrawAmount(e.target.value)}
+                          placeholder="Enter amount"
+                          className="bg-background/40 border-primary/20 focus:border-primary/40"
+                        />
+                      </div>
+                      <Button 
+                        type="submit"
+                        className="w-full bg-primary/20 hover:bg-primary/30 text-primary"
+                      >
+                        Confirm Withdrawal
+                      </Button>
+                    </form>
+                  </DialogContent>
+                </Dialog>
               </div>
 
               <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-[#1A1F2C]/90">
