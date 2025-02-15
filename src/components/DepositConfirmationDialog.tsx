@@ -94,18 +94,18 @@ const DepositConfirmationDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={() => handleClose(false)}>
-      <DialogContent className="sm:max-w-md relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background/90 backdrop-blur-xl border-primary/20" />
+      <DialogContent className="sm:max-w-md bg-background/95 backdrop-blur-xl border border-primary/10">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-background/95 to-background/90" />
         <div className="relative">
           <DialogHeader>
-            <DialogTitle>Deposit Process</DialogTitle>
-            <DialogDescription className="space-y-4">
+            <DialogTitle className="text-xl font-bold text-primary">Deposit</DialogTitle>
+            <DialogDescription className="space-y-4 text-muted-foreground">
               {step === 'amount' ? (
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-primary/80">
-                      Amount (ETH)
-                    </label>
+                    <div className="text-sm font-medium text-primary/80">
+                      Add funds to your wallet
+                    </div>
                     <Input
                       type="number"
                       step="0.0001"
@@ -113,7 +113,7 @@ const DepositConfirmationDialog = ({
                       value={depositAmount}
                       onChange={(e) => setDepositAmount(e.target.value)}
                       placeholder="Enter amount"
-                      className="bg-background/60 border-primary/20 focus:border-primary/40"
+                      className="bg-background/40 border-primary/20 focus:border-primary/40"
                     />
                   </div>
                   <Button 
@@ -133,7 +133,7 @@ const DepositConfirmationDialog = ({
                   
                   <div className="space-y-2 mt-4">
                     <p>To send {depositAmount} ETH to the following address:</p>
-                    <div className="bg-background/60 p-4 rounded-md border border-primary/20">
+                    <div className="bg-background/40 p-4 rounded-md border border-primary/20">
                       <div className="break-all font-mono text-primary/90">
                         {walletAddress}
                       </div>
@@ -149,7 +149,7 @@ const DepositConfirmationDialog = ({
                             <TooltipTrigger>
                               <HelpCircle className="h-4 w-4 flex-shrink-0 text-primary/60" />
                             </TooltipTrigger>
-                            <TooltipContent className="max-w-sm bg-background/80 backdrop-blur-sm border-primary/20">
+                            <TooltipContent className="max-w-sm bg-background/95 backdrop-blur-sm border-primary/20">
                               <p>We give time limits due to frequent fraudulent activities. During this time, the transfer is guaranteed to be secure for both parties. You cannot cancel deposits more than 3 times per 24 hours.</p>
                             </TooltipContent>
                           </Tooltip>
@@ -168,7 +168,7 @@ const DepositConfirmationDialog = ({
                           <TooltipTrigger>
                             <HelpCircle className="h-4 w-4 text-primary/60" />
                           </TooltipTrigger>
-                          <TooltipContent className="max-w-sm bg-background/80 backdrop-blur-sm border-primary/20">
+                          <TooltipContent className="max-w-sm bg-background/95 backdrop-blur-sm border-primary/20">
                             <p>This is the transaction ID. After successful withdrawal of funds from another wallet, you will need to provide a confirmation with the number that appears in other wallet.</p>
                             <Button 
                               variant="link" 
@@ -185,14 +185,14 @@ const DepositConfirmationDialog = ({
                       value={transactionHash}
                       onChange={(e) => setTransactionHash(e.target.value)}
                       placeholder="Enter transaction hash"
-                      className="font-mono bg-background/60 border-primary/20 focus:border-primary/40"
+                      className="font-mono bg-background/40 border-primary/20 focus:border-primary/40"
                     />
                   </div>
 
                   <div className="flex gap-2">
                     <Button 
                       variant="outline"
-                      className="flex-1 bg-background/60 border-primary/20 hover:bg-primary/10"
+                      className="flex-1 bg-background/40 border-primary/20 hover:bg-primary/10 text-primary/90"
                       onClick={() => handleClose(true)}
                     >
                       Cancel transaction
