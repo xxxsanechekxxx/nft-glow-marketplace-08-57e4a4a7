@@ -93,7 +93,7 @@ const DepositConfirmationDialog = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={() => handleClose(false)}>
       <DialogContent className="sm:max-w-md bg-background/60 backdrop-blur-xl border border-primary/10 shadow-xl animate-in relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-purple-500/5 to-pink-500/5 pointer-events-none"></div>
         <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background/40 pointer-events-none"></div>
