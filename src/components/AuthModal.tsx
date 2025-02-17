@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -124,7 +123,7 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
       <DialogTrigger asChild>
         {trigger}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto bg-gradient-to-br from-purple-900/50 to-purple-800/30 backdrop-blur-xl border border-white/10">
+      <DialogContent className="sm:max-w-[425px] bg-gradient-to-br from-purple-900/50 to-purple-800/30 backdrop-blur-xl border border-white/10">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
             {isLogin ? "Welcome Back" : "Create Account"}
