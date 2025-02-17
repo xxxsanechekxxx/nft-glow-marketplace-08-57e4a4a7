@@ -21,7 +21,8 @@ import {
   Shield,
   FileCheck,
   BadgeCheck,
-  Home
+  Home,
+  CheckCircle2
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import WalletAddressModal from "@/components/WalletAddressModal";
@@ -976,18 +977,23 @@ const Profile = () => {
               <CardContent className="space-y-8">
                 <div className="p-6 rounded-xl bg-[#12151C]/80 border border-primary/10 space-y-4">
                   <div className="flex items-start gap-4">
-                    <div className="p-3 rounded-xl bg-orange-500/10 border border-orange-500/20">
-                      <HelpCircle className="w-8 h-8 text-orange-500" />
+                    <div className={`p-3 rounded-xl ${userData?.verified ? 'bg-green-500/10 border border-green-500/20' : 'bg-orange-500/10 border border-orange-500/20'}`}>
+                      {userData?.verified ? (
+                        <CheckCircle2 className="w-8 h-8 text-green-500" />
+                      ) : (
+                        <HelpCircle className="w-8 h-8 text-orange-500" />
+                      )}
                     </div>
                     <div className="space-y-1 flex-1">
                       <div className="flex items-center justify-between">
                         <h3 className="text-lg font-semibold">
-                          KYC Status: {' '}
-                          <span className="text-orange-500">
-                            {userData?.kyc_status === 'not_started' && 'Not Started'}
-                            {userData?.kyc_status === 'identity_submitted' && 'Identity Submitted'}
-                            {userData?.kyc_status === 'under_review' && 'Under Review'}
-                            {userData?.verified && 'Verified'}
+                          KYC Status:{' '}
+                          <span className={`${userData?.verified ? 'text-green-500' : 'text-orange-500'}`}>
+                            {userData?.verified ? 'Verified' : (
+                              userData?.kyc_status === 'not_started' ? 'Not Started' :
+                              userData?.kyc_status === 'identity_submitted' ? 'Identity Submitted' :
+                              userData?.kyc_status === 'under_review' ? 'Under Review' : 'Not Verified'
+                            )}
                           </span>
                         </h3>
                         {userData?.kyc_status === 'under_review' && (
