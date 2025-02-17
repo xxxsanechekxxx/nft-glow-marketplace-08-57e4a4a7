@@ -1,3 +1,4 @@
+<lov-code>
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,6 +33,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
@@ -668,19 +670,12 @@ const Profile = () => {
                     <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div className="bg-background/50 border border-primary/10 group-hover:border-primary/30 transition-colors rounded-lg p-3 pl-10 flex items-center">
                       {userData?.verified ? (
-                        <span className="text-green-500 font-medium flex items-center gap-2">
-                          <CheckCircle2 className="w-4 h-4" />
-                          Verified
-                        </span>
+                        <span className="text-green-500 font-medium">Verified</span>
                       ) : (
                         <span className="text-yellow-500 font-medium">Not Verified</span>
                       )}
                     </div>
-                    {userData?.verified ? (
-                      <CheckCircle2 className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-green-500" />
-                    ) : (
-                      <HelpCircle className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                    )}
+                    <HelpCircle className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                   </div>
                 </div>
                 <div className="space-y-2 group">
@@ -845,51 +840,4 @@ const Profile = () => {
                   onClick={() => setIsDepositConfirmationOpen(true)}
                   className="w-full bg-green-500/20 hover:bg-green-500/30 text-green-500 flex items-center gap-3 p-6 h-auto group relative overflow-hidden"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-green-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <span className="relative z-10">Deposit</span>
-                </Button>
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="verification">
-            <div className="space-y-6">
-              <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-[#1A1F2C]/90">
-                <CardContent className="p-8">
-                  <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                    <div className="space-y-4">
-                      <p className="text-sm text-muted-foreground">Verification Status</p>
-                      <div className="space-y-2">
-                        <h2 className="text-5xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-1.5">
-                          <Shield className="w-10 h-10" />
-                          {userData?.kyc_status || 'not_started'}
-                        </h2>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <div className="space-y-4">
-                <Button
-                  onClick={startKYCVerification}
-                  className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-colors flex items-center gap-2 group relative overflow-hidden"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <UserRound className="w-6 h-6 relative z-10" />
-                  <span className="relative z-10">Start Verification</span>
-                </Button>
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="nft">
-            <EmptyNFTState />
-          </TabsContent>
-        </Tabs>
-      </div>
-    </div>
-  );
-};
-
-export default Profile;
+                  <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-green-400/10 opacity-0 group
