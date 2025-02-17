@@ -1001,9 +1001,11 @@ const Profile = () => {
                         )}
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        {userData?.kyc_status === 'under_review' 
-                          ? 'Final verification check in progress'
-                          : 'Complete verification to unlock all features'}
+                        {userData?.verified 
+                          ? 'Your account is fully verified and has access to all features'
+                          : userData?.kyc_status === 'under_review' 
+                            ? 'Final verification check in progress'
+                            : 'Complete verification to unlock all features'}
                       </p>
                       {userData?.kyc_status === 'under_review' && (
                         <div className="mt-4 w-full bg-orange-500/10 rounded-full h-2 overflow-hidden">
