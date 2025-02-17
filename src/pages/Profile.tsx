@@ -1,3 +1,4 @@
+<lov-code>
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,8 +22,7 @@ import {
   Shield,
   FileCheck,
   BadgeCheck,
-  Home,
-  ShieldCheck
+  Home
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import WalletAddressModal from "@/components/WalletAddressModal";
@@ -662,30 +662,19 @@ const Profile = () => {
                 </div>
                 <div className="space-y-2 group">
                   <label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
-                    {userData?.verified ? (
-                      <ShieldCheck className="w-4 h-4 text-green-500" />
-                    ) : (
-                      <HelpCircle className="w-4 h-4" />
-                    )}
+                    <HelpCircle className="w-4 h-4" />
                     Verification Status
                   </label>
                   <div className="relative overflow-hidden rounded-lg transition-all duration-300 group-hover:shadow-lg">
                     <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div className="bg-background/50 border border-primary/10 group-hover:border-primary/30 transition-colors rounded-lg p-3 pl-10 flex items-center">
                       {userData?.verified ? (
-                        <span className="text-green-500 font-medium flex items-center gap-2">
-                          <BadgeCheck className="w-4 h-4" />
-                          Verified
-                        </span>
+                        <span className="text-green-500 font-medium">Verified</span>
                       ) : (
                         <span className="text-yellow-500 font-medium">Not Verified</span>
                       )}
                     </div>
-                    {userData?.verified ? (
-                      <BadgeCheck className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-green-500" />
-                    ) : (
-                      <HelpCircle className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                    )}
+                    <HelpCircle className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                   </div>
                 </div>
                 <div className="space-y-2 group">
@@ -850,307 +839,4 @@ const Profile = () => {
                   onClick={() => setIsDepositConfirmationOpen(true)}
                   className="w-full bg-green-500/20 hover:bg-green-500/30 text-green-500 flex items-center gap-3 p-6 h-auto group relative overflow-hidden"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-green-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <div className="p-3 rounded-xl bg-green-500/20 group-hover:bg-green-500/30 transition-colors">
-                    <ArrowDownCircle className="w-6 h-6" />
-                  </div>
-                  <div className="flex flex-col items-start">
-                    <span className="text-lg font-semibold">Deposit</span>
-                    <span className="text-sm text-muted-foreground">Add funds to your wallet</span>
-                  </div>
-                </Button>
-
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button 
-                      className="w-full bg-destructive/20 hover:bg-destructive/30 text-destructive flex items-center gap-3 p-6 h-auto group relative overflow-hidden"
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-r from-destructive/10 to-red-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      <div className="p-3 rounded-xl bg-destructive/20 group-hover:bg-destructive/30 transition-colors">
-                        <ArrowUpCircle className="w-6 h-6" />
-                      </div>
-                      <div className="flex flex-col items-start">
-                        <span className="text-lg font-semibold">Withdraw</span>
-                        <span className="text-sm text-muted-foreground">Transfer funds to your wallet</span>
-                      </div>
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-md bg-background/95 backdrop-blur-xl border border-destructive/10">
-                    <DialogHeader>
-                      <DialogTitle className="text-xl font-bold text-destructive">Withdraw</DialogTitle>
-                      <DialogDescription>
-                        Transfer funds to your wallet
-                      </DialogDescription>
-                    </DialogHeader>
-                    <form onSubmit={handleWithdraw} className="space-y-4">
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-destructive/80">
-                          Amount (ETH)
-                        </label>
-                        <Input
-                          type="number"
-                          step="0.0001"
-                          min="0.0001"
-                          value={withdrawAmount}
-                          onChange={(e) => setWithdrawAmount(e.target.value)}
-                          placeholder="Enter amount"
-                          className="bg-background/40 border-destructive/20 focus:border-destructive/40"
-                        />
-                      </div>
-                      <Button 
-                        type="submit"
-                        className="w-full bg-destructive/20 hover:bg-destructive/30 text-destructive"
-                      >
-                        Confirm Withdrawal
-                      </Button>
-                    </form>
-                  </DialogContent>
-                </Dialog>
-              </div>
-
-              <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-[#1A1F2C]/90">
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-primary/20">
-                      <ArrowUpCircle className="w-6 h-6 rotate-45 text-primary" />
-                    </div>
-                    Transaction History
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {transactions.length > 0 ? (
-                    <div className="overflow-x-auto">
-                      <Table>
-                        <TableHeader>
-                          <TableRow className="hover:bg-primary/5">
-                            <TableHead>Date</TableHead>
-                            <TableHead>Type</TableHead>
-                            <TableHead>Amount (ETH)</TableHead>
-                            <TableHead>Status</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {transactions.map((transaction) => (
-                            <TableRow
-                              key={transaction.id}
-                              className="hover:bg-primary/5 transition-colors"
-                            >
-                              <TableCell>{transaction.created_at}</TableCell>
-                              <TableCell className="capitalize flex items-center gap-2">
-                                {transaction.type === 'deposit' && (
-                                  <ArrowDownCircle className="w-4 h-4 text-green-500" />
-                                )}
-                                {transaction.type === 'withdraw' && (
-                                  <ArrowUpCircle className="w-4 h-4 text-red-500" />
-                                )}
-                                {transaction.type === 'purchase' && (
-                                  <ShoppingBag className="w-4 h-4 text-blue-500" />
-                                )}
-                                {transaction.type}
-                              </TableCell>
-                              <TableCell>{transaction.amount}</TableCell>
-                              <TableCell>
-                                <span className={`px-2 py-1 rounded-full text-xs ${
-                                  transaction.status === 'completed'
-                                    ? 'bg-green-500/20 text-green-500'
-                                    : transaction.status === 'pending'
-                                    ? 'bg-yellow-500/20 text-yellow-500'
-                                    : 'bg-red-500/20 text-red-500'
-                                }`}>
-                                  {transaction.status}
-                                </span>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </div>
-                  ) : (
-                    <div className="text-center py-8 text-muted-foreground">
-                      No transactions found
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="verification">
-            <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-[#1A1F2C]/90">
-              <CardHeader className="space-y-2">
-                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-primary/20">
-                    <Shield className="w-6 h-6 text-primary" />
-                  </div>
-                  KYC Verification
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-8">
-                <div className="p-6 rounded-xl bg-[#12151C]/80 border border-primary/10 space-y-4">
-                  <div className="flex items-start gap-4">
-                    <div className="p-3 rounded-xl bg-orange-500/10 border border-orange-500/20">
-                      <HelpCircle className="w-8 h-8 text-orange-500" />
-                    </div>
-                    <div className="space-y-1 flex-1">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-semibold">
-                          KYC Status: {' '}
-                          <span className="text-orange-500">
-                            {userData?.kyc_status === 'not_started' && 'Not Started'}
-                            {userData?.kyc_status === 'identity_submitted' && 'Identity Submitted'}
-                            {userData?.kyc_status === 'under_review' && 'Under Review'}
-                            {userData?.verified && 'Verified'}
-                          </span>
-                        </h3>
-                        {userData?.kyc_status === 'under_review' && (
-                          <span className="text-sm text-orange-500 font-medium">80%</span>
-                        )}
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        {userData?.kyc_status === 'under_review' 
-                          ? 'Final verification check in progress'
-                          : 'Complete verification to unlock all features'}
-                      </p>
-                      {userData?.kyc_status === 'under_review' && (
-                        <div className="mt-4 w-full bg-orange-500/10 rounded-full h-2 overflow-hidden">
-                          <div 
-                            className="h-full bg-gradient-to-r from-orange-500 to-orange-400 transition-all duration-1000"
-                            style={{ width: '80%' }}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className={`p-6 rounded-xl border transition-all duration-300 space-y-4 ${
-                    userData?.kyc_status === 'not_started'
-                      ? 'bg-primary/5 border-primary/20'
-                      : 'bg-[#12151C]/80 border-primary/10'
-                  }`}>
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${
-                        userData?.kyc_status === 'not_started'
-                          ? 'bg-primary/20'
-                          : 'bg-green-500/20'
-                      }`}>
-                        <User className={`w-5 h-5 ${
-                          userData?.kyc_status === 'not_started'
-                            ? 'text-primary'
-                            : 'text-green-500'
-                        }`} />
-                      </div>
-                      <h3 className="font-semibold">Identity</h3>
-                    </div>
-                    {userData?.kyc_status === 'not_started' && (
-                      <Button 
-                        onClick={startKYCVerification}
-                        className="w-full bg-primary/20 hover:bg-primary/30 text-primary"
-                      >
-                        Start Verification
-                      </Button>
-                    )}
-                  </div>
-
-                  <div className={`p-6 rounded-xl border transition-all duration-300 space-y-4 ${
-                    userData?.kyc_status === 'identity_submitted'
-                      ? 'bg-primary/5 border-primary/20'
-                      : 'bg-[#12151C]/80 border-primary/10'
-                  }`}>
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${
-                        userData?.kyc_status === 'identity_submitted'
-                          ? 'bg-primary/20'
-                          : userData?.kyc_status === 'under_review' || userData?.verified
-                          ? 'bg-green-500/20'
-                          : 'bg-muted/20'
-                      }`}>
-                        <Home className={`w-5 h-5 ${
-                          userData?.kyc_status === 'identity_submitted'
-                            ? 'text-primary'
-                            : userData?.kyc_status === 'under_review' || userData?.verified
-                            ? 'text-green-500'
-                            : 'text-muted-foreground'
-                        }`} />
-                      </div>
-                      <h3 className="font-semibold">Address</h3>
-                    </div>
-                    {(userData?.kyc_status === 'identity_submitted' || userData?.kyc_status === 'not_started') && (
-                      <Button 
-                        onClick={() => setIsAddressDialogOpen(true)}
-                        className="w-full bg-primary/20 hover:bg-primary/30 text-primary"
-                        disabled={userData?.kyc_status === 'not_started'}
-                      >
-                        Submit Address Documents
-                      </Button>
-                    )}
-                  </div>
-
-                  <div className={`p-6 rounded-xl border transition-all duration-300 space-y-4 ${
-                    userData?.verified
-                      ? 'bg-green-500/5 border-green-500/20'
-                      : 'bg-[#12151C]/80 border-primary/10'
-                  }`}>
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${
-                        userData?.verified
-                          ? 'bg-green-500/20'
-                          : 'bg-muted/20'
-                      }`}>
-                        <BadgeCheck className={`w-5 h-5 ${
-                          userData?.verified
-                            ? 'text-green-500'
-                            : 'text-muted-foreground'
-                        }`} />
-                      </div>
-                      <h3 className="font-semibold">Verification</h3>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="nft">
-            <EmptyNFTState />
-          </TabsContent>
-        </Tabs>
-      </div>
-
-      <WalletAddressModal
-        isOpen={isWalletModalOpen}
-        onClose={() => setIsWalletModalOpen(false)}
-        onGenerated={handleGenerateWalletAddress}
-      />
-
-      <DepositConfirmationDialog
-        isOpen={isDepositConfirmationOpen}
-        onClose={() => setIsDepositConfirmationOpen(false)}
-        amount={depositAmount}
-        onConfirm={handleDepositConfirm}
-      />
-
-      <FraudWarningDialog
-        isOpen={isFraudWarningOpen}
-        onClose={() => setIsFraudWarningOpen(false)}
-      />
-
-      <KYCIdentityDialog
-        isOpen={isIdentityDialogOpen}
-        onClose={() => setIsIdentityDialogOpen(false)}
-        onSuccess={handleIdentitySuccess}
-        userId={user?.id || ''}
-      />
-
-      <KYCAddressDialog
-        isOpen={isAddressDialogOpen}
-        onClose={handleAddressClose}
-        onSuccess={handleAddressSuccess}
-        userId={user?.id || ''}
-      />
-    </div>
-  );
-};
-
-export default Profile;
+                  <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-green-400/10 opacity-0 group-hover:opacity-1
