@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, Loader2, Shield } from "lucide-react";
@@ -106,14 +105,14 @@ const SellNFTConfirmation = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background text-white flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-background text-white flex flex-col items-center p-6 relative overflow-hidden pt-24">
       {/* Background effects */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-purple-900/20 via-background to-background/95 -z-10" />
       <div className="absolute w-96 h-96 bg-primary/10 rounded-full blur-3xl top-20 right-1/4 animate-pulse duration-10000 -z-10" />
       <div className="absolute w-80 h-80 bg-purple-500/10 rounded-full blur-3xl -bottom-20 left-1/4 animate-pulse duration-8000 -z-10" />
       
-      {/* Back button */}
-      <div className="absolute top-6 left-6 md:top-10 md:left-10">
+      {/* Back button - moved up to top-24 to be below header but not covered by it */}
+      <div className="absolute top-24 left-6 md:top-24 md:left-10 z-20">
         <Link
           to={`/sell-nft/${id}`}
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-all duration-300 group"
