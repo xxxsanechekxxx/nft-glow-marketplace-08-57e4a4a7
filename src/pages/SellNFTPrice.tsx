@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, Tag, CheckCircle, Sparkles, FileCheck } from "lucide-react";
@@ -22,6 +21,9 @@ const SellNFTPrice = () => {
   const [marketplace, setMarketplace] = useState<string | null>(null);
   const [marketplaceName, setMarketplaceName] = useState<string>("selected marketplace");
   const queryClient = useQueryClient();
+  
+  // Platform fee percentage
+  const PLATFORM_FEE_PERCENT = 2.5;
 
   const { data: nft, isLoading } = useQuery({
     queryKey: ['nft', id],
@@ -74,11 +76,15 @@ const SellNFTPrice = () => {
     setIsSubmitting(true);
     
     try {
+      // Calculate the amount seller will receive after platform fee
+      const priceValue = parseFloat(price);
+      const sellerReceives = priceValue * (1 - PLATFORM_FEE_PERCENT / 100);
+      
       // Update the price, marketplace, and for_sale flag in the database
       const { error } = await supabase
         .from('nfts')
         .update({
-          price: parseFloat(price),
+          price: priceValue,
           marketplace: marketplace,
           for_sale: true  // Set for_sale flag to true
         })
@@ -163,6 +169,14 @@ const SellNFTPrice = () => {
     );
   }
 
+  // Calculate seller's proceeds after platform fee
+  const calculateSellerProceeds = () => {
+    if (!price) return "0.0000";
+    const priceValue = parseFloat(price);
+    const sellerReceives = priceValue * (1 - PLATFORM_FEE_PERCENT / 100);
+    return sellerReceives.toFixed(4);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#09081A] via-[#0E0D26] to-[#13123A] relative overflow-hidden py-20">
       {/* Animated Background Elements */}
@@ -197,9 +211,14 @@ const SellNFTPrice = () => {
                 Your NFT is now listed for sale on {marketplaceName} for {price} ETH
               </p>
               
-              <div className="flex items-center justify-center space-x-2 text-purple-300/70 text-sm">
-                <Sparkles className="h-4 w-4" />
-                <p>Redirecting to marketplace...</p>
+              <div className="flex flex-col items-center justify-center space-y-2 text-center">
+                <p className="text-purple-200/90">
+                  You'll receive: <span className="text-green-400 font-medium">{calculateSellerProceeds()} ETH</span> after platform fee
+                </p>
+                <div className="flex items-center justify-center space-x-2 text-purple-300/70 text-sm mt-2">
+                  <Sparkles className="h-4 w-4" />
+                  <p>Redirecting to marketplace...</p>
+                </div>
               </div>
               
               <div className="w-full max-w-xs mt-8 relative h-1.5">
@@ -290,13 +309,26 @@ const SellNFTPrice = () => {
                         </div>
                       </div>
                       
-                      <div className="flex items-center justify-between text-sm text-purple-200/60">
-                        <p>Platform fee: 2.5%</p>
-                        {price && (
-                          <p>You'll receive: <span className="text-purple-200 font-medium">
-                            {(parseFloat(price) * 0.975).toFixed(4)} ETH
-                          </span></p>
-                        )}
+                      <div className="space-y-3 mt-4">
+                        <div className="flex items-center justify-between text-sm">
+                          <p className="text-purple-200/60">Platform fee ({PLATFORM_FEE_PERCENT}%):</p>
+                          {price && (
+                            <p className="text-purple-200/60">
+                              {(parseFloat(price) * PLATFORM_FEE_PERCENT / 100).toFixed(4)} ETH
+                            </p>
+                          )}
+                        </div>
+                        
+                        <div className="flex items-center justify-between text-sm">
+                          <p className="text-purple-200/60">You'll receive:</p> 
+                          {price && (
+                            <p className="text-green-400 font-medium">
+                              {calculateSellerProceeds()} ETH
+                            </p>
+                          )}
+                        </div>
+                        
+                        <div className="h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent my-1"></div>
                       </div>
                     </div>
                     
