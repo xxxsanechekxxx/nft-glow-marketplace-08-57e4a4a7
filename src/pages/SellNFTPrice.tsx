@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, Tag, CheckCircle, Sparkles, FileCheck } from "lucide-react";
@@ -23,7 +22,6 @@ const SellNFTPrice = () => {
   const [marketplaceName, setMarketplaceName] = useState<string>("selected marketplace");
   const queryClient = useQueryClient();
   
-  // Platform fee percentage
   const PLATFORM_FEE_PERCENT = 2.5;
 
   const { data: nft, isLoading } = useQuery({
@@ -41,11 +39,9 @@ const SellNFTPrice = () => {
   });
 
   useEffect(() => {
-    // Get marketplace selection from session storage
     const savedMarketplace = sessionStorage.getItem('sellNFT_marketplace');
     setMarketplace(savedMarketplace);
 
-    // Set marketplace name based on ID
     if (savedMarketplace === 'purenft') setMarketplaceName('PureNFT.io');
     if (savedMarketplace === 'rarible') setMarketplaceName('Rarible.com');
     if (savedMarketplace === 'opensea') setMarketplaceName('OpenSea.io');
@@ -55,7 +51,6 @@ const SellNFTPrice = () => {
   }, []);
 
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Only allow numbers and decimal point
     const value = e.target.value;
     if (/^(\d+)?(\.\d{0,6})?$/.test(value) || value === "") {
       setPrice(value);
@@ -77,27 +72,23 @@ const SellNFTPrice = () => {
     setIsSubmitting(true);
     
     try {
-      // Calculate the amount seller will receive after platform fee
       const priceValue = parseFloat(price);
       const sellerReceives = priceValue * (1 - PLATFORM_FEE_PERCENT / 100);
       
-      // Update the price, marketplace, and for_sale flag in the database
       const { error } = await supabase
         .from('nfts')
         .update({
           price: priceValue,
           marketplace: marketplace,
-          for_sale: true  // Set for_sale flag to true
+          for_sale: true
         })
         .eq('id', id);
       
       if (error) throw error;
       
-      // After successful update
       setIsSubmitting(false);
       setIsSuccess(true);
       
-      // Invalidate relevant queries to refresh data
       queryClient.invalidateQueries({ queryKey: ['nft', id] });
       queryClient.invalidateQueries({ queryKey: ['nfts'] });
       
@@ -106,7 +97,6 @@ const SellNFTPrice = () => {
         description: `Your NFT is now listed for sale on ${marketplaceName} for ${price} ETH`,
       });
       
-      // Redirect to marketplace after 3 seconds
       setTimeout(() => {
         navigate("/marketplace");
       }, 3000);
@@ -143,7 +133,6 @@ const SellNFTPrice = () => {
     );
   }
 
-  // Check if the user is the owner
   if (nft.owner_id !== user?.id) {
     return (
       <div className="container mx-auto px-4 pt-24">
@@ -170,7 +159,6 @@ const SellNFTPrice = () => {
     );
   }
 
-  // Calculate seller's proceeds after platform fee
   const calculateSellerProceeds = () => {
     if (!price) return "0.0000";
     const priceValue = parseFloat(price);
@@ -180,7 +168,6 @@ const SellNFTPrice = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#09081A] via-[#0E0D26] to-[#13123A] relative overflow-hidden py-20">
-      {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-0 left-1/4 w-72 h-72 bg-purple-600/10 rounded-full filter blur-3xl animate-pulse opacity-30"></div>
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full filter blur-3xl animate-pulse opacity-20"></div>
@@ -241,7 +228,6 @@ const SellNFTPrice = () => {
           </Card>
         ) : (
           <div className="flex flex-col lg:flex-row gap-8 items-stretch">
-            {/* NFT Preview Card */}
             <div className="lg:w-2/5">
               <div className="group relative rounded-xl overflow-hidden transform transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl shadow-purple-500/5">
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/80 z-10"></div>
@@ -276,7 +262,6 @@ const SellNFTPrice = () => {
               </div>
             </div>
             
-            {/* Price Setting Card */}
             <div className="lg:w-3/5">
               <Card className="border-0 h-full bg-gradient-to-b from-purple-900/40 to-purple-800/20 backdrop-blur-md shadow-xl relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-pink-500/5 to-purple-500/5 opacity-50"></div>
@@ -321,13 +306,6 @@ const SellNFTPrice = () => {
                           className="pl-12 py-6 text-lg border-purple-500/30 bg-purple-900/30 focus:border-purple-400 focus:ring-purple-400/50 shadow-inner shadow-purple-500/5"
                           required
                         />
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-purple-300/50 text-sm">
-                          <img 
-                            src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
-                            alt="ETH"
-                            className="h-4 w-4"
-                          />
-                        </div>
                       </div>
                       
                       <div className="space-y-3 mt-4">
