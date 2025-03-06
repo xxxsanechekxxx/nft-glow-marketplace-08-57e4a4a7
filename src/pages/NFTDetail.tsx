@@ -1,4 +1,3 @@
-
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
@@ -60,8 +59,11 @@ const NFTDetail = () => {
     }, 2000);
   };
 
-  // Check if the NFT is already owned
+  // Check if the NFT is owned by the current user
   const isOwned = nft?.owner_id === user?.id;
+  
+  // Check if NFT is for sale
+  const isForSale = nft?.for_sale === true;
 
   if (isLoading) {
     return (
@@ -83,9 +85,6 @@ const NFTDetail = () => {
       </div>
     );
   }
-
-  // Check if NFT is already owned (by anyone)
-  const alreadyPurchased = !!nft.owner_id;
 
   return (
     <div className="min-h-[90vh] relative overflow-hidden bg-gradient-to-b from-background via-background/80 to-background/60">
@@ -126,10 +125,17 @@ const NFTDetail = () => {
                     </span>
                   </div>
                 </div>
-                {nft.owner_id && (
+                {nft.owner_id && !isForSale && (
                   <div className="bg-white/10 px-4 py-2 rounded-full border border-white/10">
                     <p className="text-sm text-muted-foreground">
-                      {isOwned ? "You own this" : "Already purchased"}
+                      Already purchased
+                    </p>
+                  </div>
+                )}
+                {isOwned && (
+                  <div className="bg-white/10 px-4 py-2 rounded-full border border-white/10">
+                    <p className="text-sm text-muted-foreground">
+                      You own this
                     </p>
                   </div>
                 )}
@@ -150,7 +156,7 @@ const NFTDetail = () => {
                 <div className="w-full py-4 px-6 text-center bg-white/10 border border-primary/20 rounded-lg backdrop-blur-xl">
                   <p className="text-lg text-primary font-medium">You own this NFT</p>
                 </div>
-              ) : alreadyPurchased ? (
+              ) : (nft.owner_id && !isForSale) ? (
                 <div className="w-full py-4 px-6 text-center bg-white/10 border border-white/10 rounded-lg backdrop-blur-xl">
                   <p className="text-lg text-muted-foreground">This NFT has already been purchased</p>
                 </div>
