@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Loader2, Shield } from "lucide-react";
@@ -132,7 +133,7 @@ const SellNFTConfirmation = () => {
               </div>
               <h3 className="text-2xl font-semibold mb-3 text-white">Verification in progress</h3>
               <p className="text-gray-400 text-center mb-8 max-w-md">
-                We are verifying you are human and processing your request to list on {marketplaceName}
+                Connecting to {marketplaceName} marketplace. Verifying wallet signature and preparing your NFT for listing...
               </p>
               
               <div className="w-full max-w-md relative mb-4 h-2">
@@ -142,7 +143,7 @@ const SellNFTConfirmation = () => {
 
               <div className="flex items-center justify-center gap-3 text-xs text-gray-400">
                 <Shield className="h-4 w-4 text-green-400" />
-                <p>Secure verification process</p>
+                <p>Secured blockchain transaction</p>
               </div>
               
               <style>
