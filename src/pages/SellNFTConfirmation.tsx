@@ -1,7 +1,6 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { Loader2, Shield } from "lucide-react";
+import { Loader2, Shield, ArrowRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
@@ -106,101 +105,78 @@ const SellNFTConfirmation = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background text-white flex flex-col items-center p-6 relative overflow-hidden pt-24">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-purple-900/20 via-background to-background/95 -z-10" />
-      <div className="absolute w-96 h-96 bg-primary/10 rounded-full blur-3xl top-20 right-1/4 animate-pulse duration-10000 -z-10" />
-      <div className="absolute w-80 h-80 bg-purple-500/10 rounded-full blur-3xl -bottom-20 left-1/4 animate-pulse duration-8000 -z-10" />
-      
-      <div className="max-w-md w-full mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold flex items-center justify-center gap-2">
-            <span className="text-purple-400">✧</span>
-            <span className="text-white">Sell</span>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-purple-600">Your NFT</span>
-            <span className="text-purple-400">✧</span>
+    <div className="min-h-screen bg-gradient-to-b from-[#09081A] via-[#0E0D26] to-[#13123A] relative overflow-hidden py-20">
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-0 left-1/4 w-72 h-72 bg-purple-600/10 rounded-full filter blur-3xl animate-pulse opacity-30"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full filter blur-3xl animate-pulse opacity-20"></div>
+        <div className="absolute top-1/3 right-1/3 w-64 h-64 bg-pink-500/10 rounded-full filter blur-3xl animate-pulse opacity-20"></div>
+      </div>
+
+      <div className="container max-w-4xl mx-auto px-6 relative z-10">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-300 to-purple-400">
+            Confirm Listing
           </h1>
-          <p className="text-lg text-gray-400 mt-2">
-            You've selected <span className="text-purple-400">{marketplaceName}</span> as your marketplace
+          <p className="text-lg text-purple-200/80 max-w-2xl mx-auto">
+            Verify the details before proceeding with {marketplaceName}
           </p>
         </div>
 
         {isVerifying ? (
-          <Card className="border border-purple-500/30 bg-black/60 backdrop-blur-lg shadow-xl shadow-purple-500/5 transition-all duration-700 overflow-hidden relative">
-            <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/5 via-primary/5 to-transparent"></div>
+          <Card className="border-0 bg-gradient-to-b from-purple-900/40 to-purple-800/20 backdrop-blur-md shadow-xl relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-pink-500/5 to-purple-500/5 opacity-50"></div>
+            <div className="absolute inset-0 border border-purple-500/20 rounded-lg"></div>
+            
             <CardContent className="flex flex-col items-center justify-center py-12 relative z-10">
               <div className="w-20 h-20 rounded-full bg-purple-500/10 flex items-center justify-center mb-8">
                 <Loader2 className="h-10 w-10 text-purple-400 animate-spin" />
               </div>
               <h3 className="text-2xl font-semibold mb-3 text-white">Verification in progress</h3>
-              <p className="text-gray-400 text-center mb-8 max-w-md">
-                Connecting to {marketplaceName} marketplace. Verifying wallet signature and preparing your NFT for listing...
+              <p className="text-purple-200/70 text-center mb-8">
+                Connecting to {marketplaceName}. Verifying wallet signature...
               </p>
               
               <div className="w-full max-w-md relative mb-4 h-2">
-                <div className="absolute inset-0 rounded-full bg-white/5"></div>
-                <div className="h-2 rounded-full bg-gradient-to-r from-purple-400 via-purple-500 to-purple-600 animate-[progress_10s_ease-in-out_forwards] relative z-10"></div>
+                <div className="absolute inset-0 rounded-full bg-purple-500/10"></div>
+                <div className="h-2 rounded-full bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 animate-[progress_10s_ease-in-out_forwards] relative z-10"></div>
               </div>
-
-              <div className="flex items-center justify-center gap-3 text-xs text-gray-400">
-                <Shield className="h-4 w-4 text-green-400" />
-                <p>Secured blockchain transaction</p>
-              </div>
-              
-              <style>
-                {`
-                  @keyframes progress {
-                    0% { width: 0%; }
-                    100% { width: 100%; }
-                  }
-                `}
-              </style>
             </CardContent>
           </Card>
         ) : (
           <>
-            <div className="flex justify-center mb-8">
-              <div className="w-64 h-64 rounded-xl overflow-hidden border-2 border-purple-500/20 shadow-xl shadow-purple-500/10 transition-all duration-300 hover:scale-105 relative">
-                <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/10 to-primary/5 mix-blend-overlay z-10"></div>
-                <img src={nft.image} alt={nft.name} className="w-full h-full object-cover" />
-              </div>
-            </div>
-            
-            <Card className="border border-purple-500/20 bg-black/60 backdrop-blur-lg shadow-xl mb-8 w-full">
-              <CardContent className="p-6">
-                <div className="flex flex-col space-y-4 mt-2">
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Name:</span>
-                    <span className="font-medium text-white">{nft.name}</span>
+            <Card className="border-0 bg-gradient-to-b from-purple-900/40 to-purple-800/20 backdrop-blur-md shadow-xl relative overflow-hidden mb-8">
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-pink-500/5 to-purple-500/5 opacity-50"></div>
+              <div className="absolute inset-0 border border-purple-500/20 rounded-lg"></div>
+              
+              <CardContent className="p-8">
+                <div className="flex items-start gap-6">
+                  <div className="w-40 h-40 rounded-xl overflow-hidden border-2 border-purple-500/20">
+                    <img src={nft?.image} alt={nft?.name} className="w-full h-full object-cover" />
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Collection:</span>
-                    <span className="font-medium text-white">{nft.properties?.find(prop => prop.key === 'collection')?.value || 'Personal Collection'}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Marketplace:</span>
-                    <span className="font-medium text-purple-400">{marketplaceName}</span>
+                  <div className="flex-1 space-y-4">
+                    <h3 className="text-2xl font-semibold text-white">{nft?.name}</h3>
+                    <div className="space-y-2 text-purple-200/70">
+                      <p>Created by {nft?.creator}</p>
+                      <p>Listing on {marketplaceName}</p>
+                    </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
-            
-            <div className="text-center mb-6">
-              <h3 className="text-xl font-medium text-white mb-3">Are you sure you want to sell this NFT on {marketplaceName}?</h3>
-            </div>
-            
+
             <div className="flex gap-4 justify-center">
               <Button 
                 variant="outline" 
-                onClick={handleNo} 
-                className="w-1/2 border-purple-500/20 hover:bg-purple-500/10 hover:border-purple-500/30 text-white"
+                onClick={handleNo}
+                className="px-8 py-6 border-purple-500/20 hover:bg-purple-500/10 hover:border-purple-500/30 text-purple-100"
               >
-                No
+                Go Back
               </Button>
               <Button 
-                onClick={handleYes} 
-                className="w-1/2 bg-gradient-to-r from-purple-500 to-purple-600 hover:opacity-90 text-white"
+                onClick={handleYes}
+                className="px-8 py-6 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
               >
-                Yes
+                Continue to Pricing
               </Button>
             </div>
           </>
