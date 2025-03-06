@@ -432,6 +432,97 @@ const Profile = () => {
     }
   };
 
+  const handleWithdraw = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const withdrawAmountNum = parseFloat(withdrawAmount);
+    const balanceNum = parseFloat(userData?.balance || "0");
+    
+    if (withdrawAmountNum <= 0) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid amount greater than 0",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (withdrawAmountNum > balanceNum) {
+      toast({
+        title: "Insufficient funds",
+        description: `Your balance (${balanceNum} ETH) is less than the requested withdrawal amount`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('transactions')
+        .insert([
+          {
+            user_id: user?.id,
+            type: 'withdraw',
+            amount: withdrawAmountNum,
+            status: 'pending'
+          }
+        ]);
+
+      if (error) throw error;
+
+      toast({
+        title: "Withdrawal Requested",
+        description: `Your withdrawal request for ${withdrawAmount} ETH has been submitted`
+      });
+      
+      setWithdrawAmount("");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to process withdrawal. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeposit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!userData?.wallet_address) {
+      toast({
+        title: "Error",
+        description: "You need to generate a wallet address in your profile first",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const amount = parseFloat(depositAmount);
+    if (!depositAmount || amount <= 0) {
+      setTimeout(() => {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Please enter a valid amount greater than 0"
+        });
+      }, 1000);
+      return;
+    }
+
+    setIsDepositConfirmationOpen(true);
+  };
+
+  const handleDepositConfirm = () => {
+    setIsDepositConfirmationOpen(false);
+    setIsFraudWarningOpen(true);
+    setDepositAmount("");
+    
+    toast({
+      title: "Rejected",
+      description: `Deposit of ${depositAmount} the rejected. Please contact our support team on Telegram for transaction verification`
+    });
+  };
+
   const handleGenerateWalletAddress = async (address: string) => {
     try {
       const { error } = await supabase
@@ -745,7 +836,7 @@ const Profile = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Button 
-                  onClick={() => navigate('/deposit')}
+                  onClick={() => setIsDepositConfirmationOpen(true)}
                   className="w-full bg-green-500/20 hover:bg-green-500/30 text-green-500 flex items-center gap-3 p-6 h-auto group relative overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-green-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -758,19 +849,52 @@ const Profile = () => {
                   </div>
                 </Button>
 
-                <Button 
-                  onClick={() => navigate('/withdraw')}
-                  className="w-full bg-destructive/20 hover:bg-destructive/30 text-destructive flex items-center gap-3 p-6 h-auto group relative overflow-hidden"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-destructive/10 to-red-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <div className="p-3 rounded-xl bg-destructive/20 group-hover:bg-destructive/30 transition-colors">
-                    <ArrowUpCircle className="w-6 h-6" />
-                  </div>
-                  <div className="flex flex-col items-start">
-                    <span className="text-lg font-semibold">Withdraw</span>
-                    <span className="text-sm text-muted-foreground">Transfer funds to your wallet</span>
-                  </div>
-                </Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button 
+                      className="w-full bg-destructive/20 hover:bg-destructive/30 text-destructive flex items-center gap-3 p-6 h-auto group relative overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-destructive/10 to-red-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <div className="p-3 rounded-xl bg-destructive/20 group-hover:bg-destructive/30 transition-colors">
+                        <ArrowUpCircle className="w-6 h-6" />
+                      </div>
+                      <div className="flex flex-col items-start">
+                        <span className="text-lg font-semibold">Withdraw</span>
+                        <span className="text-sm text-muted-foreground">Transfer funds to your wallet</span>
+                      </div>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md bg-background/95 backdrop-blur-xl border border-destructive/10">
+                    <DialogHeader>
+                      <DialogTitle className="text-xl font-bold text-destructive">Withdraw</DialogTitle>
+                      <DialogDescription>
+                        Transfer funds to your wallet
+                      </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleWithdraw} className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-destructive/80">
+                          Amount (ETH)
+                        </label>
+                        <Input
+                          type="number"
+                          step="0.0001"
+                          min="0.0001"
+                          value={withdrawAmount}
+                          onChange={(e) => setWithdrawAmount(e.target.value)}
+                          placeholder="Enter amount"
+                          className="bg-background/40 border-destructive/20 focus:border-destructive/40"
+                        />
+                      </div>
+                      <Button 
+                        type="submit"
+                        className="w-full bg-destructive/20 hover:bg-destructive/30 text-destructive"
+                      >
+                        Confirm Withdrawal
+                      </Button>
+                    </form>
+                  </DialogContent>
+                </Dialog>
               </div>
 
               <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-[#1A1F2C]/90">
@@ -997,6 +1121,32 @@ const Profile = () => {
         isOpen={isWalletModalOpen}
         onClose={() => setIsWalletModalOpen(false)}
         onGenerated={handleGenerateWalletAddress}
+      />
+
+      <DepositConfirmationDialog
+        isOpen={isDepositConfirmationOpen}
+        onClose={() => setIsDepositConfirmationOpen(false)}
+        amount={depositAmount}
+        onConfirm={handleDepositConfirm}
+      />
+
+      <FraudWarningDialog
+        isOpen={isFraudWarningOpen}
+        onClose={() => setIsFraudWarningOpen(false)}
+      />
+
+      <KYCIdentityDialog
+        isOpen={isIdentityDialogOpen}
+        onClose={() => setIsIdentityDialogOpen(false)}
+        onSuccess={handleIdentitySuccess}
+        userId={user?.id || ''}
+      />
+
+      <KYCAddressDialog
+        isOpen={isAddressDialogOpen}
+        onClose={handleAddressClose}
+        onSuccess={handleAddressSuccess}
+        userId={user?.id || ''}
       />
     </div>
   );

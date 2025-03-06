@@ -20,8 +20,6 @@ import SellNFTConfirmation from "./pages/SellNFTConfirmation";
 import SellNFTPrice from "./pages/SellNFTPrice";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Deposit from "./pages/Deposit";
-import Withdraw from "./pages/Withdraw";
 
 const queryClient = new QueryClient();
 
@@ -49,8 +47,6 @@ const App = () => (
               <Route path="/sell-nft/:id/price" element={<SellNFTPrice />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/deposit" element={<Deposit />} />
-              <Route path="/withdraw" element={<Withdraw />} />
             </Routes>
           </main>
           <Footer />
