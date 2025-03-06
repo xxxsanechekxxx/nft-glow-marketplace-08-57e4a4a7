@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, HelpCircle, Loader2 } from "lucide-react";
+import { ArrowLeft, HelpCircle, Loader2, Sparkles, Shield } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
@@ -116,10 +117,14 @@ const SellNFTConfirmation = () => {
   }
 
   return (
-    <div className="min-h-[90vh] relative overflow-hidden bg-gradient-to-b from-background via-background/80 to-background/60">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-purple-500/10 via-pink-500/5 to-primary/10 blur-3xl -z-10" />
+    <div className="min-h-[90vh] relative overflow-hidden bg-gradient-to-b from-background/95 via-background/80 to-background/60">
+      {/* Enhanced background elements */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-purple-500/20 via-pink-500/10 to-primary/20 blur-3xl -z-10" />
+      <div className="absolute w-96 h-96 bg-primary/5 rounded-full blur-3xl -top-20 -right-20 animate-pulse duration-10000 -z-10" />
+      <div className="absolute w-80 h-80 bg-purple-500/5 rounded-full blur-3xl bottom-20 -left-20 animate-pulse duration-7000 -z-10" />
       
       <div className="container mx-auto px-4 pt-24 pb-16 relative">
+        {/* Enhanced back button */}
         <Link
           to={`/sell-nft/${id}`}
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-all duration-300 mb-8 group relative overflow-hidden"
@@ -132,22 +137,41 @@ const SellNFTConfirmation = () => {
         </Link>
 
         <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-12">
-            <h1 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-primary">Sell Your NFT</h1>
-            <p className="text-lg text-muted-foreground">You've selected {marketplaceName}</p>
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center justify-center mb-3">
+              <Sparkles className="text-primary h-6 w-6 mr-2 animate-pulse" />
+              <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-primary to-purple-500">
+                Sell Your NFT
+              </h1>
+              <Sparkles className="text-primary h-6 w-6 ml-2 animate-pulse" />
+            </div>
+            <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+              You've selected <span className="text-primary font-medium">{marketplaceName}</span> as your marketplace
+            </p>
           </div>
 
           {isVerifying ? (
-            <Card className="border border-primary/20 bg-background/60 backdrop-blur-sm shadow-lg transition-all duration-700 p-8">
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <Loader2 className="h-16 w-16 text-primary animate-spin mb-8" />
-                <h3 className="text-xl font-semibold mb-2">Verification in progress</h3>
-                <p className="text-muted-foreground text-center mb-6">
-                  We are verifying you are human
-                </p>
-                <div className="w-full max-w-md bg-white/5 rounded-full h-2 mb-2">
-                  <div className="h-2 rounded-full bg-gradient-to-r from-primary to-purple-500 animate-[progress_10s_ease-in-out_forwards]"></div>
+            <Card className="border border-primary/30 bg-background/60 backdrop-blur-sm shadow-lg shadow-primary/5 transition-all duration-700 p-8 overflow-hidden relative">
+              <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-purple-500/5 to-transparent"></div>
+              <CardContent className="flex flex-col items-center justify-center py-12 relative z-10">
+                <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-8">
+                  <Loader2 className="h-10 w-10 text-primary animate-spin" />
                 </div>
+                <h3 className="text-2xl font-semibold mb-3 text-white">Verification in progress</h3>
+                <p className="text-muted-foreground text-center mb-8 max-w-md">
+                  We are verifying you are human and processing your request to list on {marketplaceName}
+                </p>
+                
+                <div className="w-full max-w-md relative mb-4 h-2">
+                  <div className="absolute inset-0 rounded-full bg-white/5"></div>
+                  <div className="h-2 rounded-full bg-gradient-to-r from-primary via-purple-500 to-pink-500 animate-[progress_10s_ease-in-out_forwards] relative z-10"></div>
+                </div>
+
+                <div className="flex items-center justify-center gap-3 text-xs text-muted-foreground">
+                  <Shield className="h-4 w-4 text-green-500" />
+                  <p>Secure verification process</p>
+                </div>
+                
                 <style>
                   {`
                     @keyframes progress {
@@ -156,14 +180,33 @@ const SellNFTConfirmation = () => {
                     }
                   `}
                 </style>
-                <p className="text-xs text-muted-foreground">Please wait, this may take a moment...</p>
               </CardContent>
             </Card>
           ) : (
-            <div className="flex gap-6 mb-8 items-center justify-center">
-              <div className="w-48 h-48 rounded-lg overflow-hidden border border-primary/20 shadow-lg shadow-primary/10">
+            <div className="flex flex-col items-center">
+              <div className="w-64 h-64 rounded-xl overflow-hidden border-2 border-primary/20 shadow-xl shadow-primary/10 mb-8 transition-all duration-300 hover:scale-105 relative">
+                <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-purple-500/5 mix-blend-overlay z-10"></div>
                 <img src={nft.image} alt={nft.name} className="w-full h-full object-cover" />
               </div>
+              
+              <Card className="border border-primary/20 bg-background/60 backdrop-blur-sm shadow-lg transition-all duration-300 mb-6 w-full max-w-lg">
+                <CardContent className="p-6">
+                  <div className="flex flex-col space-y-4 mt-2">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Name:</span>
+                      <span className="font-medium text-white">{nft.name}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Collection:</span>
+                      <span className="font-medium text-white">{nft.collection || 'Personal Collection'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Marketplace:</span>
+                      <span className="font-medium text-primary">{marketplaceName}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           )}
         </div>
@@ -181,13 +224,16 @@ const SellNFTConfirmation = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="flex items-center justify-center py-4">
-            <img src={nft.image} alt={nft.name} className="w-32 h-32 object-cover rounded-lg border border-primary/20" />
+            <div className="w-32 h-32 rounded-lg overflow-hidden border border-primary/20 shadow-lg relative group">
+              <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
+              <img src={nft.image} alt={nft.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+            </div>
           </div>
           <DialogFooter className="flex flex-row justify-center gap-4 sm:gap-6">
-            <Button variant="outline" onClick={handleNo} className="flex-1">
+            <Button variant="outline" onClick={handleNo} className="flex-1 border-primary/20 hover:bg-primary/5">
               No
             </Button>
-            <Button onClick={handleYes} className="flex-1">
+            <Button onClick={handleYes} className="flex-1 bg-gradient-to-r from-primary to-purple-500 hover:opacity-90">
               Yes
             </Button>
           </DialogFooter>
