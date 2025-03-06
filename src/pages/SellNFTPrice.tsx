@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, Tag, CheckCircle } from "lucide-react";
@@ -73,12 +74,11 @@ const SellNFTPrice = () => {
     setIsSubmitting(true);
     
     try {
-      // Update the NFT in the database to mark it as for sale in the marketplace
+      // Update only the price in the database - don't try to update columns that don't exist
       const { error } = await supabase
         .from('nfts')
         .update({
           price: parseFloat(price),
-          for_sale: true,
           marketplace: marketplace
         })
         .eq('id', id);
@@ -200,11 +200,11 @@ const SellNFTPrice = () => {
               <CardContent className="pt-6">
                 <div className="flex gap-6 mb-8 items-center">
                   <div className="w-24 h-24 rounded-lg overflow-hidden border border-primary/20 shadow-lg shadow-primary/10">
-                    <img src={nft.image} alt={nft.name} className="w-full h-full object-cover" />
+                    <img src={nft?.image} alt={nft?.name} className="w-full h-full object-cover" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-semibold">{nft.name}</h2>
-                    <p className="text-muted-foreground">Created by {nft.creator}</p>
+                    <h2 className="text-xl font-semibold">{nft?.name}</h2>
+                    <p className="text-muted-foreground">Created by {nft?.creator}</p>
                     <p className="text-muted-foreground">Listing on {marketplaceName}</p>
                   </div>
                 </div>
