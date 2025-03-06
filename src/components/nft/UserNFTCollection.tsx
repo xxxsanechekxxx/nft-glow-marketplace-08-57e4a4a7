@@ -28,7 +28,13 @@ export const UserNFTCollection = () => {
           throw error;
         }
         
-        setNfts(data || []);
+        // Ensure price is a string to match NFT type
+        const formattedData = data?.map(nft => ({
+          ...nft,
+          price: nft.price.toString()
+        })) || [];
+        
+        setNfts(formattedData);
       } catch (error) {
         console.error("Error fetching user NFTs:", error);
       } finally {
@@ -49,9 +55,9 @@ export const UserNFTCollection = () => {
       
       if (error) throw error;
       
-      // Update local state
+      // Update local state with string price
       setNfts(nfts.map(nft => 
-        nft.id === id ? { ...nft, price: Number(newPrice) } : nft
+        nft.id === id ? { ...nft, price: newPrice } : nft
       ));
     } catch (error) {
       console.error("Error updating NFT price:", error);
@@ -90,14 +96,14 @@ export const UserNFTCollection = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
       {nfts.map((nft) => (
         <NFTCard
           key={nft.id}
           id={nft.id}
           name={nft.name}
           image={nft.image}
-          price={nft.price.toString()}
+          price={nft.price}
           creator={nft.creator}
           owner_id={nft.owner_id}
           for_sale={nft.for_sale}
