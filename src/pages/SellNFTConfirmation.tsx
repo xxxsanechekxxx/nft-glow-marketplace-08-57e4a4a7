@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Loader2, Shield, ArrowRight } from "lucide-react";
@@ -105,14 +106,14 @@ const SellNFTConfirmation = () => {
   }
 
   return (
-    <div className="bg-gradient-to-b from-[#09081A] via-[#0E0D26] to-[#13123A] min-h-screen relative overflow-hidden">
+    <div className="bg-gradient-to-b from-[#09081A] via-[#0E0D26] to-[#13123A] relative overflow-hidden">
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-0 left-1/4 w-72 h-72 bg-purple-600/10 rounded-full filter blur-3xl animate-pulse opacity-30"></div>
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full filter blur-3xl animate-pulse opacity-20"></div>
         <div className="absolute top-1/3 right-1/3 w-64 h-64 bg-pink-500/10 rounded-full filter blur-3xl animate-pulse opacity-20"></div>
       </div>
 
-      <div className="container max-w-4xl mx-auto px-6 relative z-10 py-12">
+      <div className="container max-w-4xl mx-auto px-6 relative z-10 py-12 pb-8">
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-300 to-purple-400">
             Confirm Listing
@@ -164,7 +165,7 @@ const SellNFTConfirmation = () => {
               </CardContent>
             </Card>
 
-            <div className="flex gap-4 justify-center">
+            <div className="flex gap-4 justify-center pb-12">
               <Button 
                 variant="outline" 
                 onClick={handleNo}
