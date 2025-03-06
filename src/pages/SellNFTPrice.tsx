@@ -74,12 +74,13 @@ const SellNFTPrice = () => {
     setIsSubmitting(true);
     
     try {
-      // Update only the price in the database - don't try to update columns that don't exist
+      // Update the price, marketplace, and for_sale flag in the database
       const { error } = await supabase
         .from('nfts')
         .update({
           price: parseFloat(price),
-          marketplace: marketplace
+          marketplace: marketplace,
+          for_sale: true  // Set for_sale flag to true
         })
         .eq('id', id);
       

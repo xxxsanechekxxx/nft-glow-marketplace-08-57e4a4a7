@@ -14,8 +14,10 @@ export type Database = {
           created_at: string
           creator: string
           description: string | null
+          for_sale: boolean | null
           id: string
           image: string
+          marketplace: string | null
           name: string
           owner_id: string | null
           price: number
@@ -25,8 +27,10 @@ export type Database = {
           created_at?: string
           creator: string
           description?: string | null
+          for_sale?: boolean | null
           id?: string
           image: string
+          marketplace?: string | null
           name: string
           owner_id?: string | null
           price: number
@@ -36,8 +40,10 @@ export type Database = {
           created_at?: string
           creator?: string
           description?: string | null
+          for_sale?: boolean | null
           id?: string
           image?: string
+          marketplace?: string | null
           name?: string
           owner_id?: string | null
           price?: number
