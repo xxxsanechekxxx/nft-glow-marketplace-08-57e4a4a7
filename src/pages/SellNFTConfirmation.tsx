@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, HelpCircle, Loader2 } from "lucide-react";
@@ -43,12 +42,10 @@ const SellNFTConfirmation = () => {
   });
 
   useEffect(() => {
-    // Get marketplace selection from session storage
     const savedMarketplace = sessionStorage.getItem('sellNFT_marketplace');
     setMarketplace(savedMarketplace);
 
-    // Set marketplace name based on ID
-    if (savedMarketplace === 'purenft') setMarketplaceName('PureNFT.com');
+    if (savedMarketplace === 'purenft') setMarketplaceName('PureNFT.io');
     if (savedMarketplace === 'rarible') setMarketplaceName('Rarible.com');
     if (savedMarketplace === 'opensea') setMarketplaceName('OpenSea.io');
     if (savedMarketplace === 'looksrare') setMarketplaceName('LooksRare.org');
@@ -65,7 +62,6 @@ const SellNFTConfirmation = () => {
     setIsDialogOpen(false);
     setIsVerifying(true);
     
-    // Simulate verification for 10 seconds
     setTimeout(() => {
       setIsVerifying(false);
       navigate(`/sell-nft/${id}/price`);
@@ -93,7 +89,6 @@ const SellNFTConfirmation = () => {
     );
   }
 
-  // Check if the user is the owner
   if (nft.owner_id !== user?.id) {
     return (
       <div className="container mx-auto px-4 pt-24">
