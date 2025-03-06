@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, Loader2, Shield } from "lucide-react";
+import { Loader2, Shield } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
@@ -106,26 +106,11 @@ const SellNFTConfirmation = () => {
 
   return (
     <div className="min-h-screen bg-background text-white flex flex-col items-center p-6 relative overflow-hidden pt-24">
-      {/* Background effects */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-purple-900/20 via-background to-background/95 -z-10" />
       <div className="absolute w-96 h-96 bg-primary/10 rounded-full blur-3xl top-20 right-1/4 animate-pulse duration-10000 -z-10" />
       <div className="absolute w-80 h-80 bg-purple-500/10 rounded-full blur-3xl -bottom-20 left-1/4 animate-pulse duration-8000 -z-10" />
       
-      {/* Back button - styled to match the design in the first screenshot */}
-      <div className="absolute left-6 top-[100px] md:left-10 md:top-[100px]">
-        <Link
-          to={`/sell-nft/${id}`}
-          className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-all duration-300"
-        >
-          <div className="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full">
-            <ArrowLeft className="h-4 w-4" />
-            <span>Back</span>
-          </div>
-        </Link>
-      </div>
-
       <div className="max-w-md w-full mx-auto">
-        {/* Title with decorative stars */}
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-bold flex items-center justify-center gap-2">
             <span className="text-purple-400">✧</span>
@@ -172,7 +157,6 @@ const SellNFTConfirmation = () => {
           </Card>
         ) : (
           <>
-            {/* NFT Image */}
             <div className="flex justify-center mb-8">
               <div className="w-64 h-64 rounded-xl overflow-hidden border-2 border-purple-500/20 shadow-xl shadow-purple-500/10 transition-all duration-300 hover:scale-105 relative">
                 <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/10 to-primary/5 mix-blend-overlay z-10"></div>
@@ -180,7 +164,6 @@ const SellNFTConfirmation = () => {
               </div>
             </div>
             
-            {/* NFT Info Card */}
             <Card className="border border-purple-500/20 bg-black/60 backdrop-blur-lg shadow-xl mb-8 w-full">
               <CardContent className="p-6">
                 <div className="flex flex-col space-y-4 mt-2">
@@ -200,12 +183,10 @@ const SellNFTConfirmation = () => {
               </CardContent>
             </Card>
             
-            {/* Confirmation Question */}
             <div className="text-center mb-6">
               <h3 className="text-xl font-medium text-white mb-3">Are you sure you want to sell this NFT on {marketplaceName}?</h3>
             </div>
             
-            {/* Action Buttons */}
             <div className="flex gap-4 justify-center">
               <Button 
                 variant="outline" 
