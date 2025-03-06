@@ -13,4 +13,5 @@ export interface NFT {
   description?: string;
   properties?: Property[];
   token_standard?: string;
+  owner_id?: string | null;
 }
