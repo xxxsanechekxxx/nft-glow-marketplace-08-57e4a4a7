@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Globe } from "lucide-react";
@@ -117,7 +118,7 @@ const SellNFTMarketplace = () => {
           </div>
         </div>
 
-        <Card className="border-0 bg-gradient-to-b from-purple-900/40 to-purple-800/20 backdrop-blur-md shadow-xl relative overflow-hidden">
+        <Card className="border-0 bg-gradient-to-b from-purple-900/40 to-purple-800/20 backdrop-blur-md shadow-xl relative overflow-hidden mb-8">
           <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-pink-500/5 to-purple-500/5 opacity-50"></div>
           <div className="absolute inset-0 border border-purple-500/20 rounded-lg"></div>
           
@@ -125,18 +126,21 @@ const SellNFTMarketplace = () => {
             <RadioGroup 
               value={selectedMarketplace || ""} 
               onValueChange={setSelectedMarketplace}
-              className="grid gap-4"
+              className="space-y-4"
             >
               {marketplaces.map((marketplace) => (
-                <div key={marketplace.id} className="flex items-center">
+                <div
+                  key={marketplace.id}
+                  className="relative flex items-center"
+                >
                   <RadioGroupItem 
                     value={marketplace.id} 
                     id={marketplace.id}
-                    className="peer sr-only" 
+                    className="peer sr-only"
                   />
                   <Label
                     htmlFor={marketplace.id}
-                    className="flex items-center justify-between w-full p-4 rounded-lg border border-purple-500/20 peer-data-[state=checked]:border-purple-400 peer-data-[state=checked]:bg-purple-500/10 cursor-pointer transition-all duration-300"
+                    className="flex items-center justify-between w-full p-4 rounded-lg border border-purple-500/20 hover:bg-purple-500/5 peer-data-[state=checked]:border-purple-400 peer-data-[state=checked]:bg-purple-500/10 cursor-pointer transition-all duration-300"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center">
