@@ -53,7 +53,7 @@ import { UserNFTCollection } from "@/components/nft/UserNFTCollection";
 
 interface Transaction {
   id: string;
-  type: 'deposit' | 'withdraw' | 'purchase';
+  type: 'deposit' | 'withdraw' | 'purchase' | 'sale';
   amount: string;
   created_at: string;
   status: 'pending' | 'completed' | 'failed';
@@ -934,6 +934,9 @@ const Profile = () => {
                                 )}
                                 {transaction.type === 'purchase' && (
                                   <ShoppingBag className="w-4 h-4 text-blue-500" />
+                                )}
+                                {transaction.type === 'sale' && (
+                                  <ShoppingBag className="w-4 h-4 text-green-500" />
                                 )}
                                 {transaction.type}
                               </TableCell>
