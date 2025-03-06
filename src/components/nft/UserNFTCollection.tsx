@@ -59,9 +59,10 @@ export const UserNFTCollection = () => {
           id={nft.id}
           name={nft.name}
           image={nft.image}
-          price={nft.price}
+          price={nft.price.toString()}
           creator={nft.creator}
           owner_id={nft.owner_id}
+          for_sale={nft.for_sale}
         />
       ))}
     </div>

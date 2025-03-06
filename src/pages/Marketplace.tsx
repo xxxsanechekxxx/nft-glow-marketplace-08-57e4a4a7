@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { supabase } from "@/lib/supabase";
@@ -25,7 +26,7 @@ const fetchNFTs = async ({ pageParam = 0 }) => {
   const { data, error, count } = await supabase
     .from('nfts')
     .select('*', { count: 'exact' })
-    .is('owner_id', null)
+    .or('owner_id.is.null,for_sale.eq.true') // Show NFTs without owner OR with for_sale=true
     .range(from, to)
     .order('created_at', { ascending: false });
 

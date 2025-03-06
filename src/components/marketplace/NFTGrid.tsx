@@ -10,6 +10,8 @@ interface NFT {
   price: string;
   creator: string;
   created_at: string;
+  owner_id?: string | null;
+  for_sale?: boolean;
 }
 
 interface NFTGridProps {
@@ -71,7 +73,7 @@ export const NFTGrid = ({
               >
                 <div className="relative transition-transform duration-700 group-hover:translate-y-[-8px] group-hover:scale-[1.02]">
                   <div className="absolute -inset-2 bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                  <NFTCard {...nft} />
+                  <NFTCard {...nft} for_sale={nft.for_sale} />
                 </div>
               </div>
             ))}

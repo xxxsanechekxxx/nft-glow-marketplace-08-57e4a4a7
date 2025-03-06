@@ -14,4 +14,6 @@ export interface NFT {
   properties?: Property[];
   token_standard?: string;
   owner_id?: string | null;
+  for_sale?: boolean;
+  marketplace?: string | null;
 }

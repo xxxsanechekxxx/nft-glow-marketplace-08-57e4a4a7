@@ -2,6 +2,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import React from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { Tag } from "lucide-react";
 
 interface NFTCardProps {
   id: string;
@@ -10,10 +12,15 @@ interface NFTCardProps {
   price: string;
   creator: string;
   owner_id?: string | null;
+  for_sale?: boolean;
 }
 
-export const NFTCard = ({ id, name, image, price, creator, owner_id }: NFTCardProps) => {
+export const NFTCard = ({ id, name, image, price, creator, owner_id, for_sale }: NFTCardProps) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  
+  const isOwner = user?.id === owner_id;
+  const isForSale = for_sale === true;
 
   const handlePurchase = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -30,6 +37,12 @@ export const NFTCard = ({ id, name, image, price, creator, owner_id }: NFTCardPr
       <div className="relative">
         <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
         <div className="relative rounded-xl overflow-hidden bg-background/60 backdrop-blur-sm border border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-700">
+          {isForSale && (
+            <div className="absolute top-2 right-2 bg-primary/80 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1 z-10">
+              <Tag className="h-3 w-3" />
+              For Sale
+            </div>
+          )}
           <div className="aspect-square overflow-hidden">
             <img
               src={image}
@@ -50,12 +63,12 @@ export const NFTCard = ({ id, name, image, price, creator, owner_id }: NFTCardPr
                 {price}
               </span>
               <Button 
-                onClick={owner_id ? handleSell : handlePurchase} 
+                onClick={(isOwner && !isForSale) ? handleSell : handlePurchase} 
                 size="sm"
                 className="relative overflow-hidden transition-all duration-700 hover:scale-105 hover:shadow-lg hover:shadow-primary/20"
               >
                 <span className="relative z-10">
-                  {owner_id ? "Sell" : "Purchase"}
+                  {(isOwner && !isForSale) ? "Sell" : "Purchase"}
                 </span>
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-purple-500/80 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
               </Button>
