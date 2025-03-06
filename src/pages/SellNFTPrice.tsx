@@ -268,10 +268,6 @@ const SellNFTPrice = () => {
                 <div className="absolute inset-0 border border-purple-500/20 rounded-lg"></div>
                 
                 <CardContent className="p-8">
-                  <h2 className="text-2xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-300">
-                    Set Your Price
-                  </h2>
-                  
                   <form onSubmit={handleSubmit} className="space-y-8">
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
