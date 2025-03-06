@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -123,8 +124,8 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
       <DialogTrigger asChild>
         {trigger}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] bg-gradient-to-br from-purple-900/50 to-purple-800/30 backdrop-blur-xl border border-white/10">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-[425px] max-h-[80vh] md:max-h-[90vh] overflow-y-auto bg-gradient-to-br from-purple-900/50 to-purple-800/30 backdrop-blur-xl border border-white/10 relative">
+        <DialogHeader className="mb-4">
           <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
             {isLogin ? "Welcome Back" : "Create Account"}
           </DialogTitle>
@@ -134,7 +135,7 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
               : "Join us today and start your journey"}
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-4 pb-4">
           <div className="space-y-2">
             <label htmlFor="email" className="text-sm font-medium text-gray-300 flex items-center gap-2">
               <Mail className="w-4 h-4" />
@@ -247,7 +248,7 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
                 <h4 className="text-sm font-medium text-gray-300">Additional agreements</h4>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <label htmlFor="seed-access" className="text-sm text-gray-400 leading-none">
+                    <label htmlFor="seed-access" className="text-sm text-gray-400 leading-none flex-1 mr-4">
                       I agree that only I have access to the seed and keys. If the seed is lost, access to accounts cannot be restored
                     </label>
                     <Switch
@@ -258,7 +259,7 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
                   </div>
                   
                   <div className="flex items-center justify-between">
-                    <label htmlFor="seed-transfer" className="text-sm text-gray-400 leading-none">
+                    <label htmlFor="seed-transfer" className="text-sm text-gray-400 leading-none flex-1 mr-4">
                       I agree that when transferring the seed to third parties, I may lose all my accounts
                     </label>
                     <Switch
@@ -269,7 +270,7 @@ export const AuthModal = ({ trigger }: AuthModalProps) => {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <label htmlFor="policy" className="text-sm text-gray-400 leading-none">
+                    <label htmlFor="policy" className="text-sm text-gray-400 leading-none flex-1 mr-4">
                       I agree to the website policy and terms of service
                     </label>
                     <Switch
