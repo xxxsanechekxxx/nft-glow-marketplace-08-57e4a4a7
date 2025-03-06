@@ -111,15 +111,15 @@ const SellNFTConfirmation = () => {
       <div className="absolute w-96 h-96 bg-primary/10 rounded-full blur-3xl top-20 right-1/4 animate-pulse duration-10000 -z-10" />
       <div className="absolute w-80 h-80 bg-purple-500/10 rounded-full blur-3xl -bottom-20 left-1/4 animate-pulse duration-8000 -z-10" />
       
-      {/* Back button - moved up to top-24 to be below header but not covered by it */}
-      <div className="absolute top-24 left-6 md:top-24 md:left-10 z-20">
+      {/* Back button - styled to match the design in the first screenshot */}
+      <div className="absolute left-6 top-[100px] md:left-10 md:top-[100px]">
         <Link
           to={`/sell-nft/${id}`}
-          className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-all duration-300 group"
+          className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-all duration-300"
         >
-          <div className="relative z-10 flex items-center gap-2 px-4 py-2 bg-black/40 rounded-full backdrop-blur-xl border border-white/10 group-hover:border-primary/30">
-            <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform duration-300" />
-            Back
+          <div className="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full">
+            <ArrowLeft className="h-4 w-4" />
+            <span>Back</span>
           </div>
         </Link>
       </div>
