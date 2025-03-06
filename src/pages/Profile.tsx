@@ -87,6 +87,7 @@ const Profile = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
+  const [withdrawWalletAddress, setWithdrawWalletAddress] = useState("");
   const [depositAmount, setDepositAmount] = useState("");
   const [userData, setUserData] = useState<UserData | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -456,6 +457,15 @@ const Profile = () => {
       return;
     }
 
+    if (!withdrawWalletAddress) {
+      toast({
+        title: "Error",
+        description: "Please enter a wallet address for the withdrawal",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from('transactions')
@@ -464,7 +474,8 @@ const Profile = () => {
             user_id: user?.id,
             type: 'withdraw',
             amount: withdrawAmountNum,
-            status: 'pending'
+            status: 'pending',
+            wallet_address: withdrawWalletAddress
           }
         ]);
 
@@ -476,6 +487,7 @@ const Profile = () => {
       });
       
       setWithdrawAmount("");
+      setWithdrawWalletAddress("");
     } catch (error) {
       toast({
         title: "Error",
@@ -883,6 +895,18 @@ const Profile = () => {
                           value={withdrawAmount}
                           onChange={(e) => setWithdrawAmount(e.target.value)}
                           placeholder="Enter amount"
+                          className="bg-background/40 border-destructive/20 focus:border-destructive/40"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-destructive/80">
+                          Wallet Address
+                        </label>
+                        <Input
+                          type="text"
+                          value={withdrawWalletAddress}
+                          onChange={(e) => setWithdrawWalletAddress(e.target.value)}
+                          placeholder="Enter wallet address"
                           className="bg-background/40 border-destructive/20 focus:border-destructive/40"
                         />
                       </div>
