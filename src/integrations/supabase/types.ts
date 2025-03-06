@@ -17,6 +17,7 @@ export type Database = {
           id: string
           image: string
           name: string
+          owner_id: string | null
           price: number
           properties: Json | null
         }
@@ -27,6 +28,7 @@ export type Database = {
           id?: string
           image: string
           name: string
+          owner_id?: string | null
           price: number
           properties?: Json | null
         }
@@ -37,6 +39,7 @@ export type Database = {
           id?: string
           image?: string
           name?: string
+          owner_id?: string | null
           price?: number
           properties?: Json | null
         }
@@ -133,6 +136,12 @@ export type Database = {
           total_deposits: number
           total_withdrawals: number
         }[]
+      }
+      purchase_nft: {
+        Args: {
+          nft_id: string
+        }
+        Returns: Json
       }
     }
     Enums: {

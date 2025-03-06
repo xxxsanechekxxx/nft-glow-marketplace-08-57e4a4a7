@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { supabase } from "@/lib/supabase";
@@ -14,6 +13,7 @@ interface NFT {
   price: string;
   creator: string;
   created_at: string;
+  owner_id: string | null;
 }
 
 const ITEMS_PER_PAGE = 8;
@@ -25,6 +25,7 @@ const fetchNFTs = async ({ pageParam = 0 }) => {
   const { data, error, count } = await supabase
     .from('nfts')
     .select('*', { count: 'exact' })
+    .is('owner_id', null)
     .range(from, to)
     .order('created_at', { ascending: false });
 

@@ -9,15 +9,19 @@ interface NFTCardProps {
   image: string;
   price: string;
   creator: string;
+  owner_id?: string | null;
 }
 
-export const NFTCard = ({ id, name, image, price, creator }: NFTCardProps) => {
+export const NFTCard = ({ id, name, image, price, creator, owner_id }: NFTCardProps) => {
   const navigate = useNavigate();
 
   const handlePurchase = (e: React.MouseEvent) => {
     e.preventDefault();
     navigate(`/nft/${id}`);
   };
+
+  // If the NFT is already owned, we might not want to show it in certain contexts
+  // This is handled at the parent component level now
 
   return (
     <Link to={`/nft/${id}`} className="block group">
@@ -48,7 +52,9 @@ export const NFTCard = ({ id, name, image, price, creator }: NFTCardProps) => {
                 size="sm"
                 className="relative overflow-hidden transition-all duration-700 hover:scale-105 hover:shadow-lg hover:shadow-primary/20"
               >
-                <span className="relative z-10">Purchase</span>
+                <span className="relative z-10">
+                  {owner_id ? "View" : "Purchase"}
+                </span>
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-purple-500/80 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
               </Button>
             </div>

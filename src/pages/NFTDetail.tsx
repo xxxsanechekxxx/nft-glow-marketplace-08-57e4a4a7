@@ -1,9 +1,9 @@
 
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/lib/supabase";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { NFTImage } from "@/components/nft/NFTImage";
 import { NFTHeader } from "@/components/nft/NFTHeader";
@@ -15,6 +15,8 @@ const NFTDetail = () => {
   const { id } = useParams();
   const { toast } = useToast();
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { data: nft, isLoading } = useQuery({
     queryKey: ['nft', id],
@@ -46,26 +48,20 @@ const NFTDetail = () => {
     enabled: !!user,
   });
 
-  const handlePurchase = async () => {
-    if (!user) return;
-
-    const nftPrice = parseFloat(nft?.price || "0");
-    const userBalance = parseFloat(userData?.balance || "0");
-
-    if (userBalance < nftPrice) {
-      toast({
-        title: "Insufficient funds",
-        description: `Your balance (${userBalance} ETH) is less than the NFT price (${nftPrice} ETH)`,
-        variant: "destructive",
-      });
-      return;
-    }
-
-    toast({
-      title: "Purchase initiated",
-      description: "Processing your purchase...",
-    });
+  const handlePurchaseComplete = () => {
+    // Invalidate and refetch queries to update UI
+    queryClient.invalidateQueries({ queryKey: ['nft', id] });
+    queryClient.invalidateQueries({ queryKey: ['user-balance', user?.id] });
+    queryClient.invalidateQueries({ queryKey: ['nfts'] });
+    
+    // Navigate to profile page after successful purchase
+    setTimeout(() => {
+      navigate('/profile');
+    }, 2000);
   };
+
+  // Check if the NFT is already owned
+  const isOwned = nft?.owner_id === user?.id;
 
   if (isLoading) {
     return (
@@ -87,6 +83,9 @@ const NFTDetail = () => {
       </div>
     );
   }
+
+  // Check if NFT is already owned (by anyone)
+  const alreadyPurchased = !!nft.owner_id;
 
   return (
     <div className="min-h-[90vh] relative overflow-hidden bg-gradient-to-b from-background via-background/80 to-background/60">
@@ -120,10 +119,21 @@ const NFTDetail = () => {
             )}
 
             <div className="flex gap-4">
-              <PurchaseButton 
-                isLoggedIn={!!user}
-                onPurchase={handlePurchase}
-              />
+              {isOwned ? (
+                <div className="w-full py-4 px-6 text-center bg-white/10 border border-primary/20 rounded-lg backdrop-blur-xl">
+                  <p className="text-lg text-primary font-medium">You own this NFT</p>
+                </div>
+              ) : alreadyPurchased ? (
+                <div className="w-full py-4 px-6 text-center bg-white/10 border border-white/10 rounded-lg backdrop-blur-xl">
+                  <p className="text-lg text-muted-foreground">This NFT has already been purchased</p>
+                </div>
+              ) : (
+                <PurchaseButton 
+                  isLoggedIn={!!user}
+                  onPurchase={handlePurchaseComplete}
+                  nftId={nft.id}
+                />
+              )}
             </div>
 
             <NFTDetails 
