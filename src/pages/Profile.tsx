@@ -811,7 +811,7 @@ const Profile = () => {
                   onClick={() => navigate('/deposit')}
                   className="w-full bg-green-500/20 hover:bg-green-500/30 text-green-500 flex items-center gap-3 p-6 h-auto group relative overflow-hidden"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-green-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-green-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <div className="p-3 rounded-xl bg-green-500/20 group-hover:bg-green-500/30 transition-colors">
                     <ArrowDownCircle className="w-6 h-6" />
                   </div>
@@ -826,3 +826,121 @@ const Profile = () => {
                     <Button 
                       className="w-full bg-destructive/20 hover:bg-destructive/30 text-destructive flex items-center gap-3 p-6 h-auto group relative overflow-hidden"
                     >
+                      <div className="absolute inset-0 bg-gradient-to-r from-destructive/10 to-red 500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <div className="p-3 rounded-xl bg-destructive/20 group-hover:bg-destructive/30 transition-colors">
+                        <ArrowUpCircle className="w-6 h-6" />
+                      </div>
+                      <div className="flex flex-col items-start">
+                        <span className="text-lg font-semibold">Withdraw</span>
+                        <span className="text-sm text-muted-foreground">Withdraw funds from your wallet</span>
+                      </div>
+                    </Button>
+                  </DialogTrigger>
+
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Withdraw Funds</DialogTitle>
+                      <DialogDescription>
+                        Enter the amount you want to withdraw and the wallet address.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleWithdraw} className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Amount (ETH)</label>
+                        <Input
+                          type="number"
+                          value={withdrawAmount}
+                          onChange={(e) => setWithdrawAmount(e.target.value)}
+                          placeholder="0.00"
+                          step="0.01"
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Wallet Address</label>
+                        <Input
+                          value={withdrawWalletAddress}
+                          onChange={(e) => setWithdrawWalletAddress(e.target.value)}
+                          placeholder="Enter wallet address"
+                          required
+                        />
+                      </div>
+                      <DialogFooter>
+                        <Button type="submit">
+                          Withdraw Funds
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="verification">
+            <Card>
+              <CardHeader>
+                <CardTitle>Account Verification</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium">Verify your identity</p>
+                      <p className="text-sm text-muted-foreground">
+                        Complete the verification process to unlock all features
+                      </p>
+                    </div>
+                    <Button
+                      onClick={startKYCVerification}
+                      disabled={userData?.kyc_status === 'completed'}
+                      className="bg-primary/20 text-primary hover:bg-primary/30"
+                    >
+                      {userData?.kyc_status === 'completed' ? (
+                        <>
+                          <CheckCircle2 className="w-4 h-4 mr-2" />
+                          Verified
+                        </>
+                      ) : (
+                        'Start Verification'
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="nft">
+            <UserNFTCollection />
+          </TabsContent>
+        </Tabs>
+      </div>
+
+      <KYCIdentityDialog
+        open={isIdentityDialogOpen}
+        onClose={() => setIsIdentityDialogOpen(false)}
+        onSuccess={handleIdentitySuccess}
+      />
+
+      <KYCAddressDialog
+        open={isAddressDialogOpen}
+        onClose={handleAddressClose}
+        onSuccess={handleAddressSuccess}
+      />
+
+      <WalletAddressModal
+        isOpen={isWalletModalOpen}
+        onClose={() => setIsWalletModalOpen(false)}
+        onGenerate={handleGenerateWalletAddress}
+      />
+
+      <FraudWarningDialog
+        open={isFraudWarningOpen}
+        onClose={() => setIsFraudWarningOpen(false)}
+      />
+    </div>
+  );
+};
+
+export default Profile;
