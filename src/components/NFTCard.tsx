@@ -20,6 +20,11 @@ export const NFTCard = ({ id, name, image, price, creator, owner_id }: NFTCardPr
     navigate(`/nft/${id}`);
   };
 
+  const handleSell = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate(`/sell-nft/${id}`);
+  };
+
   return (
     <Link to={`/nft/${id}`} className="block group">
       <div className="relative">
@@ -45,12 +50,12 @@ export const NFTCard = ({ id, name, image, price, creator, owner_id }: NFTCardPr
                 {price}
               </span>
               <Button 
-                onClick={handlePurchase} 
+                onClick={owner_id ? handleSell : handlePurchase} 
                 size="sm"
                 className="relative overflow-hidden transition-all duration-700 hover:scale-105 hover:shadow-lg hover:shadow-primary/20"
               >
                 <span className="relative z-10">
-                  {owner_id ? "View" : "Purchase"}
+                  {owner_id ? "Sell" : "Purchase"}
                 </span>
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-purple-500/80 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
               </Button>

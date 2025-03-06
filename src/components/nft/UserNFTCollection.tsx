@@ -5,15 +5,7 @@ import { NFTCard } from "@/components/NFTCard";
 import { EmptyNFTState } from "@/components/EmptyNFTState";
 import { useAuth } from "@/hooks/useAuth";
 import { Loader2 } from "lucide-react";
-
-interface NFT {
-  id: string;
-  name: string;
-  image: string;
-  price: string;
-  creator: string;
-  owner_id: string | null;
-}
+import type { NFT } from "@/types/nft";
 
 export const UserNFTCollection = () => {
   const [nfts, setNfts] = useState<NFT[]>([]);
