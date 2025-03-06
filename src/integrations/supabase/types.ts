@@ -159,7 +159,7 @@ export type Database = {
         | "verified"
         | "rejected"
       transaction_status: "pending" | "completed" | "failed"
-      transaction_type: "deposit" | "withdraw" | "purchase"
+      transaction_type: "deposit" | "withdraw" | "purchase" | "sale"
     }
     CompositeTypes: {
       [_ in never]: never
