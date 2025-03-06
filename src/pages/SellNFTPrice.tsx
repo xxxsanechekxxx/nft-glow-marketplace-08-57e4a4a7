@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, Tag, CheckCircle, Sparkles, FileCheck } from "lucide-react";
@@ -208,12 +209,23 @@ const SellNFTPrice = () => {
               
               <h3 className="text-2xl font-bold mb-3 text-white">NFT Listed Successfully!</h3>
               <p className="text-lg text-purple-200/90 text-center mb-6 max-w-md">
-                Your NFT is now listed for sale on {marketplaceName} for {price} ETH
+                Your NFT is now listed for sale on {marketplaceName} for {price} 
+                <img 
+                  src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                  alt="ETH"
+                  className="h-4 w-4 inline mx-1"
+                />
               </p>
               
               <div className="flex flex-col items-center justify-center space-y-2 text-center">
                 <p className="text-purple-200/90">
-                  You'll receive: <span className="text-green-400 font-medium">{calculateSellerProceeds()} ETH</span> after platform fee
+                  You'll receive: <span className="text-green-400 font-medium">{calculateSellerProceeds()}</span> 
+                  <img 
+                    src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                    alt="ETH"
+                    className="h-4 w-4 inline mx-1"
+                  />
+                  after platform fee
                 </p>
                 <div className="flex items-center justify-center space-x-2 text-purple-300/70 text-sm mt-2">
                   <Sparkles className="h-4 w-4" />
@@ -280,10 +292,15 @@ const SellNFTPrice = () => {
                       <div className="flex items-center justify-between">
                         <label htmlFor="price" className="flex items-center gap-2 text-md font-medium text-purple-100">
                           <Tag className="h-5 w-5 text-purple-400" />
-                          Price (ETH)
+                          Price
                         </label>
                         <div className="text-xs text-purple-300/60 bg-purple-500/10 px-3 py-1 rounded-full border border-purple-500/20">
-                          <span className="font-medium">Current Floor:</span> 0.24 ETH
+                          <span className="font-medium">Current Floor:</span> 0.24 
+                          <img 
+                            src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                            alt="ETH"
+                            className="h-3 w-3 inline mx-1"
+                          />
                         </div>
                       </div>
                       
@@ -305,7 +322,11 @@ const SellNFTPrice = () => {
                           required
                         />
                         <div className="absolute right-3 top-1/2 -translate-y-1/2 text-purple-300/50 text-sm">
-                          ETH
+                          <img 
+                            src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                            alt="ETH"
+                            className="h-4 w-4"
+                          />
                         </div>
                       </div>
                       
@@ -314,7 +335,12 @@ const SellNFTPrice = () => {
                           <p className="text-purple-200/60">Platform fee ({PLATFORM_FEE_PERCENT}%):</p>
                           {price && (
                             <p className="text-purple-200/60">
-                              {(parseFloat(price) * PLATFORM_FEE_PERCENT / 100).toFixed(4)} ETH
+                              {(parseFloat(price) * PLATFORM_FEE_PERCENT / 100).toFixed(4)}
+                              <img 
+                                src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                                alt="ETH"
+                                className="h-3 w-3 inline mx-1"
+                              />
                             </p>
                           )}
                         </div>
@@ -323,7 +349,12 @@ const SellNFTPrice = () => {
                           <p className="text-purple-200/60">You'll receive:</p> 
                           {price && (
                             <p className="text-green-400 font-medium">
-                              {calculateSellerProceeds()} ETH
+                              {calculateSellerProceeds()}
+                              <img 
+                                src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                                alt="ETH"
+                                className="h-3 w-3 inline mx-1"
+                              />
                             </p>
                           )}
                         </div>
