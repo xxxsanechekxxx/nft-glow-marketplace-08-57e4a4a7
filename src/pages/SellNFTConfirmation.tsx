@@ -191,7 +191,7 @@ const SellNFTConfirmation = () => {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">Collection:</span>
-                    <span className="font-medium text-white">{nft.collection || 'Personal Collection'}</span>
+                    <span className="font-medium text-white">{nft.properties?.find(prop => prop.key === 'collection')?.value || 'Personal Collection'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">Marketplace:</span>
