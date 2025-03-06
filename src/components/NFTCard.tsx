@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import React from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { Tag } from "lucide-react";
 
 interface NFTCardProps {
   id: string;
@@ -37,12 +36,6 @@ export const NFTCard = ({ id, name, image, price, creator, owner_id, for_sale }:
       <div className="relative">
         <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
         <div className="relative rounded-xl overflow-hidden bg-background/60 backdrop-blur-sm border border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-700">
-          {isForSale && (
-            <div className="absolute top-2 right-2 bg-primary/80 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1 z-10">
-              <Tag className="h-3 w-3" />
-              For Sale
-            </div>
-          )}
           <div className="aspect-square overflow-hidden">
             <img
               src={image}
