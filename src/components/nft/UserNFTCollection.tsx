@@ -39,6 +39,44 @@ export const UserNFTCollection = () => {
     fetchUserNFTs();
   }, [user?.id]);
 
+  const handleUpdateNFTPrice = async (id: string, newPrice: string) => {
+    try {
+      const { error } = await supabase
+        .from('nfts')
+        .update({ price: newPrice })
+        .eq('id', id)
+        .eq('owner_id', user?.id);
+      
+      if (error) throw error;
+      
+      // Update local state
+      setNfts(nfts.map(nft => 
+        nft.id === id ? { ...nft, price: Number(newPrice) } : nft
+      ));
+    } catch (error) {
+      console.error("Error updating NFT price:", error);
+    }
+  };
+
+  const handleCancelSale = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('nfts')
+        .update({ for_sale: false })
+        .eq('id', id)
+        .eq('owner_id', user?.id);
+      
+      if (error) throw error;
+      
+      // Update local state
+      setNfts(nfts.map(nft => 
+        nft.id === id ? { ...nft, for_sale: false } : nft
+      ));
+    } catch (error) {
+      console.error("Error canceling NFT sale:", error);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center py-20">
@@ -63,6 +101,9 @@ export const UserNFTCollection = () => {
           creator={nft.creator}
           owner_id={nft.owner_id}
           for_sale={nft.for_sale}
+          isProfileView={true}
+          onCancelSale={handleCancelSale}
+          onUpdatePrice={handleUpdateNFTPrice}
         />
       ))}
     </div>
