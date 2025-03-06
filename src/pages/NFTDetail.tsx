@@ -108,6 +108,33 @@ const NFTDetail = () => {
 
           <div className="space-y-8 animate-fade-in">
             <NFTHeader name={nft.name} creator={nft.creator} />
+            
+            {/* Display NFT Price */}
+            <div className="relative group">
+              <div className="absolute -inset-px bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-xl blur opacity-75 group-hover:opacity-100 transition-all duration-700" />
+              <div className="relative flex items-center justify-between backdrop-blur-xl bg-white/5 p-6 rounded-xl border border-white/10 group-hover:border-primary/20 transition-all duration-300 group-hover:bg-white/10 shadow-lg group-hover:shadow-primary/20">
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Current price</p>
+                  <div className="flex items-center gap-2">
+                    <img 
+                      src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                      alt="ETH"
+                      className="h-6 w-6"
+                    />
+                    <span className="text-2xl font-bold bg-gradient-to-r from-white to-primary bg-clip-text text-transparent">
+                      {nft.price} ETH
+                    </span>
+                  </div>
+                </div>
+                {nft.owner_id && (
+                  <div className="bg-white/10 px-4 py-2 rounded-full border border-white/10">
+                    <p className="text-sm text-muted-foreground">
+                      {isOwned ? "You own this" : "Already purchased"}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
 
             {nft.description && (
               <div className="relative group">
