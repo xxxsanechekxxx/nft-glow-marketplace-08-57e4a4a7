@@ -47,9 +47,9 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 import DepositConfirmationDialog from "@/components/DepositConfirmationDialog";
 import FraudWarningDialog from "@/components/FraudWarningDialog";
-import { EmptyNFTState } from "@/components/EmptyNFTState";
 import KYCIdentityDialog from "@/components/KYCIdentityDialog";
 import KYCAddressDialog from "@/components/KYCAddressDialog";
+import { UserNFTCollection } from "@/components/nft/UserNFTCollection";
 
 interface Transaction {
   id: string;
@@ -977,7 +977,7 @@ const Profile = () => {
               <CardContent className="space-y-8">
                 <div className="p-6 rounded-xl bg-[#12151C]/80 border border-primary/10 space-y-4">
                   <div className="flex items-start gap-4">
-                    <div className={`p-3 rounded-xl ${userData?.verified ? 'bg-green-500/10 border border-green-500/20' : 'bg-orange-500/10 border border-orange-500/20'}`}>
+                    <div className={`p-3 rounded-lg ${userData?.verified ? 'bg-green-500/10 border border-green-500/20' : 'bg-orange-500/10 border border-orange-500/20'}`}>
                       {userData?.verified ? (
                         <CheckCircle2 className="w-8 h-8 text-green-500" />
                       ) : (
@@ -1109,7 +1109,7 @@ const Profile = () => {
           </TabsContent>
 
           <TabsContent value="nft">
-            <EmptyNFTState />
+            <UserNFTCollection />
           </TabsContent>
         </Tabs>
       </div>

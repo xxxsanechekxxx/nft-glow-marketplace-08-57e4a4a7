@@ -20,9 +20,6 @@ export const NFTCard = ({ id, name, image, price, creator, owner_id }: NFTCardPr
     navigate(`/nft/${id}`);
   };
 
-  // If the NFT is already owned, we might not want to show it in certain contexts
-  // This is handled at the parent component level now
-
   return (
     <Link to={`/nft/${id}`} className="block group">
       <div className="relative">

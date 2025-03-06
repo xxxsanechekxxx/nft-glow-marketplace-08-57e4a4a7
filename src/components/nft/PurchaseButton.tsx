@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { AuthModal } from "@/components/AuthModal";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase";
 import { Loader2 } from "lucide-react";
 
 interface PurchaseButtonProps {
@@ -30,13 +30,18 @@ export const PurchaseButton = ({ isLoggedIn, onPurchase, nftId }: PurchaseButton
         throw error;
       }
       
-      if (!data.success) {
-        toast({
-          title: "Purchase Failed",
-          description: data.message,
-          variant: "destructive",
-        });
-        return;
+      // Handle the response safely with type checking
+      if (data && typeof data === 'object' && 'success' in data) {
+        if (!data.success && 'message' in data) {
+          toast({
+            title: "Purchase Failed",
+            description: String(data.message),
+            variant: "destructive",
+          });
+          return;
+        }
+      } else {
+        throw new Error("Unexpected response format");
       }
       
       toast({
@@ -45,7 +50,7 @@ export const PurchaseButton = ({ isLoggedIn, onPurchase, nftId }: PurchaseButton
       });
       
       onPurchase();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Purchase error:", error);
       toast({
         title: "Purchase Error",
