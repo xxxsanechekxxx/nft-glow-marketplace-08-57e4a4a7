@@ -13,7 +13,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 
 const marketplaces = [
-  { id: "purenft", name: "PureNFT.com", logo: "/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" },
+  { id: "purenft", name: "PureNFT.io", logo: "/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" },
   { id: "rarible", name: "Rarible.com", logo: "/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" },
   { id: "opensea", name: "OpenSea.io", logo: "/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" },
   { id: "looksrare", name: "LooksRare.org", logo: "/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" },

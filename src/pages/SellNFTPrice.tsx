@@ -1,8 +1,7 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, Tag, CheckCircle } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +20,7 @@ const SellNFTPrice = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [marketplace, setMarketplace] = useState<string | null>(null);
   const [marketplaceName, setMarketplaceName] = useState<string>("selected marketplace");
+  const queryClient = useQueryClient();
 
   const { data: nft, isLoading } = useQuery({
     queryKey: ['nft', id],
@@ -42,7 +42,7 @@ const SellNFTPrice = () => {
     setMarketplace(savedMarketplace);
 
     // Set marketplace name based on ID
-    if (savedMarketplace === 'purenft') setMarketplaceName('PureNFT.com');
+    if (savedMarketplace === 'purenft') setMarketplaceName('PureNFT.io');
     if (savedMarketplace === 'rarible') setMarketplaceName('Rarible.com');
     if (savedMarketplace === 'opensea') setMarketplaceName('OpenSea.io');
     if (savedMarketplace === 'looksrare') setMarketplaceName('LooksRare.org');
@@ -72,21 +72,46 @@ const SellNFTPrice = () => {
     
     setIsSubmitting(true);
     
-    // Simulate submission
-    setTimeout(() => {
+    try {
+      // Update the NFT in the database to mark it as for sale in the marketplace
+      const { error } = await supabase
+        .from('nfts')
+        .update({
+          price: parseFloat(price),
+          for_sale: true,
+          marketplace: marketplace
+        })
+        .eq('id', id);
+      
+      if (error) throw error;
+      
+      // After successful update
       setIsSubmitting(false);
       setIsSuccess(true);
+      
+      // Invalidate relevant queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['nft', id] });
+      queryClient.invalidateQueries({ queryKey: ['nfts'] });
       
       toast({
         title: "NFT listed for sale",
         description: `Your NFT is now listed for sale on ${marketplaceName} for ${price} ETH`,
       });
       
-      // Redirect to profile after 3 seconds
+      // Redirect to marketplace after 3 seconds
       setTimeout(() => {
-        navigate("/profile");
+        navigate("/marketplace");
       }, 3000);
-    }, 2000);
+      
+    } catch (error) {
+      setIsSubmitting(false);
+      console.error("Error listing NFT:", error);
+      toast({
+        title: "Error listing NFT",
+        description: "There was an error listing your NFT for sale. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   if (isLoading) {
@@ -167,7 +192,7 @@ const SellNFTPrice = () => {
                 <p className="text-muted-foreground text-center mb-6">
                   Your NFT is now listed for sale on {marketplaceName} for {price} ETH
                 </p>
-                <p className="text-sm text-muted-foreground">Redirecting to your profile...</p>
+                <p className="text-sm text-muted-foreground">Redirecting to marketplace...</p>
               </CardContent>
             </Card>
           ) : (
