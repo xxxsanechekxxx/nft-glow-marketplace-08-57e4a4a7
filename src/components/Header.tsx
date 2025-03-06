@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, User } from "lucide-react";
-import { AuthModal } from './AuthModal';
 import { useAuth } from "@/hooks/useAuth";
 
 export const Header = () => {
@@ -66,15 +65,13 @@ export const Header = () => {
                 </Button>
               </Link>
             ) : (
-              <AuthModal 
-                trigger={
-                  <Button variant="outline" className="flex items-center gap-2 bg-white/5 backdrop-blur-xl border-white/10 hover:border-primary/40 hover:bg-primary/10 transition-all duration-300 shadow-lg hover:shadow-primary/20 relative group">
-                    <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <User className="w-4 h-4 relative z-10" />
-                    <span className="relative z-10">Login</span>
-                  </Button>
-                }
-              />
+              <Link to="/login">
+                <Button variant="outline" className="flex items-center gap-2 bg-white/5 backdrop-blur-xl border-white/10 hover:border-primary/40 hover:bg-primary/10 transition-all duration-300 shadow-lg hover:shadow-primary/20 relative group">
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <User className="w-4 h-4 relative z-10" />
+                  <span className="relative z-10">Login</span>
+                </Button>
+              </Link>
             )}
           </nav>
 
@@ -124,15 +121,13 @@ export const Header = () => {
                   </Button>
                 </Link>
               ) : (
-                <AuthModal 
-                  trigger={
-                    <Button variant="outline" className="w-full flex items-center gap-2 justify-center bg-white/5 backdrop-blur-xl border-white/10 hover:border-primary/40 hover:bg-primary/10 transition-all duration-300 relative group">
-                      <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      <User className="w-4 h-4 relative z-10" />
-                      <span className="relative z-10">Login</span>
-                    </Button>
-                  }
-                />
+                <Link to="/login" onClick={() => setIsMenuOpen(false)}>
+                  <Button variant="outline" className="w-full flex items-center gap-2 justify-center bg-white/5 backdrop-blur-xl border-white/10 hover:border-primary/40 hover:bg-primary/10 transition-all duration-300 relative group">
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <User className="w-4 h-4 relative z-10" />
+                    <span className="relative z-10">Login</span>
+                  </Button>
+                </Link>
               )}
             </nav>
           </div>

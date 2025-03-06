@@ -18,6 +18,8 @@ import BlogPost from "./pages/BlogPost";
 import SellNFTMarketplace from "./pages/SellNFTMarketplace";
 import SellNFTConfirmation from "./pages/SellNFTConfirmation";
 import SellNFTPrice from "./pages/SellNFTPrice";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +45,8 @@ const App = () => (
               <Route path="/sell-nft/:id" element={<SellNFTMarketplace />} />
               <Route path="/sell-nft/:id/confirm" element={<SellNFTConfirmation />} />
               <Route path="/sell-nft/:id/price" element={<SellNFTPrice />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
             </Routes>
           </main>
           <Footer />
