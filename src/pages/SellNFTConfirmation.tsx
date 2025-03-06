@@ -153,12 +153,14 @@ const SellNFTConfirmation = () => {
                 <div className="w-full max-w-md bg-white/5 rounded-full h-2 mb-2">
                   <div className="h-2 rounded-full bg-gradient-to-r from-primary to-purple-500 animate-[progress_10s_ease-in-out_forwards]"></div>
                 </div>
-                <style jsx="true">{`
-                  @keyframes progress {
-                    0% { width: 0%; }
-                    100% { width: 100%; }
-                  }
-                `}</style>
+                <style>
+                  {`
+                    @keyframes progress {
+                      0% { width: 0%; }
+                      100% { width: 100%; }
+                    }
+                  `}
+                </style>
                 <p className="text-xs text-muted-foreground">Please wait, this may take a moment...</p>
               </CardContent>
             </Card>
