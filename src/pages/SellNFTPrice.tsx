@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, Tag, CheckCircle } from "lucide-react";
+import { ArrowLeft, Tag, CheckCircle, Sparkles, FileCheck } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
@@ -163,94 +164,174 @@ const SellNFTPrice = () => {
   }
 
   return (
-    <div className="min-h-[90vh] relative overflow-hidden bg-gradient-to-b from-background via-background/80 to-background/60">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-purple-500/10 via-pink-500/5 to-primary/10 blur-3xl -z-10" />
+    <div className="min-h-screen bg-gradient-to-b from-[#09081A] via-[#0E0D26] to-[#13123A] relative overflow-hidden py-20">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-0 left-1/4 w-72 h-72 bg-purple-600/10 rounded-full filter blur-3xl animate-pulse opacity-30"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full filter blur-3xl animate-pulse opacity-20"></div>
+        <div className="absolute top-1/3 right-1/3 w-64 h-64 bg-pink-500/10 rounded-full filter blur-3xl animate-pulse opacity-20"></div>
+      </div>
       
-      <div className="container mx-auto px-4 pt-24 pb-16 relative">
-        <Link
-          to={`/sell-nft/${id}/confirm`}
-          className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-all duration-300 mb-8 group relative overflow-hidden"
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"></div>
-          <div className="relative z-10 flex items-center gap-2 px-6 py-2.5 bg-white/5 rounded-full backdrop-blur-xl border border-white/10 group-hover:border-primary/20 shadow-lg group-hover:shadow-primary/20">
-            <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform duration-300" />
-            Back
-          </div>
-        </Link>
+      <div className="container max-w-4xl mx-auto px-6 relative z-10">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-300 to-purple-400">
+            Set Your Price
+          </h1>
+          <p className="text-lg text-purple-200/80 max-w-2xl mx-auto">
+            Enter the amount you want to sell your NFT for on {marketplaceName}
+          </p>
+        </div>
 
-        <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-12">
-            <h1 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-primary">Set Your Price</h1>
-            <p className="text-lg text-muted-foreground">Enter the amount you want to sell your NFT for on {marketplaceName}</p>
-          </div>
-
-          {isSuccess ? (
-            <Card className="border border-primary/20 bg-background/60 backdrop-blur-sm shadow-lg transition-all duration-700 p-8">
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <CheckCircle className="h-16 w-16 text-green-500 mb-8" />
-                <h3 className="text-xl font-semibold mb-2">NFT Listed Successfully!</h3>
-                <p className="text-muted-foreground text-center mb-6">
-                  Your NFT is now listed for sale on {marketplaceName} for {price} ETH
-                </p>
-                <p className="text-sm text-muted-foreground">Redirecting to marketplace...</p>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card className="border border-primary/20 bg-background/60 backdrop-blur-sm shadow-lg hover:shadow-primary/5 transition-all duration-700">
-              <CardContent className="pt-6">
-                <div className="flex gap-6 mb-8 items-center">
-                  <div className="w-24 h-24 rounded-lg overflow-hidden border border-primary/20 shadow-lg shadow-primary/10">
-                    <img src={nft?.image} alt={nft?.name} className="w-full h-full object-cover" />
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-semibold">{nft?.name}</h2>
-                    <p className="text-muted-foreground">Created by {nft?.creator}</p>
-                    <p className="text-muted-foreground">Listing on {marketplaceName}</p>
+        {isSuccess ? (
+          <Card className="border-0 bg-gradient-to-b from-purple-900/40 to-purple-800/20 backdrop-blur-md shadow-xl relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-pink-500/5 to-purple-500/5 opacity-50"></div>
+            <div className="absolute inset-0 border border-purple-500/20 rounded-lg"></div>
+            
+            <CardContent className="flex flex-col items-center justify-center py-12 px-6">
+              <div className="w-20 h-20 flex items-center justify-center bg-gradient-to-br from-green-400 to-green-600 rounded-full mb-8 shadow-lg shadow-green-500/20">
+                <CheckCircle className="h-10 w-10 text-white" />
+              </div>
+              
+              <h3 className="text-2xl font-bold mb-3 text-white">NFT Listed Successfully!</h3>
+              <p className="text-lg text-purple-200/90 text-center mb-6 max-w-md">
+                Your NFT is now listed for sale on {marketplaceName} for {price} ETH
+              </p>
+              
+              <div className="flex items-center justify-center space-x-2 text-purple-300/70 text-sm">
+                <Sparkles className="h-4 w-4" />
+                <p>Redirecting to marketplace...</p>
+              </div>
+              
+              <div className="w-full max-w-xs mt-8 relative h-1.5">
+                <div className="absolute inset-0 bg-purple-900/60 rounded-full"></div>
+                <div className="h-1.5 rounded-full bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 animate-[progress_3s_ease-in-out_forwards] relative"></div>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="flex flex-col lg:flex-row gap-8 items-stretch">
+            {/* NFT Preview Card */}
+            <div className="lg:w-2/5">
+              <div className="group relative rounded-xl overflow-hidden transform transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl shadow-purple-500/5">
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/80 z-10"></div>
+                <div className="absolute bottom-0 left-0 right-0 p-5 z-20">
+                  <div className="bg-black/40 backdrop-blur-md rounded-lg p-4 border border-white/10">
+                    <h3 className="text-xl font-bold text-white mb-1">{nft?.name}</h3>
+                    <p className="text-purple-200/80 text-sm">Created by {nft?.creator}</p>
                   </div>
                 </div>
-
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="space-y-2">
-                    <label htmlFor="price" className="flex items-center gap-2 text-sm font-medium mb-2">
-                      <Tag className="h-4 w-4 text-primary" />
-                      Price (ETH)
-                    </label>
-                    <div className="relative">
-                      <Input
-                        id="price"
-                        type="text"
-                        value={price}
-                        onChange={handlePriceChange}
-                        placeholder="0.00"
-                        className="pl-10 border-primary/20 focus:border-primary"
-                        required
-                      />
-                      <div className="absolute left-3 top-1/2 -translate-y-1/2">
-                        <img 
-                          src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
-                          alt="ETH"
-                          className="h-4 w-4"
+                <img 
+                  src={nft?.image} 
+                  alt={nft?.name} 
+                  className="w-full h-full object-cover aspect-square" 
+                />
+              </div>
+              
+              <div className="mt-6 p-5 bg-purple-900/20 backdrop-blur-md rounded-xl border border-purple-500/20">
+                <div className="flex items-center gap-3 text-purple-200/80 mb-2">
+                  <FileCheck className="h-5 w-5 text-purple-400" />
+                  <span className="text-sm font-medium">Marketplace Details</span>
+                </div>
+                <div className="pl-8">
+                  <p className="text-sm text-purple-200/60 mb-1">
+                    <span className="text-purple-200/40 mr-2">Listing on:</span>
+                    <span className="text-purple-300 font-medium">{marketplaceName}</span>
+                  </p>
+                  <p className="text-sm text-purple-200/60">
+                    <span className="text-purple-200/40 mr-2">Network:</span>
+                    <span className="text-purple-300 font-medium">Ethereum Mainnet</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Price Setting Card */}
+            <div className="lg:w-3/5">
+              <Card className="border-0 h-full bg-gradient-to-b from-purple-900/40 to-purple-800/20 backdrop-blur-md shadow-xl relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-pink-500/5 to-purple-500/5 opacity-50"></div>
+                <div className="absolute inset-0 border border-purple-500/20 rounded-lg"></div>
+                
+                <CardContent className="p-8">
+                  <h2 className="text-2xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-300">
+                    Set Your Price
+                  </h2>
+                  
+                  <form onSubmit={handleSubmit} className="space-y-8">
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <label htmlFor="price" className="flex items-center gap-2 text-md font-medium text-purple-100">
+                          <Tag className="h-5 w-5 text-purple-400" />
+                          Price (ETH)
+                        </label>
+                        <div className="text-xs text-purple-300/60 bg-purple-500/10 px-3 py-1 rounded-full border border-purple-500/20">
+                          <span className="font-medium">Current Floor:</span> 0.24 ETH
+                        </div>
+                      </div>
+                      
+                      <div className="relative">
+                        <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-6 h-6">
+                          <img 
+                            src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                            alt="ETH"
+                            className="h-5 w-5"
+                          />
+                        </div>
+                        <Input
+                          id="price"
+                          type="text"
+                          value={price}
+                          onChange={handlePriceChange}
+                          placeholder="0.00"
+                          className="pl-12 py-6 text-lg border-purple-500/30 bg-purple-900/30 focus:border-purple-400 focus:ring-purple-400/50 shadow-inner shadow-purple-500/5"
+                          required
                         />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-purple-300/50 text-sm">
+                          ETH
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between text-sm text-purple-200/60">
+                        <p>Platform fee: 2.5%</p>
+                        {price && (
+                          <p>You'll receive: <span className="text-purple-200 font-medium">
+                            {(parseFloat(price) * 0.975).toFixed(4)} ETH
+                          </span></p>
+                        )}
                       </div>
                     </div>
-                    <p className="text-xs text-muted-foreground">Enter the price in ETH you want to sell this NFT for</p>
-                  </div>
-
-                  <Button 
-                    type="submit"
-                    disabled={isSubmitting || !price}
-                    className="w-full relative overflow-hidden transition-all duration-700 hover:scale-105 group"
-                  >
-                    <span className="relative z-10">
-                      {isSubmitting ? "Processing..." : "Confirm"}
-                    </span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-purple-500/80 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+                    
+                    <div className="pt-4">
+                      <Button 
+                        type="submit"
+                        disabled={isSubmitting || !price}
+                        className="w-full py-6 text-lg relative overflow-hidden group"
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 opacity-100 group-hover:opacity-90 transition-opacity"></div>
+                        <span className="relative z-10 font-bold flex items-center justify-center gap-2">
+                          {isSubmitting ? (
+                            <>
+                              <span className="h-5 w-5 border-2 border-white/30 border-t-white/90 rounded-full animate-spin"></span>
+                              Processing...
+                            </>
+                          ) : (
+                            <>
+                              List NFT for Sale
+                              <Sparkles className="h-5 w-5 text-yellow-200 animate-pulse" />
+                            </>
+                          )}
+                        </span>
+                      </Button>
+                      
+                      <p className="text-center text-xs text-purple-200/50 mt-4">
+                        By confirming, you agree to our Terms of Service and NFT Listing Policy
+                      </p>
+                    </div>
+                  </form>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
