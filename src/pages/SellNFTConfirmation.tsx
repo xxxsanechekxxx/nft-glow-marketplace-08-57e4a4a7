@@ -131,7 +131,7 @@ const SellNFTConfirmation = () => {
               <div className="w-20 h-20 rounded-full bg-purple-500/10 flex items-center justify-center mb-8">
                 <Loader2 className="h-10 w-10 text-purple-400 animate-spin" />
               </div>
-              <h3 className="text-2xl font-semibold mb-3 text-white">Connecting to {marketplaceName} marketplace</h3>
+              <h3 className="text-2xl font-semibold mb-3 text-white">Verification in progress</h3>
               <p className="text-gray-400 text-center mb-8 max-w-md">
                 Connecting to {marketplaceName} marketplace. Verifying wallet signature and preparing your NFT for listing...
               </p>
