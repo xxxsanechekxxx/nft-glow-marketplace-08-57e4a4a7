@@ -16,4 +16,14 @@ export interface NFT {
   owner_id?: string | null;
   for_sale?: boolean;
   marketplace?: string | null;
+  marketplace_status?: string;
+}
+
+export interface NFTBid {
+  id: string;
+  nft_id: string;
+  bidder_address: string;
+  bid_amount: string;
+  created_at: string;
+  marketplace: string;
 }
