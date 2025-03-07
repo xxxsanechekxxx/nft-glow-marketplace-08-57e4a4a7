@@ -121,15 +121,20 @@ export const ActiveBids = () => {
           .rpc('accept_bid', { bid_id: selectedBid.id });
         
         if (error) throw error;
-        
-        if (!data.success) {
-          throw new Error(data.message);
+
+        // Type checking for the returned data
+        if (typeof data === 'object' && data !== null && 'success' in data) {
+          if (!data.success) {
+            throw new Error(data.message as string);
+          }
+          
+          toast({
+            title: "Bid Accepted",
+            description: `You sold your NFT for ${selectedBid.bid_amount} ETH (${data.fee_percent as number}% fee applied)`,
+          });
+        } else {
+          throw new Error("Invalid response format");
         }
-        
-        toast({
-          title: "Bid Accepted",
-          description: `You sold your NFT for ${selectedBid.bid_amount} ETH (${data.fee_percent}% fee applied)`,
-        });
       } else {
         // Delete just this bid
         const { error } = await supabase
@@ -141,7 +146,7 @@ export const ActiveBids = () => {
 
         toast({
           title: "Bid Declined",
-          description: "The bid has been declined",
+          description: "The bid has been declined and removed",
         });
       }
 
@@ -296,7 +301,7 @@ export const ActiveBids = () => {
                                 
                                 <div className="flex items-center text-gray-400 text-xs">
                                   <Clock className="h-3 w-3 mr-1" />
-                                  <span>{formatRelativeTime(bid.created_at)}</span>
+                                  <span>{formatRelativeTime(bid.created_at || '')}</span>
                                 </div>
                               </div>
                               
