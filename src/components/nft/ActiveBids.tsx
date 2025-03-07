@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Clock, Award, CheckCircle2, XCircle } from "lucide-react";
 import { NFTBid, NFT } from "@/types/nft";
 import { Button } from "@/components/ui/button";
@@ -109,75 +109,36 @@ export const ActiveBids = () => {
   };
 
   const confirmAction = async () => {
-    if (!selectedBid || !actionType) return;
+    if (!selectedBid || !actionType || !user?.id) return;
     
     try {
       if (actionType === "accept") {
-        const bidAmount = parseFloat(selectedBid.bid_amount);
-        const platformFeePercent = 2.5;
-        const platformFee = bidAmount * (platformFeePercent / 100);
-        const sellerAmount = bidAmount - platformFee;
-
-        // 1. Update NFT ownership to the bidder and set for_sale to false
-        const { error: nftError } = await supabase
-          .from('nfts')
-          .update({ 
-            owner_id: selectedBid.bidder_address,
-            for_sale: false 
-          })
-          .eq('id', selectedBid.nft_id);
+        console.log("Accepting bid:", selectedBid.id, "for NFT:", selectedBid.nft_id, "by user:", user.id);
         
-        if (nftError) {
-          console.error("Error updating NFT ownership:", nftError);
-          throw nftError;
-        }
-
-        // 2. Update seller's balance with amount after fee
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .update({ 
-            balance: supabase.rpc('increment', { amount: sellerAmount })
-          })
-          .eq('user_id', user?.id);
-        
-        if (profileError) {
-          console.error("Error updating profile balance:", profileError);
-          throw profileError;
-        }
-
-        // 3. Record sale transaction for the seller
-        const { error: transactionError } = await supabase
-          .from('transactions')
-          .insert({ 
-            amount: sellerAmount,
-            type: 'sale',
-            item: selectedBid.nft_id,
-            status: 'completed',
-            user_id: user?.id
+        // Call the Supabase function that handles bid acceptance
+        const { data, error } = await supabase
+          .rpc('accept_bid', { 
+            p_bid_id: selectedBid.id,
+            p_user_id: user.id
           });
         
-        if (transactionError) {
-          console.error("Error creating transaction record:", transactionError);
-          throw transactionError;
+        if (error) {
+          console.error("Error accepting bid:", error);
+          throw error;
         }
-
-        // 4. Delete all bids for this NFT
-        const { error: bidsError } = await supabase
-          .from('nft_bids')
-          .delete()
-          .eq('nft_id', selectedBid.nft_id);
         
-        if (bidsError) {
-          console.error("Error deleting bids:", bidsError);
-          throw bidsError;
+        console.log("Bid acceptance result:", data);
+        
+        if (data.success) {
+          toast({
+            title: "Bid Accepted",
+            description: `You sold your NFT for ${data.amount.toFixed(2)} ETH (after ${data.fee_percent}% fee)`,
+          });
+        } else {
+          throw new Error(data.message || 'Failed to accept bid');
         }
-
-        toast({
-          title: "Bid Accepted",
-          description: `You sold your NFT for ${sellerAmount.toFixed(2)} ETH (after ${platformFeePercent}% fee)`,
-        });
       } else {
-        // Delete just this bid
+        // Decline just this bid
         const { error } = await supabase
           .from('nft_bids')
           .delete()
@@ -195,11 +156,11 @@ export const ActiveBids = () => {
       queryClient.invalidateQueries({ queryKey: ['nft-bids'] });
       queryClient.invalidateQueries({ queryKey: ['user-nfts'] });
       
-    } catch (error) {
+    } catch (error: any) {
       console.error(`Error ${actionType}ing bid:`, error);
       toast({
         title: "Error",
-        description: `Failed to ${actionType} the bid`,
+        description: `Failed to ${actionType} the bid: ${error.message || 'Unknown error'}`,
         variant: "destructive"
       });
     } finally {
@@ -347,7 +308,7 @@ export const ActiveBids = () => {
                               <div className="flex gap-2 mt-2">
                                 <Button 
                                   onClick={() => handleAcceptBid(bid)}
-                                  className="accept-button"
+                                  variant="success"
                                 >
                                   <CheckCircle2 className="w-4 h-4 mr-2" /> Accept
                                 </Button>
@@ -486,9 +447,9 @@ export const ActiveBids = () => {
               Cancel
             </Button>
             <Button 
-              variant={actionType === "accept" ? "default" : "destructive"}
+              variant={actionType === "accept" ? "success" : "destructive"}
               onClick={confirmAction}
-              className={`text-xs sm:text-sm ${actionType === "accept" ? "bg-green-600 hover:bg-green-700" : ""}`}
+              className={`text-xs sm:text-sm ${actionType === "accept" ? "" : ""}`}
               size="sm"
             >
               {actionType === "accept" ? "Confirm Sale" : "Confirm Decline"}
