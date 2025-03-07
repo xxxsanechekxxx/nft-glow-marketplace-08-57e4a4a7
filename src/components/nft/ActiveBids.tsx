@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
-import { Loader2, Clock, DollarSign, Award, CheckCircle2, XCircle, Calendar, ShieldCheck, ShieldAlert } from "lucide-react";
+import { Loader2, Clock, Award, CheckCircle2, XCircle, ShieldCheck, ShieldAlert } from "lucide-react";
 import { NFTBid, NFT } from "@/types/nft";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -226,8 +226,8 @@ export const ActiveBids = () => {
                       <h3 className="font-semibold text-sm sm:text-lg md:text-xl line-clamp-1">{nft?.name || 'Unknown NFT'}</h3>
                       <div className="flex flex-wrap gap-1 sm:gap-2 items-center">
                         <Badge variant="outline" className="bg-amber-500/10 text-amber-200 border-amber-500/20 text-[10px] sm:text-xs py-0.5 sm:py-1">
-                          <DollarSign className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-0.5 sm:mr-1" />
-                          Top: {highestBid?.bid_amount} ETH
+                          <img src="/lovable-uploads/174f7cf6-3855-440b-a1dd-6f860efba966.png" alt="ETH" className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-0.5 sm:mr-1" />
+                          Top: {highestBid?.bid_amount}
                         </Badge>
                         <Badge variant="outline" className="bg-blue-500/10 text-blue-200 border-blue-500/20 text-[10px] sm:text-xs py-0.5 sm:py-1">
                           <Award className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-0.5 sm:mr-1" />
@@ -287,12 +287,8 @@ export const ActiveBids = () => {
                               {/* Bid Details */}
                               <div className="mt-1 sm:mt-2 flex flex-wrap gap-1 sm:gap-3 bid-meta-container">
                                 <span className={`bid-amount ${index === 0 ? 'bid-amount-highlighted' : 'bid-amount-regular'}`}>
-                                  <img 
-                                    src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
-                                    alt="ETH" 
-                                    className="h-3 w-3 sm:h-4 sm:w-4 mr-0.5 sm:mr-1" 
-                                  />
-                                  {bid.bid_amount} ETH
+                                  <img src="/lovable-uploads/174f7cf6-3855-440b-a1dd-6f860efba966.png" alt="ETH" className="h-3 w-3 sm:h-4 sm:w-4 mr-0.5 sm:mr-1" />
+                                  {bid.bid_amount}
                                 </span>
                                 
                                 <div className="flex flex-wrap gap-1 sm:gap-3">
@@ -307,7 +303,7 @@ export const ActiveBids = () => {
                               <div className="flex gap-2 sm:gap-3 mt-2 sm:mt-3">
                                 <Button 
                                   onClick={() => handleAcceptBid(bid)}
-                                  className="accept-btn flex-1 text-xs sm:text-xs"
+                                  className="accept-btn flex-1 text-xs sm:text-xs h-7"
                                   size="sm"
                                 >
                                   <CheckCircle2 className="w-3 h-3 mr-1" /> Accept
@@ -316,7 +312,7 @@ export const ActiveBids = () => {
                                 <Button 
                                   variant="outline"
                                   onClick={() => handleDeclineBid(bid)}
-                                  className="decline-btn flex-1 text-xs sm:text-xs"
+                                  className="decline-btn flex-1 text-xs sm:text-xs h-7"
                                   size="sm"
                                 >
                                   <XCircle className="w-3 h-3 mr-1" /> Decline
@@ -383,12 +379,8 @@ export const ActiveBids = () => {
                   <div className="flex flex-col items-center">
                     <span className="text-xs sm:text-sm text-green-300">You are selling for</span>
                     <div className="flex items-center justify-center mt-1">
-                      <img 
-                        src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
-                        alt="ETH" 
-                        className="h-5 w-5 sm:h-6 sm:w-6 mr-1 sm:mr-2" 
-                      />
-                      <span className="text-xl sm:text-2xl font-bold text-green-400">{selectedBid.bid_amount} ETH</span>
+                      <img src="/lovable-uploads/174f7cf6-3855-440b-a1dd-6f860efba966.png" alt="ETH" className="h-5 w-5 sm:h-6 sm:w-6 mr-1 sm:mr-2" />
+                      <span className="text-xl sm:text-2xl font-bold text-green-400">{selectedBid.bid_amount}</span>
                     </div>
                     <span className="text-xs sm:text-sm text-green-300 mt-1 bidder-address">{selectedBid.bidder_address}</span>
                     
@@ -409,12 +401,8 @@ export const ActiveBids = () => {
                   <div className="flex flex-col items-center">
                     <span className="text-xs sm:text-sm text-red-300">You are declining</span>
                     <div className="flex items-center justify-center mt-1">
-                      <img 
-                        src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
-                        alt="ETH" 
-                        className="h-5 w-5 sm:h-6 sm:w-6 mr-1 sm:mr-2" 
-                      />
-                      <span className="text-xl sm:text-2xl font-bold text-red-400">{selectedBid.bid_amount} ETH</span>
+                      <img src="/lovable-uploads/174f7cf6-3855-440b-a1dd-6f860efba966.png" alt="ETH" className="h-5 w-5 sm:h-6 sm:w-6 mr-1 sm:mr-2" />
+                      <span className="text-xl sm:text-2xl font-bold text-red-400">{selectedBid.bid_amount}</span>
                     </div>
                     <span className="text-xs sm:text-sm text-red-300 mt-1 bidder-address">{selectedBid.bidder_address}</span>
                     
