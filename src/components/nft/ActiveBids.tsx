@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Clock, Award, CheckCircle2, XCircle, ShieldCheck, ShieldAlert } from "lucide-react";
@@ -43,7 +43,12 @@ export const ActiveBids = () => {
         .eq('for_sale', true);
       
       if (error) throw error;
-      return data as NFT[];
+      
+      // Convert the price to string to match our NFT type
+      return (data || []).map(nft => ({
+        ...nft,
+        price: nft.price.toString()
+      })) as NFT[];
     },
     enabled: !!user?.id
   });
@@ -64,7 +69,16 @@ export const ActiveBids = () => {
         .order('bid_amount', { ascending: false });
       
       if (error) throw error;
-      return data as (NFTBid & { nft: NFT })[];
+      
+      // Convert bid amounts and NFT prices to strings to match our types
+      return (data || []).map(bid => ({
+        ...bid,
+        bid_amount: bid.bid_amount.toString(),
+        nft: bid.nft ? {
+          ...bid.nft,
+          price: bid.nft.price.toString()
+        } : undefined
+      })) as (NFTBid & { nft: NFT })[];
     },
     enabled: !!userNFTs?.length
   });
