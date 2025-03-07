@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -127,84 +128,10 @@
   100% { width: 100%; }
 }
 
-/* New bid card styling */
+/* Updated bid card styling to match screenshot */
 .bid-card {
-  @apply relative rounded-lg border transition-all duration-300;
-  background: linear-gradient(170deg, rgba(58, 54, 82, 0.4) 0%, rgba(25, 22, 47, 0.6) 100%);
-}
-
-.bid-card-highlight {
-  @apply relative rounded-lg transition-all duration-300;
-  background: linear-gradient(170deg, rgba(147, 82, 39, 0.25) 0%, rgba(75, 47, 22, 0.35) 100%);
-  border: 1px solid rgba(255, 177, 15, 0.3);
-}
-
-.marketplace-badge {
-  @apply absolute top-3 left-3 z-10 px-2.5 py-1 text-xs font-medium rounded-full;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.nft-accordion-item {
-  @apply overflow-hidden border-0 bg-transparent mb-4;
-}
-
-.nft-accordion-trigger {
-  @apply px-0 py-3 hover:no-underline transition-all;
-}
-
-.nft-accordion-content {
-  @apply px-0 pt-2 pb-4;
-}
-
-/* Bid item enhanced styles */
-.bid-item {
-  @apply rounded-lg p-4 mb-3 transition-all duration-300;
-}
-
-.bid-item-highlighted {
-  @apply border border-amber-500/30 bg-gradient-to-br from-amber-900/20 to-amber-800/10;
-}
-
-.bid-item-regular {
-  @apply border border-purple-500/20 bg-gradient-to-br from-purple-900/15 to-indigo-900/10;
-}
-
-.bid-amount {
-  @apply text-base font-medium flex items-center gap-1;
-}
-
-.bid-amount-highlighted {
-  @apply text-amber-300;
-}
-
-.bid-amount-regular {
-  @apply text-purple-300;
-}
-
-.bid-meta {
-  @apply flex items-center text-xs;
-}
-
-.bid-meta-highlighted {
-  @apply text-amber-200/70;
-}
-
-.bid-meta-regular {
-  @apply text-blue-300/70;
-}
-
-.bid-action-btn {
-  @apply flex items-center justify-center rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-300 mt-2;
-}
-
-.accept-btn {
-  @apply bg-green-600 hover:bg-green-700 text-white py-1 px-2 text-xs;
-}
-
-.decline-btn {
-  @apply bg-transparent border border-red-500/50 text-red-300 hover:bg-red-950/30 hover:text-red-200 py-1 px-2 text-xs;
+  @apply relative rounded-lg border border-[#2A2E3D];
+  background: #0D101A;
 }
 
 /* Mobile-specific styles */
@@ -232,28 +159,6 @@
     margin-top: 0.5rem !important;
   }
   
-  .bid-item {
-    padding: 0.75rem !important;
-  }
-  
-  .bid-meta {
-    font-size: 0.65rem !important;
-  }
-  
-  .bid-amount {
-    font-size: 0.875rem !important;
-  }
-  
-  .bid-action-btn {
-    padding: 0.25rem 0.5rem !important;
-    font-size: 0.7rem !important;
-  }
-  
-  .bid-meta-container {
-    flex-wrap: wrap !important;
-    gap: 0.5rem !important;
-  }
-  
   .bidder-address {
     max-width: 100px !important;
     white-space: nowrap !important;
@@ -262,3 +167,37 @@
     display: inline-block !important;
   }
 }
+
+/* New styles for the updated bid design */
+.dark-bid-card {
+  @apply bg-[#0D101A] border border-[#2A2E3D] rounded-lg;
+}
+
+.bid-item {
+  @apply border border-[#2A2E3D] rounded-lg p-4 my-3;
+}
+
+.verified-badge {
+  @apply bg-green-800/30 text-green-400 border-green-500/30 text-xs;
+}
+
+.verified-dot {
+  @apply bg-green-500 rounded-full h-2 w-2 mr-1;
+}
+
+.bid-amount {
+  @apply flex items-center text-purple-300;
+}
+
+.bid-action-button {
+  @apply flex-1 flex items-center justify-center;
+}
+
+.accept-button {
+  @apply bg-green-600 hover:bg-green-700 text-white;
+}
+
+.decline-button {
+  @apply border-red-500/50 text-red-300 hover:bg-red-950/30 hover:text-red-200;
+}
+

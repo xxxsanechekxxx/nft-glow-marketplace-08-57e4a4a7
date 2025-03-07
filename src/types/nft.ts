@@ -11,12 +11,13 @@ export interface NFT {
   price: string;
   creator: string;
   description?: string;
-  properties?: Property[];
+  properties?: Property[] | any; // Allow any to accommodate Json type from database
   token_standard?: string;
   owner_id?: string | null;
   for_sale?: boolean;
   marketplace?: string | null;
   marketplace_status?: string;
+  created_at?: string;
 }
 
 export interface NFTBid {
@@ -29,5 +30,6 @@ export interface NFTBid {
   nft?: NFT; 
   bidder_rating?: string;
   bidder_verified?: boolean;
+  verified?: boolean; // Additional field to match database
   bidder_joined?: string;
 }
