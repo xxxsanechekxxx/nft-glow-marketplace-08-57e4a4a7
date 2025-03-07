@@ -144,12 +144,12 @@ const NFTDetail = () => {
                   <p className="text-sm text-muted-foreground mb-1">Current price</p>
                   <div className="flex items-center gap-2">
                     <img 
-                      src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                      src="/lovable-uploads/fd7b1417-9dab-4b62-a359-d7a36d3c3edb.png" 
                       alt="ETH"
                       className="h-6 w-6"
                     />
                     <span className="text-2xl font-bold bg-gradient-to-r from-white to-primary bg-clip-text text-transparent">
-                      {nft.price} ETH
+                      {nft.price}
                     </span>
                   </div>
                 </div>
