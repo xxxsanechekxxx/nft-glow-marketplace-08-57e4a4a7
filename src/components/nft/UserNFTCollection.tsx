@@ -4,27 +4,19 @@ import { supabase } from "@/lib/supabase";
 import { NFTCard } from "@/components/NFTCard";
 import { EmptyNFTState } from "@/components/EmptyNFTState";
 import { useAuth } from "@/hooks/useAuth";
-import { Loader2, Filter, SlidersHorizontal } from "lucide-react";
+import { Loader2, Filter, Search } from "lucide-react";
 import type { NFT } from "@/types/nft";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { ActiveBids } from "./ActiveBids";
-import { 
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 
 export const UserNFTCollection = () => {
   const [nfts, setNfts] = useState<NFT[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("my-nfts");
-  const [filterBy, setFilterBy] = useState<"all" | "for-sale" | "not-for-sale">("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -122,10 +114,9 @@ export const UserNFTCollection = () => {
   };
 
   const filteredNFTs = nfts.filter(nft => {
-    if (filterBy === "all") return true;
-    if (filterBy === "for-sale") return nft.for_sale;
-    if (filterBy === "not-for-sale") return !nft.for_sale;
-    return true;
+    if (!searchQuery) return true;
+    return nft.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+           nft.creator.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
   if (isLoading) {
@@ -148,19 +139,12 @@ export const UserNFTCollection = () => {
       return (
         <div className="flex flex-col items-center justify-center py-16 px-4 text-center space-y-4">
           <div className="p-4 rounded-full bg-primary/10">
-            <Filter className="h-10 w-10 text-primary" />
+            <Search className="h-10 w-10 text-primary" />
           </div>
-          <h3 className="text-xl font-semibold">No NFTs match your filter</h3>
+          <h3 className="text-xl font-semibold">No NFTs match your search</h3>
           <p className="text-muted-foreground max-w-md">
-            Try changing your filter settings to see more NFTs
+            Try changing your search criteria
           </p>
-          <Button 
-            variant="outline" 
-            onClick={() => setFilterBy("all")}
-            className="mt-4"
-          >
-            Clear Filters
-          </Button>
         </div>
       );
     }
@@ -205,37 +189,18 @@ export const UserNFTCollection = () => {
         </TabsList>
 
         {activeTab === "my-nfts" && nfts.length > 0 && (
-          <div className="flex gap-2 self-end md:self-auto">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2">
-                  <SlidersHorizontal className="h-4 w-4" />
-                  <span className="hidden sm:inline">Filter</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Filter by status</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem 
-                  className={filterBy === "all" ? "bg-primary/10 text-primary" : ""}
-                  onClick={() => setFilterBy("all")}
-                >
-                  All NFTs
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  className={filterBy === "for-sale" ? "bg-primary/10 text-primary" : ""}
-                  onClick={() => setFilterBy("for-sale")}
-                >
-                  For Sale
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  className={filterBy === "not-for-sale" ? "bg-primary/10 text-primary" : ""}
-                  onClick={() => setFilterBy("not-for-sale")}
-                >
-                  Not For Sale
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+          <div className="relative group w-full md:w-auto">
+            <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
+            <div className="relative flex items-center">
+              <Input
+                type="text"
+                placeholder="Search by name or creator..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 bg-white/5 backdrop-blur-sm border-white/10 focus:border-primary shadow-lg transition-all duration-700 hover:shadow-primary/5 text-white placeholder:text-muted-foreground w-full"
+              />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors duration-700 group-hover:text-primary" />
+            </div>
           </div>
         )}
       </div>

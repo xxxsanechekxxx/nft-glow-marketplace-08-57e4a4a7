@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -285,6 +286,16 @@
   
   .marketplace-nft-card .aspect-square {
     max-height: 300px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  /* NFT image centering on mobile */
+  .aspect-square img {
+    object-fit: contain !important;
+    max-height: 100% !important;
+    margin: 0 auto !important;
   }
   
   /* Transaction table container shouldn't scroll horizontally */
