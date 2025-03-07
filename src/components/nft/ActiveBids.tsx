@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Clock, Award, CheckCircle2, XCircle } from "lucide-react";
+import { Loader2, Clock, Award, CheckCircle2 } from "lucide-react";
 import { NFTBid, NFT } from "@/types/nft";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -27,7 +27,6 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 export const ActiveBids = () => {
   const [selectedBid, setSelectedBid] = useState<(NFTBid & { nft?: NFT })| null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
-  const [actionType, setActionType] = useState<"accept" | "decline" | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
@@ -99,51 +98,29 @@ export const ActiveBids = () => {
 
   const handleAcceptBid = (bid: NFTBid & { nft?: NFT }) => {
     setSelectedBid(bid);
-    setActionType("accept");
-    setConfirmDialogOpen(true);
-  };
-
-  const handleDeclineBid = (bid: NFTBid & { nft?: NFT }) => {
-    setSelectedBid(bid);
-    setActionType("decline");
     setConfirmDialogOpen(true);
   };
 
   const confirmAction = async () => {
-    if (!selectedBid || !actionType) return;
+    if (!selectedBid) return;
     
     try {
       setIsProcessing(true);
       
-      if (actionType === "accept") {
-        // Call the Supabase function to accept the bid
-        const { data, error } = await supabase
-          .rpc('accept_bid', { bid_id: selectedBid.id });
-        
-        if (error) throw error;
-        
-        if (!data.success) {
-          throw new Error(data.message);
-        }
-        
-        toast({
-          title: "Bid Accepted",
-          description: `You sold your NFT for ${selectedBid.bid_amount} ETH (${data.fee_percent}% fee applied)`,
-        });
-      } else {
-        // Delete just this bid
-        const { error } = await supabase
-          .from('nft_bids')
-          .delete()
-          .eq('id', selectedBid.id);
-        
-        if (error) throw error;
-
-        toast({
-          title: "Bid Declined",
-          description: "The bid has been declined",
-        });
+      // Call the Supabase function to accept the bid
+      const { data, error } = await supabase
+        .rpc('accept_bid', { bid_id: selectedBid.id });
+      
+      if (error) throw error;
+      
+      if (!data.success) {
+        throw new Error(data.message);
       }
+      
+      toast({
+        title: "Bid Accepted",
+        description: `You sold your NFT for ${selectedBid.bid_amount} ETH (${data.fee_percent}% fee applied)`,
+      });
 
       // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ['nft-bids'] });
@@ -152,17 +129,16 @@ export const ActiveBids = () => {
       queryClient.invalidateQueries({ queryKey: ['user-transactions'] });
       
     } catch (error) {
-      console.error(`Error ${actionType}ing bid:`, error);
+      console.error("Error accepting bid:", error);
       toast({
         title: "Error",
-        description: `Failed to ${actionType} the bid: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        description: `Failed to accept the bid: ${error instanceof Error ? error.message : 'Unknown error'}`,
         variant: "destructive"
       });
     } finally {
       setIsProcessing(false);
       setConfirmDialogOpen(false);
       setSelectedBid(null);
-      setActionType(null);
     }
   };
 
@@ -300,23 +276,14 @@ export const ActiveBids = () => {
                                 </div>
                               </div>
                               
-                              {/* Accept & Decline Buttons */}
-                              <div className="flex gap-2 mt-2">
+                              {/* Accept Button */}
+                              <div className="flex mt-2">
                                 <Button 
                                   onClick={() => handleAcceptBid(bid)}
-                                  className="accept-button"
+                                  className="accept-button w-full"
                                   disabled={isProcessing}
                                 >
                                   <CheckCircle2 className="w-4 h-4 mr-2" /> Accept
-                                </Button>
-                                
-                                <Button 
-                                  variant="outline"
-                                  onClick={() => handleDeclineBid(bid)}
-                                  className="decline-button"
-                                  disabled={isProcessing}
-                                >
-                                  <XCircle className="w-4 h-4 mr-2" /> Decline
                                 </Button>
                               </div>
                             </div>
@@ -336,12 +303,10 @@ export const ActiveBids = () => {
         <DialogContent className="sm:max-w-md border-purple-500/30 bg-gradient-to-br from-background to-background/95 w-[calc(100%-2rem)] max-w-md mx-auto">
           <DialogHeader>
             <DialogTitle className="text-center text-lg sm:text-xl">
-              {actionType === "accept" ? "Accept Bid" : "Decline Bid"}
+              Accept Bid
             </DialogTitle>
             <DialogDescription className="text-center pt-2 text-sm sm:text-base">
-              {actionType === "accept" 
-                ? "Are you sure you want to accept this bid and sell your NFT? A 2.5% platform fee will be applied." 
-                : "Are you sure you want to decline this bid?"}
+              Are you sure you want to accept this bid and sell your NFT? A 2.5% platform fee will be applied.
             </DialogDescription>
           </DialogHeader>
           
@@ -371,59 +336,32 @@ export const ActiveBids = () => {
                 </div>
               </div>
               
-              <div className={`text-center p-4 sm:p-6 rounded-lg ${
-                actionType === "accept" 
-                  ? "bg-green-900/20 border border-green-500/30" 
-                  : "bg-red-900/20 border border-red-500/30"
-              }`}>
-                {actionType === "accept" ? (
-                  <div className="flex flex-col items-center">
-                    <span className="text-xs sm:text-sm text-green-300">You are selling for</span>
-                    <div className="flex items-center justify-center mt-1">
-                      <img 
-                        src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
-                        alt="ETH" 
-                        className="h-5 w-5 sm:h-6 sm:w-6 mr-1 sm:mr-2" 
-                      />
-                      <span className="text-xl sm:text-2xl font-bold text-green-400">{selectedBid.bid_amount}</span>
-                    </div>
-                    <span className="text-xs sm:text-sm text-green-300 mt-1 bidder-address">{selectedBid.bidder_address}</span>
-                    
-                    {/* Fee Information */}
-                    <Badge className="bg-green-500/10 text-green-300 border-green-500/20 flex text-xs mt-2 items-center gap-1">
-                      2.5% platform fee
+              <div className="text-center p-4 sm:p-6 rounded-lg bg-green-900/20 border border-green-500/30">
+                <div className="flex flex-col items-center">
+                  <span className="text-xs sm:text-sm text-green-300">You are selling for</span>
+                  <div className="flex items-center justify-center mt-1">
+                    <img 
+                      src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                      alt="ETH" 
+                      className="h-5 w-5 sm:h-6 sm:w-6 mr-1 sm:mr-2" 
+                    />
+                    <span className="text-xl sm:text-2xl font-bold text-green-400">{selectedBid.bid_amount}</span>
+                  </div>
+                  <span className="text-xs sm:text-sm text-green-300 mt-1 bidder-address">{selectedBid.bidder_address}</span>
+                  
+                  {/* Fee Information */}
+                  <Badge className="bg-green-500/10 text-green-300 border-green-500/20 flex text-xs mt-2 items-center gap-1">
+                    2.5% platform fee
+                  </Badge>
+                  
+                  {/* Verification Status in Confirmation Dialog */}
+                  {selectedBid.verified ? (
+                    <Badge className="bg-green-500/20 text-green-300 border-green-500/30 flex text-xs mt-2 items-center gap-1">
+                      <span className="bg-green-500 rounded-full h-2 w-2 mr-1"></span>
+                      Verified Bidder
                     </Badge>
-                    
-                    {/* Verification Status in Confirmation Dialog */}
-                    {selectedBid.verified ? (
-                      <Badge className="bg-green-500/20 text-green-300 border-green-500/30 flex text-xs mt-2 items-center gap-1">
-                        <span className="bg-green-500 rounded-full h-2 w-2 mr-1"></span>
-                        Verified Bidder
-                      </Badge>
-                    ) : null}
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center">
-                    <span className="text-xs sm:text-sm text-red-300">You are declining</span>
-                    <div className="flex items-center justify-center mt-1">
-                      <img 
-                        src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
-                        alt="ETH" 
-                        className="h-5 w-5 sm:h-6 sm:w-6 mr-1 sm:mr-2" 
-                      />
-                      <span className="text-xl sm:text-2xl font-bold text-red-400">{selectedBid.bid_amount}</span>
-                    </div>
-                    <span className="text-xs sm:text-sm text-red-300 mt-1 bidder-address">{selectedBid.bidder_address}</span>
-                    
-                    {/* Verification Status in Confirmation Dialog */}
-                    {selectedBid.verified ? (
-                      <Badge className="bg-green-500/20 text-green-300 border-green-500/30 flex text-xs mt-2 items-center gap-1">
-                        <span className="bg-green-500 rounded-full h-2 w-2 mr-1"></span>
-                        Verified Bidder
-                      </Badge>
-                    ) : null}
-                  </div>
-                )}
+                  ) : null}
+                </div>
               </div>
             </div>
           )}
@@ -439,9 +377,9 @@ export const ActiveBids = () => {
               Cancel
             </Button>
             <Button 
-              variant={actionType === "accept" ? "default" : "destructive"}
+              variant="default"
               onClick={confirmAction}
-              className={`text-xs sm:text-sm ${actionType === "accept" ? "bg-green-600 hover:bg-green-700" : ""}`}
+              className="text-xs sm:text-sm bg-green-600 hover:bg-green-700"
               size="sm"
               disabled={isProcessing}
             >
@@ -451,7 +389,7 @@ export const ActiveBids = () => {
                   Processing...
                 </>
               ) : (
-                actionType === "accept" ? "Confirm Sale" : "Confirm Decline"
+                "Confirm Sale"
               )}
             </Button>
           </DialogFooter>
