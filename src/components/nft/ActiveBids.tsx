@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
-import { Loader2, Clock, Award, CheckCircle2, XCircle, ShieldCheck, ShieldAlert } from "lucide-react";
+import { Loader2, Clock, DollarSign, Award, CheckCircle2, XCircle, Calendar, ShieldCheck, ShieldAlert } from "lucide-react";
 import { NFTBid, NFT } from "@/types/nft";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -195,6 +195,7 @@ export const ActiveBids = () => {
           const sortedBids = [...nftBids].sort((a, b) => 
             parseFloat(b.bid_amount) - parseFloat(a.bid_amount)
           );
+          const highestBid = sortedBids[0];
           
           return (
             <AccordionItem 
@@ -224,6 +225,10 @@ export const ActiveBids = () => {
                     <div className="flex-grow space-y-1 text-left">
                       <h3 className="font-semibold text-sm sm:text-lg md:text-xl line-clamp-1">{nft?.name || 'Unknown NFT'}</h3>
                       <div className="flex flex-wrap gap-1 sm:gap-2 items-center">
+                        <Badge variant="outline" className="bg-amber-500/10 text-amber-200 border-amber-500/20 text-[10px] sm:text-xs py-0.5 sm:py-1">
+                          <DollarSign className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-0.5 sm:mr-1" />
+                          Top: {highestBid?.bid_amount} ETH
+                        </Badge>
                         <Badge variant="outline" className="bg-blue-500/10 text-blue-200 border-blue-500/20 text-[10px] sm:text-xs py-0.5 sm:py-1">
                           <Award className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-0.5 sm:mr-1" />
                           {nftBids.length} {nftBids.length === 1 ? 'Bid' : 'Bids'}
@@ -240,7 +245,7 @@ export const ActiveBids = () => {
                       {sortedBids.map((bid, index) => (
                         <div 
                           key={bid.id} 
-                          className={`bid-item ${index === 0 ? 'bg-background/30 border border-purple-500/20 rounded-lg p-3 sm:p-4' : 'bg-background/20 border border-white/5 rounded-lg p-3 sm:p-4'}`}
+                          className={`bid-item ${index === 0 ? 'bid-item-highlighted' : 'bid-item-regular'}`}
                         >
                           <div className="flex items-start gap-2 sm:gap-3">
                             {/* Bid Content */}
@@ -248,7 +253,7 @@ export const ActiveBids = () => {
                               {/* Bidder Info Row */}
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-1 sm:gap-2">
-                                  <span className="text-xs sm:text-sm font-medium text-white">{bid.bidder_address}</span>
+                                  <span className="text-xs sm:text-sm font-medium bidder-address">{bid.bidder_address}</span>
                                   
                                   {/* Verification Badge */}
                                   {bid.verified ? (
@@ -280,27 +285,29 @@ export const ActiveBids = () => {
                               </div>
                               
                               {/* Bid Details */}
-                              <div className="mt-1 sm:mt-2 flex flex-wrap gap-1 sm:gap-3 items-center">
-                                <span className="flex items-center text-purple-300 text-sm sm:text-base">
+                              <div className="mt-1 sm:mt-2 flex flex-wrap gap-1 sm:gap-3 bid-meta-container">
+                                <span className={`bid-amount ${index === 0 ? 'bid-amount-highlighted' : 'bid-amount-regular'}`}>
                                   <img 
-                                    src="/lovable-uploads/fd7b1417-9dab-4b62-a359-d7a36d3c3edb.png" 
+                                    src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
                                     alt="ETH" 
-                                    className="h-3 w-3 sm:h-4 sm:w-4 mr-1" 
+                                    className="h-3 w-3 sm:h-4 sm:w-4 mr-0.5 sm:mr-1" 
                                   />
-                                  <span>{bid.bid_amount}</span>
+                                  {bid.bid_amount} ETH
                                 </span>
                                 
-                                <span className="flex items-center text-xs sm:text-sm text-purple-200/70">
-                                  <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1" />
-                                  {bid.created_at}
-                                </span>
+                                <div className="flex flex-wrap gap-1 sm:gap-3">
+                                  <span className={`bid-meta ${index === 0 ? 'bid-meta-highlighted' : 'bid-meta-regular'}`}>
+                                    <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-0.5 sm:mr-1" />
+                                    {bid.created_at}
+                                  </span>
+                                </div>
                               </div>
                               
                               {/* Action Buttons */}
                               <div className="flex gap-2 sm:gap-3 mt-2 sm:mt-3">
                                 <Button 
                                   onClick={() => handleAcceptBid(bid)}
-                                  className="bg-green-600 hover:bg-green-700 text-white flex-1 text-xs sm:text-xs"
+                                  className="accept-btn flex-1 text-xs sm:text-xs"
                                   size="sm"
                                 >
                                   <CheckCircle2 className="w-3 h-3 mr-1" /> Accept
@@ -309,7 +316,7 @@ export const ActiveBids = () => {
                                 <Button 
                                   variant="outline"
                                   onClick={() => handleDeclineBid(bid)}
-                                  className="border-red-600/30 text-red-300 hover:bg-red-950/30 flex-1 text-xs sm:text-xs"
+                                  className="decline-btn flex-1 text-xs sm:text-xs"
                                   size="sm"
                                 >
                                   <XCircle className="w-3 h-3 mr-1" /> Decline
@@ -377,13 +384,13 @@ export const ActiveBids = () => {
                     <span className="text-xs sm:text-sm text-green-300">You are selling for</span>
                     <div className="flex items-center justify-center mt-1">
                       <img 
-                        src="/lovable-uploads/fd7b1417-9dab-4b62-a359-d7a36d3c3edb.png" 
+                        src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
                         alt="ETH" 
-                        className="h-5 w-5 sm:h-6 sm:w-6 mr-1" 
+                        className="h-5 w-5 sm:h-6 sm:w-6 mr-1 sm:mr-2" 
                       />
-                      <span className="text-xl sm:text-2xl font-bold text-green-400">{selectedBid.bid_amount}</span>
+                      <span className="text-xl sm:text-2xl font-bold text-green-400">{selectedBid.bid_amount} ETH</span>
                     </div>
-                    <span className="text-xs sm:text-sm text-green-300 mt-1">{selectedBid.bidder_address}</span>
+                    <span className="text-xs sm:text-sm text-green-300 mt-1 bidder-address">{selectedBid.bidder_address}</span>
                     
                     {/* Verification Status in Confirmation Dialog */}
                     {selectedBid.verified ? (
@@ -403,13 +410,13 @@ export const ActiveBids = () => {
                     <span className="text-xs sm:text-sm text-red-300">You are declining</span>
                     <div className="flex items-center justify-center mt-1">
                       <img 
-                        src="/lovable-uploads/fd7b1417-9dab-4b62-a359-d7a36d3c3edb.png" 
+                        src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
                         alt="ETH" 
-                        className="h-5 w-5 sm:h-6 sm:w-6 mr-1" 
+                        className="h-5 w-5 sm:h-6 sm:w-6 mr-1 sm:mr-2" 
                       />
-                      <span className="text-xl sm:text-2xl font-bold text-red-400">{selectedBid.bid_amount}</span>
+                      <span className="text-xl sm:text-2xl font-bold text-red-400">{selectedBid.bid_amount} ETH</span>
                     </div>
-                    <span className="text-xs sm:text-sm text-red-300 mt-1">{selectedBid.bidder_address}</span>
+                    <span className="text-xs sm:text-sm text-red-300 mt-1 bidder-address">{selectedBid.bidder_address}</span>
                     
                     {/* Verification Status in Confirmation Dialog */}
                     {selectedBid.verified ? (
@@ -449,72 +456,6 @@ export const ActiveBids = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      <style jsx global>{`
-        .bid-item-highlighted {
-          background-color: rgba(23, 23, 32, 0.3);
-          border: 1px solid rgba(139, 92, 246, 0.2);
-          border-radius: 0.5rem;
-          padding: 0.75rem 1rem;
-        }
-        
-        .bid-item-regular {
-          background-color: rgba(23, 23, 32, 0.2);
-          border: 1px solid rgba(255, 255, 255, 0.05);
-          border-radius: 0.5rem;
-          padding: 0.75rem 1rem;
-        }
-        
-        .bidder-address {
-          color: #fff;
-        }
-        
-        .bid-amount {
-          display: flex;
-          align-items: center;
-          font-weight: 500;
-        }
-        
-        .bid-amount-highlighted {
-          color: rgb(216, 180, 254);
-        }
-        
-        .bid-amount-regular {
-          color: rgb(216, 180, 254);
-        }
-        
-        .bid-meta {
-          display: flex;
-          align-items: center;
-          font-size: 0.75rem;
-        }
-        
-        .bid-meta-highlighted {
-          color: rgba(216, 180, 254, 0.7);
-        }
-        
-        .bid-meta-regular {
-          color: rgba(216, 180, 254, 0.7);
-        }
-        
-        .accept-btn {
-          background-color: rgb(22, 163, 74);
-          color: white;
-        }
-        
-        .accept-btn:hover {
-          background-color: rgb(21, 128, 61);
-        }
-        
-        .decline-btn {
-          border-color: rgba(220, 38, 38, 0.3);
-          color: rgb(252, 165, 165);
-        }
-        
-        .decline-btn:hover {
-          background-color: rgba(127, 29, 29, 0.3);
-        }
-      `}</style>
     </div>
   );
 };
