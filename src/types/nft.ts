@@ -16,15 +16,4 @@ export interface NFT {
   owner_id?: string | null;
   for_sale?: boolean;
   marketplace?: string | null;
-  marketplace_status?: 'unlisted' | 'waiting_for_bids' | 'available_bids' | 'sold';
-}
-
-export interface NFTBid {
-  id: string;
-  nft_id: string;
-  bidder_address: string;
-  bid_amount: string;
-  status: 'active' | 'accepted' | 'declined' | 'expired';
-  created_at: string;
-  expires_at: string;
 }
