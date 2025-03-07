@@ -1,8 +1,7 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Clock, Award, CheckCircle2, User, Tag } from "lucide-react";
+import { Loader2, Clock, Award, CheckCircle2, User, Tag, CheckCircle } from "lucide-react";
 import { NFTBid, NFT } from "@/types/nft";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -24,7 +23,6 @@ import {
 } from "@/components/ui/accordion";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-// Define the RPC response type to fix TypeScript errors
 interface AcceptBidResponse {
   success: boolean;
   message: string;
@@ -35,13 +33,13 @@ export const ActiveBids = () => {
   const [selectedBid, setSelectedBid] = useState<(NFTBid & { nft?: NFT })| null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  // Added a new state to track the loading state when submitting a sale
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [transactionCompleted, setTransactionCompleted] = useState(false);
+  const [sellerReceives, setSellerReceives] = useState<string>("0");
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Format relative time from timestamp
   const formatRelativeTime = (timestamp: string) => {
     try {
       const date = new Date(timestamp);
@@ -52,7 +50,6 @@ export const ActiveBids = () => {
     }
   };
 
-  // Fetch NFTs owned by the user
   const { data: userNFTs, isLoading: isLoadingNFTs } = useQuery({
     queryKey: ['user-nfts', user?.id],
     queryFn: async () => {
@@ -69,7 +66,6 @@ export const ActiveBids = () => {
     enabled: !!user?.id
   });
 
-  // Fetch bids for user's NFTs
   const { data: bids = [], isLoading: isLoadingBids } = useQuery({
     queryKey: ['nft-bids', userNFTs?.map(nft => nft.id)],
     queryFn: async () => {
@@ -107,53 +103,67 @@ export const ActiveBids = () => {
 
   const handleAcceptBid = (bid: NFTBid & { nft?: NFT }) => {
     setSelectedBid(bid);
+    if (bid) {
+      const fee = 2.5;
+      const amount = parseFloat(bid.bid_amount);
+      const receives = amount * (1 - fee / 100);
+      setSellerReceives(receives.toFixed(4));
+    }
     setConfirmDialogOpen(true);
   };
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    
+    if (isSubmitting && !transactionCompleted) {
+      timer = setTimeout(() => {
+        setIsSubmitting(false);
+        setTransactionCompleted(true);
+        
+        toast({
+          title: "Transaction Complete",
+          description: `Your NFT has been sold and ${sellerReceives} ETH has been added to your wallet.`,
+        });
+        
+        queryClient.invalidateQueries({ queryKey: ['nft-bids'] });
+        queryClient.invalidateQueries({ queryKey: ['user-nfts'] });
+        queryClient.invalidateQueries({ queryKey: ['user-balance'] });
+        queryClient.invalidateQueries({ queryKey: ['user-transactions'] });
+      }, 20000);
+    }
+    
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [isSubmitting, transactionCompleted, sellerReceives, toast, queryClient]);
 
   const confirmAction = async () => {
     if (!selectedBid) return;
     
     try {
-      // Set both processing states to true
       setIsProcessing(true);
       setIsSubmitting(true);
+      setConfirmDialogOpen(false);
       
-      // Call the Supabase function to accept the bid
       const { data, error } = await supabase
         .rpc('accept_bid', { bid_id: selectedBid.id });
       
       if (error) throw error;
       
-      // Properly cast the response to our defined type
       const response = data as unknown as AcceptBidResponse;
       
       if (!response.success) {
         throw new Error(response.message);
       }
       
-      toast({
-        title: "Bid Accepted",
-        description: `You sold your NFT for ${selectedBid.bid_amount} ETH (${response.fee_percent}% fee applied)`,
-      });
-
-      // Invalidate queries to refresh data
-      queryClient.invalidateQueries({ queryKey: ['nft-bids'] });
-      queryClient.invalidateQueries({ queryKey: ['user-nfts'] });
-      queryClient.invalidateQueries({ queryKey: ['user-balance'] });
-      queryClient.invalidateQueries({ queryKey: ['user-transactions'] });
-      
     } catch (error) {
       console.error("Error accepting bid:", error);
+      
       toast({
         title: "Error",
         description: `Failed to accept the bid: ${error instanceof Error ? error.message : 'Unknown error'}`,
         variant: "destructive"
       });
-    } finally {
-      setIsProcessing(false);
-      setIsSubmitting(false);
-      setConfirmDialogOpen(false);
-      setSelectedBid(null);
     }
   };
 
@@ -179,7 +189,6 @@ export const ActiveBids = () => {
     );
   }
 
-  // Group bids by NFT
   const bidsByNFT: Record<string, (NFTBid & { nft?: NFT })[]> = {};
   bids.forEach(bid => {
     if (!bidsByNFT[bid.nft_id]) {
@@ -190,13 +199,62 @@ export const ActiveBids = () => {
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
-      {/* Show full page loader when a sale is being submitted */}
       {isSubmitting && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="bg-background/80 p-6 rounded-xl shadow-xl border border-primary/20 flex flex-col items-center">
-            <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
-            <p className="text-lg font-medium">Processing Sale...</p>
-            <p className="text-sm text-muted-foreground">Please wait while we confirm your transaction.</p>
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-background/80 p-8 rounded-xl shadow-xl border border-primary/20 flex flex-col items-center max-w-md w-full">
+            <div className="relative mb-8">
+              <div className="absolute -inset-4 rounded-full bg-gradient-to-r from-primary/30 to-purple-500/30 opacity-75 blur-lg animate-pulse"></div>
+              <Loader2 className="h-16 w-16 animate-spin text-primary relative" />
+            </div>
+            
+            <h3 className="text-2xl font-semibold mb-4 text-center text-primary">Processing Sale</h3>
+            <p className="text-center text-muted-foreground mb-6">
+              Your transaction is being processed. Please wait while we confirm the sale of your NFT.
+            </p>
+            
+            <div className="w-full bg-black/20 h-2 rounded-full overflow-hidden mb-8">
+              <div className="h-full bg-gradient-to-r from-primary to-purple-500 animate-[progress_20s_ease-in-out_forwards]"></div>
+            </div>
+            
+            <div className="bg-black/20 p-4 rounded-lg w-full border border-primary/10">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-muted-foreground">Bid amount:</span>
+                <span className="font-medium text-white flex items-center">
+                  <img 
+                    src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                    alt="ETH" 
+                    className="h-4 w-4 mr-1" 
+                  />
+                  {selectedBid?.bid_amount || "0.00"}
+                </span>
+              </div>
+              
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-muted-foreground">Platform fee (2.5%):</span>
+                <span className="font-medium text-white flex items-center">
+                  <img 
+                    src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                    alt="ETH" 
+                    className="h-4 w-4 mr-1" 
+                  />
+                  {selectedBid ? (parseFloat(selectedBid.bid_amount) * 0.025).toFixed(4) : "0.00"}
+                </span>
+              </div>
+              
+              <div className="h-px bg-white/10 my-2"></div>
+              
+              <div className="flex items-center justify-between font-semibold">
+                <span className="text-green-400">You will receive:</span>
+                <span className="font-bold text-green-400 flex items-center">
+                  <img 
+                    src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                    alt="ETH" 
+                    className="h-4 w-4 mr-1" 
+                  />
+                  {sellerReceives}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -216,14 +274,12 @@ export const ActiveBids = () => {
                 <AccordionTrigger className="px-4 sm:px-6 py-3 sm:py-4 hover:no-underline">
                   <div className="flex w-full items-center justify-between">
                     <div className="flex items-center gap-2 sm:gap-4">
-                      {/* NFT Image */}
                       {nft?.image && (
                         <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-lg overflow-hidden border border-[#3A3F50]">
                           <img src={nft.image} alt={nft.name} className="h-full w-full object-cover" />
                         </div>
                       )}
                       
-                      {/* NFT Info */}
                       <div className="text-left">
                         <h3 className="font-semibold text-sm sm:text-lg text-white truncate max-w-[140px] sm:max-w-full">{nft?.name || 'Unknown NFT'}</h3>
                         <div className="flex items-center mt-1 text-xs sm:text-sm text-gray-400">
@@ -262,7 +318,6 @@ export const ActiveBids = () => {
                         >
                           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
                             <div className="space-y-3">
-                              {/* Bidder info */}
                               <div className="flex items-center space-x-2 sm:space-x-3">
                                 <div className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#252A40] border border-[#3A3F50]">
                                   <User className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
@@ -301,7 +356,6 @@ export const ActiveBids = () => {
                             </div>
                             
                             <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6">
-                              {/* Bid amount */}
                               <div className="flex items-center">
                                 <div className="flex flex-col">
                                   <span className="text-[10px] sm:text-xs text-gray-400">Bid Amount</span>
@@ -316,7 +370,6 @@ export const ActiveBids = () => {
                                 </div>
                               </div>
                               
-                              {/* Accept Button */}
                               <Button 
                                 onClick={() => handleAcceptBid(bid)}
                                 className="bg-green-600 hover:bg-green-700 text-white px-3 sm:px-6 h-8 sm:h-10 text-xs sm:text-sm"
@@ -387,12 +440,10 @@ export const ActiveBids = () => {
                   </div>
                   <span className="text-xs sm:text-sm text-green-300 mt-1 bidder-address">{selectedBid.bidder_address}</span>
                   
-                  {/* Fee Information */}
                   <Badge className="bg-green-500/10 text-green-300 border-green-500/20 flex text-xs mt-2 items-center gap-1">
                     2.5% platform fee
                   </Badge>
                   
-                  {/* Verification Status in Confirmation Dialog */}
                   {selectedBid.verified ? (
                     <Badge className="bg-green-500/20 text-green-300 border-green-500/30 flex text-xs mt-2 items-center gap-1">
                       <span className="bg-green-500 rounded-full h-2 w-2 mr-1"></span>
