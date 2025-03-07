@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Loader2, Shield, ArrowRight } from "lucide-react";
@@ -17,6 +18,7 @@ const SellNFTConfirmation = () => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [marketplace, setMarketplace] = useState<string | null>(null);
   const [marketplaceName, setMarketplaceName] = useState<string>("selected marketplace");
+  const [marketplaceLogo, setMarketplaceLogo] = useState<string | null>(null);
 
   const { data: nft, isLoading } = useQuery({
     queryKey: ['nft', id],
@@ -36,12 +38,18 @@ const SellNFTConfirmation = () => {
     const savedMarketplace = sessionStorage.getItem('sellNFT_marketplace');
     setMarketplace(savedMarketplace);
 
-    if (savedMarketplace === 'purenft') setMarketplaceName('PureNFT.io');
-    if (savedMarketplace === 'rarible') setMarketplaceName('Rarible.com');
-    if (savedMarketplace === 'opensea') setMarketplaceName('OpenSea.io');
-    if (savedMarketplace === 'looksrare') setMarketplaceName('LooksRare.org');
-    if (savedMarketplace === 'dappradar') setMarketplaceName('DappRadar.com');
-    if (savedMarketplace === 'debank') setMarketplaceName('DeBank.com');
+    if (savedMarketplace === 'purenft') {
+      setMarketplaceName('PureNFT.io');
+      setMarketplaceLogo('/lovable-uploads/1a4506f1-61ef-49dd-a8e8-0ef41959d79d.png');
+    }
+    if (savedMarketplace === 'rarible') {
+      setMarketplaceName('Rarible.com');
+      setMarketplaceLogo('/lovable-uploads/4079ebe1-e8eb-4d32-b629-1baaaa70558f.png');
+    }
+    if (savedMarketplace === 'opensea') {
+      setMarketplaceName('OpenSea.io');
+      setMarketplaceLogo('/lovable-uploads/607e13eb-1487-4c92-9043-c1a7c6be55b0.png');
+    }
   }, []);
 
   const handleNo = () => {
@@ -157,7 +165,18 @@ const SellNFTConfirmation = () => {
                     <h3 className="text-2xl font-semibold text-white">{nft?.name}</h3>
                     <div className="space-y-2 text-purple-200/70">
                       <p>Created by {nft?.creator}</p>
-                      <p>Listing on {marketplaceName}</p>
+                      <div className="flex items-center gap-2">
+                        <p>Listing on {marketplaceName}</p>
+                        {marketplaceLogo && (
+                          <div className="w-6 h-6 rounded-full overflow-hidden">
+                            <img 
+                              src={marketplaceLogo} 
+                              alt={marketplaceName} 
+                              className="w-full h-full object-contain"
+                            />
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>

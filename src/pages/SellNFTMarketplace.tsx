@@ -16,17 +16,17 @@ const marketplaces = [
   { 
     id: "purenft", 
     name: "PureNFT.io", 
-    logo: "/lovable-uploads/5cc42452-a022-4b20-91e1-4d277a373579.png" 
+    logo: "/lovable-uploads/1a4506f1-61ef-49dd-a8e8-0ef41959d79d.png" 
   },
   { 
     id: "rarible", 
     name: "Rarible.com", 
-    logo: "/lovable-uploads/2761dd0f-2060-41c1-9475-cb699f139bd1.png" 
+    logo: "/lovable-uploads/4079ebe1-e8eb-4d32-b629-1baaaa70558f.png" 
   },
   { 
     id: "opensea", 
     name: "OpenSea.io", 
-    logo: "/lovable-uploads/2a47993b-b343-4016-9b9c-e3a372d31ba7.png" 
+    logo: "/lovable-uploads/607e13eb-1487-4c92-9043-c1a7c6be55b0.png" 
   },
 ];
 
