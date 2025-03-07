@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
-import { Loader2, Clock, DollarSign, Award, CheckCircle2, XCircle, ChevronDown, User, Calendar, Wallet, Shield, Globe } from "lucide-react";
+import { Loader2, Clock, DollarSign, Award, CheckCircle2, XCircle, User, Calendar, Shield } from "lucide-react";
 import { NFTBid, NFT } from "@/types/nft";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -15,7 +15,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
   Accordion,
   AccordionContent,
@@ -29,7 +28,6 @@ export const ActiveBids = () => {
   const [selectedBid, setSelectedBid] = useState<NFTBid | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [actionType, setActionType] = useState<"accept" | "decline" | null>(null);
-  const [expandedNft, setExpandedNft] = useState<string | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -57,10 +55,10 @@ export const ActiveBids = () => {
           if (nft.for_sale) {
             // Mock bid data based on the image
             const mockBidders = [
-              { address: "0fx32....734e", amount: "13.34", time: "1 min ago", rating: "98%", verified: true, country: "USA", transactions: 145, joinedDate: "Mar 2024" },
-              { address: "0xc81...3xyq", amount: "13.11", time: "5 min ago", rating: "95%", verified: true, country: "Germany", transactions: 87, joinedDate: "Jan 2024" },
-              { address: "0xc199...34x", amount: "13.10", time: "7 min ago", rating: "92%", verified: false, country: "Japan", transactions: 62, joinedDate: "Feb 2024" },
-              { address: "0xc88...882x", amount: "13.09", time: "14 min ago", rating: "89%", verified: false, country: "Brazil", transactions: 31, joinedDate: "Apr 2024" }
+              { address: "0fx32....734e", amount: "13.34", time: "1 min ago", rating: "98%", verified: true, joinedDate: "Mar 2024" },
+              { address: "0xc81...3xyq", amount: "13.11", time: "5 min ago", rating: "95%", verified: true, joinedDate: "Jan 2024" },
+              { address: "0xc199...34x", amount: "13.10", time: "7 min ago", rating: "92%", verified: false, joinedDate: "Feb 2024" },
+              { address: "0xc88...882x", amount: "13.09", time: "14 min ago", rating: "89%", verified: false, joinedDate: "Apr 2024" }
             ];
             
             mockBidders.forEach((bidder, index) => {
@@ -74,8 +72,6 @@ export const ActiveBids = () => {
                 nft: nft,
                 bidder_rating: bidder.rating,
                 bidder_verified: bidder.verified,
-                bidder_country: bidder.country,
-                bidder_transactions: bidder.transactions,
                 bidder_joined: bidder.joinedDate
               });
             });
@@ -182,6 +178,12 @@ export const ActiveBids = () => {
       <Accordion type="single" collapsible className="w-full">
         {Object.entries(bidsByNFT).map(([nftId, nftBids]) => {
           const nft = nftBids[0]?.nft;
+          // Sort bids by amount (highest first)
+          const sortedBids = [...nftBids].sort((a, b) => 
+            parseFloat(b.bid_amount) - parseFloat(a.bid_amount)
+          );
+          const highestBid = sortedBids[0];
+          
           return (
             <AccordionItem 
               key={nftId} 
@@ -211,15 +213,21 @@ export const ActiveBids = () => {
                         <Award className="w-3 h-3 mr-1" />
                         Bids: {nftBids.length}
                       </Badge>
+                      {highestBid && (
+                        <Badge variant="outline" className="bg-amber-500/10 text-amber-200 border-amber-500/20">
+                          <DollarSign className="w-3 h-3 mr-1" />
+                          Highest: {highestBid.bid_amount} ETH
+                        </Badge>
+                      )}
                       <Badge variant="outline" className="bg-green-500/10 text-green-200 border-green-500/20">
                         <Clock className="w-3 h-3 mr-1" />
-                        Latest: {nftBids[0]?.created_at}
+                        Latest: {sortedBids[0]?.created_at}
                       </Badge>
                     </div>
                   </div>
                   <div className="hidden sm:flex items-center">
                     <div className="flex -space-x-2 overflow-hidden">
-                      {nftBids.slice(0, 3).map((bid, idx) => (
+                      {sortedBids.slice(0, 3).map((bid, idx) => (
                         <div 
                           key={idx}
                           className="inline-block h-8 w-8 rounded-full ring-2 ring-background"
@@ -232,10 +240,10 @@ export const ActiveBids = () => {
                           </span>
                         </div>
                       ))}
-                      {nftBids.length > 3 && (
+                      {sortedBids.length > 3 && (
                         <div className="inline-block h-8 w-8 rounded-full bg-gray-700 ring-2 ring-background">
                           <span className="flex h-full w-full items-center justify-center text-xs font-bold text-white">
-                            +{nftBids.length - 3}
+                            +{sortedBids.length - 3}
                           </span>
                         </div>
                       )}
@@ -246,21 +254,23 @@ export const ActiveBids = () => {
               
               <AccordionContent className="px-6 pt-2 pb-6">
                 <div className="space-y-4">
-                  <div className="bg-purple-500/5 rounded-lg p-4 border border-purple-500/10">
-                    <h4 className="text-lg font-medium mb-2 text-purple-100">Active Bids</h4>
-                    <div className="space-y-4">
-                      {nftBids.map((bid) => (
+                  <div className="bg-purple-500/5 rounded-lg p-4 border border-purple-500/10 overflow-hidden">
+                    <h4 className="text-lg font-medium mb-4 text-purple-100">Bids ({sortedBids.length})</h4>
+                    <div className="grid gap-3">
+                      {sortedBids.map((bid, index) => (
                         <div 
                           key={bid.id} 
-                          className="rounded-lg border border-purple-500/20 bg-purple-500/5 hover:bg-purple-500/10 transition-colors overflow-hidden"
+                          className={`rounded-lg border ${index === 0 ? 'border-amber-500/30 bg-amber-500/5' : 'border-purple-500/20 bg-purple-500/5'} 
+                          hover:bg-purple-500/10 transition-colors overflow-hidden`}
                         >
-                          <div className="p-4 flex flex-col lg:flex-row justify-between gap-4">
+                          <div className="p-4 flex flex-col sm:flex-row justify-between gap-4">
                             <div className="flex items-center gap-3">
                               <div 
-                                className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold"
-                                style={{
+                                className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold
+                                ${index === 0 ? 'bg-gradient-to-br from-amber-400 to-amber-600' : ''}`}
+                                style={index !== 0 ? {
                                   background: `linear-gradient(135deg, hsl(${bid.id.charCodeAt(0) % 360}, 70%, 60%), hsl(${(bid.id.charCodeAt(0) + 40) % 360}, 70%, 40%))`,
-                                }}
+                                } : {}}
                               >
                                 {bid.bidder_address.slice(0, 2)}
                               </div>
@@ -272,41 +282,37 @@ export const ActiveBids = () => {
                                       <Shield className="h-3 w-3 mr-1" /> Verified
                                     </Badge>
                                   )}
+                                  {index === 0 && (
+                                    <Badge className="bg-amber-500/20 text-amber-200 border-amber-500/30">
+                                      Top Bid
+                                    </Badge>
+                                  )}
                                 </div>
-                                <div className="text-sm text-yellow-300 font-medium flex items-center gap-2">
-                                  <span className="flex items-center">
+                                <div className="flex items-center gap-3 text-sm">
+                                  <span className="text-yellow-300 font-medium flex items-center">
                                     <DollarSign className="h-3 w-3 mr-1" />
                                     {bid.bid_amount} ETH
                                   </span>
-                                  <span className="text-muted-foreground">·</span>
+                                  <span className="text-muted-foreground">•</span>
                                   <span className="flex items-center text-blue-300">
                                     <Clock className="h-3 w-3 mr-1" />
                                     {bid.created_at}
+                                  </span>
+                                  <span className="text-muted-foreground">•</span>
+                                  <span className="flex items-center text-green-300">
+                                    <User className="h-3 w-3 mr-1" />
+                                    {bid.bidder_rating}
+                                  </span>
+                                  <span className="text-muted-foreground">•</span>
+                                  <span className="flex items-center text-purple-300">
+                                    <Calendar className="h-3 w-3 mr-1" />
+                                    {bid.bidder_joined}
                                   </span>
                                 </div>
                               </div>
                             </div>
                             
-                            <div className="flex flex-wrap gap-2 items-center lg:ml-auto">
-                              <Badge className="bg-indigo-900/30 border-indigo-400/20 text-indigo-200">
-                                <User className="h-3 w-3 mr-1" />
-                                {bid.bidder_rating} Rating
-                              </Badge>
-                              <Badge className="bg-emerald-900/30 border-emerald-400/20 text-emerald-200">
-                                <Calendar className="h-3 w-3 mr-1" />
-                                Joined {bid.bidder_joined}
-                              </Badge>
-                              <Badge className="bg-amber-900/30 border-amber-400/20 text-amber-200">
-                                <Wallet className="h-3 w-3 mr-1" />
-                                {bid.bidder_transactions} Txs
-                              </Badge>
-                              <Badge className="bg-fuchsia-900/30 border-fuchsia-400/20 text-fuchsia-200">
-                                <Globe className="h-3 w-3 mr-1" />
-                                {bid.bidder_country}
-                              </Badge>
-                            </div>
-                            
-                            <div className="flex space-x-2 self-end lg:self-center">
+                            <div className="flex space-x-2 self-end sm:self-center ml-auto">
                               <Button 
                                 variant="default" 
                                 size="sm" 

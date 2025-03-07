@@ -29,7 +29,5 @@ export interface NFTBid {
   nft?: NFT; 
   bidder_rating?: string;
   bidder_verified?: boolean;
-  bidder_country?: string;
-  bidder_transactions?: number;
   bidder_joined?: string;
 }
