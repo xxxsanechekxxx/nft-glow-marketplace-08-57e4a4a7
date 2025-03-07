@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Clock, Award, CheckCircle2 } from "lucide-react";
+import { Loader2, Clock, Award, CheckCircle2, ChevronDown, Check, Verified } from "lucide-react";
 import { NFTBid, NFT } from "@/types/nft";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -113,13 +113,20 @@ export const ActiveBids = () => {
       
       if (error) throw error;
       
-      if (!data.success) {
-        throw new Error(data.message);
+      // Fix TypeScript error by adding proper type checking and handling
+      const responseData = data as unknown as { 
+        success: boolean;
+        message: string;
+        fee_percent: number;
+      };
+      
+      if (!responseData.success) {
+        throw new Error(responseData.message);
       }
       
       toast({
         title: "Bid Accepted",
-        description: `You sold your NFT for ${selectedBid.bid_amount} ETH (${data.fee_percent}% fee applied)`,
+        description: `You sold your NFT for ${selectedBid.bid_amount} ETH (${responseData.fee_percent}% fee applied)`,
       });
 
       // Invalidate queries to refresh data
@@ -186,7 +193,7 @@ export const ActiveBids = () => {
               value={nftId}
               className="mb-4 border-0"
             >
-              <div className="bg-[#131B31] border border-[#2A3047] rounded-lg overflow-hidden">
+              <div className="bg-[#0D1425] border border-[#2A3047] rounded-lg overflow-hidden">
                 <AccordionTrigger className="px-4 py-3 hover:no-underline">
                   <div className="flex w-full items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -200,11 +207,12 @@ export const ActiveBids = () => {
                       {/* NFT Info */}
                       <div className="text-left">
                         <h3 className="font-semibold text-md">{nft?.name || 'Unknown NFT'}</h3>
+                        <p className="text-xs text-muted-foreground">#{nftId.substring(0, 8)}</p>
                       </div>
                     </div>
                     
                     <div className="flex items-center gap-4">
-                      <div className="flex items-center bg-[#1A1F2C] rounded-full px-3 py-1">
+                      <div className="flex items-center bg-[#1A1F2C] rounded-full px-3 py-1 text-primary">
                         <img 
                           src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
                           alt="ETH" 
@@ -214,7 +222,7 @@ export const ActiveBids = () => {
                       </div>
                       
                       <div className="flex items-center bg-[#1A1F2C] rounded-full px-3 py-1">
-                        <Award className="h-4 w-4 mr-1" />
+                        <Award className="h-4 w-4 mr-1 text-primary" />
                         <span className="text-sm">{nftBids.length} Bids</span>
                       </div>
                     </div>
@@ -222,71 +230,67 @@ export const ActiveBids = () => {
                 </AccordionTrigger>
                 
                 <AccordionContent className="px-4 pt-0 pb-4">
-                  <div className="space-y-2 mt-2">
-                    {nftBids.map((bid, index) => {
+                  <div className="space-y-4 mt-2">
+                    {nftBids.map((bid) => {
                       const isHighestBid = parseFloat(bid.bid_amount) === highestBidAmount;
                       return (
                         <div 
                           key={bid.id}
-                          className="bg-[#1A1F2C] rounded-lg overflow-hidden"
+                          className="bg-[#131B31] rounded-lg overflow-hidden border border-[#2A3047]"
                         >
                           <div className="p-4">
-                            <div className="flex flex-col space-y-3">
-                              {/* Bidder Address & Badges */}
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center space-x-2">
-                                  <span className="text-sm font-mono truncate max-w-[120px] sm:max-w-[150px]">
+                            {/* Bidder Info, Badges, and Amount */}
+                            <div className="flex justify-between items-start mb-3">
+                              <div className="flex flex-col">
+                                <div className="flex items-center space-x-2 mb-1">
+                                  <span className="text-sm font-mono text-white/80 truncate max-w-[120px] sm:max-w-[150px]">
                                     {bid.bidder_address}
                                   </span>
                                   
                                   <div className="flex gap-1">
                                     {isHighestBid && (
-                                      <span className="badge-highest bid-badge">
+                                      <Badge className="bg-yellow-900/40 text-yellow-500 border border-yellow-500/30 text-xs">
                                         Highest Bid
-                                      </span>
+                                      </Badge>
                                     )}
                                     
                                     {bid.verified ? (
-                                      <span className="badge-verified bid-badge">
+                                      <Badge className="bg-green-900/40 text-green-500 border border-green-500/30 text-xs flex items-center">
+                                        <span className="bg-green-500 h-1.5 w-1.5 rounded-full mr-1"></span>
                                         Verified
-                                      </span>
+                                      </Badge>
                                     ) : (
-                                      <span className="badge-not-verified bid-badge">
+                                      <Badge className="bg-red-900/40 text-red-500 border border-red-500/30 text-xs">
                                         Not Verified
-                                      </span>
+                                      </Badge>
                                     )}
                                   </div>
                                 </div>
-                              </div>
-                              
-                              {/* Bid Amount & Time */}
-                              <div className="flex justify-between items-center">
+                                
                                 <div className="flex items-center text-white font-bold">
                                   <img 
                                     src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
                                     alt="ETH" 
                                     className="h-5 w-5 mr-1" 
                                   />
-                                  <span>{bid.bid_amount} ETH</span>
-                                </div>
-                                
-                                <div className="flex items-center text-gray-400 text-xs">
-                                  <Clock className="h-3 w-3 mr-1" />
-                                  <span>{formatRelativeTime(bid.created_at)}</span>
+                                  <span className="text-lg">{bid.bid_amount} ETH</span>
                                 </div>
                               </div>
                               
-                              {/* Accept Button */}
-                              <div className="flex mt-2">
-                                <Button 
-                                  onClick={() => handleAcceptBid(bid)}
-                                  className="accept-button w-full"
-                                  disabled={isProcessing}
-                                >
-                                  <CheckCircle2 className="w-4 h-4 mr-2" /> Accept
-                                </Button>
+                              <div className="flex items-center text-gray-400 text-xs">
+                                <Clock className="h-3 w-3 mr-1" />
+                                <span>{formatRelativeTime(bid.created_at)}</span>
                               </div>
                             </div>
+                            
+                            {/* Accept Button */}
+                            <Button 
+                              onClick={() => handleAcceptBid(bid)}
+                              className="w-full bg-green-600 hover:bg-green-700 transition-colors"
+                              disabled={isProcessing}
+                            >
+                              <CheckCircle2 className="w-4 h-4 mr-2" /> Accept
+                            </Button>
                           </div>
                         </div>
                       );
@@ -300,7 +304,7 @@ export const ActiveBids = () => {
       </Accordion>
 
       <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
-        <DialogContent className="sm:max-w-md border-purple-500/30 bg-gradient-to-br from-background to-background/95 w-[calc(100%-2rem)] max-w-md mx-auto">
+        <DialogContent className="sm:max-w-md border-purple-500/30 bg-gradient-to-br from-background to-background/95">
           <DialogHeader>
             <DialogTitle className="text-center text-lg sm:text-xl">
               Accept Bid
