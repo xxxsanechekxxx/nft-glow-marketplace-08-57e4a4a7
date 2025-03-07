@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
 import { Loader2, Clock, Award, CheckCircle2, XCircle } from "lucide-react";
@@ -193,6 +193,7 @@ export const ActiveBids = () => {
       <Accordion type="single" collapsible className="w-full">
         {Object.entries(bidsByNFT).map(([nftId, nftBids]) => {
           const nft = nftBids[0]?.nft;
+          const highestBidAmount = Math.max(...nftBids.map(bid => parseFloat(bid.bid_amount)));
           
           return (
             <AccordionItem 
@@ -200,86 +201,119 @@ export const ActiveBids = () => {
               value={nftId}
               className="mb-4 border-0"
             >
-              <div className="bg-[#0D101A] border border-[#2A2E3D] rounded-lg overflow-hidden">
+              <div className="bg-[#131B31] border border-[#2A3047] rounded-lg overflow-hidden">
                 <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                  <div className="flex w-full items-center gap-3">
-                    {/* NFT Image */}
-                    {nft?.image && (
-                      <div className="h-14 w-14 rounded-md overflow-hidden border border-[#2A2E3D]">
-                        <img src={nft.image} alt={nft.name} className="h-full w-full object-cover" />
+                  <div className="flex w-full items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      {/* NFT Image */}
+                      {nft?.image && (
+                        <div className="h-14 w-14 rounded-md overflow-hidden">
+                          <img src={nft.image} alt={nft.name} className="h-full w-full object-cover" />
+                        </div>
+                      )}
+                      
+                      {/* NFT Info */}
+                      <div className="text-left">
+                        <h3 className="font-semibold text-md">{nft?.name || 'Unknown NFT'}</h3>
                       </div>
-                    )}
+                    </div>
                     
-                    {/* NFT Info */}
-                    <div className="flex-grow space-y-1 text-left">
-                      <h3 className="font-semibold text-md truncate">{nft?.name || 'Unknown NFT'}</h3>
-                      <div className="flex items-center text-xs text-gray-400">
-                        <Award className="w-3.5 h-3.5 mr-1" />
-                        {nftBids.length} {nftBids.length === 1 ? 'Bid' : 'Bids'}
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center bg-[#1A1F2C] rounded-full px-3 py-1">
+                        <img 
+                          src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                          alt="ETH" 
+                          className="h-4 w-4 mr-1" 
+                        />
+                        <span className="text-sm font-semibold">Top: {highestBidAmount.toFixed(2)} ETH</span>
+                      </div>
+                      
+                      <div className="flex items-center bg-[#1A1F2C] rounded-full px-3 py-1">
+                        <Award className="h-4 w-4 mr-1" />
+                        <span className="text-sm">{nftBids.length} Bids</span>
                       </div>
                     </div>
                   </div>
                 </AccordionTrigger>
                 
                 <AccordionContent className="px-4 pt-0 pb-4">
-                  {nftBids.map((bid) => (
-                    <div 
-                      key={bid.id}
-                      className="border border-[#2A2E3D] rounded-lg p-4 my-3"
-                    >
-                      <div className="flex flex-col space-y-3">
-                        {/* Bidder Address & Verification Status */}
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm text-gray-300 font-mono truncate max-w-[180px]">
-                              {bid.bidder_address}
-                            </span>
-                            {bid.verified ? (
-                              <Badge className="bg-green-800/30 text-green-400 border-green-500/30 text-xs h-5">
-                                <span className="bg-green-500 rounded-full h-2 w-2 mr-1"></span>
-                                Verified
-                              </Badge>
-                            ) : null}
+                  <div className="space-y-2 mt-2">
+                    {nftBids.map((bid, index) => {
+                      const isHighestBid = parseFloat(bid.bid_amount) === highestBidAmount;
+                      return (
+                        <div 
+                          key={bid.id}
+                          className="bg-[#1A1F2C] rounded-lg overflow-hidden"
+                        >
+                          <div className="p-4">
+                            <div className="flex flex-col space-y-3">
+                              {/* Bidder Address & Badges */}
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-2">
+                                  <span className="text-sm font-mono truncate max-w-[120px] sm:max-w-[150px]">
+                                    {bid.bidder_address}
+                                  </span>
+                                  
+                                  <div className="flex gap-1">
+                                    {isHighestBid && (
+                                      <span className="badge-highest bid-badge">
+                                        Highest Bid
+                                      </span>
+                                    )}
+                                    
+                                    {bid.verified ? (
+                                      <span className="badge-verified bid-badge">
+                                        Verified
+                                      </span>
+                                    ) : (
+                                      <span className="badge-not-verified bid-badge">
+                                        Not Verified
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              {/* Bid Amount & Time */}
+                              <div className="flex justify-between items-center">
+                                <div className="flex items-center text-white font-bold">
+                                  <img 
+                                    src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                                    alt="ETH" 
+                                    className="h-5 w-5 mr-1" 
+                                  />
+                                  <span>{bid.bid_amount} ETH</span>
+                                </div>
+                                
+                                <div className="flex items-center text-gray-400 text-xs">
+                                  <Clock className="h-3 w-3 mr-1" />
+                                  <span>{bid.created_at}</span>
+                                </div>
+                              </div>
+                              
+                              {/* Accept & Decline Buttons */}
+                              <div className="flex gap-2 mt-2">
+                                <Button 
+                                  onClick={() => handleAcceptBid(bid)}
+                                  className="accept-button"
+                                >
+                                  <CheckCircle2 className="w-4 h-4 mr-2" /> Accept
+                                </Button>
+                                
+                                <Button 
+                                  variant="outline"
+                                  onClick={() => handleDeclineBid(bid)}
+                                  className="decline-button"
+                                >
+                                  <XCircle className="w-4 h-4 mr-2" /> Decline
+                                </Button>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                        
-                        {/* Bid Amount & Date */}
-                        <div className="flex justify-between items-center">
-                          <div className="flex items-center text-purple-300">
-                            <img 
-                              src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
-                              alt="ETH" 
-                              className="h-4 w-4 mr-1" 
-                            />
-                            <span className="text-md font-medium">{bid.bid_amount}</span>
-                          </div>
-                          
-                          <div className="flex items-center text-xs text-gray-400">
-                            <Clock className="h-3.5 w-3.5 mr-1" />
-                            {bid.created_at}
-                          </div>
-                        </div>
-                        
-                        {/* Accept & Decline Buttons */}
-                        <div className="flex gap-2 mt-2">
-                          <Button 
-                            onClick={() => handleAcceptBid(bid)}
-                            className="flex-1 bg-green-600 hover:bg-green-700 text-white"
-                          >
-                            <CheckCircle2 className="w-4 h-4 mr-2" /> Accept
-                          </Button>
-                          
-                          <Button 
-                            variant="outline"
-                            onClick={() => handleDeclineBid(bid)}
-                            className="flex-1 border-red-500/50 text-red-300 hover:bg-red-950/30 hover:text-red-200"
-                          >
-                            <XCircle className="w-4 h-4 mr-2" /> Decline
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                      );
+                    })}
+                  </div>
                 </AccordionContent>
               </div>
             </AccordionItem>
