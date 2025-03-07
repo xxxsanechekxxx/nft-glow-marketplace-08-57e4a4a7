@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
@@ -112,7 +113,12 @@ export const ActiveBids = () => {
     
     try {
       if (actionType === "accept") {
-        // Update NFT ownership and sale status
+        const bidAmount = parseFloat(selectedBid.bid_amount);
+        const platformFeePercent = 2.5;
+        const platformFee = bidAmount * (platformFeePercent / 100);
+        const sellerAmount = bidAmount - platformFee;
+
+        // 1. Update NFT ownership to the bidder and set for_sale to false
         const { error: nftError } = await supabase
           .from('nfts')
           .update({ 
@@ -123,7 +129,30 @@ export const ActiveBids = () => {
         
         if (nftError) throw nftError;
 
-        // Delete all bids for this NFT
+        // 2. Update seller's balance with amount after fee
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({ 
+            balance: supabase.rpc('increment', { amount: sellerAmount })
+          })
+          .eq('user_id', user?.id);
+        
+        if (profileError) throw profileError;
+
+        // 3. Record sale transaction for the seller
+        const { error: transactionError } = await supabase
+          .from('transactions')
+          .insert({ 
+            amount: sellerAmount,
+            type: 'sale',
+            item: selectedBid.nft_id,
+            status: 'completed',
+            user_id: user?.id
+          });
+        
+        if (transactionError) throw transactionError;
+
+        // 4. Delete all bids for this NFT
         const { error: bidsError } = await supabase
           .from('nft_bids')
           .delete()
@@ -133,7 +162,7 @@ export const ActiveBids = () => {
 
         toast({
           title: "Bid Accepted",
-          description: `You sold your NFT for ${selectedBid.bid_amount} ETH`,
+          description: `You sold your NFT for ${sellerAmount.toFixed(2)} ETH (after ${platformFeePercent}% fee)`,
         });
       } else {
         // Delete just this bid
@@ -389,9 +418,21 @@ export const ActiveBids = () => {
                     </div>
                     <span className="text-xs sm:text-sm text-green-300 mt-1 bidder-address">{selectedBid.bidder_address}</span>
                     
+                    {/* Platform Fee Information */}
+                    <div className="mt-2 text-xs text-green-300/80">
+                      <div className="flex justify-between w-full max-w-[180px] mx-auto">
+                        <span>Platform Fee (2.5%):</span>
+                        <span>-{(parseFloat(selectedBid.bid_amount) * 0.025).toFixed(2)} ETH</span>
+                      </div>
+                      <div className="flex justify-between w-full max-w-[180px] mx-auto font-semibold mt-1">
+                        <span>You receive:</span>
+                        <span>{(parseFloat(selectedBid.bid_amount) * 0.975).toFixed(2)} ETH</span>
+                      </div>
+                    </div>
+                    
                     {/* Verification Status in Confirmation Dialog */}
                     {selectedBid.verified ? (
-                      <Badge className="bg-green-500/20 text-green-300 border-green-500/30 flex text-xs mt-2 items-center gap-1">
+                      <Badge className="bg-green-500/20 text-green-300 border-green-500/30 flex text-xs mt-3 items-center gap-1">
                         <span className="bg-green-500 rounded-full h-2 w-2 mr-1"></span>
                         Verified Bidder
                       </Badge>
