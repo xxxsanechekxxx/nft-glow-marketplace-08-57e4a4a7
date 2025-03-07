@@ -127,7 +127,10 @@ export const ActiveBids = () => {
           })
           .eq('id', selectedBid.nft_id);
         
-        if (nftError) throw nftError;
+        if (nftError) {
+          console.error("Error updating NFT ownership:", nftError);
+          throw nftError;
+        }
 
         // 2. Update seller's balance with amount after fee
         const { error: profileError } = await supabase
@@ -137,7 +140,10 @@ export const ActiveBids = () => {
           })
           .eq('user_id', user?.id);
         
-        if (profileError) throw profileError;
+        if (profileError) {
+          console.error("Error updating profile balance:", profileError);
+          throw profileError;
+        }
 
         // 3. Record sale transaction for the seller
         const { error: transactionError } = await supabase
@@ -150,7 +156,10 @@ export const ActiveBids = () => {
             user_id: user?.id
           });
         
-        if (transactionError) throw transactionError;
+        if (transactionError) {
+          console.error("Error creating transaction record:", transactionError);
+          throw transactionError;
+        }
 
         // 4. Delete all bids for this NFT
         const { error: bidsError } = await supabase
@@ -158,7 +167,10 @@ export const ActiveBids = () => {
           .delete()
           .eq('nft_id', selectedBid.nft_id);
         
-        if (bidsError) throw bidsError;
+        if (bidsError) {
+          console.error("Error deleting bids:", bidsError);
+          throw bidsError;
+        }
 
         toast({
           title: "Bid Accepted",
