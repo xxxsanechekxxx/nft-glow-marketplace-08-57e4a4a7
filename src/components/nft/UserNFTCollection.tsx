@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabase";
 import { NFTCard } from "@/components/NFTCard";
 import { EmptyNFTState } from "@/components/EmptyNFTState";
 import { useAuth } from "@/hooks/useAuth";
-import { Loader2, Grid, List, Filter, SlidersHorizontal } from "lucide-react";
+import { Loader2, Filter, SlidersHorizontal } from "lucide-react";
 import type { NFT } from "@/types/nft";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
@@ -24,7 +24,6 @@ export const UserNFTCollection = () => {
   const [nfts, setNfts] = useState<NFT[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("my-nfts");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [filterBy, setFilterBy] = useState<"all" | "for-sale" | "not-for-sale">("all");
   const { user } = useAuth();
   const { toast } = useToast();
@@ -167,90 +166,21 @@ export const UserNFTCollection = () => {
     }
 
     return (
-      <div className={
-        viewMode === "grid" 
-          ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 animate-in fade-in duration-300" 
-          : "flex flex-col gap-4 animate-in fade-in duration-300"
-      }>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 animate-in fade-in duration-300">
         {filteredNFTs.map((nft) => (
-          viewMode === "grid" ? (
-            <NFTCard
-              key={nft.id}
-              id={nft.id}
-              name={nft.name}
-              image={nft.image}
-              price={nft.price}
-              creator={nft.creator}
-              owner_id={nft.owner_id}
-              for_sale={nft.for_sale}
-              isProfileView={true}
-              onCancelSale={handleCancelSale}
-              onUpdatePrice={handleUpdateNFTPrice}
-            />
-          ) : (
-            <div key={nft.id} className="flex flex-col sm:flex-row gap-4 p-4 border border-primary/10 rounded-lg bg-card/50 hover:bg-card/80 transition-all duration-300">
-              <div className="w-full sm:w-48 h-48 rounded-lg overflow-hidden">
-                <img 
-                  src={nft.image} 
-                  alt={nft.name} 
-                  className="w-full h-full object-cover transition-all hover:scale-110 duration-500"
-                />
-              </div>
-              <div className="flex-1 flex flex-col justify-between py-2">
-                <div>
-                  <div className="flex justify-between items-start">
-                    <h3 className="text-xl font-semibold">{nft.name}</h3>
-                    {nft.for_sale && (
-                      <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/20">
-                        For Sale
-                      </Badge>
-                    )}
-                  </div>
-                  <p className="text-sm text-muted-foreground">by {nft.creator}</p>
-                </div>
-                <div className="mt-4 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <img 
-                      src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
-                      alt="ETH"
-                      className="h-5 w-5"
-                    />
-                    <span className="text-lg font-medium">{nft.price}</span>
-                  </div>
-                  <div className="flex gap-2">
-                    {nft.for_sale ? (
-                      <>
-                        <Button 
-                          onClick={() => handleUpdateNFTPrice(nft.id, nft.price)}
-                          size="sm"
-                          variant="outline"
-                          className="text-primary border-primary/20 hover:bg-primary/10"
-                        >
-                          Edit Price
-                        </Button>
-                        <Button 
-                          onClick={() => handleCancelSale(nft.id)}
-                          size="sm"
-                          variant="outline"
-                          className="text-red-500 border-red-500/20 hover:bg-red-500/10"
-                        >
-                          Cancel Sale
-                        </Button>
-                      </>
-                    ) : (
-                      <Button 
-                        onClick={() => null}
-                        size="sm"
-                        className="bg-primary/20 hover:bg-primary/30 text-primary"
-                      >
-                        Sell
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )
+          <NFTCard
+            key={nft.id}
+            id={nft.id}
+            name={nft.name}
+            image={nft.image}
+            price={nft.price}
+            creator={nft.creator}
+            owner_id={nft.owner_id}
+            for_sale={nft.for_sale}
+            isProfileView={true}
+            onCancelSale={handleCancelSale}
+            onUpdatePrice={handleUpdateNFTPrice}
+          />
         ))}
       </div>
     );
@@ -306,25 +236,6 @@ export const UserNFTCollection = () => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-
-            <div className="bg-background/50 border border-input rounded-md p-1 flex">
-              <Button
-                variant="ghost" 
-                size="icon"
-                className={`h-8 w-8 ${viewMode === "grid" ? "bg-primary/20 text-primary" : ""}`}
-                onClick={() => setViewMode("grid")}
-              >
-                <Grid className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost" 
-                size="icon"
-                className={`h-8 w-8 ${viewMode === "list" ? "bg-primary/20 text-primary" : ""}`} 
-                onClick={() => setViewMode("list")}
-              >
-                <List className="h-4 w-4" />
-              </Button>
-            </div>
           </div>
         )}
       </div>
