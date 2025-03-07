@@ -1,3 +1,4 @@
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -5,17 +6,84 @@
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+/* Base Elements */
+body {
+  min-height: 100vh;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+
+/* Selection color */
+::selection {
+  background-color: hsl(var(--primary) / 0.2);
 }
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background) / 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted) / 0.3);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted) / 0.5);
+}
+
+/* Cards and containers */
+.glass-card {
+  @apply backdrop-blur-xl bg-white/10 border border-white/20 rounded-xl shadow-lg transition-all duration-300;
+}
+
+.glass-card:hover {
+  @apply bg-white/15 border-white/30 shadow-xl;
+}
+
+.glowing-border {
+  @apply border border-primary/20 transition-all duration-300 relative;
+}
+
+.glowing-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(45deg, hsl(var(--primary) / 0.2), transparent, hsl(var(--primary) / 0.2));
+  border-radius: inherit;
+  z-index: -1;
+  animation: animate-gradient 2s linear infinite;
+}
+
+/* Utility Classes */
+.text-gradient {
+  @apply bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent;
+}
+
+.text-gradient-primary {
+  @apply bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent;
+}
+
+.bg-gradient-primary {
+  @apply bg-gradient-to-r from-primary via-purple-500 to-primary bg-[length:200%_100%] animate-shimmer;
+}
+
+/* Animations */
+@keyframes animate-gradient {
+  0% {
+    background-position: 0%;
+  }
+  100% {
+    background-position: 100%;
+  }
 }
 
 @keyframes logo-spin {
@@ -31,6 +99,20 @@
   a:nth-of-type(2) .logo {
     animation: logo-spin infinite 20s linear;
   }
+}
+
+/* Legacy classes (kept for backward compatibility) */
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
 .card {
