@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -223,4 +224,51 @@
 
 .bid-action-button {
   @apply flex-1 flex items-center justify-center;
+}
+
+/* New animations for My NFTs page */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(147, 39, 143, 0);
+  }
+  50% {
+    box-shadow: 0 0 10px 3px rgba(147, 39, 143, 0.3);
+  }
+}
+
+.pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* NFT collection view animations */
+.animate-in {
+  animation-duration: 0.3s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation-name: fadeIn;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Glassmorphism styles */
+.glass-panel {
+  background: rgba(26, 31, 44, 0.5);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(147, 39, 143, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* View mode transition */
+.view-transition {
+  transition: all 0.3s ease;
 }
