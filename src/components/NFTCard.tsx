@@ -124,51 +124,51 @@ export const NFTCard = ({
               </div>
             )}
           </div>
-          <div className="p-6 space-y-3">
-            <h3 className="font-semibold text-xl transition-colors duration-700 group-hover:text-primary line-clamp-1">{name}</h3>
-            <p className="text-base text-muted-foreground line-clamp-1">by {creator}</p>
-            <div className="flex items-center justify-between mt-5">
+          <div className="p-4 sm:p-6 space-y-2 sm:space-y-3">
+            <h3 className="font-semibold text-lg sm:text-xl transition-colors duration-700 group-hover:text-primary line-clamp-1">{name}</h3>
+            <p className="text-sm sm:text-base text-muted-foreground line-clamp-1">by {creator}</p>
+            <div className="flex items-center justify-between mt-3 sm:mt-5">
               {isEditingPrice ? (
                 <div className="flex items-center gap-2 flex-1">
                   <Input 
                     type="number" 
                     value={newPrice} 
                     onChange={(e) => setNewPrice(e.target.value)}
-                    className="h-10 w-24"
+                    className="h-8 sm:h-10 w-20 sm:w-24"
                     min="0"
                     step="0.01"
                     onClick={(e) => e.preventDefault()}
                   />
                   <Button 
                     size="icon" 
-                    className="h-9 w-9"
+                    className="h-8 w-8 sm:h-9 sm:w-9"
                     variant="ghost"
                     onClick={handleSavePrice}
                   >
-                    <Check className="h-5 w-5" />
+                    <Check className="h-4 w-4 sm:h-5 sm:w-5" />
                   </Button>
                   <Button 
                     size="icon" 
-                    className="h-9 w-9"
+                    className="h-8 w-8 sm:h-9 sm:w-9"
                     variant="ghost"
                     onClick={handleCancelEdit}
                   >
-                    <X className="h-5 w-5" />
+                    <X className="h-4 w-4 sm:h-5 sm:w-5" />
                   </Button>
                 </div>
               ) : (
-                <span className="text-lg font-medium flex items-center gap-2 text-white">
+                <span className="text-base sm:text-lg font-medium flex items-center gap-1 sm:gap-2 text-white">
                   <img 
                     src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
                     alt="ETH"
-                    className="h-5 w-5"
+                    className="h-4 w-4 sm:h-5 sm:w-5"
                   />
                   {price}
                 </span>
               )}
               
               {isProfileView ? (
-                <div className="flex gap-2">
+                <div className="flex gap-1 sm:gap-2">
                   {isForSale ? (
                     <>
                       {!isEditingPrice && (
@@ -176,25 +176,25 @@ export const NFTCard = ({
                           onClick={handleEditPrice} 
                           size="sm"
                           variant="ghost"
-                          className="h-9 w-9 p-0"
+                          className="h-8 w-8 sm:h-9 sm:w-9 p-0"
                         >
-                          <PencilLine className="h-5 w-5" />
+                          <PencilLine className="h-4 w-4 sm:h-5 sm:w-5" />
                         </Button>
                       )}
                       <Button 
                         onClick={handleCancelSale} 
                         size="sm"
                         variant="ghost"
-                        className="h-9 w-9 p-0"
+                        className="h-8 w-8 sm:h-9 sm:w-9 p-0"
                       >
-                        <X className="h-5 w-5" />
+                        <X className="h-4 w-4 sm:h-5 sm:w-5" />
                       </Button>
                     </>
                   ) : (
                     <Button 
                       onClick={handleSell} 
                       size="sm"
-                      className="relative overflow-hidden transition-all duration-700 hover:scale-105 hover:shadow-lg hover:shadow-primary/20 px-5 py-2 h-10"
+                      className="relative overflow-hidden transition-all duration-700 hover:scale-105 hover:shadow-lg hover:shadow-primary/20 px-3 sm:px-5 py-1 sm:py-2 h-8 sm:h-10 text-xs sm:text-sm"
                     >
                       <span className="relative z-10">Sell</span>
                       <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-purple-500/80 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
@@ -206,7 +206,7 @@ export const NFTCard = ({
                   <Button 
                     onClick={(isOwner && !isForSale) ? handleSell : handlePurchase} 
                     size="sm"
-                    className="relative overflow-hidden transition-all duration-700 hover:scale-105 hover:shadow-lg hover:shadow-primary/20 px-5 py-2 h-10"
+                    className="relative overflow-hidden transition-all duration-700 hover:scale-105 hover:shadow-lg hover:shadow-primary/20 px-3 sm:px-5 py-1 sm:py-2 h-8 sm:h-10 text-xs sm:text-sm"
                   >
                     <span className="relative z-10">
                       {(isOwner && !isForSale) ? "Sell" : (isOwner ? "View" : "Purchase")}
