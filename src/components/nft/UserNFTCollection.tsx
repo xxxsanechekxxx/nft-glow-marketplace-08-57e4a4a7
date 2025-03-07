@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { NFTCard } from "@/components/NFTCard";
@@ -33,7 +32,6 @@ export const UserNFTCollection = () => {
           throw error;
         }
         
-        // Ensure price is a string to match NFT type
         const formattedData = data?.map(nft => ({
           ...nft,
           price: nft.price.toString()
@@ -65,7 +63,6 @@ export const UserNFTCollection = () => {
       
       if (error) throw error;
       
-      // Update local state with string price
       setNfts(nfts.map(nft => 
         nft.id === id ? { ...nft, price: newPrice } : nft
       ));
@@ -94,7 +91,6 @@ export const UserNFTCollection = () => {
       
       if (error) throw error;
       
-      // Update local state
       setNfts(nfts.map(nft => 
         nft.id === id ? { ...nft, for_sale: false } : nft
       ));
@@ -122,15 +118,13 @@ export const UserNFTCollection = () => {
   }
 
   const renderMyNFTs = () => {
-    const myNFTs = nfts.filter(nft => !nft.for_sale);
-    
-    if (myNFTs.length === 0) {
+    if (nfts.length === 0) {
       return <EmptyNFTState />;
     }
 
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {myNFTs.map((nft) => (
+        {nfts.map((nft) => (
           <NFTCard
             key={nft.id}
             id={nft.id}
@@ -143,43 +137,6 @@ export const UserNFTCollection = () => {
             isProfileView={true}
             onCancelSale={handleCancelSale}
             onUpdatePrice={handleUpdateNFTPrice}
-          />
-        ))}
-      </div>
-    );
-  };
-
-  const renderListedNFTs = () => {
-    const listedNFTs = nfts.filter(nft => nft.for_sale);
-    
-    if (listedNFTs.length === 0) {
-      return (
-        <div className="text-center py-12">
-          <h3 className="text-lg font-medium">No NFTs listed for sale</h3>
-          <p className="text-muted-foreground mt-2">
-            When you list your NFTs for sale, they will appear here.
-          </p>
-        </div>
-      );
-    }
-
-    return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {listedNFTs.map((nft) => (
-          <NFTCard
-            key={nft.id}
-            id={nft.id}
-            name={nft.name}
-            image={nft.image}
-            price={nft.price}
-            creator={nft.creator}
-            owner_id={nft.owner_id}
-            for_sale={nft.for_sale}
-            isProfileView={true}
-            onCancelSale={handleCancelSale}
-            onUpdatePrice={handleUpdateNFTPrice}
-            // Make marketplace an optional prop in the NFTCard component
-            marketplace={nft.marketplace || "Rarible"}
           />
         ))}
       </div>
@@ -188,18 +145,13 @@ export const UserNFTCollection = () => {
 
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="grid w-full grid-cols-3 mb-8">
+      <TabsList className="grid w-full grid-cols-2 mb-8">
         <TabsTrigger value="my-nfts">My NFTs</TabsTrigger>
-        <TabsTrigger value="listed-nfts">Listed NFTs</TabsTrigger>
         <TabsTrigger value="active-bids">Active Bids</TabsTrigger>
       </TabsList>
       
       <TabsContent value="my-nfts">
         {renderMyNFTs()}
-      </TabsContent>
-      
-      <TabsContent value="listed-nfts">
-        {renderListedNFTs()}
       </TabsContent>
       
       <TabsContent value="active-bids">
