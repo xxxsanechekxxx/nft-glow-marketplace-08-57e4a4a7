@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Clock, Award, CheckCircle2, XCircle, ShieldCheck, ShieldAlert } from "lucide-react";
 import { NFTBid, NFT } from "@/types/nft";
 import { Button } from "@/components/ui/button";
@@ -121,7 +122,7 @@ export const ActiveBids = () => {
 
         toast({
           title: "Bid Accepted",
-          description: `You sold your NFT for ${selectedBid.bid_amount} ETH`,
+          description: `You sold your NFT for ${selectedBid.bid_amount}`,
         });
       } else {
         // Delete just this bid
