@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -604,7 +603,7 @@ const Profile = () => {
               </label>
             </div>
             <div className="text-center sm:text-left">
-              <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent truncate max-w-[200px] sm:max-w-[300px]">
+              <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent username-truncate max-w-full">
                 @{userData?.login}
               </h1>
             </div>
@@ -612,12 +611,12 @@ const Profile = () => {
         </div>
 
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="w-full flex flex-wrap p-1.5 bg-background/50 backdrop-blur-sm rounded-xl border border-primary/10 mb-6">
+          <TabsList className="w-full responsive-tabs-list p-1.5 bg-background/50 backdrop-blur-sm rounded-xl border border-primary/10 mb-6">
             {["profile", "settings", "wallet", "verification", "nft"].map((tab) => (
               <TabsTrigger
                 key={tab}
                 value={tab}
-                className="flex-1 min-w-[80px] flex items-center justify-center gap-1 transition-all duration-300 data-[state=active]:bg-primary/20 data-[state=active]:text-primary relative overflow-hidden group py-2"
+                className="responsive-tab-trigger flex items-center justify-center gap-1 transition-all duration-300 data-[state=active]:bg-primary/20 data-[state=active]:text-primary relative overflow-hidden group py-2"
               >
                 {tab === "profile" && <User className="w-4 h-4" />}
                 {tab === "settings" && <Settings className="w-4 h-4" />}
@@ -933,14 +932,14 @@ const Profile = () => {
                 </CardHeader>
                 <CardContent>
                   {transactions.length > 0 ? (
-                    <div className="overflow-x-auto">
-                      <Table>
+                    <div className="w-full">
+                      <Table className="transaction-table">
                         <TableHeader>
                           <TableRow className="hover:bg-primary/5">
-                            <TableHead>Date</TableHead>
-                            <TableHead>Type</TableHead>
-                            <TableHead>Amount (ETH)</TableHead>
-                            <TableHead>Status</TableHead>
+                            <TableHead className="date-column">Date</TableHead>
+                            <TableHead className="type-column">Type</TableHead>
+                            <TableHead className="amount-column">Amount</TableHead>
+                            <TableHead className="status-column">Status</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -949,25 +948,25 @@ const Profile = () => {
                               key={transaction.id}
                               className="hover:bg-primary/5 transition-colors"
                             >
-                              <TableCell>{transaction.created_at}</TableCell>
-                              <TableCell className="capitalize flex items-center gap-2">
+                              <TableCell className="date-column">{transaction.created_at}</TableCell>
+                              <TableCell className="type-column capitalize flex items-center gap-1">
                                 {transaction.type === 'deposit' && (
-                                  <ArrowDownCircle className="w-4 h-4 text-green-500" />
+                                  <ArrowDownCircle className="w-3 h-3 sm:w-4 sm:h-4 text-green-500 flex-shrink-0" />
                                 )}
                                 {transaction.type === 'withdraw' && (
-                                  <ArrowUpCircle className="w-4 h-4 text-red-500" />
+                                  <ArrowUpCircle className="w-3 h-3 sm:w-4 sm:h-4 text-red-500 flex-shrink-0" />
                                 )}
                                 {transaction.type === 'purchase' && (
-                                  <ShoppingBag className="w-4 h-4 text-blue-500" />
+                                  <ShoppingBag className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500 flex-shrink-0" />
                                 )}
                                 {transaction.type === 'sale' && (
-                                  <ShoppingBag className="w-4 h-4 text-green-500" />
+                                  <ShoppingBag className="w-3 h-3 sm:w-4 sm:h-4 text-green-500 flex-shrink-0" />
                                 )}
-                                {transaction.type}
+                                <span className="truncate">{transaction.type}</span>
                               </TableCell>
-                              <TableCell>{transaction.amount}</TableCell>
-                              <TableCell>
-                                <span className={`px-2 py-1 rounded-full text-xs ${
+                              <TableCell className="amount-column">{Number(transaction.amount).toFixed(2)}</TableCell>
+                              <TableCell className="status-column">
+                                <span className={`px-1.5 py-0.5 rounded-full text-xs ${
                                   transaction.status === 'completed'
                                     ? 'bg-green-500/20 text-green-500'
                                     : transaction.status === 'pending'

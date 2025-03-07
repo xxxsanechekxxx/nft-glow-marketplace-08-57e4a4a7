@@ -227,31 +227,53 @@
     padding: 0.5rem !important;
     min-width: 65px !important;
   }
+
+  /* Improved transaction table for mobile */
+  .transaction-table {
+    width: 100%;
+    display: block;
+    table-layout: fixed;
+  }
+  
+  .transaction-table th, 
+  .transaction-table td {
+    padding: 0.5rem 0.25rem !important;
+    font-size: 0.75rem !important;
+  }
+  
+  .transaction-table .date-column {
+    width: 28% !important;
+  }
+  
+  .transaction-table .type-column {
+    width: 30% !important;
+  }
+  
+  .transaction-table .amount-column {
+    width: 22% !important;
+  }
+  
+  .transaction-table .status-column {
+    width: 20% !important;
+  }
+  
+  /* Username truncation on mobile */
+  .username-truncate {
+    max-width: 150px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: inline-block !important;
+  }
 }
 
-/* New styles for the updated bid design */
-.dark-bid-card {
-  @apply bg-[#0D101A] border border-[#2A2E3D] rounded-lg shadow-lg;
+/* Responsive tab styles */
+.responsive-tabs-list {
+  @apply flex flex-wrap gap-1 !important;
 }
 
-.bid-item {
-  @apply border border-[#2A2E3D] rounded-lg p-5 my-3 transition-all hover:shadow-md;
-}
-
-.verified-badge {
-  @apply bg-green-800/30 text-green-400 border-green-500/30 text-xs;
-}
-
-.verified-dot {
-  @apply bg-green-500 rounded-full h-2 w-2 mr-1;
-}
-
-.bid-amount {
-  @apply flex items-center text-purple-300;
-}
-
-.bid-action-button {
-  @apply flex-1 flex items-center justify-center;
+.responsive-tab-trigger {
+  @apply flex-grow flex-shrink-0 !important;
 }
 
 /* NFT collection view animations */
