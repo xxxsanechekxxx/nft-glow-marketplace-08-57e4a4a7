@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Globe } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
@@ -13,12 +13,21 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 
 const marketplaces = [
-  { id: "purenft", name: "PureNFT.io" },
-  { id: "rarible", name: "Rarible.com" },
-  { id: "opensea", name: "OpenSea.io" },
-  { id: "looksrare", name: "LooksRare.org" },
-  { id: "dappradar", name: "DappRadar.com" },
-  { id: "debank", name: "DeBank.com" },
+  { 
+    id: "purenft", 
+    name: "PureNFT.io", 
+    logo: "/lovable-uploads/5cc42452-a022-4b20-91e1-4d277a373579.png" 
+  },
+  { 
+    id: "rarible", 
+    name: "Rarible.com", 
+    logo: "/lovable-uploads/2761dd0f-2060-41c1-9475-cb699f139bd1.png" 
+  },
+  { 
+    id: "opensea", 
+    name: "OpenSea.io", 
+    logo: "/lovable-uploads/2a47993b-b343-4016-9b9c-e3a372d31ba7.png" 
+  },
 ];
 
 const SellNFTMarketplace = () => {
@@ -142,7 +151,16 @@ const SellNFTMarketplace = () => {
                     htmlFor={marketplace.id}
                     className="flex items-center justify-between w-full p-4 rounded-lg border border-purple-500/20 hover:bg-purple-500/5 peer-data-[state=checked]:border-purple-400 peer-data-[state=checked]:bg-purple-500/10 cursor-pointer transition-all duration-300"
                   >
-                    <span className="text-purple-100">{marketplace.name}</span>
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-white/5">
+                        <img 
+                          src={marketplace.logo} 
+                          alt={marketplace.name} 
+                          className="w-full h-full object-contain" 
+                        />
+                      </div>
+                      <span className="text-purple-100">{marketplace.name}</span>
+                    </div>
                   </Label>
                 </div>
               ))}
