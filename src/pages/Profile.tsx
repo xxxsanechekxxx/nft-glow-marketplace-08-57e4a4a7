@@ -293,14 +293,20 @@ const Profile = () => {
           setUserData(userData);
 
           if (transactionsData) {
-            setTransactions(transactionsData.map(tx => ({
-              id: tx.id,
-              type: tx.type,
-              amount: tx.amount.toString(),
-              created_at: new Date(tx.created_at).toISOString().split('T')[0],
-              status: tx.status,
-              item: tx.item
-            })));
+            setTransactions(transactionsData.map(tx => {
+              // Format date without year, only show DD/MM format
+              const dateObj = new Date(tx.created_at);
+              const formattedDate = `${dateObj.getDate().toString().padStart(2, '0')}/${(dateObj.getMonth() + 1).toString().padStart(2, '0')}`;
+              
+              return {
+                id: tx.id,
+                type: tx.type,
+                amount: tx.amount.toString(),
+                created_at: formattedDate,
+                status: tx.status,
+                item: tx.item
+              };
+            }));
           }
         }
       } catch (error) {
@@ -932,7 +938,7 @@ const Profile = () => {
                 </CardHeader>
                 <CardContent>
                   {transactions.length > 0 ? (
-                    <div className="w-full">
+                    <div className="w-full overflow-x-auto">
                       <Table className="transaction-table">
                         <TableHeader>
                           <TableRow className="hover:bg-primary/5">
