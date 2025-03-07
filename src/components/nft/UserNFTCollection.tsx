@@ -178,6 +178,7 @@ export const UserNFTCollection = () => {
             isProfileView={true}
             onCancelSale={handleCancelSale}
             onUpdatePrice={handleUpdateNFTPrice}
+            // Make marketplace an optional prop in the NFTCard component
             marketplace={nft.marketplace || "Rarible"}
           />
         ))}

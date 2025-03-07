@@ -26,4 +26,5 @@ export interface NFTBid {
   bid_amount: string;
   created_at: string;
   marketplace: string;
+  nft?: NFT; // Make nft optional to fix the TypeScript error
 }
