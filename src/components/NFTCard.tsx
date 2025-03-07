@@ -118,7 +118,10 @@ export const NFTCard = ({
             
             {marketplace && isForSale && (
               <div className="absolute top-3 left-3 z-10">
-                <Badge variant="outline" className="bg-black/60 text-white border-white/20 backdrop-blur-md px-2.5 py-1">
+                <Badge 
+                  variant="outline" 
+                  className="bg-black/60 text-white border-white/20 backdrop-blur-md px-2.5 py-1 flex items-center"
+                >
                   {getMarketplaceDisplay()}
                 </Badge>
               </div>
@@ -157,14 +160,16 @@ export const NFTCard = ({
                   </Button>
                 </div>
               ) : (
-                <span className="text-base sm:text-lg font-medium flex items-center gap-1 sm:gap-2 text-white">
+                <div className="flex items-center gap-1 sm:gap-2">
                   <img 
                     src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
                     alt="ETH"
                     className="h-4 w-4 sm:h-5 sm:w-5"
                   />
-                  {price}
-                </span>
+                  <span className="text-base sm:text-lg font-medium text-white">
+                    {price}
+                  </span>
+                </div>
               )}
               
               {isProfileView ? (
