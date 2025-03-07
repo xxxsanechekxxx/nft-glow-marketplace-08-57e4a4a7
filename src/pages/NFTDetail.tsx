@@ -108,61 +108,61 @@ const NFTDetail = () => {
     <div className="min-h-[90vh] relative overflow-hidden bg-gradient-to-b from-background via-background/80 to-background/60">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-purple-500/10 via-pink-500/5 to-primary/10 blur-3xl -z-10" />
       
-      <div className="container mx-auto px-4 pt-24 pb-16 relative">
+      <div className="container mx-auto px-4 pt-16 sm:pt-24 pb-16 relative">
         <Link
           to="/marketplace"
-          className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-all duration-300 mb-8 group relative overflow-hidden"
+          className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-all duration-300 mb-6 sm:mb-8 group relative overflow-hidden"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"></div>
-          <div className="relative z-10 flex items-center gap-2 px-6 py-2.5 bg-white/5 rounded-full backdrop-blur-xl border border-white/10 group-hover:border-primary/20 shadow-lg group-hover:shadow-primary/20">
-            <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform duration-300" />
-            Back to Marketplace
+          <div className="relative z-10 flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 bg-white/5 rounded-full backdrop-blur-xl border border-white/10 group-hover:border-primary/20 shadow-lg group-hover:shadow-primary/20">
+            <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4 group-hover:-translate-x-1 transition-transform duration-300" />
+            <span className="text-sm sm:text-base">Back to Marketplace</span>
           </div>
         </Link>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
           <div className="relative">
             <NFTImage image={nft.image} name={nft.name} />
             
             {nft.marketplace && isForSale && (
               <div className="absolute top-4 left-4 z-10">
-                <Badge className="bg-black/70 text-white border-white/20 backdrop-blur-md px-4 py-1.5 text-sm font-medium">
+                <Badge className="bg-black/70 text-white border-white/20 backdrop-blur-md px-3 py-1 sm:px-4 sm:py-1.5 text-xs sm:text-sm font-medium">
                   Listed on {getMarketplaceDisplay()}
                 </Badge>
               </div>
             )}
           </div>
 
-          <div className="space-y-8 animate-fade-in">
+          <div className="space-y-6 sm:space-y-8 animate-fade-in">
             <NFTHeader name={nft.name} creator={nft.creator} />
             
             {/* Display NFT Price */}
             <div className="relative group">
               <div className="absolute -inset-px bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-xl blur opacity-75 group-hover:opacity-100 transition-all duration-700" />
-              <div className="relative flex items-center justify-between backdrop-blur-xl bg-white/5 p-6 rounded-xl border border-white/10 group-hover:border-primary/20 transition-all duration-300 group-hover:bg-white/10 shadow-lg group-hover:shadow-primary/20">
+              <div className="relative flex items-center justify-between backdrop-blur-xl bg-white/5 p-4 sm:p-6 rounded-xl border border-white/10 group-hover:border-primary/20 transition-all duration-300 group-hover:bg-white/10 shadow-lg group-hover:shadow-primary/20">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Current price</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground mb-1">Current price</p>
                   <div className="flex items-center gap-2">
                     <img 
                       src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
                       alt="ETH"
-                      className="h-6 w-6"
+                      className="h-5 w-5 sm:h-6 sm:w-6"
                     />
-                    <span className="text-2xl font-bold bg-gradient-to-r from-white to-primary bg-clip-text text-transparent">
+                    <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-white to-primary bg-clip-text text-transparent">
                       {nft.price} ETH
                     </span>
                   </div>
                 </div>
                 {nft.owner_id && !isForSale && (
-                  <div className="bg-white/10 px-4 py-2 rounded-full border border-white/10">
-                    <p className="text-sm text-muted-foreground">
+                  <div className="bg-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border border-white/10 text-xs sm:text-sm">
+                    <p className="text-muted-foreground">
                       Already purchased
                     </p>
                   </div>
                 )}
                 {isOwned && (
-                  <div className="bg-white/10 px-4 py-2 rounded-full border border-white/10">
-                    <p className="text-sm text-muted-foreground">
+                  <div className="bg-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border border-white/10 text-xs sm:text-sm">
+                    <p className="text-muted-foreground">
                       You own this
                     </p>
                   </div>
@@ -173,20 +173,20 @@ const NFTDetail = () => {
             {nft.description && (
               <div className="relative group">
                 <div className="absolute -inset-px bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition-all duration-700" />
-                <div className="relative space-y-2 text-muted-foreground backdrop-blur-xl bg-white/5 p-8 rounded-xl border border-white/10 group-hover:border-primary/20 transition-all duration-300 group-hover:bg-white/10 shadow-lg group-hover:shadow-primary/20">
-                  <p className="leading-relaxed">{nft.description}</p>
+                <div className="relative space-y-2 text-muted-foreground backdrop-blur-xl bg-white/5 p-4 sm:p-8 rounded-xl border border-white/10 group-hover:border-primary/20 transition-all duration-300 group-hover:bg-white/10 shadow-lg group-hover:shadow-primary/20">
+                  <p className="leading-relaxed text-sm sm:text-base">{nft.description}</p>
                 </div>
               </div>
             )}
 
             <div className="flex gap-4">
               {isOwned ? (
-                <div className="w-full py-4 px-6 text-center bg-white/10 border border-primary/20 rounded-lg backdrop-blur-xl">
-                  <p className="text-lg text-primary font-medium">You own this NFT</p>
+                <div className="w-full py-3 sm:py-4 px-4 sm:px-6 text-center bg-white/10 border border-primary/20 rounded-lg backdrop-blur-xl">
+                  <p className="text-base sm:text-lg text-primary font-medium">You own this NFT</p>
                 </div>
               ) : (nft.owner_id && !isForSale) ? (
-                <div className="w-full py-4 px-6 text-center bg-white/10 border border-white/10 rounded-lg backdrop-blur-xl">
-                  <p className="text-lg text-muted-foreground">This NFT has already been purchased</p>
+                <div className="w-full py-3 sm:py-4 px-4 sm:px-6 text-center bg-white/10 border border-white/10 rounded-lg backdrop-blur-xl">
+                  <p className="text-base sm:text-lg text-muted-foreground">This NFT has already been purchased</p>
                 </div>
               ) : (
                 <PurchaseButton 

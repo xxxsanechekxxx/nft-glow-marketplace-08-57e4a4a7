@@ -17,7 +17,7 @@ interface NFT {
   owner_id: string | null;
 }
 
-const ITEMS_PER_PAGE = 6; // Reduced items per page for better mobile experience
+const ITEMS_PER_PAGE = 5; // Reduced items per page for better mobile experience
 
 const fetchNFTs = async ({ pageParam = 0 }) => {
   const from = pageParam * ITEMS_PER_PAGE;
@@ -114,12 +114,12 @@ const Marketplace = () => {
       <div className="absolute inset-0 bg-[conic-gradient(at_bottom_left,_var(--tw-gradient-stops))] from-primary/5 via-purple-500/5 to-pink-500/5 blur-3xl -z-10" />
       
       <div className="container mx-auto px-4 pt-24 pb-16">
-        <div className="text-center mb-16 space-y-8">
+        <div className="text-center mb-12 space-y-8">
           <div className="space-y-4 opacity-0 animate-[fadeIn_1s_ease-out_forwards] min-h-[120px] flex flex-col items-center justify-center relative">
-            <h1 className="text-7xl font-bold bg-gradient-to-r from-white via-primary to-purple-500 bg-clip-text text-transparent animate-gradient bg-300% drop-shadow-sm py-6">
+            <h1 className="text-5xl sm:text-7xl font-bold bg-gradient-to-r from-white via-primary to-purple-500 bg-clip-text text-transparent animate-gradient bg-300% drop-shadow-sm py-6">
               NFT Marketplace
             </h1>
-            <p className="text-xl text-muted-foreground/80 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg sm:text-xl text-muted-foreground/80 max-w-2xl mx-auto leading-relaxed">
               Discover and collect extraordinary NFTs from talented creators around the world
             </p>
           </div>

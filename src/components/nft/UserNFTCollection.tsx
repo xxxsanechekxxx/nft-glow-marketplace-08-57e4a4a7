@@ -331,7 +331,7 @@ export const UserNFTCollection = () => {
       
       <div className="relative">
         <div className="absolute -inset-1 bg-gradient-to-r from-primary/10 via-transparent to-primary/10 rounded-xl blur-xl opacity-50"></div>
-        <div className="relative bg-card/30 backdrop-blur-sm border border-primary/10 rounded-xl p-6 shadow-lg">
+        <div className="relative bg-card/30 backdrop-blur-sm border border-primary/10 rounded-xl p-4 sm:p-6 shadow-lg">
           <TabsContent value="my-nfts" className="mt-0">
             {renderMyNFTs()}
           </TabsContent>
