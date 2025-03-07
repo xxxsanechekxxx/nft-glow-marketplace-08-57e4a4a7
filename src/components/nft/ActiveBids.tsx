@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
-import { Loader2, Clock, DollarSign, Award, CheckCircle2, XCircle, Calendar } from "lucide-react";
+import { Loader2, Clock, DollarSign, Award, CheckCircle2, XCircle, Calendar, ShieldCheck, ShieldAlert } from "lucide-react";
 import { NFTBid, NFT } from "@/types/nft";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -23,9 +23,9 @@ import {
 } from "@/components/ui/accordion";
 
 export const ActiveBids = () => {
-  const [bids, setBids] = useState<(NFTBid & { nft?: NFT })[]>([]);
+  const [bids, setBids] = useState<(NFTBid & { nft?: NFT; verified?: boolean })[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedBid, setSelectedBid] = useState<NFTBid | null>(null);
+  const [selectedBid, setSelectedBid] = useState<(NFTBid & { nft?: NFT; verified?: boolean }) | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [actionType, setActionType] = useState<"accept" | "decline" | null>(null);
   const { user } = useAuth();
@@ -63,17 +63,17 @@ export const ActiveBids = () => {
         
         // Fetch bids for these NFTs (this would be connected to the real backend)
         // This is a placeholder implementation
-        const mockBids: (NFTBid & { nft?: NFT })[] = [];
+        const mockBids: (NFTBid & { nft?: NFT; verified?: boolean })[] = [];
         
         // For each NFT that is for sale, create mock bids
         userNFTs?.forEach(nft => {
           if (nft.for_sale) {
             // Mock bid data based on the image
             const mockBidders = [
-              { address: "0fx32....734e", amount: "13.34", time: "1 min ago" },
-              { address: "0xc81...3xyq", amount: "13.11", time: "5 min ago" },
-              { address: "0xc199...34x", amount: "13.10", time: "7 min ago" },
-              { address: "0xc88...882x", amount: "13.09", time: "14 min ago" }
+              { address: "0fx32....734e", amount: "13.34", time: "1 min ago", verified: true },
+              { address: "0xc81...3xyq", amount: "13.11", time: "5 min ago", verified: false },
+              { address: "0xc199...34x", amount: "13.10", time: "7 min ago", verified: true },
+              { address: "0xc88...882x", amount: "13.09", time: "14 min ago", verified: false }
             ];
             
             mockBidders.forEach((bidder, index) => {
@@ -84,7 +84,8 @@ export const ActiveBids = () => {
                 bid_amount: bidder.amount,
                 created_at: bidder.time,
                 marketplace: nft.marketplace || "rarible",
-                nft: nft
+                nft: nft,
+                verified: bidder.verified
               });
             });
           }
@@ -106,13 +107,13 @@ export const ActiveBids = () => {
     fetchUserBids();
   }, [user?.id, toast]);
 
-  const handleAcceptBid = (bid: NFTBid) => {
+  const handleAcceptBid = (bid: NFTBid & { nft?: NFT; verified?: boolean }) => {
     setSelectedBid(bid);
     setActionType("accept");
     setConfirmDialogOpen(true);
   };
 
-  const handleDeclineBid = (bid: NFTBid) => {
+  const handleDeclineBid = (bid: NFTBid & { nft?: NFT; verified?: boolean }) => {
     setSelectedBid(bid);
     setActionType("decline");
     setConfirmDialogOpen(true);
@@ -177,7 +178,7 @@ export const ActiveBids = () => {
   }
 
   // Group bids by NFT
-  const bidsByNFT: Record<string, (NFTBid & { nft?: NFT })[]> = {};
+  const bidsByNFT: Record<string, (NFTBid & { nft?: NFT; verified?: boolean })[]> = {};
   bids.forEach(bid => {
     if (!bidsByNFT[bid.nft_id]) {
       bidsByNFT[bid.nft_id] = [];
@@ -253,6 +254,19 @@ export const ActiveBids = () => {
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-1 sm:gap-2">
                                   <span className="text-xs sm:text-sm font-medium bidder-address">{bid.bidder_address}</span>
+                                  
+                                  {/* Verification Badge */}
+                                  {bid.verified ? (
+                                    <Badge className="bg-green-500/20 text-green-300 border-green-500/30 flex text-[10px] h-5 items-center gap-0.5">
+                                      <ShieldCheck className="h-3 w-3 mr-0.5" />
+                                      Verified
+                                    </Badge>
+                                  ) : (
+                                    <Badge className="bg-red-500/20 text-red-300 border-red-500/30 flex text-[10px] h-5 items-center gap-0.5">
+                                      <ShieldAlert className="h-3 w-3 mr-0.5" />
+                                      Not Verified
+                                    </Badge>
+                                  )}
                                   
                                   {/* Highest Bid Badge - Desktop Only */}
                                   {index === 0 && (
@@ -377,6 +391,19 @@ export const ActiveBids = () => {
                       <span className="text-xl sm:text-2xl font-bold text-green-400">{selectedBid.bid_amount} ETH</span>
                     </div>
                     <span className="text-xs sm:text-sm text-green-300 mt-1 bidder-address">{selectedBid.bidder_address}</span>
+                    
+                    {/* Verification Status in Confirmation Dialog */}
+                    {selectedBid.verified ? (
+                      <Badge className="bg-green-500/20 text-green-300 border-green-500/30 flex text-xs mt-2 items-center gap-1">
+                        <ShieldCheck className="h-3 w-3 mr-0.5" />
+                        Verified Bidder
+                      </Badge>
+                    ) : (
+                      <Badge className="bg-red-500/20 text-red-300 border-red-500/30 flex text-xs mt-2 items-center gap-1">
+                        <ShieldAlert className="h-3 w-3 mr-0.5" />
+                        Not Verified Bidder
+                      </Badge>
+                    )}
                   </div>
                 ) : (
                   <div className="flex flex-col items-center">
@@ -390,6 +417,19 @@ export const ActiveBids = () => {
                       <span className="text-xl sm:text-2xl font-bold text-red-400">{selectedBid.bid_amount} ETH</span>
                     </div>
                     <span className="text-xs sm:text-sm text-red-300 mt-1 bidder-address">{selectedBid.bidder_address}</span>
+                    
+                    {/* Verification Status in Confirmation Dialog */}
+                    {selectedBid.verified ? (
+                      <Badge className="bg-green-500/20 text-green-300 border-green-500/30 flex text-xs mt-2 items-center gap-1">
+                        <ShieldCheck className="h-3 w-3 mr-0.5" />
+                        Verified Bidder
+                      </Badge>
+                    ) : (
+                      <Badge className="bg-red-500/20 text-red-300 border-red-500/30 flex text-xs mt-2 items-center gap-1">
+                        <ShieldAlert className="h-3 w-3 mr-0.5" />
+                        Not Verified Bidder
+                      </Badge>
+                    )}
                   </div>
                 )}
               </div>
