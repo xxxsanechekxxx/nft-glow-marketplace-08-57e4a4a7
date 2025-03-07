@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
@@ -7,6 +6,7 @@ import { NFTBid, NFT } from "@/types/nft";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { formatDistanceToNow } from "date-fns";
 import {
   Dialog,
   DialogContent,
@@ -30,6 +30,17 @@ export const ActiveBids = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Format relative time from timestamp
+  const formatRelativeTime = (timestamp: string) => {
+    try {
+      const date = new Date(timestamp);
+      return formatDistanceToNow(date, { addSuffix: true });
+    } catch (error) {
+      console.error("Error parsing date:", error);
+      return "Unknown time";
+    }
+  };
 
   // Fetch NFTs owned by the user
   const { data: userNFTs, isLoading: isLoadingNFTs } = useQuery({
@@ -287,7 +298,7 @@ export const ActiveBids = () => {
                                 
                                 <div className="flex items-center text-gray-400 text-xs">
                                   <Clock className="h-3 w-3 mr-1" />
-                                  <span>{bid.created_at}</span>
+                                  <span>{formatRelativeTime(bid.created_at)}</span>
                                 </div>
                               </div>
                               
