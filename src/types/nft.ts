@@ -25,9 +25,9 @@ export interface NFTBid {
   bidder_address: string;
   bid_amount: string;
   created_at: string;
-  marketplace?: string | null;
-  verified?: boolean;
+  marketplace: string;
   nft?: NFT; 
   bidder_rating?: string;
+  bidder_verified?: boolean;
   bidder_joined?: string;
 }

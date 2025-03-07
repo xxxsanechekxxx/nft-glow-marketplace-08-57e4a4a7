@@ -1,7 +1,6 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase";
 import { Loader2, Clock, Award, CheckCircle2, XCircle, ShieldCheck, ShieldAlert } from "lucide-react";
 import { NFTBid, NFT } from "@/types/nft";
 import { Button } from "@/components/ui/button";
@@ -43,12 +42,7 @@ export const ActiveBids = () => {
         .eq('for_sale', true);
       
       if (error) throw error;
-      
-      // Convert the price to string to match our NFT type
-      return (data || []).map(nft => ({
-        ...nft,
-        price: nft.price.toString()
-      })) as NFT[];
+      return data as NFT[];
     },
     enabled: !!user?.id
   });
@@ -69,16 +63,7 @@ export const ActiveBids = () => {
         .order('bid_amount', { ascending: false });
       
       if (error) throw error;
-      
-      // Convert bid amounts and NFT prices to strings to match our types
-      return (data || []).map(bid => ({
-        ...bid,
-        bid_amount: bid.bid_amount.toString(),
-        nft: bid.nft ? {
-          ...bid.nft,
-          price: bid.nft.price.toString()
-        } : undefined
-      })) as (NFTBid & { nft: NFT })[];
+      return data as (NFTBid & { nft: NFT })[];
     },
     enabled: !!userNFTs?.length
   });
@@ -136,7 +121,7 @@ export const ActiveBids = () => {
 
         toast({
           title: "Bid Accepted",
-          description: `You sold your NFT for ${selectedBid.bid_amount}`,
+          description: `You sold your NFT for ${selectedBid.bid_amount} ETH`,
         });
       } else {
         // Delete just this bid

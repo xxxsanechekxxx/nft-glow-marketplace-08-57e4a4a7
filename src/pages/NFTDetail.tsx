@@ -29,11 +29,7 @@ const NFTDetail = () => {
         .single();
 
       if (error) throw error;
-      // Convert price to string to match our NFT type
-      return {
-        ...data,
-        price: data.price.toString()
-      } as NFT;
+      return data as NFT;
     },
   });
 
