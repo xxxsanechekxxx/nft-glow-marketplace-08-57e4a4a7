@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
@@ -27,6 +28,7 @@ export const ActiveBids = () => {
   const [selectedBid, setSelectedBid] = useState<(NFTBid & { nft?: NFT })| null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [actionType, setActionType] = useState<"accept" | "decline" | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -111,29 +113,22 @@ export const ActiveBids = () => {
     if (!selectedBid || !actionType) return;
     
     try {
+      setIsProcessing(true);
+      
       if (actionType === "accept") {
-        // Update NFT ownership and sale status
-        const { error: nftError } = await supabase
-          .from('nfts')
-          .update({ 
-            owner_id: selectedBid.bidder_address,
-            for_sale: false 
-          })
-          .eq('id', selectedBid.nft_id);
+        // Call the Supabase function to accept the bid
+        const { data, error } = await supabase
+          .rpc('accept_bid', { bid_id: selectedBid.id });
         
-        if (nftError) throw nftError;
-
-        // Delete all bids for this NFT
-        const { error: bidsError } = await supabase
-          .from('nft_bids')
-          .delete()
-          .eq('nft_id', selectedBid.nft_id);
+        if (error) throw error;
         
-        if (bidsError) throw bidsError;
-
+        if (!data.success) {
+          throw new Error(data.message);
+        }
+        
         toast({
           title: "Bid Accepted",
-          description: `You sold your NFT for ${selectedBid.bid_amount} ETH`,
+          description: `You sold your NFT for ${selectedBid.bid_amount} ETH (${data.fee_percent}% fee applied)`,
         });
       } else {
         // Delete just this bid
@@ -153,15 +148,18 @@ export const ActiveBids = () => {
       // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ['nft-bids'] });
       queryClient.invalidateQueries({ queryKey: ['user-nfts'] });
+      queryClient.invalidateQueries({ queryKey: ['user-balance'] });
+      queryClient.invalidateQueries({ queryKey: ['user-transactions'] });
       
     } catch (error) {
       console.error(`Error ${actionType}ing bid:`, error);
       toast({
         title: "Error",
-        description: `Failed to ${actionType} the bid`,
+        description: `Failed to ${actionType} the bid: ${error instanceof Error ? error.message : 'Unknown error'}`,
         variant: "destructive"
       });
     } finally {
+      setIsProcessing(false);
       setConfirmDialogOpen(false);
       setSelectedBid(null);
       setActionType(null);
@@ -307,6 +305,7 @@ export const ActiveBids = () => {
                                 <Button 
                                   onClick={() => handleAcceptBid(bid)}
                                   className="accept-button"
+                                  disabled={isProcessing}
                                 >
                                   <CheckCircle2 className="w-4 h-4 mr-2" /> Accept
                                 </Button>
@@ -315,6 +314,7 @@ export const ActiveBids = () => {
                                   variant="outline"
                                   onClick={() => handleDeclineBid(bid)}
                                   className="decline-button"
+                                  disabled={isProcessing}
                                 >
                                   <XCircle className="w-4 h-4 mr-2" /> Decline
                                 </Button>
@@ -340,7 +340,7 @@ export const ActiveBids = () => {
             </DialogTitle>
             <DialogDescription className="text-center pt-2 text-sm sm:text-base">
               {actionType === "accept" 
-                ? "Are you sure you want to accept this bid and sell your NFT?" 
+                ? "Are you sure you want to accept this bid and sell your NFT? A 2.5% platform fee will be applied." 
                 : "Are you sure you want to decline this bid?"}
             </DialogDescription>
           </DialogHeader>
@@ -389,6 +389,11 @@ export const ActiveBids = () => {
                     </div>
                     <span className="text-xs sm:text-sm text-green-300 mt-1 bidder-address">{selectedBid.bidder_address}</span>
                     
+                    {/* Fee Information */}
+                    <Badge className="bg-green-500/10 text-green-300 border-green-500/20 flex text-xs mt-2 items-center gap-1">
+                      2.5% platform fee
+                    </Badge>
+                    
                     {/* Verification Status in Confirmation Dialog */}
                     {selectedBid.verified ? (
                       <Badge className="bg-green-500/20 text-green-300 border-green-500/30 flex text-xs mt-2 items-center gap-1">
@@ -429,6 +434,7 @@ export const ActiveBids = () => {
               onClick={() => setConfirmDialogOpen(false)}
               className="border-muted-foreground/20 hover:bg-background text-xs sm:text-sm"
               size="sm"
+              disabled={isProcessing}
             >
               Cancel
             </Button>
@@ -437,8 +443,16 @@ export const ActiveBids = () => {
               onClick={confirmAction}
               className={`text-xs sm:text-sm ${actionType === "accept" ? "bg-green-600 hover:bg-green-700" : ""}`}
               size="sm"
+              disabled={isProcessing}
             >
-              {actionType === "accept" ? "Confirm Sale" : "Confirm Decline"}
+              {isProcessing ? (
+                <>
+                  <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 mr-2 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                actionType === "accept" ? "Confirm Sale" : "Confirm Decline"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

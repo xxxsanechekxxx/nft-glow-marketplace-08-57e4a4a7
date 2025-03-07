@@ -49,6 +49,7 @@ export type Database = {
       }
       nfts: {
         Row: {
+          bidder_wallet_address: string | null
           created_at: string
           creator: string
           description: string | null
@@ -62,6 +63,7 @@ export type Database = {
           properties: Json | null
         }
         Insert: {
+          bidder_wallet_address?: string | null
           created_at?: string
           creator: string
           description?: string | null
@@ -75,6 +77,7 @@ export type Database = {
           properties?: Json | null
         }
         Update: {
+          bidder_wallet_address?: string | null
           created_at?: string
           creator?: string
           description?: string | null
@@ -172,6 +175,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_bid: {
+        Args: {
+          bid_id: string
+        }
+        Returns: Json
+      }
       get_user_transaction_totals: {
         Args: {
           user_uuid: string
