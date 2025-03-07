@@ -1,4 +1,3 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
@@ -88,7 +87,6 @@ export const NFTCard = ({
     setNewPrice(price);
   };
 
-  // Get marketplace display name
   const getMarketplaceDisplay = () => {
     if (!marketplace) return null;
     
@@ -107,7 +105,7 @@ export const NFTCard = ({
   return (
     <Link to={`/nft/${id}`} className="block group">
       <div className="relative">
-        <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
+        <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 via-primary/10 to-purple-500/30 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:scale-105 pulse-glow" />
         <div className="relative rounded-xl overflow-hidden bg-background/60 backdrop-blur-sm border border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-700">
           <div className="aspect-square overflow-hidden relative">
             <img
