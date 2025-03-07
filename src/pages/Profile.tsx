@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -573,9 +574,9 @@ const Profile = () => {
   return (
     <div className="container mx-auto py-8 px-4 mt-16 min-h-screen bg-gradient-to-b from-background via-background/80 to-background/60">
       <div className="max-w-4xl mx-auto space-y-8">
-        <div className="relative p-8 rounded-2xl overflow-hidden bg-gradient-to-r from-purple-500/10 via-primary/5 to-purple-500/10 border border-primary/10 backdrop-blur-sm shadow-xl">
+        <div className="relative p-6 sm:p-8 rounded-2xl overflow-hidden bg-gradient-to-r from-purple-500/10 via-primary/5 to-purple-500/10 border border-primary/10 backdrop-blur-sm shadow-xl">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 animate-gradient"></div>
-          <div className="relative flex items-center gap-6 z-10">
+          <div className="relative flex flex-col sm:flex-row items-center gap-4 sm:gap-6 z-10">
             <div className="relative group">
               <input
                 type="file"
@@ -588,12 +589,12 @@ const Profile = () => {
                 htmlFor="avatar-upload" 
                 className="cursor-pointer block relative"
               >
-                <Avatar className="w-24 h-24 border-4 border-primary/20 shadow-xl ring-2 ring-purple-500/20 transition-all duration-300 group-hover:ring-purple-500/40">
+                <Avatar className="w-20 h-20 sm:w-24 sm:h-24 border-4 border-primary/20 shadow-xl ring-2 ring-purple-500/20 transition-all duration-300 group-hover:ring-purple-500/40">
                   {userData?.avatar_url ? (
                     <AvatarImage src={userData.avatar_url} alt={userData.login} />
                   ) : (
                     <AvatarFallback className="bg-gradient-to-br from-primary/80 to-purple-600 text-white">
-                      <UserRound className="w-12 h-12" />
+                      <UserRound className="w-10 h-10 sm:w-12 sm:h-12" />
                     </AvatarFallback>
                   )}
                 </Avatar>
@@ -602,8 +603,8 @@ const Profile = () => {
                 </div>
               </label>
             </div>
-            <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+            <div className="text-center sm:text-left">
+              <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent truncate max-w-[200px] sm:max-w-[300px]">
                 @{userData?.login}
               </h1>
             </div>
@@ -611,19 +612,19 @@ const Profile = () => {
         </div>
 
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-5 p-1.5 bg-background/50 backdrop-blur-sm rounded-xl border border-primary/10 mb-6">
+          <TabsList className="w-full flex flex-wrap p-1.5 bg-background/50 backdrop-blur-sm rounded-xl border border-primary/10 mb-6">
             {["profile", "settings", "wallet", "verification", "nft"].map((tab) => (
               <TabsTrigger
                 key={tab}
                 value={tab}
-                className="flex items-center gap-2 transition-all duration-300 data-[state=active]:bg-primary/20 data-[state=active]:text-primary relative overflow-hidden group"
+                className="flex-1 min-w-[80px] flex items-center justify-center gap-1 transition-all duration-300 data-[state=active]:bg-primary/20 data-[state=active]:text-primary relative overflow-hidden group py-2"
               >
                 {tab === "profile" && <User className="w-4 h-4" />}
                 {tab === "settings" && <Settings className="w-4 h-4" />}
                 {tab === "wallet" && <Wallet className="w-4 h-4" />}
                 {tab === "verification" && <Shield className="w-4 h-4" />}
                 {tab === "nft" && <ShoppingBag className="w-4 h-4" />}
-                <span className="relative z-10 capitalize">{tab}</span>
+                <span className="relative z-10 capitalize hidden sm:inline">{tab}</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </TabsTrigger>
             ))}

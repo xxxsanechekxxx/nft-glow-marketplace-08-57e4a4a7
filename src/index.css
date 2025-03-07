@@ -217,6 +217,16 @@
     text-overflow: ellipsis !important;
     display: inline-block !important;
   }
+  
+  /* Improved tab navigation for mobile */
+  .tabs-navigation {
+    gap: 0.25rem !important;
+  }
+  
+  .tab-trigger {
+    padding: 0.5rem !important;
+    min-width: 65px !important;
+  }
 }
 
 /* New styles for the updated bid design */
