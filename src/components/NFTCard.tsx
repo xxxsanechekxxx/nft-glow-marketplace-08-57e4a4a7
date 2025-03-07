@@ -162,8 +162,8 @@ export const NFTCard = ({
               ) : (
                 <div className="flex items-center gap-1 sm:gap-2">
                   <img 
-                    src="/lovable-uploads/5a5e2e7d-5299-480e-974e-1a494f67ec68.png" 
-                    alt="Ethereum"
+                    src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                    alt="ETH"
                     className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5"
                   />
                   <span className="text-sm sm:text-base md:text-lg font-medium text-white">
