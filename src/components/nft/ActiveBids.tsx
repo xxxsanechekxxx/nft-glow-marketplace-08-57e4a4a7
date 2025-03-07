@@ -35,6 +35,8 @@ export const ActiveBids = () => {
   const [selectedBid, setSelectedBid] = useState<(NFTBid & { nft?: NFT })| null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  // Added a new state to track the loading state when submitting a sale
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -112,7 +114,9 @@ export const ActiveBids = () => {
     if (!selectedBid) return;
     
     try {
+      // Set both processing states to true
       setIsProcessing(true);
+      setIsSubmitting(true);
       
       // Call the Supabase function to accept the bid
       const { data, error } = await supabase
@@ -147,6 +151,7 @@ export const ActiveBids = () => {
       });
     } finally {
       setIsProcessing(false);
+      setIsSubmitting(false);
       setConfirmDialogOpen(false);
       setSelectedBid(null);
     }
@@ -185,6 +190,17 @@ export const ActiveBids = () => {
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
+      {/* Show full page loader when a sale is being submitted */}
+      {isSubmitting && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-background/80 p-6 rounded-xl shadow-xl border border-primary/20 flex flex-col items-center">
+            <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
+            <p className="text-lg font-medium">Processing Sale...</p>
+            <p className="text-sm text-muted-foreground">Please wait while we confirm your transaction.</p>
+          </div>
+        </div>
+      )}
+      
       <Accordion type="single" collapsible className="w-full">
         {Object.entries(bidsByNFT).map(([nftId, nftBids]) => {
           const nft = nftBids[0]?.nft;
