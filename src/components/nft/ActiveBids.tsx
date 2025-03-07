@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Clock, Award, CheckCircle2, User, Tag, Wallet } from "lucide-react";
+import { Loader2, Clock, Award, CheckCircle2, User, Tag } from "lucide-react";
 import { NFTBid, NFT } from "@/types/nft";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -23,6 +23,13 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+
+// Define the RPC response type to fix TypeScript errors
+interface AcceptBidResponse {
+  success: boolean;
+  message: string;
+  fee_percent: number;
+}
 
 export const ActiveBids = () => {
   const [selectedBid, setSelectedBid] = useState<(NFTBid & { nft?: NFT })| null>(null);
@@ -113,13 +120,16 @@ export const ActiveBids = () => {
       
       if (error) throw error;
       
-      if (!data.success) {
-        throw new Error(data.message);
+      // Properly cast the response to our defined type
+      const response = data as unknown as AcceptBidResponse;
+      
+      if (!response.success) {
+        throw new Error(response.message);
       }
       
       toast({
         title: "Bid Accepted",
-        description: `You sold your NFT for ${selectedBid.bid_amount} ETH (${data.fee_percent}% fee applied)`,
+        description: `You sold your NFT for ${selectedBid.bid_amount} ETH (${response.fee_percent}% fee applied)`,
       });
 
       // Invalidate queries to refresh data
@@ -187,106 +197,105 @@ export const ActiveBids = () => {
               className="mb-6 border-0"
             >
               <div className="dark-bid-card shadow-md">
-                <AccordionTrigger className="px-6 py-4 hover:no-underline">
+                <AccordionTrigger className="px-4 sm:px-6 py-3 sm:py-4 hover:no-underline">
                   <div className="flex w-full items-center justify-between">
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 sm:gap-4">
                       {/* NFT Image */}
                       {nft?.image && (
-                        <div className="h-16 w-16 rounded-lg overflow-hidden border border-[#3A3F50]">
+                        <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-lg overflow-hidden border border-[#3A3F50]">
                           <img src={nft.image} alt={nft.name} className="h-full w-full object-cover" />
                         </div>
                       )}
                       
                       {/* NFT Info */}
                       <div className="text-left">
-                        <h3 className="font-semibold text-lg text-white">{nft?.name || 'Unknown NFT'}</h3>
-                        <div className="flex items-center mt-1 text-sm text-gray-400">
-                          <Tag className="h-3.5 w-3.5 mr-1.5" />
-                          <span>#{nftId.substring(0, 8)}</span>
+                        <h3 className="font-semibold text-sm sm:text-lg text-white truncate max-w-[140px] sm:max-w-full">{nft?.name || 'Unknown NFT'}</h3>
+                        <div className="flex items-center mt-1 text-xs sm:text-sm text-gray-400">
+                          <Tag className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1" />
+                          <span>#{nftId.substring(0, 6)}</span>
                         </div>
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center bg-[#1D2235] rounded-lg px-4 py-2 border border-[#2A2E3D]">
+                    <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2 sm:gap-4">
+                      <div className="flex items-center bg-[#1D2235] rounded-lg px-2 sm:px-4 py-1 sm:py-2 border border-[#2A2E3D]">
                         <img 
                           src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
                           alt="ETH" 
-                          className="h-5 w-5 mr-2" 
+                          className="h-4 w-4 mr-1 sm:mr-2" 
                         />
-                        <span className="text-sm font-semibold text-purple-300">Top: {highestBidAmount.toFixed(2)} ETH</span>
+                        <span className="text-xs sm:text-sm font-semibold text-purple-300">{highestBidAmount.toFixed(2)}</span>
                       </div>
                       
-                      <div className="flex items-center bg-[#1D2235] rounded-lg px-4 py-2 border border-[#2A2E3D]">
-                        <Award className="h-4 w-4 mr-2 text-yellow-400" />
-                        <span className="text-sm">{nftBids.length} Bids</span>
+                      <div className="flex items-center bg-[#1D2235] rounded-lg px-2 sm:px-4 py-1 sm:py-2 border border-[#2A2E3D]">
+                        <Award className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2 text-yellow-400" />
+                        <span className="text-xs sm:text-sm">{nftBids.length}</span>
                       </div>
                     </div>
                   </div>
                 </AccordionTrigger>
                 
-                <AccordionContent className="px-6 pt-0 pb-6">
-                  <div className="space-y-4 mt-4">
+                <AccordionContent className="px-4 sm:px-6 pt-0 pb-4 sm:pb-6">
+                  <div className="space-y-3 sm:space-y-4 mt-3 sm:mt-4">
                     {nftBids.map((bid, index) => {
                       const isHighestBid = parseFloat(bid.bid_amount) === highestBidAmount;
                       return (
                         <div 
                           key={bid.id}
-                          className="bid-item bg-[#1D2235] hover:bg-[#252A40] transition-colors"
+                          className="bid-item bg-[#1D2235] hover:bg-[#252A40] transition-colors p-3 sm:p-5 my-2 sm:my-3"
                         >
-                          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
                             <div className="space-y-3">
                               {/* Bidder info */}
-                              <div className="flex items-center space-x-3">
-                                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#252A40] border border-[#3A3F50]">
-                                  <User className="h-5 w-5 text-gray-400" />
+                              <div className="flex items-center space-x-2 sm:space-x-3">
+                                <div className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#252A40] border border-[#3A3F50]">
+                                  <User className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                                 </div>
                                 <div>
                                   <div className="flex items-center space-x-2">
-                                    <span className="text-sm font-mono truncate max-w-[120px] sm:max-w-[150px] text-white">
+                                    <span className="text-xs sm:text-sm font-mono truncate bidder-address text-white">
                                       {bid.bidder_address}
                                     </span>
                                     
                                     <div className="flex gap-1">
                                       {isHighestBid && (
-                                        <Badge className="bg-yellow-900/40 text-yellow-500 border border-yellow-500/30 text-xs px-2">
-                                          Highest Bid
+                                        <Badge className="bg-yellow-900/40 text-yellow-500 border border-yellow-500/30 text-[10px] sm:text-xs px-1 sm:px-2">
+                                          Highest
                                         </Badge>
                                       )}
                                       
                                       {bid.verified ? (
-                                        <Badge className="verified-badge border px-2 flex items-center">
+                                        <Badge className="verified-badge border px-1 sm:px-2 flex items-center text-[10px] sm:text-xs">
                                           <div className="verified-dot"></div>
                                           Verified
                                         </Badge>
                                       ) : (
-                                        <Badge className="bg-red-900/40 text-red-400 border border-red-500/30 text-xs px-2">
-                                          Not Verified
+                                        <Badge className="bg-red-900/40 text-red-400 border border-red-500/30 text-[10px] sm:text-xs px-1 sm:px-2">
+                                          Unverified
                                         </Badge>
                                       )}
                                     </div>
                                   </div>
-                                  <div className="flex items-center text-gray-400 text-xs mt-1">
-                                    <Clock className="h-3 w-3 mr-1.5" />
+                                  <div className="flex items-center text-[10px] sm:text-xs text-gray-400 mt-1">
+                                    <Clock className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-1" />
                                     <span>{formatRelativeTime(bid.created_at)}</span>
                                   </div>
                                 </div>
                               </div>
                             </div>
                             
-                            <div className="flex items-center justify-between md:justify-end gap-6">
+                            <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6">
                               {/* Bid amount */}
                               <div className="flex items-center">
-                                <Wallet className="h-4 w-4 mr-2 text-primary" />
                                 <div className="flex flex-col">
-                                  <span className="text-xs text-gray-400">Bid Amount</span>
+                                  <span className="text-[10px] sm:text-xs text-gray-400">Bid Amount</span>
                                   <div className="flex items-center">
                                     <img 
                                       src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
                                       alt="ETH" 
-                                      className="h-4 w-4 mr-1.5" 
+                                      className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1" 
                                     />
-                                    <span className="text-lg font-bold text-primary">{bid.bid_amount} ETH</span>
+                                    <span className="text-base sm:text-lg font-bold text-primary">{bid.bid_amount}</span>
                                   </div>
                                 </div>
                               </div>
@@ -294,10 +303,10 @@ export const ActiveBids = () => {
                               {/* Accept Button */}
                               <Button 
                                 onClick={() => handleAcceptBid(bid)}
-                                className="bg-green-600 hover:bg-green-700 text-white px-6 h-12"
+                                className="bg-green-600 hover:bg-green-700 text-white px-3 sm:px-6 h-8 sm:h-10 text-xs sm:text-sm"
                                 disabled={isProcessing}
                               >
-                                <CheckCircle2 className="w-4 h-4 mr-2" /> Accept Bid
+                                <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 sm:mr-2" /> Accept
                               </Button>
                             </div>
                           </div>
@@ -344,19 +353,19 @@ export const ActiveBids = () => {
                 <div>
                   <div className="font-semibold text-sm sm:text-lg">{selectedBid.nft.name}</div>
                   <div className="text-xs sm:text-sm text-muted-foreground">
-                    {selectedBid.marketplace && `On ${getMarketplaceDisplay(selectedBid.marketplace)}`} • Token ID: #{selectedBid.nft_id.substring(0, 8)}
+                    {selectedBid.marketplace && `On ${getMarketplaceDisplay(selectedBid.marketplace)}`} • Token ID: #{selectedBid.nft_id.substring(0, 6)}
                   </div>
                 </div>
               </div>
               
-              <div className="text-center p-4 sm:p-6 rounded-lg bg-green-900/20 border border-green-500/30">
+              <div className="text-center p-3 sm:p-4 rounded-lg bg-green-900/20 border border-green-500/30">
                 <div className="flex flex-col items-center">
                   <span className="text-xs sm:text-sm text-green-300">You are selling for</span>
                   <div className="flex items-center justify-center mt-1">
                     <img 
                       src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
                       alt="ETH" 
-                      className="h-5 w-5 sm:h-6 sm:w-6 mr-1 sm:mr-2" 
+                      className="h-5 w-5 sm:h-6 sm:w-6 mr-1" 
                     />
                     <span className="text-xl sm:text-2xl font-bold text-green-400">{selectedBid.bid_amount}</span>
                   </div>
