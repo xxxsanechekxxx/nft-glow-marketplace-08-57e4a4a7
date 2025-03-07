@@ -1,7 +1,8 @@
+
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
-import { Loader2, Clock, Award, CheckCircle2, XCircle } from "lucide-react";
+import { Loader2, Award, CheckCircle2, XCircle, Clock } from "lucide-react";
 import { NFTBid, NFT } from "@/types/nft";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -15,18 +16,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 export const ActiveBids = () => {
   const [selectedBid, setSelectedBid] = useState<(NFTBid & { nft?: NFT })| null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [actionType, setActionType] = useState<"accept" | "decline" | null>(null);
+  const [expandedNft, setExpandedNft] = useState<string | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -168,6 +165,10 @@ export const ActiveBids = () => {
     }
   };
 
+  const toggleExpand = (nftId: string) => {
+    setExpandedNft(expandedNft === nftId ? null : nftId);
+  };
+
   const isLoading = isLoadingNFTs || isLoadingBids;
 
   if (isLoading) {
@@ -200,137 +201,125 @@ export const ActiveBids = () => {
   });
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
-      <Accordion type="single" collapsible className="w-full">
-        {Object.entries(bidsByNFT).map(([nftId, nftBids]) => {
-          const nft = nftBids[0]?.nft;
-          const highestBidAmount = Math.max(...nftBids.map(bid => parseFloat(bid.bid_amount)));
-          
-          return (
-            <AccordionItem 
-              key={nftId} 
-              value={nftId}
-              className="mb-4 border-0"
+    <div className="space-y-4 max-w-4xl mx-auto">
+      {Object.entries(bidsByNFT).map(([nftId, nftBids]) => {
+        const nft = nftBids[0]?.nft;
+        const highestBidAmount = Math.max(...nftBids.map(bid => parseFloat(bid.bid_amount)));
+        const isExpanded = expandedNft === nftId;
+        
+        return (
+          <div key={nftId} className="bid-card">
+            <div 
+              className="bid-header cursor-pointer"
+              onClick={() => toggleExpand(nftId)}
             >
-              <div className="bg-[#131B31] border border-[#2A3047] rounded-lg overflow-hidden">
-                <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                  <div className="flex w-full items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      {/* NFT Image */}
-                      {nft?.image && (
-                        <div className="h-14 w-14 rounded-md overflow-hidden">
-                          <img src={nft.image} alt={nft.name} className="h-full w-full object-cover" />
-                        </div>
-                      )}
-                      
-                      {/* NFT Info */}
-                      <div className="text-left">
-                        <h3 className="font-semibold text-md">{nft?.name || 'Unknown NFT'}</h3>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center bg-[#1A1F2C] rounded-full px-3 py-1">
-                        <img 
-                          src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
-                          alt="ETH" 
-                          className="h-4 w-4 mr-1" 
-                        />
-                        <span className="text-sm font-semibold">Top: {highestBidAmount.toFixed(2)} ETH</span>
-                      </div>
-                      
-                      <div className="flex items-center bg-[#1A1F2C] rounded-full px-3 py-1">
-                        <Award className="h-4 w-4 mr-1" />
-                        <span className="text-sm">{nftBids.length} Bids</span>
-                      </div>
-                    </div>
+              <div className="flex items-center gap-3">
+                {/* NFT Image */}
+                {nft?.image && (
+                  <div className="h-12 w-12 rounded-lg overflow-hidden flex-shrink-0">
+                    <img src={nft.image} alt={nft.name} className="h-full w-full object-cover" />
                   </div>
-                </AccordionTrigger>
+                )}
                 
-                <AccordionContent className="px-4 pt-0 pb-4">
-                  <div className="space-y-2 mt-2">
-                    {nftBids.map((bid, index) => {
-                      const isHighestBid = parseFloat(bid.bid_amount) === highestBidAmount;
-                      return (
-                        <div 
-                          key={bid.id}
-                          className="bg-[#1A1F2C] rounded-lg overflow-hidden"
-                        >
-                          <div className="p-4">
-                            <div className="flex flex-col space-y-3">
-                              {/* Bidder Address & Badges */}
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center space-x-2">
-                                  <span className="text-sm font-mono truncate max-w-[120px] sm:max-w-[150px]">
-                                    {bid.bidder_address}
-                                  </span>
-                                  
-                                  <div className="flex gap-1">
-                                    {isHighestBid && (
-                                      <span className="badge-highest bid-badge">
-                                        Highest Bid
-                                      </span>
-                                    )}
-                                    
-                                    {bid.verified ? (
-                                      <span className="badge-verified bid-badge">
-                                        Verified
-                                      </span>
-                                    ) : (
-                                      <span className="badge-not-verified bid-badge">
-                                        Not Verified
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                              
-                              {/* Bid Amount & Time */}
-                              <div className="flex justify-between items-center">
-                                <div className="flex items-center text-white font-bold">
-                                  <img 
-                                    src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
-                                    alt="ETH" 
-                                    className="h-5 w-5 mr-1" 
-                                  />
-                                  <span>{bid.bid_amount} ETH</span>
-                                </div>
-                                
-                                <div className="flex items-center text-gray-400 text-xs">
-                                  <Clock className="h-3 w-3 mr-1" />
-                                  <span>{formatRelativeTime(bid.created_at)}</span>
-                                </div>
-                              </div>
-                              
-                              {/* Accept & Decline Buttons */}
-                              <div className="flex gap-2 mt-2">
-                                <Button 
-                                  onClick={() => handleAcceptBid(bid)}
-                                  className="accept-button"
-                                >
-                                  <CheckCircle2 className="w-4 h-4 mr-2" /> Accept
-                                </Button>
-                                
-                                <Button 
-                                  variant="outline"
-                                  onClick={() => handleDeclineBid(bid)}
-                                  className="decline-button"
-                                >
-                                  <XCircle className="w-4 h-4 mr-2" /> Decline
-                                </Button>
-                              </div>
-                            </div>
+                {/* NFT Name */}
+                <div className="flex flex-col">
+                  <h3 className="font-semibold text-lg leading-tight">{nft?.name || 'Unknown NFT'}</h3>
+                  <span className="text-xs text-gray-400">#{nftId.substring(0, 8)}</span>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                {/* Top Bid */}
+                <div className="eth-badge">
+                  <img 
+                    src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                    alt="ETH" 
+                    className="h-4 w-4" 
+                  />
+                  <span>Top: {highestBidAmount.toFixed(2)} ETH</span>
+                </div>
+                
+                {/* Bid Count */}
+                <div className="bid-count-badge">
+                  <Award className="h-4 w-4" />
+                  <span>{nftBids.length} Bids</span>
+                </div>
+                
+                {/* Chevron */}
+                {isExpanded ? (
+                  <ChevronUp className="h-5 w-5 text-gray-400" />
+                ) : (
+                  <ChevronDown className="h-5 w-5 text-gray-400" />
+                )}
+              </div>
+            </div>
+            
+            {isExpanded && (
+              <div className="divide-y divide-[#1E2430]">
+                {nftBids.map((bid, index) => {
+                  const isHighestBid = parseFloat(bid.bid_amount) === highestBidAmount;
+                  return (
+                    <div key={bid.id} className="bid-item">
+                      <div className="flex justify-between items-center">
+                        {/* Bidder Address */}
+                        <div className="flex flex-row items-center gap-2">
+                          <span className="bid-address">{bid.bidder_address}</span>
+                          
+                          <div className="flex gap-1">
+                            {isHighestBid && (
+                              <span className="highest-bid-tag">Highest Bid</span>
+                            )}
+                            
+                            {bid.verified ? (
+                              <span className="verified-tag">Verified</span>
+                            ) : (
+                              <span className="non-verified-tag">Not Verified</span>
+                            )}
                           </div>
                         </div>
-                      );
-                    })}
-                  </div>
-                </AccordionContent>
+                      </div>
+                      
+                      {/* Bid Amount and Time */}
+                      <div className="flex justify-between items-center">
+                        <div className="nft-amount">
+                          <img 
+                            src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                            alt="ETH" 
+                            className="h-5 w-5 mr-1" 
+                          />
+                          {bid.bid_amount} ETH
+                        </div>
+                        
+                        <div className="time-ago">
+                          <Clock className="h-3 w-3 mr-1" />
+                          {formatRelativeTime(bid.created_at)}
+                        </div>
+                      </div>
+                      
+                      {/* Action Buttons */}
+                      <div className="grid grid-cols-2 gap-3 mt-2">
+                        <button 
+                          className="accept-button"
+                          onClick={() => handleAcceptBid(bid)}
+                        >
+                          <CheckCircle2 className="w-4 h-4" /> Accept
+                        </button>
+                        
+                        <button 
+                          className="decline-button"
+                          onClick={() => handleDeclineBid(bid)}
+                        >
+                          <XCircle className="w-4 h-4" /> Decline
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            </AccordionItem>
-          );
-        })}
-      </Accordion>
+            )}
+          </div>
+        );
+      })}
 
       <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
         <DialogContent className="sm:max-w-md border-purple-500/30 bg-gradient-to-br from-background to-background/95 w-[calc(100%-2rem)] max-w-md mx-auto">
