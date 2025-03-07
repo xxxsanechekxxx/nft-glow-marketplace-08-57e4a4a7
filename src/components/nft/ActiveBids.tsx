@@ -1,8 +1,7 @@
-
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
-import { Loader2, Clock, DollarSign, Award, CheckCircle2, XCircle, Calendar, ShieldCheck, ShieldAlert } from "lucide-react";
+import { Loader2, Clock, Award, CheckCircle2, XCircle, ShieldCheck, ShieldAlert } from "lucide-react";
 import { NFTBid, NFT } from "@/types/nft";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -21,15 +20,53 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const ActiveBids = () => {
-  const [bids, setBids] = useState<(NFTBid & { nft?: NFT; verified?: boolean })[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [selectedBid, setSelectedBid] = useState<(NFTBid & { nft?: NFT; verified?: boolean }) | null>(null);
+  const [selectedBid, setSelectedBid] = useState<(NFTBid & { nft?: NFT })| null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [actionType, setActionType] = useState<"accept" | "decline" | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  // Fetch NFTs owned by the user
+  const { data: userNFTs, isLoading: isLoadingNFTs } = useQuery({
+    queryKey: ['user-nfts', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      const { data, error } = await supabase
+        .from('nfts')
+        .select('*')
+        .eq('owner_id', user.id)
+        .eq('for_sale', true);
+      
+      if (error) throw error;
+      return data as NFT[];
+    },
+    enabled: !!user?.id
+  });
+
+  // Fetch bids for user's NFTs
+  const { data: bids = [], isLoading: isLoadingBids } = useQuery({
+    queryKey: ['nft-bids', userNFTs?.map(nft => nft.id)],
+    queryFn: async () => {
+      if (!userNFTs?.length) return [];
+      
+      const { data, error } = await supabase
+        .from('nft_bids')
+        .select(`
+          *,
+          nft:nfts(*)
+        `)
+        .in('nft_id', userNFTs.map(nft => nft.id))
+        .order('bid_amount', { ascending: false });
+      
+      if (error) throw error;
+      return data as (NFTBid & { nft: NFT })[];
+    },
+    enabled: !!userNFTs?.length
+  });
 
   const getMarketplaceDisplay = (marketplaceKey: string | null) => {
     if (!marketplaceKey) return null;
@@ -46,74 +83,13 @@ export const ActiveBids = () => {
     return marketplaceMap[marketplaceKey] || marketplaceKey;
   };
 
-  useEffect(() => {
-    const fetchUserBids = async () => {
-      if (!user?.id) return;
-
-      try {
-        setIsLoading(true);
-        
-        // Fetch NFTs owned by the user
-        const { data: userNFTs, error: nftError } = await supabase
-          .from('nfts')
-          .select('*')
-          .eq('owner_id', user.id);
-          
-        if (nftError) throw nftError;
-        
-        // Fetch bids for these NFTs (this would be connected to the real backend)
-        // This is a placeholder implementation
-        const mockBids: (NFTBid & { nft?: NFT; verified?: boolean })[] = [];
-        
-        // For each NFT that is for sale, create mock bids
-        userNFTs?.forEach(nft => {
-          if (nft.for_sale) {
-            // Mock bid data based on the image
-            const mockBidders = [
-              { address: "0fx32....734e", amount: "13.34", time: "1 min ago", verified: true },
-              { address: "0xc81...3xyq", amount: "13.11", time: "5 min ago", verified: false },
-              { address: "0xc199...34x", amount: "13.10", time: "7 min ago", verified: true },
-              { address: "0xc88...882x", amount: "13.09", time: "14 min ago", verified: false }
-            ];
-            
-            mockBidders.forEach((bidder, index) => {
-              mockBids.push({
-                id: `bid-${nft.id}-${index}`,
-                nft_id: nft.id,
-                bidder_address: bidder.address,
-                bid_amount: bidder.amount,
-                created_at: bidder.time,
-                marketplace: nft.marketplace || "rarible",
-                nft: nft,
-                verified: bidder.verified
-              });
-            });
-          }
-        });
-        
-        setBids(mockBids);
-      } catch (error) {
-        console.error("Error fetching user bids:", error);
-        toast({
-          title: "Error",
-          description: "Failed to load active bids",
-          variant: "destructive"
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUserBids();
-  }, [user?.id, toast]);
-
-  const handleAcceptBid = (bid: NFTBid & { nft?: NFT; verified?: boolean }) => {
+  const handleAcceptBid = (bid: NFTBid & { nft?: NFT }) => {
     setSelectedBid(bid);
     setActionType("accept");
     setConfirmDialogOpen(true);
   };
 
-  const handleDeclineBid = (bid: NFTBid & { nft?: NFT; verified?: boolean }) => {
+  const handleDeclineBid = (bid: NFTBid & { nft?: NFT }) => {
     setSelectedBid(bid);
     setActionType("decline");
     setConfirmDialogOpen(true);
@@ -123,26 +99,49 @@ export const ActiveBids = () => {
     if (!selectedBid || !actionType) return;
     
     try {
-      // In a real implementation, you would call an API endpoint
-      // to accept or decline the bid
-      
       if (actionType === "accept") {
+        // Update NFT ownership and sale status
+        const { error: nftError } = await supabase
+          .from('nfts')
+          .update({ 
+            owner_id: selectedBid.bidder_address,
+            for_sale: false 
+          })
+          .eq('id', selectedBid.nft_id);
+        
+        if (nftError) throw nftError;
+
+        // Delete all bids for this NFT
+        const { error: bidsError } = await supabase
+          .from('nft_bids')
+          .delete()
+          .eq('nft_id', selectedBid.nft_id);
+        
+        if (bidsError) throw bidsError;
+
         toast({
           title: "Bid Accepted",
           description: `You sold your NFT for ${selectedBid.bid_amount} ETH`,
         });
-        
-        // Remove all bids for this NFT
-        setBids(bids.filter(bid => bid.nft_id !== selectedBid.nft_id));
       } else {
+        // Delete just this bid
+        const { error } = await supabase
+          .from('nft_bids')
+          .delete()
+          .eq('id', selectedBid.id);
+        
+        if (error) throw error;
+
         toast({
           title: "Bid Declined",
           description: "The bid has been declined",
         });
-        
-        // Remove just this bid
-        setBids(bids.filter(bid => bid.id !== selectedBid.id));
       }
+
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['nft-bids'] });
+      queryClient.invalidateQueries({ queryKey: ['user-nfts'] });
+      
     } catch (error) {
       console.error(`Error ${actionType}ing bid:`, error);
       toast({
@@ -157,6 +156,8 @@ export const ActiveBids = () => {
     }
   };
 
+  const isLoading = isLoadingNFTs || isLoadingBids;
+
   if (isLoading) {
     return (
       <div className="flex justify-center py-20">
@@ -165,7 +166,7 @@ export const ActiveBids = () => {
     );
   }
 
-  if (bids.length === 0) {
+  if (!bids.length) {
     return (
       <div className="text-center py-12 space-y-4">
         <Award className="h-16 w-16 mx-auto text-primary/40" />
@@ -178,7 +179,7 @@ export const ActiveBids = () => {
   }
 
   // Group bids by NFT
-  const bidsByNFT: Record<string, (NFTBid & { nft?: NFT; verified?: boolean })[]> = {};
+  const bidsByNFT: Record<string, (NFTBid & { nft?: NFT })[]> = {};
   bids.forEach(bid => {
     if (!bidsByNFT[bid.nft_id]) {
       bidsByNFT[bid.nft_id] = [];
@@ -195,7 +196,6 @@ export const ActiveBids = () => {
           const sortedBids = [...nftBids].sort((a, b) => 
             parseFloat(b.bid_amount) - parseFloat(a.bid_amount)
           );
-          const highestBid = sortedBids[0];
           
           return (
             <AccordionItem 
@@ -212,8 +212,11 @@ export const ActiveBids = () => {
                         <img src={nft.image} alt={nft.name} className="h-full w-full object-cover" />
                         
                         {nft.marketplace && (
-                          <div className="absolute top-1 left-1">
-                            <Badge variant="outline" className="bg-black/70 text-white border-white/20 backdrop-blur-md text-[10px] px-1.5 py-0.5">
+                          <div className="absolute top-2 left-2">
+                            <Badge 
+                              variant="outline" 
+                              className="bg-black/70 text-white border-white/20 backdrop-blur-md text-[10px] px-1.5 py-0.5"
+                            >
                               {getMarketplaceDisplay(nft.marketplace)}
                             </Badge>
                           </div>
@@ -223,12 +226,8 @@ export const ActiveBids = () => {
                     
                     {/* NFT Info */}
                     <div className="flex-grow space-y-1 text-left">
-                      <h3 className="font-semibold text-sm sm:text-lg md:text-xl line-clamp-1">{nft?.name || 'Unknown NFT'}</h3>
+                      <h3 className="font-semibold text-sm sm:text-lg md:text-xl transition-colors duration-700 group-hover:text-primary line-clamp-1">{nft?.name || 'Unknown NFT'}</h3>
                       <div className="flex flex-wrap gap-1 sm:gap-2 items-center">
-                        <Badge variant="outline" className="bg-amber-500/10 text-amber-200 border-amber-500/20 text-[10px] sm:text-xs py-0.5 sm:py-1">
-                          <DollarSign className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-0.5 sm:mr-1" />
-                          Top: {highestBid?.bid_amount} ETH
-                        </Badge>
                         <Badge variant="outline" className="bg-blue-500/10 text-blue-200 border-blue-500/20 text-[10px] sm:text-xs py-0.5 sm:py-1">
                           <Award className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-0.5 sm:mr-1" />
                           {nftBids.length} {nftBids.length === 1 ? 'Bid' : 'Bids'}
@@ -242,10 +241,10 @@ export const ActiveBids = () => {
                   <div className="space-y-3 sm:space-y-4">
                     {/* Bids List */}
                     <div className="grid gap-2 sm:gap-3">
-                      {sortedBids.map((bid, index) => (
+                      {sortedBids.map((bid) => (
                         <div 
                           key={bid.id} 
-                          className={`bid-item ${index === 0 ? 'bid-item-highlighted' : 'bid-item-regular'}`}
+                          className="bid-item-regular"
                         >
                           <div className="flex items-start gap-2 sm:gap-3">
                             {/* Bid Content */}
@@ -267,36 +266,22 @@ export const ActiveBids = () => {
                                       Not Verified
                                     </Badge>
                                   )}
-                                  
-                                  {/* Highest Bid Badge - Desktop Only */}
-                                  {index === 0 && (
-                                    <Badge className="bg-amber-500/20 text-amber-200 border-amber-500/30 hidden sm:flex text-[10px] h-5">
-                                      Highest Bid
-                                    </Badge>
-                                  )}
                                 </div>
-                                
-                                {/* Highest Bid Badge - Mobile Only */}
-                                {index === 0 && (
-                                  <Badge className="bg-amber-500/20 text-amber-200 border-amber-500/30 sm:hidden text-[9px] h-4">
-                                    Highest
-                                  </Badge>
-                                )}
                               </div>
                               
                               {/* Bid Details */}
                               <div className="mt-1 sm:mt-2 flex flex-wrap gap-1 sm:gap-3 bid-meta-container">
-                                <span className={`bid-amount ${index === 0 ? 'bid-amount-highlighted' : 'bid-amount-regular'}`}>
+                                <span className="bid-amount-regular">
                                   <img 
                                     src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
                                     alt="ETH" 
                                     className="h-3 w-3 sm:h-4 sm:w-4 mr-0.5 sm:mr-1" 
                                   />
-                                  {bid.bid_amount} ETH
+                                  {bid.bid_amount}
                                 </span>
                                 
                                 <div className="flex flex-wrap gap-1 sm:gap-3">
-                                  <span className={`bid-meta ${index === 0 ? 'bid-meta-highlighted' : 'bid-meta-regular'}`}>
+                                  <span className="bid-meta-regular">
                                     <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-0.5 sm:mr-1" />
                                     {bid.created_at}
                                   </span>
@@ -388,7 +373,7 @@ export const ActiveBids = () => {
                         alt="ETH" 
                         className="h-5 w-5 sm:h-6 sm:w-6 mr-1 sm:mr-2" 
                       />
-                      <span className="text-xl sm:text-2xl font-bold text-green-400">{selectedBid.bid_amount} ETH</span>
+                      <span className="text-xl sm:text-2xl font-bold text-green-400">{selectedBid.bid_amount}</span>
                     </div>
                     <span className="text-xs sm:text-sm text-green-300 mt-1 bidder-address">{selectedBid.bidder_address}</span>
                     
@@ -414,7 +399,7 @@ export const ActiveBids = () => {
                         alt="ETH" 
                         className="h-5 w-5 sm:h-6 sm:w-6 mr-1 sm:mr-2" 
                       />
-                      <span className="text-xl sm:text-2xl font-bold text-red-400">{selectedBid.bid_amount} ETH</span>
+                      <span className="text-xl sm:text-2xl font-bold text-red-400">{selectedBid.bid_amount}</span>
                     </div>
                     <span className="text-xs sm:text-sm text-red-300 mt-1 bidder-address">{selectedBid.bidder_address}</span>
                     

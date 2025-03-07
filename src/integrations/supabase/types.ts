@@ -9,6 +9,44 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      nft_bids: {
+        Row: {
+          bid_amount: number
+          bidder_address: string
+          created_at: string | null
+          id: string
+          marketplace: string | null
+          nft_id: string
+          verified: boolean | null
+        }
+        Insert: {
+          bid_amount: number
+          bidder_address: string
+          created_at?: string | null
+          id?: string
+          marketplace?: string | null
+          nft_id: string
+          verified?: boolean | null
+        }
+        Update: {
+          bid_amount?: number
+          bidder_address?: string
+          created_at?: string | null
+          id?: string
+          marketplace?: string | null
+          nft_id?: string
+          verified?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nft_bids_nft_id_fkey"
+            columns: ["nft_id"]
+            isOneToOne: false
+            referencedRelation: "nfts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       nfts: {
         Row: {
           created_at: string
