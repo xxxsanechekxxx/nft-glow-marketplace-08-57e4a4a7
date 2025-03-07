@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
@@ -30,6 +29,21 @@ export const ActiveBids = () => {
   const [actionType, setActionType] = useState<"accept" | "decline" | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
+
+  const getMarketplaceDisplay = (marketplaceKey: string | null) => {
+    if (!marketplaceKey) return null;
+    
+    const marketplaceMap: Record<string, string> = {
+      'purenft': 'PureNFT',
+      'rarible': 'Rarible',
+      'opensea': 'OpenSea',
+      'looksrare': 'LooksRare',
+      'dappradar': 'DappRadar',
+      'debank': 'DeBank'
+    };
+    
+    return marketplaceMap[marketplaceKey] || marketplaceKey;
+  };
 
   useEffect(() => {
     const fetchUserBids = async () => {
@@ -68,7 +82,7 @@ export const ActiveBids = () => {
                 bidder_address: bidder.address,
                 bid_amount: bidder.amount,
                 created_at: bidder.time,
-                marketplace: "Rarible",
+                marketplace: nft.marketplace || "Rarible",
                 nft: nft,
                 bidder_rating: bidder.rating,
                 bidder_verified: bidder.verified,
@@ -193,16 +207,21 @@ export const ActiveBids = () => {
               <AccordionTrigger className="px-6 py-4 hover:no-underline">
                 <div className="flex flex-col sm:flex-row w-full items-start sm:items-center gap-4">
                   {nft?.image && (
-                    <div className="h-16 w-16 flex-shrink-0 rounded-lg overflow-hidden border border-purple-600/20">
+                    <div className="h-16 w-16 flex-shrink-0 rounded-lg overflow-hidden border border-purple-600/20 relative">
                       <img src={nft.image} alt={nft.name} className="h-full w-full object-cover" />
+                      
+                      {nft.marketplace && (
+                        <div className="absolute top-1 left-1">
+                          <Badge variant="outline" className="bg-black/70 text-white border-white/20 backdrop-blur-md text-[10px] px-1.5 py-0.5">
+                            {getMarketplaceDisplay(nft.marketplace)}
+                          </Badge>
+                        </div>
+                      )}
                     </div>
                   )}
                   <div className="flex-grow space-y-1 text-left">
                     <h3 className="text-xl font-semibold flex items-center gap-2">
                       {nft?.name || 'Unknown NFT'}
-                      <Badge variant="secondary" className="bg-purple-600/20 text-purple-200 border-purple-800/30">
-                        {nft?.marketplace || 'Marketplace'}
-                      </Badge>
                     </h3>
                     <div className="flex flex-wrap gap-2 items-center">
                       <Badge variant="outline" className="bg-purple-500/10 text-purple-200 border-purple-500/20">
@@ -288,7 +307,7 @@ export const ActiveBids = () => {
                                     </Badge>
                                   )}
                                 </div>
-                                <div className="flex items-center gap-3 text-sm">
+                                <div className="flex items-center gap-3 text-sm flex-wrap">
                                   <span className="text-yellow-300 font-medium flex items-center">
                                     <DollarSign className="h-3 w-3 mr-1" />
                                     {bid.bid_amount} ETH
@@ -358,17 +377,25 @@ export const ActiveBids = () => {
           {selectedBid && selectedBid.nft && (
             <div className="py-4">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-16 h-16 rounded-lg overflow-hidden border border-purple-500/30">
+                <div className="w-16 h-16 rounded-lg overflow-hidden border border-purple-500/30 relative">
                   <img 
                     src={selectedBid.nft.image} 
                     alt={selectedBid.nft.name} 
                     className="w-full h-full object-cover" 
                   />
+                  
+                  {selectedBid.nft.marketplace && (
+                    <div className="absolute top-1 left-1">
+                      <Badge variant="outline" className="bg-black/70 text-white border-white/20 backdrop-blur-md text-[10px] px-1.5 py-0.5">
+                        {getMarketplaceDisplay(selectedBid.nft.marketplace)}
+                      </Badge>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <div className="font-semibold text-lg">{selectedBid.nft.name}</div>
                   <div className="text-sm text-muted-foreground">
-                    {selectedBid.nft.marketplace || 'Marketplace'} • Token ID: #{selectedBid.nft_id.substring(0, 8)}
+                    {selectedBid.marketplace && `On ${getMarketplaceDisplay(selectedBid.marketplace)}`} • Token ID: #{selectedBid.nft_id.substring(0, 8)}
                   </div>
                 </div>
               </div>

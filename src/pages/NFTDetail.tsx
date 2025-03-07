@@ -9,6 +9,7 @@ import { NFTImage } from "@/components/nft/NFTImage";
 import { NFTHeader } from "@/components/nft/NFTHeader";
 import { NFTDetails } from "@/components/nft/NFTDetails";
 import { PurchaseButton } from "@/components/nft/PurchaseButton";
+import { Badge } from "@/components/ui/badge";
 import type { NFT } from "@/types/nft";
 
 const NFTDetail = () => {
@@ -60,6 +61,22 @@ const NFTDetail = () => {
     }, 2000);
   };
 
+  // Get marketplace display name
+  const getMarketplaceDisplay = () => {
+    if (!nft?.marketplace) return null;
+    
+    const marketplaceMap: Record<string, string> = {
+      'purenft': 'PureNFT.io',
+      'rarible': 'Rarible.com',
+      'opensea': 'OpenSea.io',
+      'looksrare': 'LooksRare.org',
+      'dappradar': 'DappRadar.com',
+      'debank': 'DeBank.com'
+    };
+    
+    return marketplaceMap[nft.marketplace] || nft.marketplace;
+  };
+
   // Check if the NFT is owned by the current user
   const isOwned = nft?.owner_id === user?.id;
   
@@ -104,7 +121,17 @@ const NFTDetail = () => {
         </Link>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-          <NFTImage image={nft.image} name={nft.name} />
+          <div className="relative">
+            <NFTImage image={nft.image} name={nft.name} />
+            
+            {nft.marketplace && isForSale && (
+              <div className="absolute top-4 left-4 z-10">
+                <Badge className="bg-black/70 text-white border-white/20 backdrop-blur-md px-4 py-1.5 text-sm font-medium">
+                  Listed on {getMarketplaceDisplay()}
+                </Badge>
+              </div>
+            )}
+          </div>
 
           <div className="space-y-8 animate-fade-in">
             <NFTHeader name={nft.name} creator={nft.creator} />

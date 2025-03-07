@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Input } from "@/components/ui/input";
 import { Check, X, PencilLine } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { Badge } from "@/components/ui/badge";
 
 interface NFTCardProps {
   id: string;
@@ -15,6 +16,7 @@ interface NFTCardProps {
   creator: string;
   owner_id?: string | null;
   for_sale?: boolean;
+  marketplace?: string | null;
   isProfileView?: boolean;
   onCancelSale?: (id: string) => Promise<void>;
   onUpdatePrice?: (id: string, price: string) => Promise<void>;
@@ -27,7 +29,8 @@ export const NFTCard = ({
   price, 
   creator, 
   owner_id, 
-  for_sale, 
+  for_sale,
+  marketplace,
   isProfileView = false,
   onCancelSale,
   onUpdatePrice
@@ -85,17 +88,41 @@ export const NFTCard = ({
     setNewPrice(price);
   };
 
+  // Get marketplace display name
+  const getMarketplaceDisplay = () => {
+    if (!marketplace) return null;
+    
+    const marketplaceMap: Record<string, string> = {
+      'purenft': 'PureNFT',
+      'rarible': 'Rarible',
+      'opensea': 'OpenSea',
+      'looksrare': 'LooksRare',
+      'dappradar': 'DappRadar',
+      'debank': 'DeBank'
+    };
+    
+    return marketplaceMap[marketplace] || marketplace;
+  };
+
   return (
     <Link to={`/nft/${id}`} className="block group">
       <div className="relative">
         <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
         <div className="relative rounded-xl overflow-hidden bg-background/60 backdrop-blur-sm border border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-700">
-          <div className="aspect-square overflow-hidden">
+          <div className="aspect-square overflow-hidden relative">
             <img
               src={image}
               alt={name}
               className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:rotate-1"
             />
+            
+            {marketplace && isForSale && (
+              <div className="absolute top-3 left-3 z-10">
+                <Badge variant="outline" className="bg-black/60 text-white border-white/20 backdrop-blur-md px-2.5 py-1">
+                  {getMarketplaceDisplay()}
+                </Badge>
+              </div>
+            )}
           </div>
           <div className="p-6 space-y-3">
             <h3 className="font-semibold text-xl transition-colors duration-700 group-hover:text-primary line-clamp-1">{name}</h3>
