@@ -17,7 +17,7 @@ interface NFT {
   owner_id: string | null;
 }
 
-const ITEMS_PER_PAGE = 8;
+const ITEMS_PER_PAGE = 6; // Reduced items per page for better mobile experience
 
 const fetchNFTs = async ({ pageParam = 0 }) => {
   const from = pageParam * ITEMS_PER_PAGE;

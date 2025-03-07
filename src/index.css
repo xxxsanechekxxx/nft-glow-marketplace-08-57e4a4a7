@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -231,7 +232,7 @@
   /* Improved transaction table for mobile */
   .transaction-table {
     width: 100%;
-    display: block;
+    display: table;
     table-layout: fixed;
   }
   
@@ -298,4 +299,27 @@
 /* View mode transition */
 .view-transition {
   transition: all 0.3s ease;
+}
+
+/* NFT card sizing for marketplace */
+@media (max-width: 640px) {
+  .marketplace-nft-grid {
+    grid-template-columns: repeat(1, 1fr) !important;
+    gap: 1rem !important;
+  }
+  
+  .marketplace-nft-card .aspect-square {
+    height: 300px !important;
+  }
+}
+
+/* Transaction type icon-only styles */
+.transaction-type-icon-only {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.transaction-type-icon-only span {
+  display: none;
 }

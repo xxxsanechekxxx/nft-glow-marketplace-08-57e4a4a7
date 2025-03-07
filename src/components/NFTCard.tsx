@@ -1,3 +1,4 @@
+
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
@@ -107,7 +108,7 @@ export const NFTCard = ({
       <div className="relative">
         <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 via-primary/10 to-purple-500/30 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:scale-105 pulse-glow" />
         <div className="relative rounded-xl overflow-hidden bg-background/60 backdrop-blur-sm border border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-700">
-          <div className="aspect-square overflow-hidden relative">
+          <div className="aspect-square overflow-hidden relative max-h-[350px]">
             <img
               src={image}
               alt={name}

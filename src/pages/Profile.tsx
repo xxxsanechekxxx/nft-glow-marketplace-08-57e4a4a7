@@ -219,6 +219,10 @@ const Profile = () => {
     setIsAddressDialogOpen(true);
   };
 
+  const handleTypeIconOnly = () => {
+    return true;
+  };
+
   useEffect(() => {
     let isMounted = true;
 
@@ -943,7 +947,7 @@ const Profile = () => {
                         <TableHeader>
                           <TableRow className="hover:bg-primary/5">
                             <TableHead className="date-column">Date</TableHead>
-                            <TableHead className="type-column">Type</TableHead>
+                            <TableHead className="type-column text-center">Type</TableHead>
                             <TableHead className="amount-column">Amount</TableHead>
                             <TableHead className="status-column">Status</TableHead>
                           </TableRow>
@@ -955,20 +959,21 @@ const Profile = () => {
                               className="hover:bg-primary/5 transition-colors"
                             >
                               <TableCell className="date-column">{transaction.created_at}</TableCell>
-                              <TableCell className="type-column capitalize flex items-center gap-1">
-                                {transaction.type === 'deposit' && (
-                                  <ArrowDownCircle className="w-3 h-3 sm:w-4 sm:h-4 text-green-500 flex-shrink-0" />
-                                )}
-                                {transaction.type === 'withdraw' && (
-                                  <ArrowUpCircle className="w-3 h-3 sm:w-4 sm:h-4 text-red-500 flex-shrink-0" />
-                                )}
-                                {transaction.type === 'purchase' && (
-                                  <ShoppingBag className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500 flex-shrink-0" />
-                                )}
-                                {transaction.type === 'sale' && (
-                                  <ShoppingBag className="w-3 h-3 sm:w-4 sm:h-4 text-green-500 flex-shrink-0" />
-                                )}
-                                <span className="truncate">{transaction.type}</span>
+                              <TableCell className="type-column text-center">
+                                <div className="flex justify-center">
+                                  {transaction.type === 'deposit' && (
+                                    <ArrowDownCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                                  )}
+                                  {transaction.type === 'withdraw' && (
+                                    <ArrowUpCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
+                                  )}
+                                  {transaction.type === 'purchase' && (
+                                    <ShoppingBag className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                                  )}
+                                  {transaction.type === 'sale' && (
+                                    <ShoppingBag className="w-4 h-4 text-green-500 flex-shrink-0" />
+                                  )}
+                                </div>
                               </TableCell>
                               <TableCell className="amount-column">{Number(transaction.amount).toFixed(2)}</TableCell>
                               <TableCell className="status-column">
