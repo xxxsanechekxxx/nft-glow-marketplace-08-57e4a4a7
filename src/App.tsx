@@ -20,6 +20,7 @@ import SellNFTConfirmation from "./pages/SellNFTConfirmation";
 import SellNFTPrice from "./pages/SellNFTPrice";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import NFTBids from "./pages/NFTBids";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/marketplace" element={<Marketplace />} />
               <Route path="/nft/:id" element={<NFTDetail />} />
+              <Route path="/nft/:id/bids" element={<NFTBids />} />
               <Route path="/help" element={<HelpCenter />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/create-nft" element={<CreateNFT />} />
