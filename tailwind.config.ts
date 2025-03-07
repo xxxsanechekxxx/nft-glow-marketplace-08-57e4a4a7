@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,22 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				bid: {
+					card: '#0C1122',
+					highlight: '#131B31',
+					badge: {
+						highest: {
+							bg: '#A5621D20', 
+							text: '#F6AA5A',  
+							border: '#D5861930'
+						},
+						verified: {
+							bg: '#126D2020', 
+							text: '#4ADE80',  
+							border: '#21B26730'
+						}
+					}
 				}
 			},
 			borderRadius: {

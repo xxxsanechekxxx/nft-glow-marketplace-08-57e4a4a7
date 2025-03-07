@@ -1,3 +1,4 @@
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -39,4 +40,122 @@
 
 .read-the-docs {
   color: #888;
+}
+
+/* Bid cards styling */
+.bid-card {
+  background-color: #0C1122;
+  border-color: #161E36;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.bid-card:hover {
+  background-color: #131B31;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.bid-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #161E36;
+}
+
+.bid-body {
+  padding: 1rem;
+}
+
+.bid-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-right: 0.5rem;
+}
+
+.badge-highest {
+  background-color: #A5621D20;
+  color: #F6AA5A;
+  border: 1px solid #D5861930;
+}
+
+.badge-verified {
+  background-color: #126D2020;
+  color: #4ADE80;
+  border: 1px solid #21B26730;
+}
+
+.bid-amount {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #fff;
+}
+
+.bid-time {
+  font-size: 0.75rem;
+  color: #8B95A9;
+  display: flex;
+  align-items: center;
+}
+
+.bid-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.accept-button {
+  background-color: #A588EF;
+  color: #fff;
+  transition: all 0.2s ease;
+}
+
+.accept-button:hover {
+  background-color: #8A6AD6;
+}
+
+.decline-button {
+  background-color: transparent;
+  border: 1px solid #E5484D;
+  color: #F8767C;
+}
+
+.decline-button:hover {
+  background-color: rgba(229, 72, 77, 0.1);
+}
+
+.bidder-address {
+  font-family: monospace;
+  font-size: 0.875rem;
+  color: #8B95A9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+  display: inline-block;
+}
+
+.nft-preview-image {
+  border-radius: 8px;
+  width: 42px;
+  height: 42px;
+  object-fit: cover;
+}
+
+.nft-collection-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.nft-id {
+  font-size: 0.75rem;
+  color: #8B95A9;
 }
