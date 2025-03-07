@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
-import { Loader2, Clock, DollarSign, Award, CheckCircle2, XCircle, User, Calendar, Shield } from "lucide-react";
+import { Loader2, Clock, DollarSign, Award, CheckCircle2, XCircle, Calendar } from "lucide-react";
 import { NFTBid, NFT } from "@/types/nft";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -70,10 +70,10 @@ export const ActiveBids = () => {
           if (nft.for_sale) {
             // Mock bid data based on the image
             const mockBidders = [
-              { address: "0fx32....734e", amount: "13.34", time: "1 min ago", rating: "98%", verified: true, joinedDate: "Mar 2024" },
-              { address: "0xc81...3xyq", amount: "13.11", time: "5 min ago", rating: "95%", verified: true, joinedDate: "Jan 2024" },
-              { address: "0xc199...34x", amount: "13.10", time: "7 min ago", rating: "92%", verified: false, joinedDate: "Feb 2024" },
-              { address: "0xc88...882x", amount: "13.09", time: "14 min ago", rating: "89%", verified: false, joinedDate: "Apr 2024" }
+              { address: "0fx32....734e", amount: "13.34", time: "1 min ago" },
+              { address: "0xc81...3xyq", amount: "13.11", time: "5 min ago" },
+              { address: "0xc199...34x", amount: "13.10", time: "7 min ago" },
+              { address: "0xc88...882x", amount: "13.09", time: "14 min ago" }
             ];
             
             mockBidders.forEach((bidder, index) => {
@@ -84,10 +84,7 @@ export const ActiveBids = () => {
                 bid_amount: bidder.amount,
                 created_at: bidder.time,
                 marketplace: nft.marketplace || "rarible",
-                nft: nft,
-                bidder_rating: bidder.rating,
-                bidder_verified: bidder.verified,
-                bidder_joined: bidder.joinedDate
+                nft: nft
               });
             });
           }
@@ -250,24 +247,12 @@ export const ActiveBids = () => {
                           className={`bid-item ${index === 0 ? 'bid-item-highlighted' : 'bid-item-regular'}`}
                         >
                           <div className="flex items-start gap-2 sm:gap-3">
-                            {/* Bidder Avatar */}
-                            <div 
-                              className={`bidder-avatar w-8 h-8 sm:w-10 sm:h-10 ${index === 0 ? 'bidder-avatar-highlighted' : ''}`}
-                            >
-                              {bid.bidder_address.slice(0, 2)}
-                            </div>
-                            
                             {/* Bid Content */}
                             <div className="flex-grow">
                               {/* Bidder Info Row */}
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-1 sm:gap-2">
                                   <span className="text-xs sm:text-sm font-medium bidder-address">{bid.bidder_address}</span>
-                                  {bid.bidder_verified && (
-                                    <Badge className="bg-blue-500/20 text-blue-200 border-blue-500/30 text-[9px] sm:text-[10px] h-4 sm:h-5">
-                                      <Shield className="h-2 w-2 sm:h-2.5 sm:w-2.5 mr-0.5" /> Verified
-                                    </Badge>
-                                  )}
                                   
                                   {/* Highest Bid Badge - Desktop Only */}
                                   {index === 0 && (
@@ -301,16 +286,6 @@ export const ActiveBids = () => {
                                     <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-0.5 sm:mr-1" />
                                     {bid.created_at}
                                   </span>
-                                  
-                                  <span className={`bid-meta ${index === 0 ? 'bid-meta-highlighted' : 'bid-meta-regular'}`}>
-                                    <User className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-0.5 sm:mr-1" />
-                                    {bid.bidder_rating}
-                                  </span>
-                                  
-                                  <span className={`bid-meta ${index === 0 ? 'bid-meta-highlighted' : 'bid-meta-regular'}`}>
-                                    <Calendar className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-0.5 sm:mr-1" />
-                                    {bid.bidder_joined}
-                                  </span>
                                 </div>
                               </div>
                               
@@ -318,19 +293,19 @@ export const ActiveBids = () => {
                               <div className="flex gap-2 sm:gap-3 mt-2 sm:mt-3">
                                 <Button 
                                   onClick={() => handleAcceptBid(bid)}
-                                  className="accept-btn flex-1 text-xs sm:text-sm"
+                                  className="accept-btn flex-1 text-xs sm:text-xs"
                                   size="sm"
                                 >
-                                  <CheckCircle2 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" /> Accept
+                                  <CheckCircle2 className="w-3 h-3 mr-1" /> Accept
                                 </Button>
                                 
                                 <Button 
                                   variant="outline"
                                   onClick={() => handleDeclineBid(bid)}
-                                  className="decline-btn flex-1 text-xs sm:text-sm"
+                                  className="decline-btn flex-1 text-xs sm:text-xs"
                                   size="sm"
                                 >
-                                  <XCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" /> Decline
+                                  <XCircle className="w-3 h-3 mr-1" /> Decline
                                 </Button>
                               </div>
                             </div>
