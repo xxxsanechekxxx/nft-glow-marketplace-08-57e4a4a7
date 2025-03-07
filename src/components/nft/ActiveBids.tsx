@@ -1,7 +1,6 @@
-
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase";
 import { Loader2, Clock, Award, CheckCircle2, XCircle } from "lucide-react";
 import { NFTBid, NFT } from "@/types/nft";
 import { Button } from "@/components/ui/button";
@@ -109,36 +108,35 @@ export const ActiveBids = () => {
   };
 
   const confirmAction = async () => {
-    if (!selectedBid || !actionType || !user?.id) return;
+    if (!selectedBid || !actionType) return;
     
     try {
       if (actionType === "accept") {
-        console.log("Accepting bid:", selectedBid.id, "for NFT:", selectedBid.nft_id, "by user:", user.id);
+        // Update NFT ownership and sale status
+        const { error: nftError } = await supabase
+          .from('nfts')
+          .update({ 
+            owner_id: selectedBid.bidder_address,
+            for_sale: false 
+          })
+          .eq('id', selectedBid.nft_id);
         
-        // Call the Supabase function that handles bid acceptance
-        const { data, error } = await supabase
-          .rpc('accept_bid', { 
-            p_bid_id: selectedBid.id,
-            p_user_id: user.id
-          });
+        if (nftError) throw nftError;
+
+        // Delete all bids for this NFT
+        const { error: bidsError } = await supabase
+          .from('nft_bids')
+          .delete()
+          .eq('nft_id', selectedBid.nft_id);
         
-        if (error) {
-          console.error("Error accepting bid:", error);
-          throw error;
-        }
-        
-        console.log("Bid acceptance result:", data);
-        
-        if (data.success) {
-          toast({
-            title: "Bid Accepted",
-            description: `You sold your NFT for ${data.amount.toFixed(2)} ETH (after ${data.fee_percent}% fee)`,
-          });
-        } else {
-          throw new Error(data.message || 'Failed to accept bid');
-        }
+        if (bidsError) throw bidsError;
+
+        toast({
+          title: "Bid Accepted",
+          description: `You sold your NFT for ${selectedBid.bid_amount} ETH`,
+        });
       } else {
-        // Decline just this bid
+        // Delete just this bid
         const { error } = await supabase
           .from('nft_bids')
           .delete()
@@ -156,11 +154,11 @@ export const ActiveBids = () => {
       queryClient.invalidateQueries({ queryKey: ['nft-bids'] });
       queryClient.invalidateQueries({ queryKey: ['user-nfts'] });
       
-    } catch (error: any) {
+    } catch (error) {
       console.error(`Error ${actionType}ing bid:`, error);
       toast({
         title: "Error",
-        description: `Failed to ${actionType} the bid: ${error.message || 'Unknown error'}`,
+        description: `Failed to ${actionType} the bid`,
         variant: "destructive"
       });
     } finally {
@@ -308,7 +306,7 @@ export const ActiveBids = () => {
                               <div className="flex gap-2 mt-2">
                                 <Button 
                                   onClick={() => handleAcceptBid(bid)}
-                                  variant="success"
+                                  className="accept-button"
                                 >
                                   <CheckCircle2 className="w-4 h-4 mr-2" /> Accept
                                 </Button>
@@ -391,21 +389,9 @@ export const ActiveBids = () => {
                     </div>
                     <span className="text-xs sm:text-sm text-green-300 mt-1 bidder-address">{selectedBid.bidder_address}</span>
                     
-                    {/* Platform Fee Information */}
-                    <div className="mt-2 text-xs text-green-300/80">
-                      <div className="flex justify-between w-full max-w-[180px] mx-auto">
-                        <span>Platform Fee (2.5%):</span>
-                        <span>-{(parseFloat(selectedBid.bid_amount) * 0.025).toFixed(2)} ETH</span>
-                      </div>
-                      <div className="flex justify-between w-full max-w-[180px] mx-auto font-semibold mt-1">
-                        <span>You receive:</span>
-                        <span>{(parseFloat(selectedBid.bid_amount) * 0.975).toFixed(2)} ETH</span>
-                      </div>
-                    </div>
-                    
                     {/* Verification Status in Confirmation Dialog */}
                     {selectedBid.verified ? (
-                      <Badge className="bg-green-500/20 text-green-300 border-green-500/30 flex text-xs mt-3 items-center gap-1">
+                      <Badge className="bg-green-500/20 text-green-300 border-green-500/30 flex text-xs mt-2 items-center gap-1">
                         <span className="bg-green-500 rounded-full h-2 w-2 mr-1"></span>
                         Verified Bidder
                       </Badge>
@@ -447,9 +433,9 @@ export const ActiveBids = () => {
               Cancel
             </Button>
             <Button 
-              variant={actionType === "accept" ? "success" : "destructive"}
+              variant={actionType === "accept" ? "default" : "destructive"}
               onClick={confirmAction}
-              className={`text-xs sm:text-sm ${actionType === "accept" ? "" : ""}`}
+              className={`text-xs sm:text-sm ${actionType === "accept" ? "bg-green-600 hover:bg-green-700" : ""}`}
               size="sm"
             >
               {actionType === "accept" ? "Confirm Sale" : "Confirm Decline"}
