@@ -4,15 +4,19 @@ import { supabase } from "@/lib/supabase";
 import { NFTCard } from "@/components/NFTCard";
 import { EmptyNFTState } from "@/components/EmptyNFTState";
 import { useAuth } from "@/hooks/useAuth";
-import { Loader2, HelpCircle } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import type { NFT } from "@/types/nft";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ListedNFTItem } from "@/components/nft/ListedNFTItem";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 export const UserNFTCollection = () => {
   const [nfts, setNfts] = useState<NFT[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   // Filter NFTs by status
   const unlistedNFTs = nfts.filter(nft => !nft.for_sale);
@@ -43,13 +47,18 @@ export const UserNFTCollection = () => {
         setNfts(formattedData);
       } catch (error) {
         console.error("Error fetching user NFTs:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load your NFTs. Please try again.",
+          variant: "destructive"
+        });
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchUserNFTs();
-  }, [user?.id]);
+  }, [user?.id, toast]);
 
   const handleUpdateNFTPrice = async (id: string, newPrice: string) => {
     try {
@@ -65,8 +74,18 @@ export const UserNFTCollection = () => {
       setNfts(nfts.map(nft => 
         nft.id === id ? { ...nft, price: newPrice } : nft
       ));
+      
+      toast({
+        title: "Success",
+        description: "NFT price updated successfully",
+      });
     } catch (error) {
       console.error("Error updating NFT price:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update NFT price",
+        variant: "destructive"
+      });
     }
   };
 
@@ -93,9 +112,23 @@ export const UserNFTCollection = () => {
           marketplace_status: 'unlisted'
         } : nft
       ));
+      
+      toast({
+        title: "Sale Cancelled",
+        description: "Your NFT has been removed from the marketplace",
+      });
     } catch (error) {
       console.error("Error canceling NFT sale:", error);
+      toast({
+        title: "Error",
+        description: "Failed to cancel the sale",
+        variant: "destructive"
+      });
     }
+  };
+
+  const handleCheckBids = (nftId: string) => {
+    navigate(`/nft/${nftId}/bids`);
   };
 
   if (isLoading) {
@@ -112,9 +145,8 @@ export const UserNFTCollection = () => {
 
   return (
     <Tabs defaultValue="my-nfts" className="w-full">
-      <TabsList className="mb-6 w-full grid grid-cols-3 h-auto p-1 bg-background/10 backdrop-blur-sm">
+      <TabsList className="mb-6 w-full grid grid-cols-2 h-auto p-1 bg-background/10 backdrop-blur-sm">
         <TabsTrigger value="my-nfts" className="py-3 text-base">My NFTs</TabsTrigger>
-        <TabsTrigger value="my-history" className="py-3 text-base">My History</TabsTrigger>
         <TabsTrigger value="active-bids" className="py-3 text-base">Active Bids</TabsTrigger>
       </TabsList>
 
@@ -144,12 +176,6 @@ export const UserNFTCollection = () => {
         )}
       </TabsContent>
 
-      <TabsContent value="my-history" className="mt-6">
-        <div className="text-center py-12 text-muted-foreground">
-          Transaction history will appear here
-        </div>
-      </TabsContent>
-
       <TabsContent value="active-bids" className="mt-6">
         {listedNFTs.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
@@ -161,7 +187,8 @@ export const UserNFTCollection = () => {
               <ListedNFTItem 
                 key={nft.id} 
                 nft={nft} 
-                onCancelSale={handleCancelSale} 
+                onCancelSale={handleCancelSale}
+                onCheckBids={handleCheckBids}
               />
             ))}
           </div>
