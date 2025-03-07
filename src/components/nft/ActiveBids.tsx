@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Clock, Award, CheckCircle2, XCircle } from "lucide-react";
 import { NFTBid, NFT } from "@/types/nft";
 import { Button } from "@/components/ui/button";

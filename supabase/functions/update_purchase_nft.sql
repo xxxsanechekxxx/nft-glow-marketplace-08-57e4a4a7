@@ -11,6 +11,9 @@ DECLARE
   v_transaction_id uuid;
   v_owner_id uuid;
   v_for_sale boolean;
+  v_seller_transaction_id uuid;
+  v_platform_fee_percent numeric := 2.5;
+  v_seller_receives numeric;
 BEGIN
   -- Check if NFT exists and is available for purchase (either no owner or for_sale is true)
   SELECT price, creator, owner_id, for_sale INTO v_nft_price, v_creator, v_owner_id, v_for_sale
@@ -35,17 +38,33 @@ BEGIN
     RETURN json_build_object('success', false, 'message', 'Insufficient balance');
   END IF;
   
+  -- If there's an original owner, add the payment to their balance after deducting platform fee
+  IF v_owner_id IS NOT NULL THEN
+    -- Calculate amount seller receives after platform fee
+    v_seller_receives := v_nft_price * (1 - v_platform_fee_percent / 100);
+    
+    -- Update seller's balance with the amount after commission
+    UPDATE public.profiles
+    SET balance = balance + v_seller_receives
+    WHERE user_id = v_owner_id;
+    
+    -- Record transaction for seller (sale)
+    INSERT INTO public.transactions (amount, type, item, status, user_id)
+    VALUES (v_seller_receives, 'sale', nft_id::text, 'completed', v_owner_id)
+    RETURNING id INTO v_seller_transaction_id;
+  END IF;
+  
   -- Update NFT ownership and for_sale status
   UPDATE public.nfts
   SET owner_id = auth.uid(), for_sale = false
   WHERE id = nft_id;
   
-  -- Update user balance
+  -- Update buyer's balance with full price (buyer pays full price)
   UPDATE public.profiles
   SET balance = balance - v_nft_price
   WHERE user_id = auth.uid();
   
-  -- Record transaction
+  -- Record transaction for buyer (purchase)
   INSERT INTO public.transactions (amount, type, item, status, user_id)
   VALUES (v_nft_price, 'purchase', nft_id::text, 'completed', auth.uid())
   RETURNING id INTO v_transaction_id;
