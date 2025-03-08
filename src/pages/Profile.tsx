@@ -263,13 +263,12 @@ const Profile = () => {
         return;
       }
       
-      // Add transaction record with pending status
       const { data: transactionData, error: transactionError } = await supabase
         .from('transactions')
         .insert([
           {
             user_id: user?.id,
-            type: 'withdraw', // Using withdraw type for exchange
+            type: 'withdraw',
             amount: amountToExchange,
             status: 'pending',
             item: `Exchanging ${amountToExchange} ETH to USDT`
@@ -279,7 +278,6 @@ const Profile = () => {
       
       if (transactionError) throw transactionError;
       
-      // Update transactions list
       if (transactionData && transactionData.length > 0) {
         const tx = transactionData[0];
         const dateObj = new Date(tx.created_at);
@@ -825,4 +823,186 @@ const Profile = () => {
                         className="bg-background/50 font-mono text-sm border-primary/10 group-hover:border-primary/30 transition-colors pl-10"
                         placeholder="No wallet address generated"
                       />
-                      <Wallet className
+                      <Wallet className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                      {userData?.wallet_address && (
+                        <div className="bg-primary/20 px-3 py-1.5 rounded-md text-sm text-primary font-medium min-w-[80px] text-center">
+                          ERC-20
+                        </div>
+                      )}
+                    </div>
+                    {!userData?.wallet_address && (
+                      <Button
+                        onClick={() => setIsWalletModalOpen(true)}
+                        className="bg-primary/20 text-primary hover:bg-primary/30 transition-colors flex items-center gap-2 group relative overflow-hidden"
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <Wallet className="w-4 h-4 relative z-10" />
+                        <span className="relative z-10">Generate Address</span>
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="settings">
+            <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-[#1A1F2C]/90">
+              <CardHeader className="space-y-2">
+                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary/20">
+                    <Settings className="w-6 h-6 text-primary" />
+                  </div>
+                  Settings
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Settings content */}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="wallet">
+            <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-[#1A1F2C]/90">
+              <CardHeader className="space-y-2">
+                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary/20">
+                    <Wallet className="w-6 h-6 text-primary" />
+                  </div>
+                  Wallet
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Wallet content */}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="verification">
+            <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-[#1A1F2C]/90">
+              <CardHeader className="space-y-2">
+                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary/20">
+                    <Shield className="w-6 h-6 text-primary" />
+                  </div>
+                  Verification
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Verification content */}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="nft">
+            <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-[#1A1F2C]/90">
+              <CardHeader className="space-y-2">
+                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary/20">
+                    <ShoppingBag className="w-6 h-6 text-primary" />
+                  </div>
+                  NFT
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* NFT content */}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+
+        <WalletAddressModal 
+          isOpen={isWalletModalOpen} 
+          onClose={() => setIsWalletModalOpen(false)}
+          onSave={handleGenerateWalletAddress}
+        />
+
+        <DepositConfirmationDialog
+          isOpen={isDepositConfirmationOpen}
+          onClose={() => setIsDepositConfirmationOpen(false)}
+          onConfirm={handleDepositConfirm}
+          amount={depositAmount}
+        />
+
+        <Dialog open={isExchangeDialogOpen} onOpenChange={setIsExchangeDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Exchange Hold Balance to USDT</DialogTitle>
+              <DialogDescription>
+                Convert your hold ETH balance to USDT tokens. This operation cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium flex items-center gap-2">
+                  <ArrowRightLeft className="w-4 h-4 text-primary" />
+                  Amount to Exchange (ETH)
+                </label>
+                <div className="relative">
+                  <Input
+                    type="number"
+                    step="0.0001"
+                    min="0.0001"
+                    max={userData?.frozen_balance || '0'}
+                    value={exchangeAmount}
+                    onChange={(e) => setExchangeAmount(e.target.value)}
+                    placeholder="0.00"
+                    className="pl-10"
+                  />
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                    <LockIcon className="w-4 h-4" />
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Available hold balance: {userData?.frozen_balance || '0'} ETH
+                </p>
+              </div>
+              <div className="flex items-center justify-between text-sm bg-primary/10 p-3 rounded-lg">
+                <span>Estimated USDT:</span>
+                <span className="font-medium">
+                  {!isNaN(parseFloat(exchangeAmount)) 
+                    ? `$${(parseFloat(exchangeAmount) * 3000).toFixed(2)}` 
+                    : '$0.00'}
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Exchange rate: 1 ETH = $3,000 USDT (rate may vary)
+              </p>
+            </div>
+            <DialogFooter>
+              <Button 
+                onClick={handleExchangeHoldBalance}
+                className="w-full"
+                disabled={!exchangeAmount || parseFloat(exchangeAmount) <= 0}
+              >
+                <ArrowRightLeft className="w-4 h-4 mr-2" />
+                Exchange to USDT
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        <FraudWarningDialog
+          isOpen={isFraudWarningOpen}
+          onClose={() => setIsFraudWarningOpen(false)}
+        />
+
+        <KYCIdentityDialog
+          isOpen={isIdentityDialogOpen}
+          onClose={() => setIsIdentityDialogOpen(false)}
+          onSubmit={handleIdentitySuccess}
+          userId={user?.id || ''}
+        />
+        
+        <KYCAddressDialog
+          isOpen={isAddressDialogOpen}
+          onClose={handleAddressClose}
+          onSubmit={handleAddressSuccess}
+          userId={user?.id || ''}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default Profile;
