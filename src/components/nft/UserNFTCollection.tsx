@@ -8,7 +8,7 @@ import { Loader2, Filter, Search } from "lucide-react";
 import type { NFT } from "@/types/nft";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { ActiveBids } from "./ActiveBids";
+import ActiveBids from "./ActiveBids"; // Changed from { ActiveBids } to default import
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 
