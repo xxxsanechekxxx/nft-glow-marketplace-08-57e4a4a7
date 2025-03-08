@@ -9,11 +9,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { FraudWarningDialog } from "@/components/FraudWarningDialog";
-import { WalletAddressModal } from "@/components/WalletAddressModal";
-import { DepositConfirmationDialog } from "@/components/DepositConfirmationDialog";
-import { KYCIdentityDialog } from "@/components/KYCIdentityDialog";
-import { KYCAddressDialog } from "@/components/KYCAddressDialog";
+import FraudWarningDialog from "@/components/FraudWarningDialog";
+import WalletAddressModal from "@/components/WalletAddressModal";
+import DepositConfirmationDialog from "@/components/DepositConfirmationDialog";
+import KYCIdentityDialog from "@/components/KYCIdentityDialog";
+import KYCAddressDialog from "@/components/KYCAddressDialog";
 import { Badge } from "@/components/ui/badge";
 import { CreditCard, ArrowDownCircle, ArrowUpCircle, Upload, ChevronRight, Copy, AlertTriangle, CheckCircle, LockIcon, Clock, RefreshCw, Wallet } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -120,7 +120,9 @@ export default function Profile() {
       if (frozenError) {
         console.error("Error fetching frozen balances:", frozenError);
       } else if (frozenData && frozenData.length > 0) {
-        setFrozenBalanceDetails(frozenData[0].unfreezing_in_days || []);
+        // Type safety: Cast the data to the expected type before setting state
+        const unfreezing = frozenData[0].unfreezing_in_days || [];
+        setFrozenBalanceDetails(unfreezing as unknown as FrozenBalanceInfo[]);
       }
       
     } catch (error) {
@@ -597,8 +599,6 @@ export default function Profile() {
       </div>
     );
   };
-
-  const { user } = useAuth();
 
   if (isLoading) {
     return <div>Loading...</div>;
