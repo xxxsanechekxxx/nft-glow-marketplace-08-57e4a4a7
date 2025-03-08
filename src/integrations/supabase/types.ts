@@ -99,7 +99,6 @@ export type Database = {
           country: string | null
           created_at: string
           frozen_balance: number | null
-          frozen_usdt_balance: number | null
           id: string
           kyc_address_doc: string | null
           kyc_identity_doc: string | null
@@ -117,7 +116,6 @@ export type Database = {
           country?: string | null
           created_at?: string
           frozen_balance?: number | null
-          frozen_usdt_balance?: number | null
           id?: string
           kyc_address_doc?: string | null
           kyc_identity_doc?: string | null
@@ -135,7 +133,6 @@ export type Database = {
           country?: string | null
           created_at?: string
           frozen_balance?: number | null
-          frozen_usdt_balance?: number | null
           id?: string
           kyc_address_doc?: string | null
           kyc_identity_doc?: string | null
@@ -205,7 +202,6 @@ export type Database = {
         }
         Returns: {
           frozen_balance: number
-          frozen_usdt_balance: number
           unfreezing_in_days: Json[]
         }[]
       }
