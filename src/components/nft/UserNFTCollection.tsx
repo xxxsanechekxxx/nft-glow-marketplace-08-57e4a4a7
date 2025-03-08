@@ -24,9 +24,6 @@ export const UserNFTCollection = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("my-nfts");
   const [searchQuery, setSearchQuery] = useState("");
-  const [frozenBalance, setFrozenBalance] = useState("0");
-  const [frozenBalanceDetails, setFrozenBalanceDetails] = useState<FrozenBalanceInfo[]>([]);
-  const [showFrozenDetails, setShowFrozenDetails] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -36,18 +33,6 @@ export const UserNFTCollection = () => {
 
       try {
         setIsLoading(true);
-        
-        const { data: frozenData, error: frozenError } = await supabase
-          .rpc('get_user_frozen_balances', {
-            user_uuid: user.id
-          });
-
-        if (frozenError) {
-          console.error("Error fetching frozen balances:", frozenError);
-        } else if (frozenData && frozenData.length > 0) {
-          setFrozenBalance(frozenData[0].frozen_balance.toString());
-          setFrozenBalanceDetails(frozenData[0].unfreezing_in_days || []);
-        }
         
         const { data, error } = await supabase
           .from('nfts')
@@ -199,63 +184,6 @@ export const UserNFTCollection = () => {
     });
   };
 
-  const renderFrozenBalance = () => {
-    if (Number(frozenBalance) <= 0) return null;
-    
-    return (
-      <div className="bg-black border border-primary/30 rounded-lg p-5 mb-6 shadow-lg">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-yellow-900/40 p-2.5 rounded-full">
-              <LockIcon className="h-5 w-5 text-yellow-500" />
-            </div>
-            <div>
-              <h3 className="text-xl font-bold text-yellow-500 flex items-center">
-                Hold Balance
-                <span className="ml-auto md:ml-4 text-xl md:text-2xl">{Number(frozenBalance).toFixed(2)} ETH</span>
-              </h3>
-              <p className="text-sm text-yellow-500/80 mt-1">
-                Funds from NFT sales are frozen for 15 days before being available
-              </p>
-            </div>
-          </div>
-          
-          <Button
-            variant="outline"
-            className="border-yellow-500/30 bg-yellow-900/20 hover:bg-yellow-900/40 text-yellow-500 transition-all duration-300"
-            size="sm"
-            onClick={() => setShowFrozenDetails(!showFrozenDetails)}
-          >
-            {showFrozenDetails ? "Hide Details" : "Show Details"}
-          </Button>
-        </div>
-        
-        {showFrozenDetails && frozenBalanceDetails.length > 0 && (
-          <div className="mt-4 border-t border-yellow-500/20 pt-4 space-y-3 animate-in fade-in duration-300">
-            <p className="text-sm font-medium text-yellow-500/80">Upcoming Releases:</p>
-            <div className="grid gap-3 sm:grid-cols-1 md:grid-cols-2">
-              {frozenBalanceDetails.map((item) => (
-                <div 
-                  key={item.transaction_id} 
-                  className="bg-yellow-900/10 border border-yellow-500/20 rounded-lg p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
-                >
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-yellow-500/80" />
-                    <span className="text-yellow-500/90 font-medium">{item.days_left} days left</span>
-                  </div>
-                  <div className="flex items-center justify-between sm:gap-4">
-                    <span className="font-bold text-yellow-500">{item.amount.toFixed(2)} ETH</span>
-                    <span className="text-xs text-yellow-500/70">{item.unfreeze_date}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  };
-
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
@@ -294,7 +222,6 @@ export const UserNFTCollection = () => {
       <div className="relative">
         <div className="absolute -inset-1 bg-gradient-to-r from-primary/10 via-transparent to-primary/10 rounded-xl blur-xl opacity-50"></div>
         <div className="relative bg-card/30 backdrop-blur-sm border border-primary/10 rounded-xl p-4 sm:p-6 shadow-lg">
-          {Number(frozenBalance) > 0 && renderFrozenBalance()}
           
           <TabsContent value="my-nfts" className="mt-4">
             {renderMyNFTs()}
