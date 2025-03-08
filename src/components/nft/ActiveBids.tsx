@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { CheckCircle, Clock, Loader2, XCircle } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Bid {
   id: string;
@@ -21,21 +22,24 @@ interface Bid {
 }
 
 interface ActiveBidsProps {
-  nftId: string;
-  ownerId: string | null;
-  currentUserId: string | undefined;
-  bids: Bid[];
-  onBidAccepted: () => void;
+  nftId?: string;
+  ownerId?: string | null;
+  currentUserId?: string | undefined;
+  bids?: Bid[];
+  onBidAccepted?: () => void;
 }
 
 const ActiveBids = ({
   nftId,
   ownerId,
   currentUserId,
-  bids,
+  bids: initialBids,
   onBidAccepted,
-}: ActiveBidsProps) => {
+}: ActiveBidsProps = {}) => {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const [bids, setBids] = useState<Bid[]>(initialBids || []);
+  const [isLoading, setIsLoading] = useState(true);
   const [processingBidId, setProcessingBidId] = useState<string | null>(null);
   const [isTransactionLoading, setIsTransactionLoading] = useState(false);
   const [processingDetails, setProcessingDetails] = useState<{
@@ -47,7 +51,61 @@ const ActiveBids = ({
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [loadingStage, setLoadingStage] = useState(0);
 
-  const isOwner = currentUserId === ownerId;
+  // If no bids were passed as props, fetch them from the database
+  useEffect(() => {
+    const fetchUserBids = async () => {
+      if (initialBids) {
+        setBids(initialBids);
+        setIsLoading(false);
+        return;
+      }
+      
+      if (!user?.id) return;
+
+      try {
+        setIsLoading(true);
+        
+        // Get all NFTs owned by the user
+        const { data: userNfts, error: nftError } = await supabase
+          .from('nfts')
+          .select('id')
+          .eq('owner_id', user.id);
+        
+        if (nftError) throw nftError;
+        
+        if (!userNfts || userNfts.length === 0) {
+          setBids([]);
+          setIsLoading(false);
+          return;
+        }
+        
+        // Get all bids for the user's NFTs
+        const nftIds = userNfts.map(nft => nft.id);
+        
+        const { data: bidData, error: bidError } = await supabase
+          .from('nft_bids')
+          .select('*')
+          .in('nft_id', nftIds);
+        
+        if (bidError) throw bidError;
+        
+        setBids(bidData || []);
+      } catch (error) {
+        console.error("Error fetching user bids:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load your bids",
+          variant: "destructive"
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserBids();
+  }, [initialBids, user?.id, toast]);
+  
+  const isOwner = currentUserId === ownerId || (user?.id && !ownerId);
   const hasBids = bids.length > 0;
   
   const PLATFORM_FEE_PERCENT = 2.5;
@@ -107,18 +165,21 @@ const ActiveBids = ({
             description: error.message || "Failed to accept bid",
             variant: "destructive",
           });
-        } else if (data.success) {
+        } else if (data?.success) {
           toast({
             title: "Success",
             description: `The bid has been accepted. ${receivedAmount.toFixed(2)} ETH will be available in your wallet after a 15-day security period.`,
           });
           
           // Notify parent component to refresh
-          onBidAccepted();
+          if (onBidAccepted) onBidAccepted();
+          
+          // Remove the accepted bid from the local state
+          setBids(bids.filter(bid => bid.id !== bidId));
         } else {
           toast({
             title: "Error",
-            description: data.message || "Failed to accept bid",
+            description: data?.message || "Failed to accept bid",
             variant: "destructive",
           });
         }
@@ -158,12 +219,23 @@ const ActiveBids = ({
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-20">
+        <div className="relative">
+          <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-primary to-purple-500 opacity-75 blur"></div>
+          <Loader2 className="h-10 w-10 animate-spin text-primary relative" />
+        </div>
+      </div>
+    );
+  }
+
   if (!hasBids) {
     return (
       <Card className="bg-[#131B31] border-[#2A3047]">
         <CardHeader>
           <CardTitle className="text-xl">Active Bids</CardTitle>
-          <CardDescription>No active bids for this NFT</CardDescription>
+          <CardDescription>No active bids for your NFTs</CardDescription>
         </CardHeader>
       </Card>
     );
@@ -175,7 +247,7 @@ const ActiveBids = ({
         <CardTitle className="text-xl">Active Bids</CardTitle>
         <CardDescription>
           {isOwner
-            ? "Review and accept bids for your NFT"
+            ? "Review and accept bids for your NFTs"
             : "Current bids for this NFT"}
         </CardDescription>
       </CardHeader>

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { NFTCard } from "@/components/NFTCard";
@@ -8,7 +7,7 @@ import { Loader2, Filter, Search } from "lucide-react";
 import type { NFT } from "@/types/nft";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import ActiveBids from "./ActiveBids"; // Changed from { ActiveBids } to default import
+import ActiveBids from "./ActiveBids";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 
@@ -170,6 +169,13 @@ export const UserNFTCollection = () => {
     );
   };
 
+  const handleRefreshBids = () => {
+    toast({
+      title: "Success",
+      description: "Bid accepted successfully",
+    });
+  };
+
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
@@ -213,7 +219,10 @@ export const UserNFTCollection = () => {
           </TabsContent>
           
           <TabsContent value="active-bids" className="mt-0">
-            <ActiveBids />
+            <ActiveBids 
+              currentUserId={user?.id} 
+              onBidAccepted={handleRefreshBids}
+            />
           </TabsContent>
         </div>
       </div>
