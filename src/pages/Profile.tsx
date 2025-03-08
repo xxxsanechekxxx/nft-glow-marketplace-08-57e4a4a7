@@ -918,4 +918,478 @@ const Profile = () => {
           </div>
         </div>
 
-        <Tabs defaultValue
+        <Tabs defaultValue="nfts" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="wallet">
+              <Wallet className="h-4 w-4 mr-2" />
+              Wallet
+            </TabsTrigger>
+            <TabsTrigger value="nfts">
+              <ShoppingBag className="h-4 w-4 mr-2" />
+              NFTs
+            </TabsTrigger>
+            <TabsTrigger value="profile">
+              <User className="h-4 w-4 mr-2" />
+              Profile
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="wallet" className="space-y-6">
+            {renderBalanceCards()}
+            
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <Card className="bg-card/30 backdrop-blur-sm border-primary/10">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg flex items-center">
+                    <ArrowUpCircle className="w-5 h-5 text-green-500 mr-2" />
+                    Deposit
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleDeposit} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="deposit-amount">Amount (ETH)</Label>
+                      <div className="relative">
+                        <Input
+                          id="deposit-amount"
+                          type="number"
+                          step="0.01"
+                          min="0.01"
+                          value={depositAmount}
+                          onChange={(e) => setDepositAmount(e.target.value)}
+                          className="pr-12"
+                          placeholder="0.00"
+                        />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-muted-foreground">
+                          ETH
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <Button 
+                      type="submit" 
+                      className="w-full"
+                      disabled={!userData?.wallet_address}
+                    >
+                      Deposit
+                    </Button>
+                    
+                    {!userData?.wallet_address && (
+                      <div className="text-xs text-amber-500 mt-1 flex items-center gap-1">
+                        <HelpCircle className="h-3 w-3" />
+                        <span>Generate a wallet address in Profile tab first</span>
+                      </div>
+                    )}
+                  </form>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-card/30 backdrop-blur-sm border-primary/10">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg flex items-center">
+                    <ArrowDownCircle className="w-5 h-5 text-amber-500 mr-2" />
+                    Withdraw
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleWithdraw} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="withdraw-amount">Amount (ETH)</Label>
+                      <div className="relative">
+                        <Input
+                          id="withdraw-amount"
+                          type="number"
+                          step="0.01"
+                          min="0.01"
+                          value={withdrawAmount}
+                          onChange={(e) => setWithdrawAmount(e.target.value)}
+                          className="pr-12"
+                          placeholder="0.00"
+                        />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-muted-foreground">
+                          ETH
+                        </div>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="wallet-address">Your Wallet Address</Label>
+                      <Input
+                        id="wallet-address"
+                        value={withdrawWalletAddress}
+                        onChange={(e) => setWithdrawWalletAddress(e.target.value)}
+                        placeholder="0x..."
+                      />
+                    </div>
+                    <Button 
+                      type="submit" 
+                      className="w-full"
+                      disabled={parseFloat(userData?.balance || "0") <= 0}
+                    >
+                      Withdraw
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
+            </div>
+            
+            <Card className="bg-card/30 backdrop-blur-sm border-primary/10">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <FileCheck className="w-5 h-5 text-purple-500 mr-2" />
+                  Transaction History
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="rounded-lg overflow-hidden border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[100px]">Date</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Amount</TableHead>
+                        <TableHead className="text-right">Status</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {transactions.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={4} className="text-center py-6 text-muted-foreground">
+                            No transactions found
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        transactions.map((tx) => (
+                          <TableRow key={tx.id}>
+                            <TableCell className="font-medium">{tx.created_at}</TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                {tx.type === 'deposit' && (
+                                  <ArrowUpCircle className="h-4 w-4 text-green-500" />
+                                )}
+                                {tx.type === 'withdraw' && (
+                                  <ArrowDownCircle className="h-4 w-4 text-amber-500" />
+                                )}
+                                {tx.type === 'purchase' && (
+                                  <ShoppingBag className="h-4 w-4 text-blue-500" />
+                                )}
+                                {tx.type === 'sale' && (
+                                  <DollarSign className="h-4 w-4 text-green-500" />
+                                )}
+                                {tx.type === 'exchange' && (
+                                  <RefreshCw className="h-4 w-4 text-purple-500" />
+                                )}
+                                {tx.type.charAt(0).toUpperCase() + tx.type.slice(1)}
+                                {tx.item && <span> - {tx.item}</span>}
+                              </div>
+                              {tx.frozen_until && (
+                                <div className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                                  <LockIcon className="h-3 w-3" /> Unfreezes on {tx.frozen_until}
+                                </div>
+                              )}
+                            </TableCell>
+                            <TableCell>{tx.amount} ETH</TableCell>
+                            <TableCell className="text-right">
+                              {tx.status === 'completed' && (
+                                <Badge variant="success">
+                                  <CheckCircle2 className="h-3 w-3 mr-1" />
+                                  Completed
+                                </Badge>
+                              )}
+                              {tx.status === 'pending' && (
+                                <Badge variant="outline" className="bg-yellow-500/10 text-yellow-500 border-yellow-500/30">
+                                  <Clock className="h-3 w-3 mr-1" />
+                                  Pending
+                                </Badge>
+                              )}
+                              {tx.status === 'failed' && (
+                                <Badge variant="destructive">
+                                  Failed
+                                </Badge>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="nfts">
+            <UserNFTCollection />
+          </TabsContent>
+          
+          <TabsContent value="profile" className="space-y-6">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <Card className="bg-card/30 backdrop-blur-sm border-primary/10">
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Mail className="w-5 h-5 text-blue-500 mr-2" />
+                    Email Settings
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleEmailChange} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="current-email">Current Email</Label>
+                      <Input
+                        id="current-email"
+                        type="email"
+                        value={userData?.email || ""}
+                        disabled
+                        className="bg-muted"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="new-email">New Email</Label>
+                      <Input
+                        id="new-email"
+                        type="email"
+                        value={newEmail}
+                        onChange={(e) => setNewEmail(e.target.value)}
+                        placeholder="Enter new email"
+                      />
+                    </div>
+                    <Button type="submit">Update Email</Button>
+                  </form>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-card/30 backdrop-blur-sm border-primary/10">
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Key className="w-5 h-5 text-amber-500 mr-2" />
+                    Password Settings
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handlePasswordChange} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="current-password">Current Password</Label>
+                      <Input
+                        id="current-password"
+                        type="password"
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="new-password">New Password</Label>
+                      <Input
+                        id="new-password"
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="confirm-password">Confirm New Password</Label>
+                      <Input
+                        id="confirm-password"
+                        type="password"
+                        value={confirmNewPassword}
+                        onChange={(e) => setConfirmNewPassword(e.target.value)}
+                      />
+                    </div>
+                    <Button type="submit">Update Password</Button>
+                  </form>
+                </CardContent>
+              </Card>
+            </div>
+            
+            <Card className="bg-card/30 backdrop-blur-sm border-primary/10">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Wallet className="w-5 h-5 text-green-500 mr-2" />
+                  Wallet Management
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="wallet-address">Your Deposit Wallet Address</Label>
+                  <div className="flex space-x-2">
+                    <Input
+                      id="wallet-address"
+                      value={userData?.wallet_address || ""}
+                      disabled
+                      className="font-mono bg-muted"
+                    />
+                    <DialogTrigger asChild>
+                      <Button 
+                        variant="outline" 
+                        className="shrink-0"
+                        onClick={() => setIsWalletModalOpen(true)}
+                      >
+                        {userData?.wallet_address ? "View" : "Generate"}
+                      </Button>
+                    </DialogTrigger>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-card/30 backdrop-blur-sm border-primary/10">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Shield className="w-5 h-5 text-purple-500 mr-2" />
+                  Account Verification
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <Home className="h-4 w-4 text-amber-500" />
+                    <span>Address Verification</span>
+                  </div>
+                  {userData?.kyc_status === 'completed' ? (
+                    <Badge variant="success">
+                      <CheckCircle2 className="h-3 w-3 mr-1" />
+                      Verified
+                    </Badge>
+                  ) : userData?.kyc_status === 'pending' ? (
+                    <Badge variant="outline" className="bg-blue-500/10 text-blue-500 border-blue-500/30">
+                      Pending Review
+                    </Badge>
+                  ) : userData?.kyc_status === 'identity_completed' ? (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={continueKYCVerification}
+                    >
+                      Continue Verification
+                    </Button>
+                  ) : (
+                    <Button
+                      size="sm"
+                      onClick={startKYCVerification}
+                    >
+                      Start Verification
+                    </Button>
+                  )}
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <BadgeCheck className="h-4 w-4 text-green-500" />
+                    <span>Account Status</span>
+                  </div>
+                  {userData?.verified ? (
+                    <Badge variant="success">
+                      <CheckCircle2 className="h-3 w-3 mr-1" />
+                      Verified
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline">
+                      Unverified
+                    </Badge>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Button 
+              variant="destructive" 
+              className="w-full"
+              onClick={handleLogout}
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
+            </Button>
+          </TabsContent>
+        </Tabs>
+      </div>
+      
+      <Dialog open={isWalletModalOpen} onOpenChange={setIsWalletModalOpen}>
+        <WalletAddressModal 
+          existingAddress={userData?.wallet_address} 
+          onGenerate={handleGenerateWalletAddress} 
+          onClose={() => setIsWalletModalOpen(false)} 
+        />
+      </Dialog>
+      
+      <Dialog open={isDepositConfirmationOpen} onOpenChange={setIsDepositConfirmationOpen}>
+        <DepositConfirmationDialog 
+          walletAddress={userData?.wallet_address || ""} 
+          amount={depositAmount}
+          onConfirm={handleDepositConfirm}
+          onCancel={() => setIsDepositConfirmationOpen(false)}
+        />
+      </Dialog>
+      
+      <Dialog open={isFraudWarningOpen} onOpenChange={setIsFraudWarningOpen}>
+        <FraudWarningDialog onClose={() => setIsFraudWarningOpen(false)} />
+      </Dialog>
+      
+      <Dialog open={isIdentityDialogOpen} onOpenChange={setIsIdentityDialogOpen}>
+        <KYCIdentityDialog 
+          onSuccess={handleIdentitySuccess}
+          onCancel={() => setIsIdentityDialogOpen(false)}
+        />
+      </Dialog>
+      
+      <Dialog open={isAddressDialogOpen} onOpenChange={setIsAddressDialogOpen}>
+        <KYCAddressDialog 
+          onSuccess={handleAddressSuccess}
+          onCancel={handleAddressClose}
+        />
+      </Dialog>
+      
+      <Dialog open={isExchangeDialogOpen} onOpenChange={setIsExchangeDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Exchange to USDT</DialogTitle>
+            <DialogDescription>
+              Convert your frozen ETH balance to USDT. This action is irreversible.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={handleExchangeToUSDT} className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="exchange-amount">Amount to Exchange (ETH)</Label>
+              <div className="relative">
+                <Input
+                  id="exchange-amount"
+                  type="number"
+                  step="0.01"
+                  min="0.01"
+                  max={parseFloat(userData?.frozen_balance || "0")}
+                  value={exchangeAmount}
+                  onChange={(e) => setExchangeAmount(e.target.value)}
+                  className="pr-12"
+                  placeholder="0.00"
+                />
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-muted-foreground">
+                  ETH
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Available: {userData?.frozen_balance || "0.00"} ETH
+              </p>
+            </div>
+            
+            <DialogFooter>
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => setIsExchangeDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button 
+                type="submit"
+                disabled={!exchangeAmount || parseFloat(exchangeAmount) <= 0 || parseFloat(exchangeAmount) > parseFloat(userData?.frozen_balance || "0")}
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Exchange
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default Profile;

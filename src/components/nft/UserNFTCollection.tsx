@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { NFTCard } from "@/components/NFTCard";
 import { EmptyNFTState } from "@/components/EmptyNFTState";
 import { useAuth } from "@/hooks/useAuth";
-import { Loader2, Filter, Search, ShoppingBag } from "lucide-react";
+import { Loader2, Filter, Search } from "lucide-react";
 import type { NFT } from "@/types/nft";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
