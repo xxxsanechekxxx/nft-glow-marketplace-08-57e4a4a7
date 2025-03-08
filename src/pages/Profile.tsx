@@ -22,7 +22,9 @@ import {
   FileCheck,
   BadgeCheck,
   Home,
-  CheckCircle2
+  CheckCircle2,
+  Clock,
+  LockIcon
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import WalletAddressModal from "@/components/WalletAddressModal";
@@ -58,6 +60,7 @@ interface Transaction {
   created_at: string;
   status: 'pending' | 'completed' | 'failed';
   item?: string;
+  frozen_until?: string;
 }
 
 interface UserData {
@@ -67,6 +70,7 @@ interface UserData {
   country: string;
   avatar_url: string | null;
   balance: string;
+  frozen_balance: string;
   wallet_address?: string;
   erc20_address?: string;
   created_at: string;
@@ -77,6 +81,13 @@ interface UserData {
 interface TransactionTotals {
   total_deposits: number;
   total_withdrawals: number;
+}
+
+interface FrozenBalanceInfo {
+  amount: number;
+  days_left: number;
+  unfreeze_date: string;
+  transaction_id: string;
 }
 
 const Profile = () => {
@@ -102,6 +113,8 @@ const Profile = () => {
   });
   const [isIdentityDialogOpen, setIsIdentityDialogOpen] = useState(false);
   const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
+  const [frozenBalanceDetails, setFrozenBalanceDetails] = useState<FrozenBalanceInfo[]>([]);
+  const [showFrozenDetails, setShowFrozenDetails] = useState(false);
 
   const showDelayedToast = (title: string, description: string, variant: "default" | "destructive" = "default") => {
     setTimeout(() => {
@@ -255,6 +268,20 @@ const Profile = () => {
           setTransactionTotals(totalsData);
         }
 
+        const { data: frozenData, error: frozenError } = await supabase
+          .rpc('get_user_frozen_balances', {
+            user_uuid: currentUser.id
+          });
+
+        if (frozenError) {
+          console.error("Error fetching frozen balances:", frozenError);
+          throw frozenError;
+        }
+
+        if (frozenData && frozenData.length > 0) {
+          setFrozenBalanceDetails(frozenData[0].unfreezing_in_days || []);
+        }
+
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('*')
@@ -276,7 +303,7 @@ const Profile = () => {
           throw transactionsError;
         }
 
-        console.log("Profile data:", profileData); // Добавляем лог для отладки
+        console.log("Profile data:", profileData);
 
         if (isMounted && currentUser) {
           const userData: UserData = {
@@ -286,6 +313,7 @@ const Profile = () => {
             country: profileData?.country || currentUser.user_metadata?.country || '',
             avatar_url: profileData?.avatar_url || null,
             balance: profileData?.balance?.toString() || "0.0",
+            frozen_balance: profileData?.frozen_balance?.toString() || "0.0",
             wallet_address: profileData?.wallet_address || '',
             erc20_address: profileData?.erc20_address || undefined,
             created_at: currentUser.created_at,
@@ -293,14 +321,19 @@ const Profile = () => {
             kyc_status: profileData?.kyc_status || 'not_started'
           };
 
-          console.log("Setting user data with avatar:", userData.avatar_url); // Добавляем лог для отладки
+          console.log("Setting user data with avatar:", userData.avatar_url);
           setUserData(userData);
 
           if (transactionsData) {
             setTransactions(transactionsData.map(tx => {
-              // Format date without year, only show DD/MM format
               const dateObj = new Date(tx.created_at);
               const formattedDate = `${dateObj.getDate().toString().padStart(2, '0')}/${(dateObj.getMonth() + 1).toString().padStart(2, '0')}`;
+              
+              let formattedFrozenUntil = null;
+              if (tx.frozen_until) {
+                const frozenDate = new Date(tx.frozen_until);
+                formattedFrozenUntil = `${frozenDate.getDate().toString().padStart(2, '0')}/${(frozenDate.getMonth() + 1).toString().padStart(2, '0')}/${frozenDate.getFullYear()}`;
+              }
               
               return {
                 id: tx.id,
@@ -308,7 +341,8 @@ const Profile = () => {
                 amount: tx.amount.toString(),
                 created_at: formattedDate,
                 status: tx.status,
-                item: tx.item
+                item: tx.item,
+                frozen_until: formattedFrozenUntil
               };
             }));
           }
@@ -853,6 +887,50 @@ const Profile = () => {
                       </div>
                     </div>
                   </div>
+                  
+                  {Number(userData?.frozen_balance || 0) > 0 && (
+                    <div className="border border-yellow-500/20 bg-yellow-500/5 rounded-lg p-4 space-y-3">
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-2">
+                          <LockIcon className="h-5 w-5 text-yellow-500" />
+                          <p className="font-medium text-yellow-500">Frozen Balance</p>
+                        </div>
+                        <p className="text-xl font-bold text-yellow-500">
+                          {Number(userData?.frozen_balance || 0).toFixed(2)} ETH
+                        </p>
+                      </div>
+                      
+                      <div className="flex justify-between items-center">
+                        <p className="text-sm text-yellow-500/80">
+                          Funds from NFT sales are frozen for 15 days before being available
+                        </p>
+                        <Button
+                          variant="outline"
+                          className="border-yellow-500/20 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500"
+                          size="sm"
+                          onClick={() => setShowFrozenDetails(!showFrozenDetails)}
+                        >
+                          {showFrozenDetails ? "Hide Details" : "Show Details"}
+                        </Button>
+                      </div>
+                      
+                      {showFrozenDetails && frozenBalanceDetails.length > 0 && (
+                        <div className="mt-2 border-t border-yellow-500/20 pt-3 space-y-3">
+                          <p className="text-sm font-medium text-yellow-500/80">Upcoming Releases:</p>
+                          {frozenBalanceDetails.map((item) => (
+                            <div key={item.transaction_id} className="grid grid-cols-3 gap-2 text-sm bg-yellow-500/10 rounded p-2">
+                              <div className="flex items-center gap-1">
+                                <Clock className="h-4 w-4 text-yellow-500/80" />
+                                <span>{item.days_left} days left</span>
+                              </div>
+                              <div className="text-center font-medium">{item.amount.toFixed(2)} ETH</div>
+                              <div className="text-right text-yellow-500/80">{item.unfreeze_date}</div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
 
@@ -956,7 +1034,7 @@ const Profile = () => {
                           {transactions.map((transaction) => (
                             <TableRow
                               key={transaction.id}
-                              className="hover:bg-primary/5 transition-colors"
+                              className={`hover:bg-primary/5 transition-colors ${transaction.frozen_until ? 'bg-yellow-500/5' : ''}`}
                             >
                               <TableCell className="date-column">{transaction.created_at}</TableCell>
                               <TableCell className="type-column text-center">
@@ -971,20 +1049,34 @@ const Profile = () => {
                                     <ShoppingBag className="w-4 h-4 text-blue-500 flex-shrink-0" />
                                   )}
                                   {transaction.type === 'sale' && (
-                                    <ShoppingBag className="w-4 h-4 text-green-500 flex-shrink-0" />
+                                    <div className="flex items-center gap-1">
+                                      <ShoppingBag className="w-4 h-4 text-green-500 flex-shrink-0" />
+                                      {transaction.frozen_until && (
+                                        <LockIcon className="w-3 h-3 text-yellow-500 flex-shrink-0" />
+                                      )}
+                                    </div>
                                   )}
                                 </div>
                               </TableCell>
-                              <TableCell className="amount-column">{Number(transaction.amount).toFixed(2)}</TableCell>
+                              <TableCell className="amount-column">
+                                {Number(transaction.amount).toFixed(2)}
+                                {transaction.frozen_until && (
+                                  <span className="text-xs ml-1 text-yellow-500" title={`Available on ${transaction.frozen_until}`}>
+                                    (Frozen)
+                                  </span>
+                                )}
+                              </TableCell>
                               <TableCell className="status-column">
                                 <span className={`px-1.5 py-0.5 rounded-full text-xs ${
                                   transaction.status === 'completed'
-                                    ? 'bg-green-500/20 text-green-500'
+                                    ? transaction.frozen_until
+                                      ? 'bg-yellow-500/20 text-yellow-500'
+                                      : 'bg-green-500/20 text-green-500'
                                     : transaction.status === 'pending'
                                     ? 'bg-yellow-500/20 text-yellow-500'
                                     : 'bg-red-500/20 text-red-500'
                                 }`}>
-                                  {transaction.status}
+                                  {transaction.frozen_until ? 'Frozen' : transaction.status}
                                 </span>
                               </TableCell>
                             </TableRow>

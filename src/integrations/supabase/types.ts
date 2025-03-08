@@ -98,6 +98,7 @@ export type Database = {
           balance: number | null
           country: string | null
           created_at: string
+          frozen_balance: number | null
           id: string
           kyc_address_doc: string | null
           kyc_identity_doc: string | null
@@ -113,6 +114,7 @@ export type Database = {
           balance?: number | null
           country?: string | null
           created_at?: string
+          frozen_balance?: number | null
           id?: string
           kyc_address_doc?: string | null
           kyc_identity_doc?: string | null
@@ -128,6 +130,7 @@ export type Database = {
           balance?: number | null
           country?: string | null
           created_at?: string
+          frozen_balance?: number | null
           id?: string
           kyc_address_doc?: string | null
           kyc_identity_doc?: string | null
@@ -144,6 +147,7 @@ export type Database = {
         Row: {
           amount: number
           created_at: string
+          frozen_until: string | null
           id: string
           item: string | null
           status: Database["public"]["Enums"]["transaction_status"] | null
@@ -153,6 +157,7 @@ export type Database = {
         Insert: {
           amount: number
           created_at?: string
+          frozen_until?: string | null
           id?: string
           item?: string | null
           status?: Database["public"]["Enums"]["transaction_status"] | null
@@ -162,6 +167,7 @@ export type Database = {
         Update: {
           amount?: number
           created_at?: string
+          frozen_until?: string | null
           id?: string
           item?: string | null
           status?: Database["public"]["Enums"]["transaction_status"] | null
@@ -181,6 +187,15 @@ export type Database = {
         }
         Returns: Json
       }
+      get_user_frozen_balances: {
+        Args: {
+          user_uuid: string
+        }
+        Returns: {
+          frozen_balance: number
+          unfreezing_in_days: Json[]
+        }[]
+      }
       get_user_transaction_totals: {
         Args: {
           user_uuid: string
@@ -189,6 +204,10 @@ export type Database = {
           total_deposits: number
           total_withdrawals: number
         }[]
+      }
+      process_frozen_balances: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       purchase_nft: {
         Args: {
