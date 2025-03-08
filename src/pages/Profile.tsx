@@ -47,15 +47,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 import DepositConfirmationDialog from "@/components/DepositConfirmationDialog";
 import FraudWarningDialog from "@/components/FraudWarningDialog";
 import KYCIdentityDialog from "@/components/KYCIdentityDialog";
 import KYCAddressDialog from "@/components/KYCAddressDialog";
 import { UserNFTCollection } from "@/components/nft/UserNFTCollection";
-import { Badge } from "@/components/ui/badge";
-import { Label } from "@/components/ui/label";
 
 interface Transaction {
   id: string;
@@ -714,170 +712,6 @@ const Profile = () => {
     );
   }
 
-  const renderBalanceCards = () => {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div className="relative overflow-hidden rounded-xl border backdrop-blur-sm transition-all duration-300">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-primary/10 to-background/80 z-0"></div>
-          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full filter blur-2xl transform translate-x-10 -translate-y-10 z-0"></div>
-          
-          <div className="relative z-10 p-6 h-full">
-            <div className="flex items-center justify-between mb-5">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-full bg-primary/20 text-primary">
-                  <Wallet className="h-5 w-5" />
-                </div>
-                <h3 className="text-xl font-bold text-white">Available Balance</h3>
-              </div>
-              <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
-                Active
-              </Badge>
-            </div>
-            
-            <div className="space-y-5">
-              <div className="flex items-center justify-between bg-white/5 rounded-lg p-4 border border-white/10">
-                <div className="flex items-center gap-3">
-                  <img 
-                    src="/lovable-uploads/0e51dc88-2aac-485e-84c5-0bb4ab88f00b.png" 
-                    alt="ETH"
-                    className="h-8 w-8 rounded-full p-1 bg-white/10"
-                  />
-                  <div>
-                    <span className="text-sm text-muted-foreground">Ethereum</span>
-                    <h4 className="font-medium text-white">ETH</h4>
-                  </div>
-                </div>
-                <h2 className="text-2xl font-bold text-white">
-                  {userData?.balance || "0.00"}
-                </h2>
-              </div>
-              
-              <div className="flex items-center justify-between bg-white/5 rounded-lg p-4 border border-white/10">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center bg-green-500/20 rounded-full h-8 w-8">
-                    <span className="text-green-500 font-bold">$</span>
-                  </div>
-                  <div>
-                    <span className="text-sm text-muted-foreground">Tether</span>
-                    <h4 className="font-medium text-green-500">USDT</h4>
-                  </div>
-                </div>
-                <h2 className="text-2xl font-bold text-green-500">
-                  {userData?.usdt_balance || "0.00"}
-                </h2>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {parseFloat(userData?.frozen_balance || "0") > 0 && (
-          <div className="relative overflow-hidden rounded-xl border backdrop-blur-sm transition-all duration-300">
-            <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/20 via-amber-500/10 to-background/80 z-0"></div>
-            <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/20 rounded-full filter blur-2xl transform translate-x-10 -translate-y-10 z-0"></div>
-            
-            <div className="relative z-10 p-6 h-full">
-              <div className="flex items-center justify-between mb-5">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-full bg-yellow-500/20 text-yellow-500">
-                    <LockIcon className="h-5 w-5" />
-                  </div>
-                  <h3 className="text-xl font-bold text-yellow-500">Hold Balance</h3>
-                </div>
-                <Button
-                  variant="outline"
-                  className="border-yellow-500/30 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 h-8 px-3"
-                  size="sm"
-                  onClick={() => setShowFrozenDetails(!showFrozenDetails)}
-                >
-                  {showFrozenDetails ? "Hide Details" : "Show Details"}
-                </Button>
-              </div>
-              
-              <div className="space-y-5">
-                <div className="flex items-center justify-between bg-white/5 rounded-lg p-4 border border-yellow-500/20">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-full bg-yellow-500/20">
-                      <img 
-                        src="/lovable-uploads/2a47993b-b343-4016-9b9c-e3a372d31ba7.png" 
-                        alt="ETH" 
-                        className="h-5 w-5"
-                      />
-                    </div>
-                    <div>
-                      <span className="text-sm text-yellow-500/80">Frozen ETH</span>
-                      <h4 className="font-medium text-yellow-500">Hold Period: 15 days</h4>
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-end gap-2">
-                    <h2 className="text-2xl font-bold text-yellow-500">
-                      {userData?.frozen_balance || "0.00"}
-                    </h2>
-                  </div>
-                </div>
-                
-                <div className="flex items-center justify-between bg-white/5 rounded-lg p-4 border border-blue-500/20">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center bg-blue-500/20 rounded-full h-8 w-8">
-                      <LockIcon className="h-4 w-4 text-blue-500" />
-                    </div>
-                    <div>
-                      <span className="text-sm text-blue-500/80">Frozen USDT</span>
-                      <h4 className="font-medium text-blue-500">Hold Period: 15 days</h4>
-                    </div>
-                  </div>
-                  <h2 className="text-2xl font-bold text-blue-500">
-                    {userData?.frozen_usdt_balance || "0.00"}
-                  </h2>
-                </div>
-              </div>
-              
-              <Button
-                variant="exchange"
-                onClick={() => setIsExchangeDialogOpen(true)}
-                className="mt-3 w-full"
-              >
-                <RefreshCw className="h-4 w-4 mr-2" />
-                <span>Exchange to USDT</span>
-              </Button>
-              
-              {showFrozenDetails && frozenBalanceDetails.length > 0 && (
-                <div className="mt-5 border-t border-yellow-500/20 pt-4 space-y-3 animate-in fade-in duration-300">
-                  <p className="text-sm font-medium text-yellow-500">Upcoming Releases:</p>
-                  <div className="max-h-48 overflow-y-auto pr-1 space-y-3">
-                    {frozenBalanceDetails.map((item) => (
-                      <div 
-                        key={item.transaction_id} 
-                        className="bg-yellow-500/5 border border-yellow-500/20 rounded-lg p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
-                      >
-                        <div className="flex items-center gap-2">
-                          <Clock className="h-4 w-4 text-yellow-500" />
-                          <span className="text-sm text-yellow-500 font-medium">{item.days_left} days remaining</span>
-                        </div>
-                        <div className="flex items-center justify-between sm:justify-end sm:gap-4">
-                          <div className="flex items-center gap-2">
-                            <img 
-                              src="/lovable-uploads/2a47993b-b343-4016-9b9c-e3a372d31ba7.png" 
-                              alt="ETH" 
-                              className="h-4 w-4"
-                            />
-                            <span className="text-sm font-bold text-yellow-500">{item.amount.toFixed(2)}</span>
-                          </div>
-                          <Badge variant="outline" className="text-yellow-500/70 border-yellow-500/30 bg-yellow-500/5">
-                            {item.unfreeze_date}
-                          </Badge>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  };
-
   return (
     <div className="container mx-auto py-8 px-4 mt-16 min-h-screen bg-gradient-to-b from-background via-background/80 to-background/60">
       <div className="max-w-4xl mx-auto space-y-8">
@@ -918,473 +752,698 @@ const Profile = () => {
           </div>
         </div>
 
-        <Tabs defaultValue="nfts" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="wallet">
-              <Wallet className="h-4 w-4 mr-2" />
-              Wallet
-            </TabsTrigger>
-            <TabsTrigger value="nfts">
-              <ShoppingBag className="h-4 w-4 mr-2" />
-              NFTs
-            </TabsTrigger>
-            <TabsTrigger value="profile">
-              <User className="h-4 w-4 mr-2" />
-              Profile
-            </TabsTrigger>
+        <Tabs defaultValue="profile" className="w-full">
+          <TabsList className="w-full responsive-tabs-list p-1.5 bg-background/50 backdrop-blur-sm rounded-xl border border-primary/10 mb-6">
+            {["profile", "settings", "wallet", "verification", "nft"].map((tab) => (
+              <TabsTrigger
+                key={tab}
+                value={tab}
+                className="responsive-tab-trigger flex items-center justify-center gap-1 transition-all duration-300 data-[state=active]:bg-primary/20 data-[state=active]:text-primary relative overflow-hidden group py-2"
+              >
+                {tab === "profile" && <User className="w-4 h-4" />}
+                {tab === "settings" && <Settings className="w-4 h-4" />}
+                {tab === "wallet" && <Wallet className="w-4 h-4" />}
+                {tab === "verification" && <Shield className="w-4 h-4" />}
+                {tab === "nft" && <ShoppingBag className="w-4 h-4" />}
+                <span className="relative z-10 capitalize hidden sm:inline">{tab}</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </TabsTrigger>
+            ))}
           </TabsList>
-          
-          <TabsContent value="wallet" className="space-y-6">
-            {renderBalanceCards()}
-            
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <Card className="bg-card/30 backdrop-blur-sm border-primary/10">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg flex items-center">
-                    <ArrowUpCircle className="w-5 h-5 text-green-500 mr-2" />
-                    Deposit
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleDeposit} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="deposit-amount">Amount (ETH)</Label>
-                      <div className="relative">
-                        <Input
-                          id="deposit-amount"
-                          type="number"
-                          step="0.01"
-                          min="0.01"
-                          value={depositAmount}
-                          onChange={(e) => setDepositAmount(e.target.value)}
-                          className="pr-12"
-                          placeholder="0.00"
-                        />
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-muted-foreground">
-                          ETH
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <Button 
-                      type="submit" 
-                      className="w-full"
-                      disabled={!userData?.wallet_address}
-                    >
-                      Deposit
-                    </Button>
-                    
-                    {!userData?.wallet_address && (
-                      <div className="text-xs text-amber-500 mt-1 flex items-center gap-1">
-                        <HelpCircle className="h-3 w-3" />
-                        <span>Generate a wallet address in Profile tab first</span>
-                      </div>
-                    )}
-                  </form>
-                </CardContent>
-              </Card>
-              
-              <Card className="bg-card/30 backdrop-blur-sm border-primary/10">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg flex items-center">
-                    <ArrowDownCircle className="w-5 h-5 text-amber-500 mr-2" />
-                    Withdraw
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleWithdraw} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="withdraw-amount">Amount (ETH)</Label>
-                      <div className="relative">
-                        <Input
-                          id="withdraw-amount"
-                          type="number"
-                          step="0.01"
-                          min="0.01"
-                          value={withdrawAmount}
-                          onChange={(e) => setWithdrawAmount(e.target.value)}
-                          className="pr-12"
-                          placeholder="0.00"
-                        />
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-muted-foreground">
-                          ETH
-                        </div>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="wallet-address">Your Wallet Address</Label>
+
+          <TabsContent value="profile">
+            <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-[#1A1F2C]/90">
+              <CardHeader className="space-y-2">
+                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary/20">
+                    <UserRound className="w-6 h-6 text-primary" />
+                  </div>
+                  Profile Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2 group">
+                    <label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
+                      <Mail className="w-4 h-4" />
+                      Email
+                    </label>
+                    <div className="relative overflow-hidden rounded-lg transition-all duration-300 group-hover:shadow-lg">
+                      <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                       <Input
-                        id="wallet-address"
-                        value={withdrawWalletAddress}
-                        onChange={(e) => setWithdrawWalletAddress(e.target.value)}
-                        placeholder="0x..."
+                        value={userData?.email}
+                        readOnly
+                        className="bg-background/50 border-primary/10 group-hover:border-primary/30 transition-colors pl-10"
                       />
+                      <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                     </div>
-                    <Button 
-                      type="submit" 
-                      className="w-full"
-                      disabled={parseFloat(userData?.balance || "0") <= 0}
-                    >
-                      Withdraw
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </div>
-            
-            <Card className="bg-card/30 backdrop-blur-sm border-primary/10">
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <FileCheck className="w-5 h-5 text-purple-500 mr-2" />
-                  Transaction History
+                  </div>
+                  <div className="space-y-2 group">
+                    <label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
+                      <Globe className="w-4 h-4" />
+                      Country
+                    </label>
+                    <div className="relative overflow-hidden rounded-lg transition-all duration-300 group-hover:shadow-lg">
+                      <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <Input
+                        value={userData?.country}
+                        readOnly
+                        className="bg-background/50 border-primary/10 group-hover:border-primary/30 transition-colors pl-10"
+                      />
+                      <Globe className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-2 group">
+                  <label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
+                    <HelpCircle className="w-4 h-4" />
+                    Verification Status
+                  </label>
+                  <div className="relative overflow-hidden rounded-lg transition-all duration-300 group-hover:shadow-lg">
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="bg-background/50 border border-primary/10 group-hover:border-primary/30 transition-colors rounded-lg p-3 pl-10 flex items-center">
+                      {userData?.verified ? (
+                        <span className="text-green-500 font-medium">Verified</span>
+                      ) : (
+                        <span className="text-yellow-500 font-medium">Not Verified</span>
+                      )}
+                    </div>
+                    <HelpCircle className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  </div>
+                </div>
+                <div className="space-y-2 group">
+                  <label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
+                    <Wallet className="w-4 h-4" />
+                    Wallet Address
+                  </label>
+                  <div className="flex gap-4 items-start">
+                    <div className="flex-grow flex gap-2 items-center relative overflow-hidden rounded-lg transition-all duration-300 group-hover:shadow-lg">
+                      <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <Input
+                        value={userData?.wallet_address || ''}
+                        readOnly
+                        className="bg-background/50 font-mono text-sm border-primary/10 group-hover:border-primary/30 transition-colors pl-10"
+                        placeholder="No wallet address generated"
+                      />
+                      <Wallet className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                      {userData?.wallet_address && (
+                        <div className="bg-primary/20 px-3 py-1.5 rounded-md text-sm text-primary font-medium min-w-[80px] text-center">
+                          ERC-20
+                        </div>
+                      )}
+                    </div>
+                    {!userData?.wallet_address && (
+                      <Button
+                        onClick={() => setIsWalletModalOpen(true)}
+                        className="bg-primary/20 text-primary hover:bg-primary/30 transition-colors flex items-center gap-2 group relative overflow-hidden"
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <Wallet className="w-4 h-4 relative z-10" />
+                        <span className="relative z-10">Generate Address</span>
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="settings">
+            <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-[#1A1F2C]/90">
+              <CardHeader className="space-y-2">
+                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary/20">
+                    <Settings className="w-6 h-6 text-primary" />
+                  </div>
+                  Account Settings
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="rounded-lg overflow-hidden border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-[100px]">Date</TableHead>
-                        <TableHead>Type</TableHead>
-                        <TableHead>Amount</TableHead>
-                        <TableHead className="text-right">Status</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {transactions.length === 0 ? (
-                        <TableRow>
-                          <TableCell colSpan={4} className="text-center py-6 text-muted-foreground">
-                            No transactions found
-                          </TableCell>
-                        </TableRow>
-                      ) : (
-                        transactions.map((tx) => (
-                          <TableRow key={tx.id}>
-                            <TableCell className="font-medium">{tx.created_at}</TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-2">
-                                {tx.type === 'deposit' && (
-                                  <ArrowUpCircle className="h-4 w-4 text-green-500" />
-                                )}
-                                {tx.type === 'withdraw' && (
-                                  <ArrowDownCircle className="h-4 w-4 text-amber-500" />
-                                )}
-                                {tx.type === 'purchase' && (
-                                  <ShoppingBag className="h-4 w-4 text-blue-500" />
-                                )}
-                                {tx.type === 'sale' && (
-                                  <DollarSign className="h-4 w-4 text-green-500" />
-                                )}
-                                {tx.type === 'exchange' && (
-                                  <RefreshCw className="h-4 w-4 text-purple-500" />
-                                )}
-                                {tx.type.charAt(0).toUpperCase() + tx.type.slice(1)}
-                                {tx.item && <span> - {tx.item}</span>}
-                              </div>
-                              {tx.frozen_until && (
-                                <div className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                                  <LockIcon className="h-3 w-3" /> Unfreezes on {tx.frozen_until}
-                                </div>
-                              )}
-                            </TableCell>
-                            <TableCell>{tx.amount} ETH</TableCell>
-                            <TableCell className="text-right">
-                              {tx.status === 'completed' && (
-                                <Badge variant="success">
-                                  <CheckCircle2 className="h-3 w-3 mr-1" />
-                                  Completed
-                                </Badge>
-                              )}
-                              {tx.status === 'pending' && (
-                                <Badge variant="outline" className="bg-yellow-500/10 text-yellow-500 border-yellow-500/30">
-                                  <Clock className="h-3 w-3 mr-1" />
-                                  Pending
-                                </Badge>
-                              )}
-                              {tx.status === 'failed' && (
-                                <Badge variant="destructive">
-                                  Failed
-                                </Badge>
-                              )}
-                            </TableCell>
-                          </TableRow>
-                        ))
-                      )}
-                    </TableBody>
-                  </Table>
+                <div className="space-y-6">
+                  <form onSubmit={handleEmailChange} className="space-y-4 p-6 rounded-xl bg-primary/5 border border-primary/10 backdrop-blur-sm transition-all duration-300 hover:shadow-lg">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium flex items-center gap-2">
+                        <Mail className="w-4 h-4 text-primary" />
+                        New Email
+                      </label>
+                      <div className="relative">
+                        <Input
+                          type="email"
+                          value={newEmail}
+                          onChange={(e) => setNewEmail(e.target.value)}
+                          placeholder="Enter new email address"
+                          required
+                          className="bg-background/50 border-primary/10 group-hover:border-primary/30 transition-colors pl-10"
+                        />
+                        <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                      </div>
+                    </div>
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-colors group relative overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <span className="relative z-10">Update Email</span>
+                    </Button>
+                  </form>
+
+                  <form onSubmit={handlePasswordChange} className="space-y-4 p-6 rounded-xl bg-primary/5 border border-primary/10 backdrop-blur-sm transition-all duration-300 hover:shadow-lg">
+                    <div className="space-y-4">
+                      {["Current Password", "New Password", "Confirm New Password"].map((label, index) => (
+                        <div key={label} className="space-y-2">
+                          <label className="text-sm font-medium flex items-center gap-2">
+                            <Key className="w-4 h-4 text-primary" />
+                            {label}
+                          </label>
+                          <div className="relative">
+                            <Input
+                              type="password"
+                              value={
+                                index === 0
+                                  ? currentPassword
+                                  : index === 1
+                                  ? newPassword
+                                  : confirmNewPassword
+                              }
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                index === 0
+                                  ? setCurrentPassword(value)
+                                  : index === 1
+                                  ? setNewPassword(value)
+                                  : setConfirmNewPassword(value);
+                              }}
+                              required
+                              className="bg-background/50 border-primary/10 pl-10 transition-all duration-300 focus:border-primary/30 focus:ring-primary/30"
+                            />
+                            <Key className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-colors group relative overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <span className="relative z-10">Update Password</span>
+                    </Button>
+                  </form>
                 </div>
               </CardContent>
             </Card>
+
+            <div className="mt-6">
+              <Button
+                variant="destructive"
+                className="w-full hover:bg-destructive/90 transition-colors flex items-center justify-center gap-2 group relative overflow-hidden"
+                onClick={handleLogout}
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-destructive/20 to-red-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <LogOut className="w-4 h-4 relative z-10" />
+                <span className="relative z-10">Logout</span>
+              </Button>
+            </div>
           </TabsContent>
-          
-          <TabsContent value="nfts">
-            <UserNFTCollection />
-          </TabsContent>
-          
-          <TabsContent value="profile" className="space-y-6">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <Card className="bg-card/30 backdrop-blur-sm border-primary/10">
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Mail className="w-5 h-5 text-blue-500 mr-2" />
-                    Email Settings
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleEmailChange} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="current-email">Current Email</Label>
-                      <Input
-                        id="current-email"
-                        type="email"
-                        value={userData?.email || ""}
-                        disabled
-                        className="bg-muted"
-                      />
+
+          <TabsContent value="wallet">
+            <div className="space-y-6">
+              <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-[#1A1F2C]/90">
+                <CardContent className="p-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div className="bg-gradient-to-br from-primary/10 to-purple-600/5 rounded-xl border border-primary/20 p-6 shadow-md hover:shadow-primary/5 transition-all duration-300">
+                      <p className="text-sm text-muted-foreground mb-2">Available Balance</p>
+                      <div className="flex flex-col gap-3">
+                        <div className="flex items-center gap-3">
+                          <img 
+                            src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                            alt="ETH"
+                            className="h-10 w-10"
+                          />
+                          <h2 className="text-4xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+                            {Number(userData?.balance || 0).toFixed(2)}
+                          </h2>
+                        </div>
+                        <div className="flex items-center gap-3 mt-2">
+                          <div className="flex items-center justify-center bg-green-500/10 rounded-full h-10 w-10">
+                            <DollarSign className="h-6 w-6 text-green-500" />
+                          </div>
+                          <h2 className="text-4xl font-bold text-green-500">
+                            {Number(userData?.usdt_balance || 0).toFixed(2)}
+                          </h2>
+                        </div>
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="new-email">New Email</Label>
-                      <Input
-                        id="new-email"
-                        type="email"
-                        value={newEmail}
-                        onChange={(e) => setNewEmail(e.target.value)}
-                        placeholder="Enter new email"
-                      />
-                    </div>
-                    <Button type="submit">Update Email</Button>
-                  </form>
+                    
+                    {Number(userData?.frozen_balance || 0) > 0 && (
+                      <div className="bg-gradient-to-br from-yellow-500/10 to-amber-600/5 rounded-xl border border-yellow-500/20 p-6 shadow-md hover:shadow-yellow-500/5 transition-all duration-300">
+                        <div className="flex justify-between items-center">
+                          <p className="text-sm text-muted-foreground mb-2">Hold Balance</p>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              className="border-yellow-500/20 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 h-8 px-3"
+                              size="sm"
+                              onClick={() => setShowFrozenDetails(!showFrozenDetails)}
+                            >
+                              {showFrozenDetails ? "Hide Details" : "Show Details"}
+                            </Button>
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-3 mt-2">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 rounded-full bg-yellow-500/20">
+                              <LockIcon className="h-6 w-6 text-yellow-500" />
+                            </div>
+                            <h2 className="text-4xl font-bold text-yellow-500">
+                              {Number(userData?.frozen_balance || 0).toFixed(2)}
+                            </h2>
+                          </div>
+                          <div className="flex items-center gap-3 mt-1">
+                            <div className="flex items-center justify-center bg-blue-500/20 rounded-full h-10 w-10">
+                              <DollarSign className="h-6 w-6 text-blue-500" />
+                            </div>
+                            <h2 className="text-4xl font-bold text-blue-500">
+                              {Number(userData?.frozen_usdt_balance || 0).toFixed(2)}
+                            </h2>
+                          </div>
+                          <Button
+                            variant="exchange"
+                            onClick={() => setIsExchangeDialogOpen(true)}
+                            className="mt-3"
+                          >
+                            <RefreshCw className="h-4 w-4 mr-2" />
+                            <span>Exchange to USDT</span>
+                          </Button>
+                        </div>
+                        <p className="text-sm text-yellow-500/80 mt-2">
+                          Funds from NFT sales are frozen for 15 days before being available
+                        </p>
+                        
+                        {showFrozenDetails && frozenBalanceDetails.length > 0 && (
+                          <div className="mt-4 border-t border-yellow-500/20 pt-4 space-y-3 animate-in fade-in duration-300">
+                            <p className="text-sm font-medium text-yellow-500/80">Upcoming Releases:</p>
+                            <div className="grid gap-3">
+                              {frozenBalanceDetails.map((item) => (
+                                <div 
+                                  key={item.transaction_id} 
+                                  className="bg-yellow-500/5 border border-yellow-500/20 rounded-lg p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <Clock className="h-4 w-4 text-yellow-500/80" />
+                                    <span className="text-yellow-500/90 font-medium">{item.days_left} days left</span>
+                                  </div>
+                                  <div className="flex items-center justify-between sm:gap-4">
+                                    <div className="flex items-center gap-1.5">
+                                      <img 
+                                        src="/lovable-uploads/0e51dc88-2aac-485e-84c5-0bb4ab88f00b.png" 
+                                        alt="ETH" 
+                                        className="h-4 w-4"
+                                      />
+                                      <span className="font-bold text-yellow-500">{item.amount.toFixed(2)}</span>
+                                    </div>
+                                    <span className="text-xs text-yellow-500/70">{item.unfreeze_date}</span>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
-              
-              <Card className="bg-card/30 backdrop-blur-sm border-primary/10">
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Key className="w-5 h-5 text-amber-500 mr-2" />
-                    Password Settings
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Button 
+                  onClick={() => setIsDepositConfirmationOpen(true)}
+                  className="w-full bg-green-500/20 hover:bg-green-500/30 text-green-500 flex items-center gap-3 p-6 h-auto group relative overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-green-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="p-3 rounded-xl bg-green-500/20 group-hover:bg-green-500/30 transition-colors">
+                    <ArrowDownCircle className="w-6 h-6" />
+                  </div>
+                  <div className="flex flex-col items-start">
+                    <span className="text-lg font-semibold">Deposit</span>
+                    <span className="text-sm text-muted-foreground">Add funds to your wallet</span>
+                  </div>
+                </Button>
+
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button 
+                      className="w-full bg-destructive/20 hover:bg-destructive/30 text-destructive flex items-center gap-3 p-6 h-auto group relative overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-destructive/10 to-red-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <div className="p-3 rounded-xl bg-destructive/20 group-hover:bg-destructive/30 transition-colors">
+                        <ArrowUpCircle className="w-6 h-6" />
+                      </div>
+                      <div className="flex flex-col items-start">
+                        <span className="text-lg font-semibold">Withdraw</span>
+                        <span className="text-sm text-muted-foreground">Transfer funds to your wallet</span>
+                      </div>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md bg-background/95 backdrop-blur-xl border border-destructive/10">
+                    <DialogHeader>
+                      <DialogTitle className="text-xl font-bold text-destructive">Withdraw</DialogTitle>
+                      <DialogDescription>
+                        Transfer funds to your wallet
+                      </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleWithdraw} className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-destructive/80">
+                          Amount (ETH)
+                        </label>
+                        <Input
+                          type="number"
+                          step="0.0001"
+                          min="0.0001"
+                          value={withdrawAmount}
+                          onChange={(e) => setWithdrawAmount(e.target.value)}
+                          placeholder="Enter amount"
+                          className="bg-background/40 border-destructive/20 focus:border-destructive/40"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-destructive/80">
+                          Wallet Address
+                        </label>
+                        <Input
+                          type="text"
+                          value={withdrawWalletAddress}
+                          onChange={(e) => setWithdrawWalletAddress(e.target.value)}
+                          placeholder="Enter wallet address"
+                          className="bg-background/40 border-destructive/20 focus:border-destructive/40"
+                        />
+                      </div>
+                      <Button 
+                        type="submit"
+                        className="w-full bg-destructive/20 hover:bg-destructive/30 text-destructive"
+                      >
+                        Confirm Withdrawal
+                      </Button>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+              </div>
+
+              <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-[#1A1F2C]/90">
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-primary/20">
+                      <ArrowUpCircle className="w-6 h-6 rotate-45 text-primary" />
+                    </div>
+                    Transaction History
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <form onSubmit={handlePasswordChange} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="current-password">Current Password</Label>
-                      <Input
-                        id="current-password"
-                        type="password"
-                        value={currentPassword}
-                        onChange={(e) => setCurrentPassword(e.target.value)}
-                      />
+                  {transactions.length > 0 ? (
+                    <div className="w-full overflow-x-auto">
+                      <Table className="transaction-table">
+                        <TableHeader>
+                          <TableRow className="hover:bg-primary/5">
+                            <TableHead className="date-column">Date</TableHead>
+                            <TableHead className="type-column text-center">Type</TableHead>
+                            <TableHead className="amount-column">Amount</TableHead>
+                            <TableHead className="status-column">Status</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {transactions.map((transaction) => (
+                            <TableRow
+                              key={transaction.id}
+                              className={`hover:bg-primary/5 transition-colors ${transaction.frozen_until ? 'bg-yellow-500/5' : ''}`}
+                            >
+                              <TableCell className="date-column">{transaction.created_at}</TableCell>
+                              <TableCell className="type-column text-center">
+                                <div className="flex justify-center">
+                                  {transaction.type === 'deposit' && (
+                                    <ArrowDownCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                                  )}
+                                  {transaction.type === 'withdraw' && (
+                                    <ArrowUpCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
+                                  )}
+                                  {transaction.type === 'purchase' && (
+                                    <ShoppingBag className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                                  )}
+                                  {transaction.type === 'sale' && (
+                                    <ShoppingBag className="w-4 h-4 text-green-500 flex-shrink-0" />
+                                  )}
+                                  {transaction.type === 'exchange' && (
+                                    <RefreshCw className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                                  )}
+                                </div>
+                              </TableCell>
+                              <TableCell className="amount-column">
+                                {Number(transaction.amount).toFixed(2)}
+                              </TableCell>
+                              <TableCell className="status-column">
+                                <span className={`px-1.5 py-0.5 rounded-full text-xs ${
+                                  transaction.status === 'completed'
+                                    ? transaction.frozen_until
+                                      ? 'bg-yellow-500/20 text-yellow-500'
+                                      : 'bg-green-500/20 text-green-500'
+                                    : transaction.status === 'pending'
+                                    ? 'bg-yellow-500/20 text-yellow-500'
+                                    : 'bg-red-500/20 text-red-500'
+                                }`}>
+                                  {transaction.status}
+                                </span>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="new-password">New Password</Label>
-                      <Input
-                        id="new-password"
-                        type="password"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                      />
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      No transactions found
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="confirm-password">Confirm New Password</Label>
-                      <Input
-                        id="confirm-password"
-                        type="password"
-                        value={confirmNewPassword}
-                        onChange={(e) => setConfirmNewPassword(e.target.value)}
-                      />
-                    </div>
-                    <Button type="submit">Update Password</Button>
-                  </form>
+                  )}
                 </CardContent>
               </Card>
             </div>
-            
-            <Card className="bg-card/30 backdrop-blur-sm border-primary/10">
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Wallet className="w-5 h-5 text-green-500 mr-2" />
-                  Wallet Management
+          </TabsContent>
+
+          <TabsContent value="verification">
+            <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-[#1A1F2C]/90">
+              <CardHeader className="space-y-2">
+                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary/20">
+                    <Shield className="w-6 h-6 text-primary" />
+                  </div>
+                  KYC Verification
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="wallet-address">Your Deposit Wallet Address</Label>
-                  <div className="flex space-x-2">
-                    <Input
-                      id="wallet-address"
-                      value={userData?.wallet_address || ""}
-                      disabled
-                      className="font-mono bg-muted"
-                    />
-                    <DialogTrigger asChild>
-                      <Button 
-                        variant="outline" 
-                        className="shrink-0"
-                        onClick={() => setIsWalletModalOpen(true)}
-                      >
-                        {userData?.wallet_address ? "View" : "Generate"}
-                      </Button>
-                    </DialogTrigger>
+              <CardContent className="space-y-8">
+                <div className="p-6 rounded-xl bg-[#12151C]/80 border border-primary/10 space-y-4">
+                  <div className="flex items-start gap-4">
+                    <div className={`p-3 rounded-lg ${userData?.verified ? 'bg-green-500/10 border border-green-500/20' : 'bg-orange-500/10 border border-orange-500/20'}`}>
+                      {userData?.verified ? (
+                        <CheckCircle2 className="w-8 h-8 text-green-500" />
+                      ) : (
+                        <HelpCircle className="w-8 h-8 text-orange-500" />
+                      )}
+                    </div>
+                    <div className="space-y-1 flex-1">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-semibold">
+                          KYC Status:{' '}
+                          <span className={`${userData?.verified ? 'text-green-500' : 'text-orange-500'}`}>
+                            {userData?.verified ? 'Verified' : (
+                              userData?.kyc_status === 'not_started' ? 'Not Started' :
+                              userData?.kyc_status === 'identity_submitted' ? 'Identity Submitted' :
+                              userData?.kyc_status === 'under_review' ? 'Under Review' : 'Not Verified'
+                            )}
+                          </span>
+                        </h3>
+                        {userData?.kyc_status === 'under_review' && (
+                          <span className="text-sm text-orange-500 font-medium">80%</span>
+                        )}
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {userData?.verified 
+                          ? 'Your account is fully verified and has access to all features'
+                          : userData?.kyc_status === 'under_review' 
+                            ? 'Final verification check in progress'
+                            : 'Complete verification to unlock all features'}
+                      </p>
+                      {userData?.kyc_status === 'under_review' && (
+                        <div className="mt-4 w-full bg-orange-500/10 rounded-full h-2 overflow-hidden">
+                          <div 
+                            className="h-full bg-gradient-to-r from-orange-500 to-orange-400 transition-all duration-1000"
+                            style={{ width: '80%' }}
+                          />
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-card/30 backdrop-blur-sm border-primary/10">
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Shield className="w-5 h-5 text-purple-500 mr-2" />
-                  Account Verification
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <Home className="h-4 w-4 text-amber-500" />
-                    <span>Address Verification</span>
-                  </div>
-                  {userData?.kyc_status === 'completed' ? (
-                    <Badge variant="success">
-                      <CheckCircle2 className="h-3 w-3 mr-1" />
-                      Verified
-                    </Badge>
-                  ) : userData?.kyc_status === 'pending' ? (
-                    <Badge variant="outline" className="bg-blue-500/10 text-blue-500 border-blue-500/30">
-                      Pending Review
-                    </Badge>
-                  ) : userData?.kyc_status === 'identity_completed' ? (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={continueKYCVerification}
-                    >
-                      Continue Verification
-                    </Button>
-                  ) : (
-                    <Button
-                      size="sm"
-                      onClick={startKYCVerification}
-                    >
-                      Start Verification
-                    </Button>
-                  )}
                 </div>
 
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <BadgeCheck className="h-4 w-4 text-green-500" />
-                    <span>Account Status</span>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className={`p-6 rounded-xl border transition-all duration-300 space-y-4 ${
+                    userData?.kyc_status === 'not_started'
+                      ? 'bg-primary/5 border-primary/20'
+                      : 'bg-[#12151C]/80 border-primary/10'
+                  }`}>
+                    <div className="flex items-center gap-3">
+                      <div className={`p-2 rounded-lg ${
+                        userData?.kyc_status === 'not_started'
+                          ? 'bg-primary/20'
+                          : 'bg-green-500/20'
+                      }`}>
+                        <User className={`w-5 h-5 ${
+                          userData?.kyc_status === 'not_started'
+                            ? 'text-primary'
+                            : 'text-green-500'
+                        }`} />
+                      </div>
+                      <h3 className="font-semibold">Identity</h3>
+                    </div>
+                    {userData?.kyc_status === 'not_started' && (
+                      <Button 
+                        onClick={startKYCVerification}
+                        className="w-full bg-primary/20 hover:bg-primary/30 text-primary"
+                      >
+                        Start Verification
+                      </Button>
+                    )}
                   </div>
-                  {userData?.verified ? (
-                    <Badge variant="success">
-                      <CheckCircle2 className="h-3 w-3 mr-1" />
-                      Verified
-                    </Badge>
-                  ) : (
-                    <Badge variant="outline">
-                      Unverified
-                    </Badge>
-                  )}
+
+                  <div className={`p-6 rounded-xl border transition-all duration-300 space-y-4 ${
+                    userData?.kyc_status === 'identity_submitted'
+                      ? 'bg-primary/5 border-primary/20'
+                      : 'bg-[#12151C]/80 border-primary/10'
+                  }`}>
+                    <div className="flex items-center gap-3">
+                      <div className={`p-2 rounded-lg ${
+                        userData?.kyc_status === 'identity_submitted'
+                          ? 'bg-primary/20'
+                          : userData?.kyc_status === 'under_review' || userData?.verified
+                          ? 'bg-green-500/20'
+                          : 'bg-muted/20'
+                      }`}>
+                        <Home className={`w-5 h-5 ${
+                          userData?.kyc_status === 'identity_submitted'
+                            ? 'text-primary'
+                            : userData?.kyc_status === 'under_review' || userData?.verified
+                            ? 'text-green-500'
+                            : 'text-muted-foreground'
+                        }`} />
+                      </div>
+                      <h3 className="font-semibold">Address</h3>
+                    </div>
+                    {(userData?.kyc_status === 'identity_submitted' || userData?.kyc_status === 'not_started') && (
+                      <Button 
+                        onClick={() => setIsAddressDialogOpen(true)}
+                        className="w-full bg-primary/20 hover:bg-primary/30 text-primary"
+                        disabled={userData?.kyc_status === 'not_started'}
+                      >
+                        Submit Address Documents
+                      </Button>
+                    )}
+                  </div>
+
+                  <div className={`p-6 rounded-xl border transition-all duration-300 space-y-4 ${
+                    userData?.verified
+                      ? 'bg-green-500/5 border-green-500/20'
+                      : 'bg-[#12151C]/80 border-primary/10'
+                  }`}>
+                    <div className="flex items-center gap-3">
+                      <div className={`p-2 rounded-lg ${
+                        userData?.verified
+                          ? 'bg-green-500/20'
+                          : 'bg-muted/20'
+                      }`}>
+                        <BadgeCheck className={`w-5 h-5 ${
+                          userData?.verified
+                            ? 'text-green-500'
+                            : 'text-muted-foreground'
+                        }`} />
+                      </div>
+                      <h3 className="font-semibold">Verification</h3>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
-            
-            <Button 
-              variant="destructive" 
-              className="w-full"
-              onClick={handleLogout}
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
-            </Button>
+          </TabsContent>
+
+          <TabsContent value="nft">
+            <UserNFTCollection />
           </TabsContent>
         </Tabs>
       </div>
-      
-      <Dialog open={isWalletModalOpen} onOpenChange={setIsWalletModalOpen}>
-        <WalletAddressModal 
-          existingAddress={userData?.wallet_address} 
-          onGenerate={handleGenerateWalletAddress} 
-          onClose={() => setIsWalletModalOpen(false)} 
-        />
-      </Dialog>
-      
-      <Dialog open={isDepositConfirmationOpen} onOpenChange={setIsDepositConfirmationOpen}>
-        <DepositConfirmationDialog 
-          walletAddress={userData?.wallet_address || ""} 
-          amount={depositAmount}
-          onConfirm={handleDepositConfirm}
-          onCancel={() => setIsDepositConfirmationOpen(false)}
-        />
-      </Dialog>
-      
-      <Dialog open={isFraudWarningOpen} onOpenChange={setIsFraudWarningOpen}>
-        <FraudWarningDialog onClose={() => setIsFraudWarningOpen(false)} />
-      </Dialog>
-      
-      <Dialog open={isIdentityDialogOpen} onOpenChange={setIsIdentityDialogOpen}>
-        <KYCIdentityDialog 
-          onSuccess={handleIdentitySuccess}
-          onCancel={() => setIsIdentityDialogOpen(false)}
-        />
-      </Dialog>
-      
-      <Dialog open={isAddressDialogOpen} onOpenChange={setIsAddressDialogOpen}>
-        <KYCAddressDialog 
-          onSuccess={handleAddressSuccess}
-          onCancel={handleAddressClose}
-        />
-      </Dialog>
-      
+
+      <WalletAddressModal
+        isOpen={isWalletModalOpen}
+        onClose={() => setIsWalletModalOpen(false)}
+        onGenerated={handleGenerateWalletAddress}
+      />
+
+      <DepositConfirmationDialog
+        isOpen={isDepositConfirmationOpen}
+        onClose={() => setIsDepositConfirmationOpen(false)}
+        amount={depositAmount}
+        onConfirm={handleDepositConfirm}
+      />
+
+      <FraudWarningDialog
+        isOpen={isFraudWarningOpen}
+        onClose={() => setIsFraudWarningOpen(false)}
+      />
+
+      <KYCIdentityDialog
+        isOpen={isIdentityDialogOpen}
+        onClose={() => setIsIdentityDialogOpen(false)}
+        onSuccess={handleIdentitySuccess}
+        userId={user?.id || ''}
+      />
+
+      <KYCAddressDialog
+        isOpen={isAddressDialogOpen}
+        onClose={handleAddressClose}
+        onSuccess={handleAddressSuccess}
+        userId={user?.id || ''}
+      />
+
       <Dialog open={isExchangeDialogOpen} onOpenChange={setIsExchangeDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-background/95 backdrop-blur-xl border border-blue-500/10">
           <DialogHeader>
-            <DialogTitle>Exchange to USDT</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-blue-500">Exchange to USDT</DialogTitle>
             <DialogDescription>
-              Convert your frozen ETH balance to USDT. This action is irreversible.
+              Convert your frozen ETH to USDT
             </DialogDescription>
           </DialogHeader>
-          
-          <form onSubmit={handleExchangeToUSDT} className="space-y-4 py-4">
+          <form onSubmit={handleExchangeToUSDT} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="exchange-amount">Amount to Exchange (ETH)</Label>
-              <div className="relative">
-                <Input
-                  id="exchange-amount"
-                  type="number"
-                  step="0.01"
-                  min="0.01"
-                  max={parseFloat(userData?.frozen_balance || "0")}
-                  value={exchangeAmount}
-                  onChange={(e) => setExchangeAmount(e.target.value)}
-                  className="pr-12"
-                  placeholder="0.00"
-                />
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-muted-foreground">
-                  ETH
-                </div>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Available: {userData?.frozen_balance || "0.00"} ETH
-              </p>
+              <label className="text-sm font-medium text-blue-500/80">
+                Amount (ETH)
+              </label>
+              <Input
+                type="number"
+                step="0.0001"
+                min="0.0001"
+                value={exchangeAmount}
+                onChange={(e) => setExchangeAmount(e.target.value)}
+                placeholder="Enter amount to exchange"
+                className="bg-background/40 border-blue-500/20 focus:border-blue-500/40"
+              />
             </div>
-            
-            <DialogFooter>
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={() => setIsExchangeDialogOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button 
-                type="submit"
-                disabled={!exchangeAmount || parseFloat(exchangeAmount) <= 0 || parseFloat(exchangeAmount) > parseFloat(userData?.frozen_balance || "0")}
-              >
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Exchange
-              </Button>
-            </DialogFooter>
+            <div className="flex justify-between items-center">
+              <p className="text-sm text-muted-foreground">Available to exchange: <span className="text-yellow-500 font-medium">{Number(userData?.frozen_balance || 0).toFixed(2)} ETH</span></p>
+            </div>
+            <Button 
+              type="submit"
+              variant="exchange"
+              className="w-full"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Request Exchange
+            </Button>
           </form>
         </DialogContent>
       </Dialog>
