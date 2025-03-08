@@ -402,17 +402,6 @@ export const UserNFTCollection = () => {
                     <h2 className="text-2xl font-bold text-yellow-500">
                       {userBalance.frozen_balance}
                     </h2>
-                    {parseFloat(userBalance.frozen_balance) > 0 && (
-                      <Button
-                        variant="exchange"
-                        size="sm"
-                        onClick={() => setShowExchangeDialog(true)}
-                        className="w-full h-8 px-3"
-                      >
-                        <RefreshCw className="h-3 w-3 mr-1.5" />
-                        Exchange to USDT
-                      </Button>
-                    )}
                   </div>
                 </div>
                 
@@ -432,6 +421,19 @@ export const UserNFTCollection = () => {
                       {userBalance.frozen_usdt_balance}
                     </h2>
                   </div>
+                )}
+
+                {/* Exchange to USDT Button - Moved here from the balance row */}
+                {parseFloat(userBalance.frozen_balance) > 0 && (
+                  <Button
+                    variant="exchange"
+                    size="sm"
+                    onClick={() => setShowExchangeDialog(true)}
+                    className="w-full h-10"
+                  >
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Exchange to USDT
+                  </Button>
                 )}
               </div>
               
@@ -605,4 +607,3 @@ export const UserNFTCollection = () => {
     </>
   );
 };
-
