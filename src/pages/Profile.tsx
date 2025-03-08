@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,7 +25,9 @@ import {
   Home,
   CheckCircle2,
   Clock,
-  LockIcon
+  LockIcon,
+  DollarSign,
+  RefreshCw,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import WalletAddressModal from "@/components/WalletAddressModal";
@@ -55,7 +58,7 @@ import { UserNFTCollection } from "@/components/nft/UserNFTCollection";
 
 interface Transaction {
   id: string;
-  type: 'deposit' | 'withdraw' | 'purchase' | 'sale';
+  type: 'deposit' | 'withdraw' | 'purchase' | 'sale' | 'exchange';
   amount: string;
   created_at: string;
   status: 'pending' | 'completed' | 'failed';
@@ -70,7 +73,9 @@ interface UserData {
   country: string;
   avatar_url: string | null;
   balance: string;
+  usdt_balance: string;
   frozen_balance: string;
+  frozen_usdt_balance: string;
   wallet_address?: string;
   erc20_address?: string;
   created_at: string;
@@ -115,6 +120,8 @@ const Profile = () => {
   const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
   const [frozenBalanceDetails, setFrozenBalanceDetails] = useState<FrozenBalanceInfo[]>([]);
   const [showFrozenDetails, setShowFrozenDetails] = useState(false);
+  const [isExchangeDialogOpen, setIsExchangeDialogOpen] = useState(false);
+  const [exchangeAmount, setExchangeAmount] = useState("");
 
   const showDelayedToast = (title: string, description: string, variant: "default" | "destructive" = "default") => {
     setTimeout(() => {
@@ -236,6 +243,96 @@ const Profile = () => {
     return true;
   };
 
+  const handleExchangeToUSDT = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const exchangeAmountNum = parseFloat(exchangeAmount);
+    const frozenBalanceNum = parseFloat(userData?.frozen_balance || "0");
+    
+    if (exchangeAmountNum <= 0) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid amount greater than 0",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (exchangeAmountNum > frozenBalanceNum) {
+      toast({
+        title: "Insufficient funds",
+        description: `Your frozen balance (${frozenBalanceNum} ETH) is less than the requested exchange amount`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const createTransaction = async () => {
+        const { error } = await supabase
+          .from('transactions')
+          .insert([
+            {
+              user_id: user?.id,
+              type: 'exchange',
+              amount: exchangeAmountNum,
+              status: 'pending'
+            }
+          ]);
+
+        if (error) throw error;
+
+        // Fetch updated transactions
+        const { data: transactionsData, error: transactionsError } = await supabase
+          .from('transactions')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(10);
+
+        if (transactionsError) throw transactionsError;
+
+        if (transactionsData) {
+          setTransactions(transactionsData.map(tx => {
+            const dateObj = new Date(tx.created_at);
+            const formattedDate = `${dateObj.getDate().toString().padStart(2, '0')}/${(dateObj.getMonth() + 1).toString().padStart(2, '0')}`;
+            
+            let formattedFrozenUntil = null;
+            if (tx.frozen_until) {
+              const frozenDate = new Date(tx.frozen_until);
+              formattedFrozenUntil = `${frozenDate.getDate().toString().padStart(2, '0')}/${(frozenDate.getMonth() + 1).toString().padStart(2, '0')}/${frozenDate.getFullYear()}`;
+            }
+            
+            return {
+              id: tx.id,
+              type: tx.type,
+              amount: tx.amount.toString(),
+              created_at: formattedDate,
+              status: tx.status,
+              item: tx.item,
+              frozen_until: formattedFrozenUntil
+            };
+          }));
+        }
+      };
+
+      createTransaction();
+
+      toast({
+        title: "Exchange Requested",
+        description: `Your exchange request for ${exchangeAmount} ETH to USDT has been submitted`
+      });
+      
+      setExchangeAmount("");
+      setIsExchangeDialogOpen(false);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to process exchange. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   useEffect(() => {
     let isMounted = true;
 
@@ -313,7 +410,9 @@ const Profile = () => {
             country: profileData?.country || currentUser.user_metadata?.country || '',
             avatar_url: profileData?.avatar_url || null,
             balance: profileData?.balance?.toString() || "0.0",
+            usdt_balance: profileData?.usdt_balance?.toString() || "0.0",
             frozen_balance: profileData?.frozen_balance?.toString() || "0.0",
+            frozen_usdt_balance: profileData?.frozen_usdt_balance?.toString() || "0.0",
             wallet_address: profileData?.wallet_address || '',
             erc20_address: profileData?.erc20_address || undefined,
             created_at: currentUser.created_at,
@@ -875,15 +974,25 @@ const Profile = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div className="bg-gradient-to-br from-primary/10 to-purple-600/5 rounded-xl border border-primary/20 p-6 shadow-md hover:shadow-primary/5 transition-all duration-300">
                       <p className="text-sm text-muted-foreground mb-2">Available Balance</p>
-                      <div className="flex items-center gap-3">
-                        <img 
-                          src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
-                          alt="ETH"
-                          className="h-10 w-10"
-                        />
-                        <h2 className="text-4xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
-                          {Number(userData?.balance || 0).toFixed(2)}
-                        </h2>
+                      <div className="flex flex-col gap-3">
+                        <div className="flex items-center gap-3">
+                          <img 
+                            src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                            alt="ETH"
+                            className="h-10 w-10"
+                          />
+                          <h2 className="text-4xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+                            {Number(userData?.balance || 0).toFixed(2)}
+                          </h2>
+                        </div>
+                        <div className="flex items-center gap-3 mt-2">
+                          <div className="flex items-center justify-center bg-green-500/10 rounded-full h-10 w-10">
+                            <DollarSign className="h-6 w-6 text-green-500" />
+                          </div>
+                          <h2 className="text-4xl font-bold text-green-500">
+                            {Number(userData?.usdt_balance || 0).toFixed(2)}
+                          </h2>
+                        </div>
                       </div>
                     </div>
                     
@@ -891,22 +1000,43 @@ const Profile = () => {
                       <div className="bg-gradient-to-br from-yellow-500/10 to-amber-600/5 rounded-xl border border-yellow-500/20 p-6 shadow-md hover:shadow-yellow-500/5 transition-all duration-300">
                         <div className="flex justify-between items-center">
                           <p className="text-sm text-muted-foreground mb-2">Hold Balance</p>
-                          <Button
-                            variant="outline"
-                            className="border-yellow-500/20 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 h-8 px-3"
-                            size="sm"
-                            onClick={() => setShowFrozenDetails(!showFrozenDetails)}
-                          >
-                            {showFrozenDetails ? "Hide Details" : "Show Details"}
-                          </Button>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-full bg-yellow-500/20">
-                            <LockIcon className="h-6 w-6 text-yellow-500" />
+                          <div className="flex gap-2">
+                            <Button
+                              variant="exchange"
+                              size="sm"
+                              onClick={() => setIsExchangeDialogOpen(true)}
+                              className="h-8 px-3"
+                            >
+                              <RefreshCw className="h-4 w-4" />
+                              <span>Exchange to USDT</span>
+                            </Button>
+                            <Button
+                              variant="outline"
+                              className="border-yellow-500/20 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 h-8 px-3"
+                              size="sm"
+                              onClick={() => setShowFrozenDetails(!showFrozenDetails)}
+                            >
+                              {showFrozenDetails ? "Hide Details" : "Show Details"}
+                            </Button>
                           </div>
-                          <h2 className="text-4xl font-bold text-yellow-500">
-                            {Number(userData?.frozen_balance || 0).toFixed(2)}
-                          </h2>
+                        </div>
+                        <div className="flex flex-col gap-3 mt-2">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 rounded-full bg-yellow-500/20">
+                              <LockIcon className="h-6 w-6 text-yellow-500" />
+                            </div>
+                            <h2 className="text-4xl font-bold text-yellow-500">
+                              {Number(userData?.frozen_balance || 0).toFixed(2)}
+                            </h2>
+                          </div>
+                          <div className="flex items-center gap-3 mt-1">
+                            <div className="flex items-center justify-center bg-blue-500/20 rounded-full h-10 w-10">
+                              <DollarSign className="h-6 w-6 text-blue-500" />
+                            </div>
+                            <h2 className="text-4xl font-bold text-blue-500">
+                              {Number(userData?.frozen_usdt_balance || 0).toFixed(2)}
+                            </h2>
+                          </div>
                         </div>
                         <p className="text-sm text-yellow-500/80 mt-2">
                           Funds from NFT sales are frozen for 15 days before being available
@@ -1063,6 +1193,9 @@ const Profile = () => {
                                   )}
                                   {transaction.type === 'sale' && (
                                     <ShoppingBag className="w-4 h-4 text-green-500 flex-shrink-0" />
+                                  )}
+                                  {transaction.type === 'exchange' && (
+                                    <RefreshCw className="w-4 h-4 text-blue-500 flex-shrink-0" />
                                   )}
                                 </div>
                               </TableCell>
@@ -1278,6 +1411,44 @@ const Profile = () => {
         onSuccess={handleAddressSuccess}
         userId={user?.id || ''}
       />
+
+      <Dialog open={isExchangeDialogOpen} onOpenChange={setIsExchangeDialogOpen}>
+        <DialogContent className="sm:max-w-md bg-background/95 backdrop-blur-xl border border-blue-500/10">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-blue-500">Exchange to USDT</DialogTitle>
+            <DialogDescription>
+              Convert your frozen ETH to USDT
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleExchangeToUSDT} className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-blue-500/80">
+                Amount (ETH)
+              </label>
+              <Input
+                type="number"
+                step="0.0001"
+                min="0.0001"
+                value={exchangeAmount}
+                onChange={(e) => setExchangeAmount(e.target.value)}
+                placeholder="Enter amount to exchange"
+                className="bg-background/40 border-blue-500/20 focus:border-blue-500/40"
+              />
+            </div>
+            <div className="flex justify-between items-center">
+              <p className="text-sm text-muted-foreground">Available to exchange: <span className="text-yellow-500 font-medium">{Number(userData?.frozen_balance || 0).toFixed(2)} ETH</span></p>
+            </div>
+            <Button 
+              type="submit"
+              variant="exchange"
+              className="w-full"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Request Exchange
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
