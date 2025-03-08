@@ -877,8 +877,8 @@ const Profile = () => {
                       <p className="text-sm text-muted-foreground mb-2">Available Balance</p>
                       <div className="flex items-center gap-3">
                         <img 
-                          src="/lovable-uploads/f92c360a-aceb-47d1-9269-a9577caf6375.png" 
-                          alt="Ethereum"
+                          src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                          alt="ETH"
                           className="h-10 w-10"
                         />
                         <h2 className="text-4xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
