@@ -190,6 +190,12 @@ export type Database = {
         }
         Returns: Json
       }
+      exchange_to_usdt: {
+        Args: {
+          amount: number
+        }
+        Returns: Json
+      }
       get_user_frozen_balances: {
         Args: {
           user_uuid: string
@@ -228,7 +234,12 @@ export type Database = {
         | "verified"
         | "rejected"
       transaction_status: "pending" | "completed" | "failed"
-      transaction_type: "deposit" | "withdraw" | "purchase" | "sale"
+      transaction_type:
+        | "deposit"
+        | "withdraw"
+        | "purchase"
+        | "sale"
+        | "exchange"
     }
     CompositeTypes: {
       [_ in never]: never
