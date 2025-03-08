@@ -926,7 +926,14 @@ const Profile = () => {
                                     <span className="text-yellow-500/90 font-medium">{item.days_left} days left</span>
                                   </div>
                                   <div className="flex items-center justify-between sm:gap-4">
-                                    <span className="font-bold text-yellow-500">{item.amount.toFixed(2)} ETH</span>
+                                    <div className="flex items-center gap-1.5">
+                                      <img 
+                                        src="/lovable-uploads/0e51dc88-2aac-485e-84c5-0bb4ab88f00b.png" 
+                                        alt="ETH" 
+                                        className="h-4 w-4"
+                                      />
+                                      <span className="font-bold text-yellow-500">{item.amount.toFixed(2)}</span>
+                                    </div>
                                     <span className="text-xs text-yellow-500/70">{item.unfreeze_date}</span>
                                   </div>
                                 </div>
