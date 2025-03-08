@@ -105,7 +105,6 @@ export type Database = {
           kyc_rejection_reason: string | null
           kyc_status: Database["public"]["Enums"]["kyc_status_type"] | null
           login: string
-          usdt_balance: number | null
           user_id: string
           verified: boolean
           wallet_address: string | null
@@ -122,7 +121,6 @@ export type Database = {
           kyc_rejection_reason?: string | null
           kyc_status?: Database["public"]["Enums"]["kyc_status_type"] | null
           login: string
-          usdt_balance?: number | null
           user_id: string
           verified?: boolean
           wallet_address?: string | null
@@ -139,7 +137,6 @@ export type Database = {
           kyc_rejection_reason?: string | null
           kyc_status?: Database["public"]["Enums"]["kyc_status_type"] | null
           login?: string
-          usdt_balance?: number | null
           user_id?: string
           verified?: boolean
           wallet_address?: string | null
