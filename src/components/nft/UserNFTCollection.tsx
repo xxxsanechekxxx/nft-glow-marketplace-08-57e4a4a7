@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { NFTCard } from "@/components/NFTCard";
@@ -38,7 +37,6 @@ export const UserNFTCollection = () => {
       try {
         setIsLoading(true);
         
-        // Fetch frozen balance info
         const { data: frozenData, error: frozenError } = await supabase
           .rpc('get_user_frozen_balances', {
             user_uuid: user.id
@@ -201,29 +199,30 @@ export const UserNFTCollection = () => {
     });
   };
 
-  // Render the frozen balance section if there's a frozen balance
   const renderFrozenBalance = () => {
     if (Number(frozenBalance) <= 0) return null;
     
     return (
-      <div className="border border-yellow-500/20 bg-yellow-500/5 rounded-lg p-4 mt-4 space-y-3">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <LockIcon className="h-5 w-5 text-yellow-500" />
-            <p className="font-medium text-yellow-500">Hold Balance</p>
+      <div className="bg-black border border-primary/30 rounded-lg p-5 mb-6 shadow-lg">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="bg-yellow-900/40 p-2.5 rounded-full">
+              <LockIcon className="h-5 w-5 text-yellow-500" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-yellow-500 flex items-center">
+                Hold Balance
+                <span className="ml-auto md:ml-4 text-xl md:text-2xl">{Number(frozenBalance).toFixed(2)} ETH</span>
+              </h3>
+              <p className="text-sm text-yellow-500/80 mt-1">
+                Funds from NFT sales are frozen for 15 days before being available
+              </p>
+            </div>
           </div>
-          <p className="text-xl font-bold text-yellow-500">
-            {Number(frozenBalance).toFixed(2)} ETH
-          </p>
-        </div>
-        
-        <div className="flex justify-between items-center">
-          <p className="text-sm text-yellow-500/80">
-            Funds from NFT sales are frozen for 15 days before being available
-          </p>
+          
           <Button
             variant="outline"
-            className="border-yellow-500/20 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500"
+            className="border-yellow-500/30 bg-yellow-900/20 hover:bg-yellow-900/40 text-yellow-500 transition-all duration-300"
             size="sm"
             onClick={() => setShowFrozenDetails(!showFrozenDetails)}
           >
@@ -232,18 +231,25 @@ export const UserNFTCollection = () => {
         </div>
         
         {showFrozenDetails && frozenBalanceDetails.length > 0 && (
-          <div className="mt-2 border-t border-yellow-500/20 pt-3 space-y-3">
+          <div className="mt-4 border-t border-yellow-500/20 pt-4 space-y-3 animate-in fade-in duration-300">
             <p className="text-sm font-medium text-yellow-500/80">Upcoming Releases:</p>
-            {frozenBalanceDetails.map((item) => (
-              <div key={item.transaction_id} className="grid grid-cols-3 gap-2 text-sm bg-yellow-500/10 rounded p-2">
-                <div className="flex items-center gap-1">
-                  <Clock className="h-4 w-4 text-yellow-500/80" />
-                  <span>{item.days_left} days left</span>
+            <div className="grid gap-3 sm:grid-cols-1 md:grid-cols-2">
+              {frozenBalanceDetails.map((item) => (
+                <div 
+                  key={item.transaction_id} 
+                  className="bg-yellow-900/10 border border-yellow-500/20 rounded-lg p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+                >
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-yellow-500/80" />
+                    <span className="text-yellow-500/90 font-medium">{item.days_left} days left</span>
+                  </div>
+                  <div className="flex items-center justify-between sm:gap-4">
+                    <span className="font-bold text-yellow-500">{item.amount.toFixed(2)} ETH</span>
+                    <span className="text-xs text-yellow-500/70">{item.unfreeze_date}</span>
+                  </div>
                 </div>
-                <div className="text-center font-medium">{item.amount.toFixed(2)} ETH</div>
-                <div className="text-right text-yellow-500/80">{item.unfreeze_date}</div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         )}
       </div>
