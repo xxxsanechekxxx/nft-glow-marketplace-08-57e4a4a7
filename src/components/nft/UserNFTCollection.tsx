@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { NFTCard } from "@/components/NFTCard";
@@ -130,7 +129,7 @@ export const UserNFTCollection = () => {
       // Fetch user's balance information
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        .select('balance, usdt_balance, frozen_balance, frozen_usdt_balance')
+        .select('balance, usdt_balance, frozen_balance')
         .eq('user_id', user.id)
         .single();
       
@@ -143,7 +142,7 @@ export const UserNFTCollection = () => {
           balance: profileData.balance?.toFixed(2) || "0.00",
           usdt_balance: profileData.usdt_balance?.toFixed(2) || "0.00",
           frozen_balance: profileData.frozen_balance?.toFixed(2) || "0.00",
-          frozen_usdt_balance: profileData.frozen_usdt_balance?.toFixed(2) || "0.00",
+          frozen_usdt_balance: "0.00",
         });
       }
 
@@ -294,7 +293,6 @@ export const UserNFTCollection = () => {
     });
   };
 
-  // Render balance cards before tabs
   const renderBalanceCards = () => {
     if (parseFloat(userBalance.balance) === 0 && parseFloat(userBalance.frozen_balance) === 0) {
       return null;
@@ -302,7 +300,6 @@ export const UserNFTCollection = () => {
 
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        {/* Available Balance Card - REDESIGNED */}
         <div className="relative overflow-hidden rounded-xl border backdrop-blur-sm transition-all duration-300">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-primary/10 to-background/80 z-0"></div>
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full filter blur-2xl transform translate-x-10 -translate-y-10 z-0"></div>
@@ -321,11 +318,10 @@ export const UserNFTCollection = () => {
             </div>
             
             <div className="space-y-5">
-              {/* ETH Balance */}
               <div className="flex items-center justify-between bg-white/5 rounded-lg p-4 border border-white/10">
                 <div className="flex items-center gap-3">
                   <img 
-                    src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                    src="/lovable-uploads/0e51dc88-2aac-485e-84c5-0bb4ab88f00b.png" 
                     alt="ETH"
                     className="h-8 w-8 rounded-full p-1 bg-white/10"
                   />
@@ -339,7 +335,6 @@ export const UserNFTCollection = () => {
                 </h2>
               </div>
               
-              {/* USDT Balance */}
               <div className="flex items-center justify-between bg-white/5 rounded-lg p-4 border border-white/10">
                 <div className="flex items-center gap-3">
                   <div className="flex items-center justify-center bg-green-500/20 rounded-full h-8 w-8">
@@ -358,7 +353,6 @@ export const UserNFTCollection = () => {
           </div>
         </div>
 
-        {/* Frozen Balance Card - REDESIGNED */}
         {parseFloat(userBalance.frozen_balance) > 0 && (
           <div className="relative overflow-hidden rounded-xl border backdrop-blur-sm transition-all duration-300">
             <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/20 via-amber-500/10 to-background/80 z-0"></div>
@@ -383,12 +377,11 @@ export const UserNFTCollection = () => {
               </div>
               
               <div className="space-y-5">
-                {/* Frozen ETH Balance */}
                 <div className="flex items-center justify-between bg-white/5 rounded-lg p-4 border border-yellow-500/20">
                   <div className="flex items-center gap-3">
                     <div className="p-2 rounded-full bg-yellow-500/20">
                       <img 
-                        src="/lovable-uploads/0e51dc88-2aac-485e-84c5-0bb4ab88f00b.png" 
+                        src="/lovable-uploads/2a47993b-b343-4016-9b9c-e3a372d31ba7.png" 
                         alt="ETH" 
                         className="h-5 w-5"
                       />
@@ -405,7 +398,6 @@ export const UserNFTCollection = () => {
                   </div>
                 </div>
                 
-                {/* Frozen USDT Balance */}
                 {parseFloat(userBalance.frozen_usdt_balance) > 0 && (
                   <div className="flex items-center justify-between bg-white/5 rounded-lg p-4 border border-blue-500/20">
                     <div className="flex items-center gap-3">
@@ -421,19 +413,6 @@ export const UserNFTCollection = () => {
                       {userBalance.frozen_usdt_balance}
                     </h2>
                   </div>
-                )}
-
-                {/* Exchange to USDT Button - Moved here from the balance row */}
-                {parseFloat(userBalance.frozen_balance) > 0 && (
-                  <Button
-                    variant="exchange"
-                    size="sm"
-                    onClick={() => setShowExchangeDialog(true)}
-                    className="w-full h-10"
-                  >
-                    <RefreshCw className="h-4 w-4 mr-2" />
-                    Exchange to USDT
-                  </Button>
                 )}
               </div>
               
@@ -453,7 +432,7 @@ export const UserNFTCollection = () => {
                         <div className="flex items-center justify-between sm:justify-end sm:gap-4">
                           <div className="flex items-center gap-2">
                             <img 
-                              src="/lovable-uploads/0e51dc88-2aac-485e-84c5-0bb4ab88f00b.png" 
+                              src="/lovable-uploads/2a47993b-b343-4016-9b9c-e3a372d31ba7.png" 
                               alt="ETH" 
                               className="h-4 w-4"
                             />
@@ -468,6 +447,17 @@ export const UserNFTCollection = () => {
                   </div>
                 </div>
               )}
+              
+              <div className="mt-5">
+                <Button
+                  variant="exchange"
+                  onClick={() => setShowExchangeDialog(true)}
+                  className="w-full"
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Exchange to USDT
+                </Button>
+              </div>
             </div>
           </div>
         )}
@@ -477,7 +467,6 @@ export const UserNFTCollection = () => {
 
   return (
     <>
-      {/* Balance Cards Section */}
       {renderBalanceCards()}
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -532,7 +521,6 @@ export const UserNFTCollection = () => {
         </div>
       </Tabs>
 
-      {/* Exchange Dialog - REDESIGNED */}
       <Dialog open={showExchangeDialog} onOpenChange={setShowExchangeDialog}>
         <DialogContent className="sm:max-w-[425px] bg-card/90 backdrop-blur-md border-primary/20 text-card-foreground">
           <DialogHeader>
@@ -570,7 +558,7 @@ export const UserNFTCollection = () => {
                 />
                 <div className="absolute left-3 top-1/2 -translate-y-1/2">
                   <img 
-                    src="/lovable-uploads/0e51dc88-2aac-485e-84c5-0bb4ab88f00b.png" 
+                    src="/lovable-uploads/2a47993b-b343-4016-9b9c-e3a372d31ba7.png" 
                     alt="ETH" 
                     className="h-4 w-4"
                   />
