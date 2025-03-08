@@ -1062,22 +1062,12 @@ const Profile = () => {
                                     <ShoppingBag className="w-4 h-4 text-blue-500 flex-shrink-0" />
                                   )}
                                   {transaction.type === 'sale' && (
-                                    <div className="flex items-center gap-1">
-                                      <ShoppingBag className="w-4 h-4 text-green-500 flex-shrink-0" />
-                                      {transaction.frozen_until && (
-                                        <LockIcon className="w-3 h-3 text-yellow-500 flex-shrink-0" />
-                                      )}
-                                    </div>
+                                    <ShoppingBag className="w-4 h-4 text-green-500 flex-shrink-0" />
                                   )}
                                 </div>
                               </TableCell>
                               <TableCell className="amount-column">
                                 {Number(transaction.amount).toFixed(2)}
-                                {transaction.frozen_until && (
-                                  <span className="text-xs ml-1 text-yellow-500" title={`Available on ${transaction.frozen_until}`}>
-                                    (Frozen)
-                                  </span>
-                                )}
                               </TableCell>
                               <TableCell className="status-column">
                                 <span className={`px-1.5 py-0.5 rounded-full text-xs ${
@@ -1089,7 +1079,7 @@ const Profile = () => {
                                     ? 'bg-yellow-500/20 text-yellow-500'
                                     : 'bg-red-500/20 text-red-500'
                                 }`}>
-                                  {transaction.frozen_until ? 'Frozen' : transaction.status}
+                                  {transaction.status}
                                 </span>
                               </TableCell>
                             </TableRow>
