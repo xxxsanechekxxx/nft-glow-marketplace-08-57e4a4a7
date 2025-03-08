@@ -873,7 +873,7 @@ const Profile = () => {
               <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-[#1A1F2C]/90">
                 <CardContent className="p-8">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div className="bg-gradient-to-br from-primary/10 to-purple-600/5 rounded-xl border border-primary/20 p-6 shadow-md hover:shadow-primary/5 transition-all duration-300 h-[140px] flex flex-col justify-center">
+                    <div className="bg-gradient-to-br from-primary/10 to-purple-600/5 rounded-xl border border-primary/20 p-6 shadow-md hover:shadow-primary/5 transition-all duration-300">
                       <p className="text-sm text-muted-foreground mb-2">Available Balance</p>
                       <div className="flex items-center gap-3">
                         <img 
@@ -888,7 +888,7 @@ const Profile = () => {
                     </div>
                     
                     {Number(userData?.frozen_balance || 0) > 0 && (
-                      <div className="bg-gradient-to-br from-yellow-500/10 to-amber-600/5 rounded-xl border border-yellow-500/20 p-6 shadow-md hover:shadow-yellow-500/5 transition-all duration-300 relative h-[140px]">
+                      <div className="bg-gradient-to-br from-yellow-500/10 to-amber-600/5 rounded-xl border border-yellow-500/20 p-6 shadow-md hover:shadow-yellow-500/5 transition-all duration-300">
                         <div className="flex justify-between items-center">
                           <p className="text-sm text-muted-foreground mb-2">Hold Balance</p>
                           <Button
@@ -913,9 +913,9 @@ const Profile = () => {
                         </p>
                         
                         {showFrozenDetails && frozenBalanceDetails.length > 0 && (
-                          <div className="absolute left-0 right-0 top-full mt-2 z-10 bg-[#1A1F2C] border border-yellow-500/20 rounded-xl p-4 shadow-lg animate-in fade-in duration-300">
-                            <p className="text-sm font-medium text-yellow-500/80 mb-3">Upcoming Releases:</p>
-                            <div className="grid gap-3 max-h-[200px] overflow-y-auto">
+                          <div className="mt-4 border-t border-yellow-500/20 pt-4 space-y-3 animate-in fade-in duration-300">
+                            <p className="text-sm font-medium text-yellow-500/80">Upcoming Releases:</p>
+                            <div className="grid gap-3">
                               {frozenBalanceDetails.map((item) => (
                                 <div 
                                   key={item.transaction_id} 
@@ -928,7 +928,7 @@ const Profile = () => {
                                   <div className="flex items-center justify-between sm:gap-4">
                                     <div className="flex items-center gap-1.5">
                                       <img 
-                                        src="/lovable-uploads/ce27dd52-838f-4e45-ad9c-c39745400eeb.png" 
+                                        src="/lovable-uploads/0e51dc88-2aac-485e-84c5-0bb4ab88f00b.png" 
                                         alt="ETH" 
                                         className="h-4 w-4"
                                       />
