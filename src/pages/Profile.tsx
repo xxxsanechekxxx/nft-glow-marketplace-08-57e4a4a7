@@ -872,65 +872,71 @@ const Profile = () => {
             <div className="space-y-6">
               <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-[#1A1F2C]/90">
                 <CardContent className="p-8">
-                  <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                    <div className="space-y-4">
-                      <p className="text-sm text-muted-foreground">Available Balance</p>
-                      <div className="space-y-2">
-                        <h2 className="text-5xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-1.5">
-                          <img 
-                            src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
-                            alt="ETH"
-                            className="h-10 w-10"
-                          />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div className="bg-gradient-to-br from-primary/10 to-purple-600/5 rounded-xl border border-primary/20 p-6 shadow-md hover:shadow-primary/5 transition-all duration-300">
+                      <p className="text-sm text-muted-foreground mb-2">Available Balance</p>
+                      <div className="flex items-center gap-3">
+                        <img 
+                          src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                          alt="ETH"
+                          className="h-10 w-10"
+                        />
+                        <h2 className="text-4xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
                           {Number(userData?.balance || 0).toFixed(2)}
                         </h2>
                       </div>
                     </div>
-                  </div>
-                  
-                  {Number(userData?.frozen_balance || 0) > 0 && (
-                    <div className="border border-yellow-500/20 bg-yellow-500/5 rounded-lg p-4 space-y-3">
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center gap-2">
-                          <LockIcon className="h-5 w-5 text-yellow-500" />
-                          <p className="font-medium text-yellow-500">Frozen Balance</p>
+                    
+                    {Number(userData?.frozen_balance || 0) > 0 && (
+                      <div className="bg-gradient-to-br from-yellow-500/10 to-amber-600/5 rounded-xl border border-yellow-500/20 p-6 shadow-md hover:shadow-yellow-500/5 transition-all duration-300">
+                        <div className="flex justify-between items-center">
+                          <p className="text-sm text-muted-foreground mb-2">Hold Balance</p>
+                          <Button
+                            variant="outline"
+                            className="border-yellow-500/20 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 h-8 px-3"
+                            size="sm"
+                            onClick={() => setShowFrozenDetails(!showFrozenDetails)}
+                          >
+                            {showFrozenDetails ? "Hide Details" : "Show Details"}
+                          </Button>
                         </div>
-                        <p className="text-xl font-bold text-yellow-500">
-                          {Number(userData?.frozen_balance || 0).toFixed(2)} ETH
-                        </p>
-                      </div>
-                      
-                      <div className="flex justify-between items-center">
-                        <p className="text-sm text-yellow-500/80">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 rounded-full bg-yellow-500/20">
+                            <LockIcon className="h-6 w-6 text-yellow-500" />
+                          </div>
+                          <h2 className="text-4xl font-bold text-yellow-500">
+                            {Number(userData?.frozen_balance || 0).toFixed(2)}
+                          </h2>
+                        </div>
+                        <p className="text-sm text-yellow-500/80 mt-2">
                           Funds from NFT sales are frozen for 15 days before being available
                         </p>
-                        <Button
-                          variant="outline"
-                          className="border-yellow-500/20 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500"
-                          size="sm"
-                          onClick={() => setShowFrozenDetails(!showFrozenDetails)}
-                        >
-                          {showFrozenDetails ? "Hide Details" : "Show Details"}
-                        </Button>
-                      </div>
-                      
-                      {showFrozenDetails && frozenBalanceDetails.length > 0 && (
-                        <div className="mt-2 border-t border-yellow-500/20 pt-3 space-y-3">
-                          <p className="text-sm font-medium text-yellow-500/80">Upcoming Releases:</p>
-                          {frozenBalanceDetails.map((item) => (
-                            <div key={item.transaction_id} className="grid grid-cols-3 gap-2 text-sm bg-yellow-500/10 rounded p-2">
-                              <div className="flex items-center gap-1">
-                                <Clock className="h-4 w-4 text-yellow-500/80" />
-                                <span>{item.days_left} days left</span>
-                              </div>
-                              <div className="text-center font-medium">{item.amount.toFixed(2)} ETH</div>
-                              <div className="text-right text-yellow-500/80">{item.unfreeze_date}</div>
+                        
+                        {showFrozenDetails && frozenBalanceDetails.length > 0 && (
+                          <div className="mt-4 border-t border-yellow-500/20 pt-4 space-y-3 animate-in fade-in duration-300">
+                            <p className="text-sm font-medium text-yellow-500/80">Upcoming Releases:</p>
+                            <div className="grid gap-3">
+                              {frozenBalanceDetails.map((item) => (
+                                <div 
+                                  key={item.transaction_id} 
+                                  className="bg-yellow-500/5 border border-yellow-500/20 rounded-lg p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <Clock className="h-4 w-4 text-yellow-500/80" />
+                                    <span className="text-yellow-500/90 font-medium">{item.days_left} days left</span>
+                                  </div>
+                                  <div className="flex items-center justify-between sm:gap-4">
+                                    <span className="font-bold text-yellow-500">{item.amount.toFixed(2)} ETH</span>
+                                    <span className="text-xs text-yellow-500/70">{item.unfreeze_date}</span>
+                                  </div>
+                                </div>
+                              ))}
                             </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
 
