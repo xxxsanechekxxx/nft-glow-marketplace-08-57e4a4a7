@@ -1,4 +1,4 @@
-importtypescript
+
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -598,7 +598,7 @@ export default function Profile() {
     );
   };
 
-  const user = useAuth().user;
+  const { user } = useAuth();
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -874,4 +874,247 @@ export default function Profile() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div 
+                        className={`border rounded-lg p-4 ${
+                          profileData.kyc_status === "identity_submitted" || 
+                          profileData.kyc_status === "under_review" || 
+                          profileData.kyc_status === "verified" 
+                            ? "bg-green-500/10 border-green-500/20" 
+                            : "bg-primary/5 border-primary/10"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3 mb-3">
+                          <div 
+                            className={`p-2 rounded-full ${
+                              profileData.kyc_status === "identity_submitted" || 
+                              profileData.kyc_status === "under_review" || 
+                              profileData.kyc_status === "verified" 
+                                ? "bg-green-500/20" 
+                                : "bg-primary/20"
+                            }`}
+                          >
+                            <Upload 
+                              className={`h-4 w-4 ${
+                                profileData.kyc_status === "identity_submitted" || 
+                                profileData.kyc_status === "under_review" || 
+                                profileData.kyc_status === "verified" 
+                                  ? "text-green-500" 
+                                  : "text-primary"
+                              }`} 
+                            />
+                          </div>
+                          <h3 className="font-medium">Identity Verification</h3>
+                        </div>
+                        
+                        {profileData.kyc_status === "identity_submitted" || 
+                         profileData.kyc_status === "under_review" || 
+                         profileData.kyc_status === "verified" ? (
+                          <div className="flex items-center gap-2 text-green-500">
+                            <CheckCircle className="h-4 w-4" />
+                            <span className="text-sm font-medium">Submitted</span>
+                          </div>
+                        ) : (
+                          <Button
+                            variant="outline"
+                            className="w-full"
+                            onClick={() => setShowKYCIdentityDialog(true)}
+                          >
+                            Upload Identity Document
+                          </Button>
+                        )}
+                      </div>
+                      
+                      <div 
+                        className={`border rounded-lg p-4 ${
+                          profileData.kyc_status === "address_submitted" || 
+                          profileData.kyc_status === "under_review" || 
+                          profileData.kyc_status === "verified" 
+                            ? "bg-green-500/10 border-green-500/20" 
+                            : "bg-primary/5 border-primary/10"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3 mb-3">
+                          <div 
+                            className={`p-2 rounded-full ${
+                              profileData.kyc_status === "address_submitted" || 
+                              profileData.kyc_status === "under_review" || 
+                              profileData.kyc_status === "verified" 
+                                ? "bg-green-500/20" 
+                                : "bg-primary/20"
+                            }`}
+                          >
+                            <Upload 
+                              className={`h-4 w-4 ${
+                                profileData.kyc_status === "address_submitted" || 
+                                profileData.kyc_status === "under_review" || 
+                                profileData.kyc_status === "verified" 
+                                  ? "text-green-500" 
+                                  : "text-primary"
+                              }`} 
+                            />
+                          </div>
+                          <h3 className="font-medium">Address Verification</h3>
+                        </div>
+                        
+                        {profileData.kyc_status === "address_submitted" || 
+                         profileData.kyc_status === "under_review" || 
+                         profileData.kyc_status === "verified" ? (
+                          <div className="flex items-center gap-2 text-green-500">
+                            <CheckCircle className="h-4 w-4" />
+                            <span className="text-sm font-medium">Submitted</span>
+                          </div>
+                        ) : (
+                          <Button
+                            variant="outline"
+                            className="w-full"
+                            onClick={() => setShowKYCAddressDialog(true)}
+                            disabled={profileData.kyc_status !== "identity_submitted" && profileData.kyc_status !== "address_submitted"}
+                          >
+                            Upload Address Document
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {profileData.kyc_status === "rejected" && (
+                      <div className="p-4 border border-red-500/20 bg-red-500/10 rounded-lg">
+                        <div className="flex items-start gap-3">
+                          <div className="p-2 rounded-full bg-red-500/20 mt-1">
+                            <AlertTriangle className="h-4 w-4 text-red-500" />
+                          </div>
+                          <div>
+                            <h3 className="font-medium text-red-500 mb-1">KYC Verification Rejected</h3>
+                            <p className="text-sm text-red-500/80">
+                              {profileData.kyc_rejection_reason || "Your KYC verification was rejected. Please update your documents and try again."}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {profileData.kyc_status === "under_review" && (
+                      <div className="p-4 border border-yellow-500/20 bg-yellow-500/10 rounded-lg">
+                        <div className="flex items-start gap-3">
+                          <div className="p-2 rounded-full bg-yellow-500/20 mt-1">
+                            <Clock className="h-4 w-4 text-yellow-500" />
+                          </div>
+                          <div>
+                            <h3 className="font-medium text-yellow-500 mb-1">KYC Under Review</h3>
+                            <p className="text-sm text-yellow-500/80">
+                              Your KYC verification is currently being reviewed. This process typically takes 1-3 business days.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {profileData.kyc_status === "verified" && (
+                      <div className="p-4 border border-green-500/20 bg-green-500/10 rounded-lg">
+                        <div className="flex items-start gap-3">
+                          <div className="p-2 rounded-full bg-green-500/20 mt-1">
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                          </div>
+                          <div>
+                            <h3 className="font-medium text-green-500 mb-1">KYC Verification Complete</h3>
+                            <p className="text-sm text-green-500/80">
+                              Your account is fully verified. You now have higher withdrawal limits and access to all platform features.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="collection" className="mt-6">
+          <UserNFTCollection />
+        </TabsContent>
+      </Tabs>
+      
+      {/* Modals and dialogs */}
+      <WalletAddressModal 
+        open={showWalletAddressModal} 
+        onOpenChange={setShowWalletAddressModal}
+        onConfirm={handleGenerateWalletAddress}
+      />
+      
+      <DepositConfirmationDialog
+        open={showDepositConfirmation}
+        onOpenChange={setShowDepositConfirmation}
+        amount={depositAmount}
+        onConfirm={handleConfirmDeposit}
+      />
+      
+      <FraudWarningDialog
+        open={showFraudWarning}
+        onOpenChange={setShowFraudWarning}
+      />
+      
+      <KYCIdentityDialog
+        open={showKYCIdentityDialog}
+        onOpenChange={setShowKYCIdentityDialog}
+        onSuccess={handleKYCIdentitySuccess}
+      />
+      
+      <KYCAddressDialog
+        open={showKYCAddressDialog}
+        onOpenChange={setShowKYCAddressDialog}
+        onSuccess={handleKYCAddressSuccess}
+      />
+      
+      <Dialog open={showExchangeDialog} onOpenChange={setShowExchangeDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Exchange Frozen ETH to USDT</DialogTitle>
+            <DialogDescription>
+              Convert your frozen ETH balance to USDT. The exchange rate is 1:1.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="flex items-center justify-between bg-yellow-500/10 rounded-lg p-4 border border-yellow-500/20">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-full bg-yellow-500/20">
+                  <LockIcon className="h-4 w-4 text-yellow-500" />
+                </div>
+                <span className="font-medium text-yellow-500">Available Frozen ETH</span>
+              </div>
+              <span className="text-lg font-bold text-yellow-500">
+                {profileData?.frozen_balance.toFixed(2)}
+              </span>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="exchange-amount">Amount to Exchange</Label>
+              <Input
+                id="exchange-amount"
+                type="number"
+                step="0.01"
+                min="0.01"
+                max={profileData?.frozen_balance}
+                placeholder="0.00"
+                value={exchangeAmount}
+                onChange={(e) => setExchangeAmount(e.target.value)}
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowExchangeDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleExchangeToUSDT}>
+              Confirm Exchange
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
