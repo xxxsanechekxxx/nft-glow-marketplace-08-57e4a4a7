@@ -1,21 +1,33 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { NFTCard } from "@/components/NFTCard";
 import { EmptyNFTState } from "@/components/EmptyNFTState";
 import { useAuth } from "@/hooks/useAuth";
-import { Loader2, Filter, Search } from "lucide-react";
+import { Loader2, Filter, Search, LockIcon, Clock } from "lucide-react";
 import type { NFT } from "@/types/nft";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import ActiveBids from "./ActiveBids";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+
+interface FrozenBalanceInfo {
+  amount: number;
+  days_left: number;
+  unfreeze_date: string;
+  transaction_id: string;
+}
 
 export const UserNFTCollection = () => {
   const [nfts, setNfts] = useState<NFT[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("my-nfts");
   const [searchQuery, setSearchQuery] = useState("");
+  const [frozenBalance, setFrozenBalance] = useState("0");
+  const [frozenBalanceDetails, setFrozenBalanceDetails] = useState<FrozenBalanceInfo[]>([]);
+  const [showFrozenDetails, setShowFrozenDetails] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -25,6 +37,19 @@ export const UserNFTCollection = () => {
 
       try {
         setIsLoading(true);
+        
+        // Fetch frozen balance info
+        const { data: frozenData, error: frozenError } = await supabase
+          .rpc('get_user_frozen_balances', {
+            user_uuid: user.id
+          });
+
+        if (frozenError) {
+          console.error("Error fetching frozen balances:", frozenError);
+        } else if (frozenData && frozenData.length > 0) {
+          setFrozenBalance(frozenData[0].frozen_balance.toString());
+          setFrozenBalanceDetails(frozenData[0].unfreezing_in_days || []);
+        }
         
         const { data, error } = await supabase
           .from('nfts')
@@ -176,6 +201,55 @@ export const UserNFTCollection = () => {
     });
   };
 
+  // Render the frozen balance section if there's a frozen balance
+  const renderFrozenBalance = () => {
+    if (Number(frozenBalance) <= 0) return null;
+    
+    return (
+      <div className="border border-yellow-500/20 bg-yellow-500/5 rounded-lg p-4 mt-4 space-y-3">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <LockIcon className="h-5 w-5 text-yellow-500" />
+            <p className="font-medium text-yellow-500">Hold Balance</p>
+          </div>
+          <p className="text-xl font-bold text-yellow-500">
+            {Number(frozenBalance).toFixed(2)} ETH
+          </p>
+        </div>
+        
+        <div className="flex justify-between items-center">
+          <p className="text-sm text-yellow-500/80">
+            Funds from NFT sales are frozen for 15 days before being available
+          </p>
+          <Button
+            variant="outline"
+            className="border-yellow-500/20 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500"
+            size="sm"
+            onClick={() => setShowFrozenDetails(!showFrozenDetails)}
+          >
+            {showFrozenDetails ? "Hide Details" : "Show Details"}
+          </Button>
+        </div>
+        
+        {showFrozenDetails && frozenBalanceDetails.length > 0 && (
+          <div className="mt-2 border-t border-yellow-500/20 pt-3 space-y-3">
+            <p className="text-sm font-medium text-yellow-500/80">Upcoming Releases:</p>
+            {frozenBalanceDetails.map((item) => (
+              <div key={item.transaction_id} className="grid grid-cols-3 gap-2 text-sm bg-yellow-500/10 rounded p-2">
+                <div className="flex items-center gap-1">
+                  <Clock className="h-4 w-4 text-yellow-500/80" />
+                  <span>{item.days_left} days left</span>
+                </div>
+                <div className="text-center font-medium">{item.amount.toFixed(2)} ETH</div>
+                <div className="text-right text-yellow-500/80">{item.unfreeze_date}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
@@ -214,11 +288,13 @@ export const UserNFTCollection = () => {
       <div className="relative">
         <div className="absolute -inset-1 bg-gradient-to-r from-primary/10 via-transparent to-primary/10 rounded-xl blur-xl opacity-50"></div>
         <div className="relative bg-card/30 backdrop-blur-sm border border-primary/10 rounded-xl p-4 sm:p-6 shadow-lg">
-          <TabsContent value="my-nfts" className="mt-0">
+          {Number(frozenBalance) > 0 && renderFrozenBalance()}
+          
+          <TabsContent value="my-nfts" className="mt-4">
             {renderMyNFTs()}
           </TabsContent>
           
-          <TabsContent value="active-bids" className="mt-0">
+          <TabsContent value="active-bids" className="mt-4">
             <ActiveBids 
               currentUserId={user?.id} 
               onBidAccepted={handleRefreshBids}
