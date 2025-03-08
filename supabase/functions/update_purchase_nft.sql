@@ -14,6 +14,7 @@ DECLARE
   v_seller_transaction_id uuid;
   v_platform_fee_percent numeric := 2.5;
   v_seller_receives numeric;
+  v_frozen_until timestamp;
 BEGIN
   -- Check if NFT exists and is available for purchase (either no owner or for_sale is true)
   SELECT price, creator, owner_id, for_sale INTO v_nft_price, v_creator, v_owner_id, v_for_sale
@@ -37,20 +38,23 @@ BEGIN
   IF v_user_balance < v_nft_price THEN
     RETURN json_build_object('success', false, 'message', 'Insufficient balance');
   END IF;
+
+  -- Set frozen_until date (15 days from now)
+  v_frozen_until := NOW() + INTERVAL '15 days';
   
-  -- If there's an original owner, add the payment to their balance after deducting platform fee
+  -- If there's an original owner, add the payment to their frozen_balance after deducting platform fee
   IF v_owner_id IS NOT NULL THEN
     -- Calculate amount seller receives after platform fee
     v_seller_receives := v_nft_price * (1 - v_platform_fee_percent / 100);
     
-    -- Update seller's balance with the amount after commission
+    -- Update seller's frozen_balance with the amount after commission
     UPDATE public.profiles
-    SET balance = balance + v_seller_receives
+    SET frozen_balance = frozen_balance + v_seller_receives
     WHERE user_id = v_owner_id;
     
-    -- Record transaction for seller (sale)
-    INSERT INTO public.transactions (amount, type, item, status, user_id)
-    VALUES (v_seller_receives, 'sale', nft_id::text, 'completed', v_owner_id)
+    -- Record transaction for seller (sale) with frozen_until date
+    INSERT INTO public.transactions (amount, type, item, status, user_id, frozen_until)
+    VALUES (v_seller_receives, 'sale', nft_id::text, 'completed', v_owner_id, v_frozen_until)
     RETURNING id INTO v_seller_transaction_id;
   END IF;
   
