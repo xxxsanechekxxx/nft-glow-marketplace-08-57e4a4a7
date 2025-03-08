@@ -1,4 +1,3 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
@@ -128,7 +127,15 @@ export const NFTCard = ({
           </div>
           <div className="p-3 sm:p-4 md:p-6 space-y-1 sm:space-y-2 md:space-y-3">
             <h3 className="font-semibold text-base sm:text-lg md:text-xl transition-colors duration-700 group-hover:text-primary line-clamp-1">{name}</h3>
+            
+            {marketplace && isForSale && (
+              <p className="text-xs sm:text-sm text-[#9F9EA1] line-clamp-1">
+                Listed on {getMarketplaceDisplay()}
+              </p>
+            )}
+            
             <p className="text-xs sm:text-sm md:text-base text-muted-foreground line-clamp-1">by {creator}</p>
+            
             <div className="flex items-center justify-between mt-2 sm:mt-3 md:mt-5">
               {isEditingPrice ? (
                 <div className="flex items-center gap-1 sm:gap-2 flex-1">
