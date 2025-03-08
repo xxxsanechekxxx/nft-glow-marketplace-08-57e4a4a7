@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -884,3 +885,100 @@ const Profile = () => {
                         <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                       </div>
                     </div>
+                    <Button type="submit" className="w-full relative overflow-hidden group">
+                      <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <span className="relative z-10">Update Email</span>
+                    </Button>
+                  </form>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+        
+        {/* Add Wallet Address Modal */}
+        <WalletAddressModal 
+          isOpen={isWalletModalOpen} 
+          onClose={() => setIsWalletModalOpen(false)} 
+          onGenerateWalletAddress={handleGenerateWalletAddress}
+        />
+        
+        {/* Deposit Confirmation Dialog */}
+        <DepositConfirmationDialog
+          isOpen={isDepositConfirmationOpen}
+          onClose={() => setIsDepositConfirmationOpen(false)}
+          onConfirm={handleDepositConfirm}
+          amount={depositAmount}
+        />
+        
+        {/* Fraud Warning Dialog */}
+        <FraudWarningDialog
+          isOpen={isFraudWarningOpen}
+          onClose={() => setIsFraudWarningOpen(false)}
+        />
+        
+        {/* KYC Dialogs */}
+        <KYCIdentityDialog
+          isOpen={isIdentityDialogOpen}
+          onClose={() => setIsIdentityDialogOpen(false)}
+          onSuccess={handleIdentitySuccess}
+        />
+        
+        <KYCAddressDialog
+          isOpen={isAddressDialogOpen}
+          onClose={handleAddressClose}
+          onSuccess={handleAddressSuccess}
+        />
+        
+        {/* Exchange Dialog */}
+        <Dialog open={isExchangeDialogOpen} onOpenChange={setIsExchangeDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Exchange Hold Balance to USDT</DialogTitle>
+              <DialogDescription>
+                Convert your frozen ETH to USDT at current market rate.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="space-y-2">
+                <label htmlFor="exchange-amount" className="text-sm font-medium flex items-center gap-2">
+                  <ArrowRightLeft className="w-4 h-4 text-primary" />
+                  Amount to Exchange (ETH)
+                </label>
+                <div className="relative">
+                  <Input
+                    id="exchange-amount"
+                    type="number"
+                    step="0.001"
+                    min="0"
+                    value={exchangeAmount}
+                    onChange={(e) => setExchangeAmount(e.target.value)}
+                    placeholder="Enter ETH amount"
+                    className="bg-background/50 border-primary/10 pl-10"
+                  />
+                  <ArrowRightLeft className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                </div>
+              </div>
+              {exchangeAmount && !isNaN(parseFloat(exchangeAmount)) && (
+                <div className="text-sm text-muted-foreground bg-primary/5 p-3 rounded-md">
+                  You will receive approximately {(parseFloat(exchangeAmount) * 3000).toFixed(2)} USDT
+                </div>
+              )}
+            </div>
+            <DialogFooter>
+              <Button 
+                onClick={handleExchangeHoldBalance}
+                className="relative overflow-hidden group w-full sm:w-auto"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <span className="relative z-10">Exchange to USDT</span>
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </div>
+  );
+};
+
+export default Profile;
