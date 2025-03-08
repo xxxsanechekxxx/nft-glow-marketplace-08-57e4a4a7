@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -1002,15 +1001,6 @@ const Profile = () => {
                           <p className="text-sm text-muted-foreground mb-2">Hold Balance</p>
                           <div className="flex gap-2">
                             <Button
-                              variant="exchange"
-                              size="sm"
-                              onClick={() => setIsExchangeDialogOpen(true)}
-                              className="h-8 px-3"
-                            >
-                              <RefreshCw className="h-4 w-4" />
-                              <span>Exchange to USDT</span>
-                            </Button>
-                            <Button
                               variant="outline"
                               className="border-yellow-500/20 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 h-8 px-3"
                               size="sm"
@@ -1037,6 +1027,14 @@ const Profile = () => {
                               {Number(userData?.frozen_usdt_balance || 0).toFixed(2)}
                             </h2>
                           </div>
+                          <Button
+                            variant="exchange"
+                            onClick={() => setIsExchangeDialogOpen(true)}
+                            className="mt-3"
+                          >
+                            <RefreshCw className="h-4 w-4 mr-2" />
+                            <span>Exchange to USDT</span>
+                          </Button>
                         </div>
                         <p className="text-sm text-yellow-500/80 mt-2">
                           Funds from NFT sales are frozen for 15 days before being available
