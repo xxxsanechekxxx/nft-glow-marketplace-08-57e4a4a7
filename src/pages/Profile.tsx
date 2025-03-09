@@ -839,20 +839,7 @@ const Profile = () => {
                         </div>
 
                         <div className="flex flex-col space-y-2 p-4">
-                          <div className="p-4 rounded-lg bg-black/20 backdrop-blur-sm border border-white/5 flex items-center justify-between">
-                            <div className="flex flex-col space-y-1">
-                              <div className="flex items-center gap-2">
-                                <div className="w-6 h-6 rounded-full bg-yellow-600/30 flex items-center justify-center">
-                                  <LockIcon className="h-3 w-3 text-yellow-500" />
-                                </div>
-                                <p className="text-gray-300 text-sm">Frozen ETH</p>
-                              </div>
-                              <p className="text-amber-400 text-sm">Hold Period: 15 days</p>
-                            </div>
-                            <p className="text-amber-400 text-2xl font-bold">
-                              {Number(userData?.frozen_balance || 0).toFixed(2)}
-                            </p>
-                          </div>
+                          
 
                           {showFrozenDetails && frozenBalanceDetails.length > 0 && <div className="mt-4 pt-4 space-y-3 border-t border-amber-500/20">
                               <p className="text-amber-400 font-medium text-sm">Upcoming Releases:</p>
