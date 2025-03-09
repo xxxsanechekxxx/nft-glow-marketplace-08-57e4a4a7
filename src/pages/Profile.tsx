@@ -5,48 +5,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  User, 
-  Settings, 
-  Mail, 
-  Key, 
-  LogOut, 
-  Wallet, 
-  ArrowUpCircle, 
-  ArrowDownCircle, 
-  Globe, 
-  UserRound, 
-  ShoppingBag, 
-  HelpCircle,
-  Shield,
-  FileCheck,
-  BadgeCheck,
-  Home,
-  CheckCircle2,
-  Clock,
-  LockIcon,
-  DollarSign,
-  RefreshCw,
-} from "lucide-react";
+import { User, Settings, Mail, Key, LogOut, Wallet, ArrowUpCircle, ArrowDownCircle, Globe, UserRound, ShoppingBag, HelpCircle, Shield, FileCheck, BadgeCheck, Home, CheckCircle2, Clock, LockIcon, DollarSign, RefreshCw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import WalletAddressModal from "@/components/WalletAddressModal";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 import DepositConfirmationDialog from "@/components/DepositConfirmationDialog";
@@ -54,7 +17,6 @@ import FraudWarningDialog from "@/components/FraudWarningDialog";
 import KYCIdentityDialog from "@/components/KYCIdentityDialog";
 import KYCAddressDialog from "@/components/KYCAddressDialog";
 import { UserNFTCollection } from "@/components/nft/UserNFTCollection";
-
 interface Transaction {
   id: string;
   type: 'deposit' | 'withdraw' | 'purchase' | 'sale' | 'exchange';
@@ -64,7 +26,6 @@ interface Transaction {
   item?: string;
   frozen_until?: string;
 }
-
 interface UserData {
   id: string;
   email: string;
@@ -81,22 +42,24 @@ interface UserData {
   verified: boolean;
   kyc_status?: string;
 }
-
 interface TransactionTotals {
   total_deposits: number;
   total_withdrawals: number;
 }
-
 interface FrozenBalanceInfo {
   amount: number;
   days_left: number;
   unfreeze_date: string;
   transaction_id: string;
 }
-
 const Profile = () => {
-  const { user, signOut } = useAuth();
-  const { toast } = useToast();
+  const {
+    user,
+    signOut
+  } = useAuth();
+  const {
+    toast
+  } = useToast();
   const navigate = useNavigate();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -121,17 +84,15 @@ const Profile = () => {
   const [showFrozenDetails, setShowFrozenDetails] = useState(false);
   const [isExchangeDialogOpen, setIsExchangeDialogOpen] = useState(false);
   const [exchangeAmount, setExchangeAmount] = useState("");
-
   const showDelayedToast = (title: string, description: string, variant: "default" | "destructive" = "default") => {
     setTimeout(() => {
       toast({
         title,
         description,
-        variant,
+        variant
       });
     }, 1000);
   };
-
   const handleLogout = async () => {
     try {
       await signOut();
@@ -141,44 +102,37 @@ const Profile = () => {
       showDelayedToast("Error", "Failed to log out", "destructive");
     }
   };
-
   const startKYCVerification = () => {
     try {
       if (!user?.id) {
         toast({
           title: "Error",
           description: "You must be logged in to start verification",
-          variant: "destructive",
+          variant: "destructive"
         });
         return;
       }
-      
       setIsIdentityDialogOpen(true);
     } catch (error) {
       console.error("Error starting verification:", error);
       toast({
         title: "Error",
         description: "Failed to start verification process. Please try again.",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const handleIdentitySuccess = async () => {
     try {
-      const { data: profileData, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('user_id', user?.id)
-        .single();
-
+      const {
+        data: profileData,
+        error
+      } = await supabase.from('profiles').select('*').eq('user_id', user?.id).single();
       if (error) throw error;
-
       setUserData(prev => prev ? {
         ...prev,
-        kyc_status: profileData.kyc_status,
+        kyc_status: profileData.kyc_status
       } : null);
-
       setIsIdentityDialogOpen(false);
       setIsAddressDialogOpen(true);
     } catch (error) {
@@ -186,121 +140,101 @@ const Profile = () => {
       toast({
         title: "Error",
         description: "Failed to update profile status",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const handleAddressSuccess = async () => {
     try {
-      const { data: profileData, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('user_id', user?.id)
-        .single();
-
+      const {
+        data: profileData,
+        error
+      } = await supabase.from('profiles').select('*').eq('user_id', user?.id).single();
       if (error) throw error;
-
       setUserData(prev => prev ? {
         ...prev,
-        kyc_status: profileData.kyc_status,
+        kyc_status: profileData.kyc_status
       } : null);
-
       setIsAddressDialogOpen(false);
-      
       toast({
         title: "Verification In Progress",
-        description: "Your documents have been submitted and are under review.",
+        description: "Your documents have been submitted and are under review."
       });
     } catch (error) {
       console.error("Error updating profile data:", error);
       toast({
         title: "Error",
         description: "Failed to update profile status",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const handleAddressClose = () => {
     setIsAddressDialogOpen(false);
   };
-
   const continueKYCVerification = () => {
     if (!user?.id) {
       toast({
         title: "Error",
         description: "You must be logged in to continue verification",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
     setIsAddressDialogOpen(true);
   };
-
   const handleTypeIconOnly = () => {
     return true;
   };
-
   const handleExchangeToUSDT = (e: React.FormEvent) => {
     e.preventDefault();
-    
     const exchangeAmountNum = parseFloat(exchangeAmount);
     const frozenBalanceNum = parseFloat(userData?.frozen_balance || "0");
-    
     if (exchangeAmountNum <= 0) {
       toast({
         title: "Error",
         description: "Please enter a valid amount greater than 0",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-
     if (exchangeAmountNum > frozenBalanceNum) {
       toast({
         title: "Insufficient funds",
         description: `Your frozen balance (${frozenBalanceNum} ETH) is less than the requested exchange amount`,
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-
     try {
       const createTransaction = async () => {
-        const { error } = await supabase
-          .from('transactions')
-          .insert([
-            {
-              user_id: user?.id,
-              type: 'exchange',
-              amount: exchangeAmountNum,
-              status: 'pending'
-            }
-          ]);
-
+        const {
+          error
+        } = await supabase.from('transactions').insert([{
+          user_id: user?.id,
+          type: 'exchange',
+          amount: exchangeAmountNum,
+          status: 'pending'
+        }]);
         if (error) throw error;
 
         // Fetch updated transactions
-        const { data: transactionsData, error: transactionsError } = await supabase
-          .from('transactions')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(10);
-
+        const {
+          data: transactionsData,
+          error: transactionsError
+        } = await supabase.from('transactions').select('*').order('created_at', {
+          ascending: false
+        }).limit(10);
         if (transactionsError) throw transactionsError;
-
         if (transactionsData) {
           setTransactions(transactionsData.map(tx => {
             const dateObj = new Date(tx.created_at);
             const formattedDate = `${dateObj.getDate().toString().padStart(2, '0')}/${(dateObj.getMonth() + 1).toString().padStart(2, '0')}`;
-            
             let formattedFrozenUntil = null;
             if (tx.frozen_until) {
               const frozenDate = new Date(tx.frozen_until);
               formattedFrozenUntil = `${frozenDate.getDate().toString().padStart(2, '0')}/${(frozenDate.getMonth() + 1).toString().padStart(2, '0')}/${frozenDate.getFullYear()}`;
             }
-            
             return {
               id: tx.id,
               type: tx.type,
@@ -313,94 +247,83 @@ const Profile = () => {
           }));
         }
       };
-
       createTransaction();
-
       toast({
         title: "Exchange Requested",
         description: `Your exchange request for ${exchangeAmount} ETH to USDT has been submitted`
       });
-      
       setExchangeAmount("");
       setIsExchangeDialogOpen(false);
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to process exchange. Please try again.",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   useEffect(() => {
     let isMounted = true;
-
     const fetchUserData = async () => {
       try {
         setIsLoading(true);
-        
-        const { data: { user: currentUser }, error: authError } = await supabase.auth.getUser();
-        
+        const {
+          data: {
+            user: currentUser
+          },
+          error: authError
+        } = await supabase.auth.getUser();
         if (authError) {
           throw authError;
         }
-
         if (!currentUser) {
           console.log("No user found");
           return;
         }
-
-        const { data: totalsData, error: totalsError } = await supabase
-          .rpc('get_user_transaction_totals', {
-            user_uuid: currentUser.id
-          });
-
+        const {
+          data: totalsData,
+          error: totalsError
+        } = await supabase.rpc('get_user_transaction_totals', {
+          user_uuid: currentUser.id
+        });
         if (totalsError) {
           console.error("Error fetching transaction totals:", totalsError);
           throw totalsError;
         }
-
         if (totalsData) {
           setTransactionTotals(totalsData);
         }
-
-        const { data: frozenData, error: frozenError } = await supabase
-          .rpc('get_user_frozen_balances', {
-            user_uuid: currentUser.id
-          });
-
+        const {
+          data: frozenData,
+          error: frozenError
+        } = await supabase.rpc('get_user_frozen_balances', {
+          user_uuid: currentUser.id
+        });
         if (frozenError) {
           console.error("Error fetching frozen balances:", frozenError);
           throw frozenError;
         }
-
         if (frozenData && frozenData.length > 0) {
           setFrozenBalanceDetails(frozenData[0].unfreezing_in_days || []);
         }
-
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('user_id', currentUser.id)
-          .single();
-
+        const {
+          data: profileData,
+          error: profileError
+        } = await supabase.from('profiles').select('*').eq('user_id', currentUser.id).single();
         if (profileError) {
           throw profileError;
         }
-
-        const { data: transactionsData, error: transactionsError } = await supabase
-          .from('transactions')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(10);
-
+        const {
+          data: transactionsData,
+          error: transactionsError
+        } = await supabase.from('transactions').select('*').order('created_at', {
+          ascending: false
+        }).limit(10);
         if (transactionsError) {
           console.error("Transactions error:", transactionsError);
           throw transactionsError;
         }
-
         console.log("Profile data:", profileData);
-
         if (isMounted && currentUser) {
           const userData: UserData = {
             id: currentUser.id,
@@ -418,21 +341,17 @@ const Profile = () => {
             verified: profileData?.verified || false,
             kyc_status: profileData?.kyc_status || 'not_started'
           };
-
           console.log("Setting user data with avatar:", userData.avatar_url);
           setUserData(userData);
-
           if (transactionsData) {
             setTransactions(transactionsData.map(tx => {
               const dateObj = new Date(tx.created_at);
               const formattedDate = `${dateObj.getDate().toString().padStart(2, '0')}/${(dateObj.getMonth() + 1).toString().padStart(2, '0')}`;
-              
               let formattedFrozenUntil = null;
               if (tx.frozen_until) {
                 const frozenDate = new Date(tx.frozen_until);
                 formattedFrozenUntil = `${frozenDate.getDate().toString().padStart(2, '0')}/${(frozenDate.getMonth() + 1).toString().padStart(2, '0')}/${frozenDate.getFullYear()}`;
               }
-              
               return {
                 id: tx.id,
                 type: tx.type,
@@ -451,7 +370,7 @@ const Profile = () => {
           toast({
             title: "Error",
             description: "Failed to fetch user data",
-            variant: "destructive",
+            variant: "destructive"
           });
         }
       } finally {
@@ -460,113 +379,100 @@ const Profile = () => {
         }
       }
     };
-
     fetchUserData();
-
     return () => {
       isMounted = false;
     };
   }, [toast]);
-
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
-
   const handleEmailChange = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!validateEmail(newEmail)) {
       toast({
         title: "Invalid Email",
         description: "Please enter a valid email address",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-
     try {
-      const { error } = await supabase.auth.updateUser({
-        email: newEmail,
+      const {
+        error
+      } = await supabase.auth.updateUser({
+        email: newEmail
       });
-
       if (error) throw error;
-
       toast({
         title: "Success",
-        description: "Email update request has been sent. Please check your new email for verification.",
+        description: "Email update request has been sent. Please check your new email for verification."
       });
-      
       setNewEmail("");
     } catch (error: any) {
       console.error("Email update error:", error);
       toast({
         title: "Error",
         description: error.message || "Failed to update email",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !userData?.id) return;
-
     try {
       const fileExt = file.name.split('.').pop();
       const filePath = `${userData.id}/${crypto.randomUUID()}.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('avatars')
-        .upload(filePath, file, {
-          upsert: true,
-        });
-
+      const {
+        error: uploadError
+      } = await supabase.storage.from('avatars').upload(filePath, file, {
+        upsert: true
+      });
       if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('avatars')
-        .getPublicUrl(filePath);
-
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({ avatar_url: publicUrl })
-        .eq('user_id', userData.id);
-
+      const {
+        data: {
+          publicUrl
+        }
+      } = supabase.storage.from('avatars').getPublicUrl(filePath);
+      const {
+        error: updateError
+      } = await supabase.from('profiles').update({
+        avatar_url: publicUrl
+      }).eq('user_id', userData.id);
       if (updateError) throw updateError;
-
-      setUserData(prev => prev ? { ...prev, avatar_url: publicUrl } : null);
-      
+      setUserData(prev => prev ? {
+        ...prev,
+        avatar_url: publicUrl
+      } : null);
       toast({
         title: "Success",
-        description: "Avatar updated successfully",
+        description: "Avatar updated successfully"
       });
     } catch (error) {
       console.error("Error uploading avatar:", error);
       toast({
         title: "Error",
         description: "Failed to upload avatar",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmNewPassword) {
       showDelayedToast("Error", "New passwords do not match", "destructive");
       return;
     }
-
     try {
-      const { error } = await supabase.auth.updateUser({
+      const {
+        error
+      } = await supabase.auth.updateUser({
         password: newPassword
       });
-
       if (error) throw error;
-
       showDelayedToast("Success", "Password has been updated");
-
       setCurrentPassword("");
       setNewPassword("");
       setConfirmNewPassword("");
@@ -574,83 +480,69 @@ const Profile = () => {
       showDelayedToast("Error", "Failed to update password", "destructive");
     }
   };
-
   const handleWithdraw = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     const withdrawAmountNum = parseFloat(withdrawAmount);
     const balanceNum = parseFloat(userData?.balance || "0");
-    
     if (withdrawAmountNum <= 0) {
       toast({
         title: "Error",
         description: "Please enter a valid amount greater than 0",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-
     if (withdrawAmountNum > balanceNum) {
       toast({
         title: "Insufficient funds",
         description: `Your balance (${balanceNum} ETH) is less than the requested withdrawal amount`,
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-
     if (!withdrawWalletAddress) {
       toast({
         title: "Error",
         description: "Please enter a wallet address for the withdrawal",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-
     try {
-      const { error } = await supabase
-        .from('transactions')
-        .insert([
-          {
-            user_id: user?.id,
-            type: 'withdraw',
-            amount: withdrawAmountNum,
-            status: 'pending',
-            wallet_address: withdrawWalletAddress
-          }
-        ]);
-
+      const {
+        error
+      } = await supabase.from('transactions').insert([{
+        user_id: user?.id,
+        type: 'withdraw',
+        amount: withdrawAmountNum,
+        status: 'pending',
+        wallet_address: withdrawWalletAddress
+      }]);
       if (error) throw error;
-
       toast({
         title: "Withdrawal Requested",
         description: `Your withdrawal request for ${withdrawAmount} ETH has been submitted`
       });
-      
       setWithdrawAmount("");
       setWithdrawWalletAddress("");
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to process withdrawal. Please try again.",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const handleDeposit = (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!userData?.wallet_address) {
       toast({
         title: "Error",
         description: "You need to generate a wallet address in your profile first",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-
     const amount = parseFloat(depositAmount);
     if (!depositAmount || amount <= 0) {
       setTimeout(() => {
@@ -662,82 +554,61 @@ const Profile = () => {
       }, 1000);
       return;
     }
-
     setIsDepositConfirmationOpen(true);
   };
-
   const handleDepositConfirm = () => {
     setIsDepositConfirmationOpen(false);
     setIsFraudWarningOpen(true);
     setDepositAmount("");
-    
     toast({
       title: "Rejected",
       description: `Deposit of ${depositAmount} the rejected. Please contact our support team on Telegram for transaction verification`
     });
   };
-
   const handleGenerateWalletAddress = async (address: string) => {
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ wallet_address: address })
-        .eq('user_id', userData?.id);
-
+      const {
+        error
+      } = await supabase.from('profiles').update({
+        wallet_address: address
+      }).eq('user_id', userData?.id);
       if (error) throw error;
-
-      setUserData(prev => prev ? { ...prev, wallet_address: address } : null);
-      
+      setUserData(prev => prev ? {
+        ...prev,
+        wallet_address: address
+      } : null);
       toast({
         title: "Success",
-        description: "Wallet address has been generated and saved.",
+        description: "Wallet address has been generated and saved."
       });
     } catch (error) {
       console.error("Error saving wallet address:", error);
       toast({
         title: "Error",
         description: "Failed to save wallet address. Please try again.",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   if (isLoading) {
-    return (
-      <div className="container mx-auto py-8 px-4 mt-16">
+    return <div className="container mx-auto py-8 px-4 mt-16">
         <div className="max-w-4xl mx-auto">
           <p>Loading...</p>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="container mx-auto py-8 px-4 mt-16 min-h-screen bg-gradient-to-b from-background via-background/80 to-background/60">
+  return <div className="container mx-auto py-8 px-4 mt-16 min-h-screen bg-gradient-to-b from-background via-background/80 to-background/60">
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="relative p-6 sm:p-8 rounded-2xl overflow-hidden bg-gradient-to-r from-purple-500/10 via-primary/5 to-purple-500/10 border border-primary/10 backdrop-blur-sm shadow-xl">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 animate-gradient"></div>
           <div className="relative flex flex-col sm:flex-row items-center gap-4 sm:gap-6 z-10">
             <div className="relative group">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleAvatarUpload}
-                className="hidden"
-                id="avatar-upload"
-              />
-              <label 
-                htmlFor="avatar-upload" 
-                className="cursor-pointer block relative"
-              >
+              <input type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" id="avatar-upload" />
+              <label htmlFor="avatar-upload" className="cursor-pointer block relative">
                 <Avatar className="w-20 h-20 sm:w-24 sm:h-24 border-4 border-primary/20 shadow-xl ring-2 ring-purple-500/20 transition-all duration-300 group-hover:ring-purple-500/40">
-                  {userData?.avatar_url ? (
-                    <AvatarImage src={userData.avatar_url} alt={userData.login} />
-                  ) : (
-                    <AvatarFallback className="bg-gradient-to-br from-primary/80 to-purple-600 text-white">
+                  {userData?.avatar_url ? <AvatarImage src={userData.avatar_url} alt={userData.login} /> : <AvatarFallback className="bg-gradient-to-br from-primary/80 to-purple-600 text-white">
                       <UserRound className="w-10 h-10 sm:w-12 sm:h-12" />
-                    </AvatarFallback>
-                  )}
+                    </AvatarFallback>}
                 </Avatar>
                 <div className="absolute inset-0 bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                   <p className="text-white text-xs font-medium">Change Avatar</p>
@@ -754,12 +625,7 @@ const Profile = () => {
 
         <Tabs defaultValue="profile" className="w-full">
           <TabsList className="w-full responsive-tabs-list p-1.5 bg-background/50 backdrop-blur-sm rounded-xl border border-primary/10 mb-6">
-            {["profile", "settings", "wallet", "verification", "nft"].map((tab) => (
-              <TabsTrigger
-                key={tab}
-                value={tab}
-                className="responsive-tab-trigger flex items-center justify-center gap-1 transition-all duration-300 data-[state=active]:bg-primary/20 data-[state=active]:text-primary relative overflow-hidden group py-2"
-              >
+            {["profile", "settings", "wallet", "verification", "nft"].map(tab => <TabsTrigger key={tab} value={tab} className="responsive-tab-trigger flex items-center justify-center gap-1 transition-all duration-300 data-[state=active]:bg-primary/20 data-[state=active]:text-primary relative overflow-hidden group py-2">
                 {tab === "profile" && <User className="w-4 h-4" />}
                 {tab === "settings" && <Settings className="w-4 h-4" />}
                 {tab === "wallet" && <Wallet className="w-4 h-4" />}
@@ -767,8 +633,7 @@ const Profile = () => {
                 {tab === "nft" && <ShoppingBag className="w-4 h-4" />}
                 <span className="relative z-10 capitalize hidden sm:inline">{tab}</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </TabsTrigger>
-            ))}
+              </TabsTrigger>)}
           </TabsList>
 
           <TabsContent value="profile">
@@ -790,11 +655,7 @@ const Profile = () => {
                     </label>
                     <div className="relative overflow-hidden rounded-lg transition-all duration-300 group-hover:shadow-lg">
                       <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      <Input
-                        value={userData?.email}
-                        readOnly
-                        className="bg-background/50 border-primary/10 group-hover:border-primary/30 transition-colors pl-10"
-                      />
+                      <Input value={userData?.email} readOnly className="bg-background/50 border-primary/10 group-hover:border-primary/30 transition-colors pl-10" />
                       <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                     </div>
                   </div>
@@ -805,11 +666,7 @@ const Profile = () => {
                     </label>
                     <div className="relative overflow-hidden rounded-lg transition-all duration-300 group-hover:shadow-lg">
                       <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      <Input
-                        value={userData?.country}
-                        readOnly
-                        className="bg-background/50 border-primary/10 group-hover:border-primary/30 transition-colors pl-10"
-                      />
+                      <Input value={userData?.country} readOnly className="bg-background/50 border-primary/10 group-hover:border-primary/30 transition-colors pl-10" />
                       <Globe className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                     </div>
                   </div>
@@ -822,11 +679,7 @@ const Profile = () => {
                   <div className="relative overflow-hidden rounded-lg transition-all duration-300 group-hover:shadow-lg">
                     <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div className="bg-background/50 border border-primary/10 group-hover:border-primary/30 transition-colors rounded-lg p-3 pl-10 flex items-center">
-                      {userData?.verified ? (
-                        <span className="text-green-500 font-medium">Verified</span>
-                      ) : (
-                        <span className="text-yellow-500 font-medium">Not Verified</span>
-                      )}
+                      {userData?.verified ? <span className="text-green-500 font-medium">Verified</span> : <span className="text-yellow-500 font-medium">Not Verified</span>}
                     </div>
                     <HelpCircle className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                   </div>
@@ -839,29 +692,17 @@ const Profile = () => {
                   <div className="flex gap-4 items-start">
                     <div className="flex-grow flex gap-2 items-center relative overflow-hidden rounded-lg transition-all duration-300 group-hover:shadow-lg">
                       <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      <Input
-                        value={userData?.wallet_address || ''}
-                        readOnly
-                        className="bg-background/50 font-mono text-sm border-primary/10 group-hover:border-primary/30 transition-colors pl-10"
-                        placeholder="No wallet address generated"
-                      />
+                      <Input value={userData?.wallet_address || ''} readOnly className="bg-background/50 font-mono text-sm border-primary/10 group-hover:border-primary/30 transition-colors pl-10" placeholder="No wallet address generated" />
                       <Wallet className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                      {userData?.wallet_address && (
-                        <div className="bg-primary/20 px-3 py-1.5 rounded-md text-sm text-primary font-medium min-w-[80px] text-center">
+                      {userData?.wallet_address && <div className="bg-primary/20 px-3 py-1.5 rounded-md text-sm text-primary font-medium min-w-[80px] text-center">
                           ERC-20
-                        </div>
-                      )}
+                        </div>}
                     </div>
-                    {!userData?.wallet_address && (
-                      <Button
-                        onClick={() => setIsWalletModalOpen(true)}
-                        className="bg-primary/20 text-primary hover:bg-primary/30 transition-colors flex items-center gap-2 group relative overflow-hidden"
-                      >
+                    {!userData?.wallet_address && <Button onClick={() => setIsWalletModalOpen(true)} className="bg-primary/20 text-primary hover:bg-primary/30 transition-colors flex items-center gap-2 group relative overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         <Wallet className="w-4 h-4 relative z-10" />
                         <span className="relative z-10">Generate Address</span>
-                      </Button>
-                    )}
+                      </Button>}
                   </div>
                 </div>
               </CardContent>
@@ -887,21 +728,11 @@ const Profile = () => {
                         New Email
                       </label>
                       <div className="relative">
-                        <Input
-                          type="email"
-                          value={newEmail}
-                          onChange={(e) => setNewEmail(e.target.value)}
-                          placeholder="Enter new email address"
-                          required
-                          className="bg-background/50 border-primary/10 group-hover:border-primary/30 transition-colors pl-10"
-                        />
+                        <Input type="email" value={newEmail} onChange={e => setNewEmail(e.target.value)} placeholder="Enter new email address" required className="bg-background/50 border-primary/10 group-hover:border-primary/30 transition-colors pl-10" />
                         <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                       </div>
                     </div>
-                    <Button 
-                      type="submit" 
-                      className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-colors group relative overflow-hidden"
-                    >
+                    <Button type="submit" className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-colors group relative overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                       <span className="relative z-10">Update Email</span>
                     </Button>
@@ -909,42 +740,21 @@ const Profile = () => {
 
                   <form onSubmit={handlePasswordChange} className="space-y-4 p-6 rounded-xl bg-primary/5 border border-primary/10 backdrop-blur-sm transition-all duration-300 hover:shadow-lg">
                     <div className="space-y-4">
-                      {["Current Password", "New Password", "Confirm New Password"].map((label, index) => (
-                        <div key={label} className="space-y-2">
+                      {["Current Password", "New Password", "Confirm New Password"].map((label, index) => <div key={label} className="space-y-2">
                           <label className="text-sm font-medium flex items-center gap-2">
                             <Key className="w-4 h-4 text-primary" />
                             {label}
                           </label>
                           <div className="relative">
-                            <Input
-                              type="password"
-                              value={
-                                index === 0
-                                  ? currentPassword
-                                  : index === 1
-                                  ? newPassword
-                                  : confirmNewPassword
-                              }
-                              onChange={(e) => {
-                                const value = e.target.value;
-                                index === 0
-                                  ? setCurrentPassword(value)
-                                  : index === 1
-                                  ? setNewPassword(value)
-                                  : setConfirmNewPassword(value);
-                              }}
-                              required
-                              className="bg-background/50 border-primary/10 pl-10 transition-all duration-300 focus:border-primary/30 focus:ring-primary/30"
-                            />
+                            <Input type="password" value={index === 0 ? currentPassword : index === 1 ? newPassword : confirmNewPassword} onChange={e => {
+                          const value = e.target.value;
+                          index === 0 ? setCurrentPassword(value) : index === 1 ? setNewPassword(value) : setConfirmNewPassword(value);
+                        }} required className="bg-background/50 border-primary/10 pl-10 transition-all duration-300 focus:border-primary/30 focus:ring-primary/30" />
                             <Key className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                           </div>
-                        </div>
-                      ))}
+                        </div>)}
                     </div>
-                    <Button 
-                      type="submit" 
-                      className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-colors group relative overflow-hidden"
-                    >
+                    <Button type="submit" className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-colors group relative overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                       <span className="relative z-10">Update Password</span>
                     </Button>
@@ -954,11 +764,7 @@ const Profile = () => {
             </Card>
 
             <div className="mt-6">
-              <Button
-                variant="destructive"
-                className="w-full hover:bg-destructive/90 transition-colors flex items-center justify-center gap-2 group relative overflow-hidden"
-                onClick={handleLogout}
-              >
+              <Button variant="destructive" className="w-full hover:bg-destructive/90 transition-colors flex items-center justify-center gap-2 group relative overflow-hidden" onClick={handleLogout}>
                 <div className="absolute inset-0 bg-gradient-to-r from-destructive/20 to-red-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <LogOut className="w-4 h-4 relative z-10" />
                 <span className="relative z-10">Logout</span>
@@ -988,11 +794,7 @@ const Profile = () => {
                         <div className="p-4 rounded-lg bg-black/20 backdrop-blur-sm border border-white/5 flex items-center justify-between">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full flex items-center justify-center bg-eth/10">
-                              <img 
-                                src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
-                                alt="ETH"
-                                className="h-6 w-6"
-                              />
+                              <img src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" alt="ETH" className="h-6 w-6" />
                             </div>
                             <div>
                               <p className="text-gray-300 text-sm">Ethereum</p>
@@ -1016,15 +818,14 @@ const Profile = () => {
                               <p className="text-white font-medium">USDT</p>
                             </div>
                           </div>
-                          <p className="text-green-400 text-2xl font-bold">
+                          <p className="text-2xl font-bold text-slate-50">
                             {Number(userData?.usdt_balance || 0).toFixed(2)}
                           </p>
                         </div>
                       </div>
                     </div>
 
-                    {Number(userData?.frozen_balance || 0) > 0 && (
-                      <div className="rounded-xl bg-balance-hold/90 overflow-hidden">
+                    {Number(userData?.frozen_balance || 0) > 0 && <div className="rounded-xl bg-balance-hold/90 overflow-hidden">
                         <div className="p-4 flex justify-between items-center">
                           <div className="flex items-center gap-3">
                             <div className="p-2 rounded-full bg-balance-hold-accent/20">
@@ -1032,11 +833,7 @@ const Profile = () => {
                             </div>
                             <h3 className="text-lg font-semibold text-white">Hold Balance</h3>
                           </div>
-                          <Button 
-                            variant="outline" 
-                            className="px-3 py-1 h-auto border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-xs"
-                            onClick={() => setShowFrozenDetails(!showFrozenDetails)}
-                          >
+                          <Button variant="outline" className="px-3 py-1 h-auto border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-xs" onClick={() => setShowFrozenDetails(!showFrozenDetails)}>
                             {showFrozenDetails ? "Hide Details" : "Show Details"}
                           </Button>
                         </div>
@@ -1057,15 +854,10 @@ const Profile = () => {
                             </p>
                           </div>
 
-                          {showFrozenDetails && frozenBalanceDetails.length > 0 && (
-                            <div className="mt-4 pt-4 space-y-3 border-t border-amber-500/20">
+                          {showFrozenDetails && frozenBalanceDetails.length > 0 && <div className="mt-4 pt-4 space-y-3 border-t border-amber-500/20">
                               <p className="text-amber-400 font-medium text-sm">Upcoming Releases:</p>
                               <div className="max-h-[150px] overflow-y-auto pr-1 space-y-2 scrollbar-thin scrollbar-thumb-amber-500/20 scrollbar-track-transparent">
-                                {frozenBalanceDetails.map((item) => (
-                                  <div 
-                                    key={item.transaction_id} 
-                                    className="p-3 rounded-lg bg-black/30 border border-amber-500/20 flex items-center justify-between"
-                                  >
+                                {frozenBalanceDetails.map(item => <div key={item.transaction_id} className="p-3 rounded-lg bg-black/30 border border-amber-500/20 flex items-center justify-between">
                                     <div className="flex items-center gap-2">
                                       <Clock className="h-4 w-4 text-amber-500" />
                                       <span className="text-amber-300 text-sm">{item.days_left} days remaining</span>
@@ -1081,32 +873,22 @@ const Profile = () => {
                                         {item.unfreeze_date}
                                       </span>
                                     </div>
-                                  </div>
-                                ))}
+                                  </div>)}
                               </div>
-                            </div>
-                          )}
+                            </div>}
 
-                          <Button 
-                            variant="outline" 
-                            className="w-full mt-2 bg-blue-700/50 hover:bg-blue-700/70 border-blue-600/30 text-blue-300 flex items-center justify-center gap-2"
-                            onClick={() => setIsExchangeDialogOpen(true)}
-                          >
+                          <Button variant="outline" className="w-full mt-2 bg-blue-700/50 hover:bg-blue-700/70 border-blue-600/30 text-blue-300 flex items-center justify-center gap-2" onClick={() => setIsExchangeDialogOpen(true)}>
                             <RefreshCw className="h-4 w-4" />
                             Exchange to USDT
                           </Button>
                         </div>
-                      </div>
-                    )}
+                      </div>}
                   </div>
                 </CardContent>
               </Card>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Button 
-                  onClick={() => setIsDepositConfirmationOpen(true)}
-                  className="w-full bg-green-500/20 hover:bg-green-500/30 text-green-500 flex items-center gap-3 p-6 h-auto group relative overflow-hidden"
-                >
+                <Button onClick={() => setIsDepositConfirmationOpen(true)} className="w-full bg-green-500/20 hover:bg-green-500/30 text-green-500 flex items-center gap-3 p-6 h-auto group relative overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-green-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <div className="p-3 rounded-xl bg-green-500/20 group-hover:bg-green-500/30 transition-colors">
                     <ArrowDownCircle className="w-6 h-6" />
@@ -1119,9 +901,7 @@ const Profile = () => {
 
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button 
-                      className="w-full bg-destructive/20 hover:bg-destructive/30 text-destructive flex items-center gap-3 p-6 h-auto group relative overflow-hidden"
-                    >
+                    <Button className="w-full bg-destructive/20 hover:bg-destructive/30 text-destructive flex items-center gap-3 p-6 h-auto group relative overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-r from-destructive/10 to-red-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                       <div className="p-3 rounded-xl bg-destructive/20 group-hover:bg-destructive/30 transition-colors">
                         <ArrowUpCircle className="w-6 h-6" />
@@ -1144,32 +924,15 @@ const Profile = () => {
                         <label className="text-sm font-medium text-destructive/80">
                           Amount (ETH)
                         </label>
-                        <Input
-                          type="number"
-                          step="0.0001"
-                          min="0.0001"
-                          value={withdrawAmount}
-                          onChange={(e) => setWithdrawAmount(e.target.value)}
-                          placeholder="Enter amount"
-                          className="bg-background/40 border-destructive/20 focus:border-destructive/40"
-                        />
+                        <Input type="number" step="0.0001" min="0.0001" value={withdrawAmount} onChange={e => setWithdrawAmount(e.target.value)} placeholder="Enter amount" className="bg-background/40 border-destructive/20 focus:border-destructive/40" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-sm font-medium text-destructive/80">
                           Wallet Address
                         </label>
-                        <Input
-                          type="text"
-                          value={withdrawWalletAddress}
-                          onChange={(e) => setWithdrawWalletAddress(e.target.value)}
-                          placeholder="Enter wallet address"
-                          className="bg-background/40 border-destructive/20 focus:border-destructive/40"
-                        />
+                        <Input type="text" value={withdrawWalletAddress} onChange={e => setWithdrawWalletAddress(e.target.value)} placeholder="Enter wallet address" className="bg-background/40 border-destructive/20 focus:border-destructive/40" />
                       </div>
-                      <Button 
-                        type="submit"
-                        className="w-full bg-destructive/20 hover:bg-destructive/30 text-destructive"
-                      >
+                      <Button type="submit" className="w-full bg-destructive/20 hover:bg-destructive/30 text-destructive">
                         Confirm Withdrawal
                       </Button>
                     </form>
@@ -1187,8 +950,7 @@ const Profile = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {transactions.length > 0 ? (
-                    <div className="w-full overflow-x-auto">
+                  {transactions.length > 0 ? <div className="w-full overflow-x-auto">
                       <Table className="transaction-table">
                         <TableHeader>
                           <TableRow className="hover:bg-primary/5">
@@ -1199,57 +961,31 @@ const Profile = () => {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {transactions.map((transaction) => (
-                            <TableRow
-                              key={transaction.id}
-                              className={`hover:bg-primary/5 transition-colors ${transaction.frozen_until ? 'bg-yellow-500/5' : ''}`}
-                            >
+                          {transactions.map(transaction => <TableRow key={transaction.id} className={`hover:bg-primary/5 transition-colors ${transaction.frozen_until ? 'bg-yellow-500/5' : ''}`}>
                               <TableCell className="date-column">{transaction.created_at}</TableCell>
                               <TableCell className="type-column text-center">
                                 <div className="flex justify-center">
-                                  {transaction.type === 'deposit' && (
-                                    <ArrowDownCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                                  )}
-                                  {transaction.type === 'withdraw' && (
-                                    <ArrowUpCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
-                                  )}
-                                  {transaction.type === 'purchase' && (
-                                    <ShoppingBag className="w-4 h-4 text-blue-500 flex-shrink-0" />
-                                  )}
-                                  {transaction.type === 'sale' && (
-                                    <ShoppingBag className="w-4 h-4 text-green-500 flex-shrink-0" />
-                                  )}
-                                  {transaction.type === 'exchange' && (
-                                    <RefreshCw className="w-4 h-4 text-blue-500 flex-shrink-0" />
-                                  )}
+                                  {transaction.type === 'deposit' && <ArrowDownCircle className="w-4 h-4 text-green-500 flex-shrink-0" />}
+                                  {transaction.type === 'withdraw' && <ArrowUpCircle className="w-4 h-4 text-red-500 flex-shrink-0" />}
+                                  {transaction.type === 'purchase' && <ShoppingBag className="w-4 h-4 text-blue-500 flex-shrink-0" />}
+                                  {transaction.type === 'sale' && <ShoppingBag className="w-4 h-4 text-green-500 flex-shrink-0" />}
+                                  {transaction.type === 'exchange' && <RefreshCw className="w-4 h-4 text-blue-500 flex-shrink-0" />}
                                 </div>
                               </TableCell>
                               <TableCell className="amount-column">
                                 {Number(transaction.amount).toFixed(2)}
                               </TableCell>
                               <TableCell className="status-column">
-                                <span className={`px-1.5 py-0.5 rounded-full text-xs ${
-                                  transaction.status === 'completed'
-                                    ? transaction.frozen_until
-                                      ? 'bg-yellow-500/20 text-yellow-500'
-                                      : 'bg-green-500/20 text-green-500'
-                                    : transaction.status === 'pending'
-                                    ? 'bg-yellow-500/20 text-yellow-500'
-                                    : 'bg-red-500/20 text-red-500'
-                                }`}>
+                                <span className={`px-1.5 py-0.5 rounded-full text-xs ${transaction.status === 'completed' ? transaction.frozen_until ? 'bg-yellow-500/20 text-yellow-500' : 'bg-green-500/20 text-green-500' : transaction.status === 'pending' ? 'bg-yellow-500/20 text-yellow-500' : 'bg-red-500/20 text-red-500'}`}>
                                   {transaction.status}
                                 </span>
                               </TableCell>
-                            </TableRow>
-                          ))}
+                            </TableRow>)}
                         </TableBody>
                       </Table>
-                    </div>
-                  ) : (
-                    <div className="text-center py-8 text-muted-foreground">
+                    </div> : <div className="text-center py-8 text-muted-foreground">
                       No transactions found
-                    </div>
-                  )}
+                    </div>}
                 </CardContent>
               </Card>
             </div>
@@ -1269,127 +1005,59 @@ const Profile = () => {
                 <div className="p-6 rounded-xl bg-[#12151C]/80 border border-primary/10 space-y-4">
                   <div className="flex items-start gap-4">
                     <div className={`p-3 rounded-lg ${userData?.verified ? 'bg-green-500/10 border border-green-500/20' : 'bg-orange-500/10 border border-orange-500/20'}`}>
-                      {userData?.verified ? (
-                        <CheckCircle2 className="w-8 h-8 text-green-500" />
-                      ) : (
-                        <HelpCircle className="w-8 h-8 text-orange-500" />
-                      )}
+                      {userData?.verified ? <CheckCircle2 className="w-8 h-8 text-green-500" /> : <HelpCircle className="w-8 h-8 text-orange-500" />}
                     </div>
                     <div className="space-y-1 flex-1">
                       <div className="flex items-center justify-between">
                         <h3 className="text-lg font-semibold">
                           KYC Status:{' '}
                           <span className={`${userData?.verified ? 'text-green-500' : 'text-orange-500'}`}>
-                            {userData?.verified ? 'Verified' : (
-                              userData?.kyc_status === 'not_started' ? 'Not Started' :
-                              userData?.kyc_status === 'identity_submitted' ? 'Identity Submitted' :
-                              userData?.kyc_status === 'under_review' ? 'Under Review' : 'Not Verified'
-                            )}
+                            {userData?.verified ? 'Verified' : userData?.kyc_status === 'not_started' ? 'Not Started' : userData?.kyc_status === 'identity_submitted' ? 'Identity Submitted' : userData?.kyc_status === 'under_review' ? 'Under Review' : 'Not Verified'}
                           </span>
                         </h3>
-                        {userData?.kyc_status === 'under_review' && (
-                          <span className="text-sm text-orange-500 font-medium">80%</span>
-                        )}
+                        {userData?.kyc_status === 'under_review' && <span className="text-sm text-orange-500 font-medium">80%</span>}
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        {userData?.verified 
-                          ? 'Your account is fully verified and has access to all features'
-                          : userData?.kyc_status === 'under_review' 
-                            ? 'Final verification check in progress'
-                            : 'Complete verification to unlock all features'}
+                        {userData?.verified ? 'Your account is fully verified and has access to all features' : userData?.kyc_status === 'under_review' ? 'Final verification check in progress' : 'Complete verification to unlock all features'}
                       </p>
-                      {userData?.kyc_status === 'under_review' && (
-                        <div className="mt-4 w-full bg-orange-500/10 rounded-full h-2 overflow-hidden">
-                          <div 
-                            className="h-full bg-gradient-to-r from-orange-500 to-orange-400 transition-all duration-1000"
-                            style={{ width: '80%' }}
-                          />
-                        </div>
-                      )}
+                      {userData?.kyc_status === 'under_review' && <div className="mt-4 w-full bg-orange-500/10 rounded-full h-2 overflow-hidden">
+                          <div className="h-full bg-gradient-to-r from-orange-500 to-orange-400 transition-all duration-1000" style={{
+                        width: '80%'
+                      }} />
+                        </div>}
                     </div>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className={`p-6 rounded-xl border transition-all duration-300 space-y-4 ${
-                    userData?.kyc_status === 'not_started'
-                      ? 'bg-primary/5 border-primary/20'
-                      : 'bg-[#12151C]/80 border-primary/10'
-                  }`}>
+                  <div className={`p-6 rounded-xl border transition-all duration-300 space-y-4 ${userData?.kyc_status === 'not_started' ? 'bg-primary/5 border-primary/20' : 'bg-[#12151C]/80 border-primary/10'}`}>
                     <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${
-                        userData?.kyc_status === 'not_started'
-                          ? 'bg-primary/20'
-                          : 'bg-green-500/20'
-                      }`}>
-                        <User className={`w-5 h-5 ${
-                          userData?.kyc_status === 'not_started'
-                            ? 'text-primary'
-                            : 'text-green-500'
-                        }`} />
+                      <div className={`p-2 rounded-lg ${userData?.kyc_status === 'not_started' ? 'bg-primary/20' : 'bg-green-500/20'}`}>
+                        <User className={`w-5 h-5 ${userData?.kyc_status === 'not_started' ? 'text-primary' : 'text-green-500'}`} />
                       </div>
                       <h3 className="font-semibold">Identity</h3>
                     </div>
-                    {userData?.kyc_status === 'not_started' && (
-                      <Button 
-                        onClick={startKYCVerification}
-                        className="w-full bg-primary/20 hover:bg-primary/30 text-primary"
-                      >
+                    {userData?.kyc_status === 'not_started' && <Button onClick={startKYCVerification} className="w-full bg-primary/20 hover:bg-primary/30 text-primary">
                         Start Verification
-                      </Button>
-                    )}
+                      </Button>}
                   </div>
 
-                  <div className={`p-6 rounded-xl border transition-all duration-300 space-y-4 ${
-                    userData?.kyc_status === 'identity_submitted'
-                      ? 'bg-primary/5 border-primary/20'
-                      : 'bg-[#12151C]/80 border-primary/10'
-                  }`}>
+                  <div className={`p-6 rounded-xl border transition-all duration-300 space-y-4 ${userData?.kyc_status === 'identity_submitted' ? 'bg-primary/5 border-primary/20' : 'bg-[#12151C]/80 border-primary/10'}`}>
                     <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${
-                        userData?.kyc_status === 'identity_submitted'
-                          ? 'bg-primary/20'
-                          : userData?.kyc_status === 'under_review' || userData?.verified
-                          ? 'bg-green-500/20'
-                          : 'bg-muted/20'
-                      }`}>
-                        <Home className={`w-5 h-5 ${
-                          userData?.kyc_status === 'identity_submitted'
-                            ? 'text-primary'
-                            : userData?.kyc_status === 'under_review' || userData?.verified
-                            ? 'text-green-500'
-                            : 'text-muted-foreground'
-                        }`} />
+                      <div className={`p-2 rounded-lg ${userData?.kyc_status === 'identity_submitted' ? 'bg-primary/20' : userData?.kyc_status === 'under_review' || userData?.verified ? 'bg-green-500/20' : 'bg-muted/20'}`}>
+                        <Home className={`w-5 h-5 ${userData?.kyc_status === 'identity_submitted' ? 'text-primary' : userData?.kyc_status === 'under_review' || userData?.verified ? 'text-green-500' : 'text-muted-foreground'}`} />
                       </div>
                       <h3 className="font-semibold">Address</h3>
                     </div>
-                    {(userData?.kyc_status === 'identity_submitted' || userData?.kyc_status === 'not_started') && (
-                      <Button 
-                        onClick={() => setIsAddressDialogOpen(true)}
-                        className="w-full bg-primary/20 hover:bg-primary/30 text-primary"
-                        disabled={userData?.kyc_status === 'not_started'}
-                      >
+                    {(userData?.kyc_status === 'identity_submitted' || userData?.kyc_status === 'not_started') && <Button onClick={() => setIsAddressDialogOpen(true)} className="w-full bg-primary/20 hover:bg-primary/30 text-primary" disabled={userData?.kyc_status === 'not_started'}>
                         Submit Address Documents
-                      </Button>
-                    )}
+                      </Button>}
                   </div>
 
-                  <div className={`p-6 rounded-xl border transition-all duration-300 space-y-4 ${
-                    userData?.verified
-                      ? 'bg-green-500/5 border-green-500/20'
-                      : 'bg-[#12151C]/80 border-primary/10'
-                  }`}>
+                  <div className={`p-6 rounded-xl border transition-all duration-300 space-y-4 ${userData?.verified ? 'bg-green-500/5 border-green-500/20' : 'bg-[#12151C]/80 border-primary/10'}`}>
                     <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${
-                        userData?.verified
-                          ? 'bg-green-500/20'
-                          : 'bg-muted/20'
-                      }`}>
-                        <BadgeCheck className={`w-5 h-5 ${
-                          userData?.verified
-                            ? 'text-green-500'
-                            : 'text-muted-foreground'
-                        }`} />
+                      <div className={`p-2 rounded-lg ${userData?.verified ? 'bg-green-500/20' : 'bg-muted/20'}`}>
+                        <BadgeCheck className={`w-5 h-5 ${userData?.verified ? 'text-green-500' : 'text-muted-foreground'}`} />
                       </div>
                       <h3 className="font-semibold">Verification</h3>
                     </div>
@@ -1405,37 +1073,15 @@ const Profile = () => {
         </Tabs>
       </div>
 
-      <WalletAddressModal
-        isOpen={isWalletModalOpen}
-        onClose={() => setIsWalletModalOpen(false)}
-        onGenerated={handleGenerateWalletAddress}
-      />
+      <WalletAddressModal isOpen={isWalletModalOpen} onClose={() => setIsWalletModalOpen(false)} onGenerated={handleGenerateWalletAddress} />
 
-      <DepositConfirmationDialog
-        isOpen={isDepositConfirmationOpen}
-        onClose={() => setIsDepositConfirmationOpen(false)}
-        amount={depositAmount}
-        onConfirm={handleDepositConfirm}
-      />
+      <DepositConfirmationDialog isOpen={isDepositConfirmationOpen} onClose={() => setIsDepositConfirmationOpen(false)} amount={depositAmount} onConfirm={handleDepositConfirm} />
 
-      <FraudWarningDialog
-        isOpen={isFraudWarningOpen}
-        onClose={() => setIsFraudWarningOpen(false)}
-      />
+      <FraudWarningDialog isOpen={isFraudWarningOpen} onClose={() => setIsFraudWarningOpen(false)} />
 
-      <KYCIdentityDialog
-        isOpen={isIdentityDialogOpen}
-        onClose={() => setIsIdentityDialogOpen(false)}
-        onSuccess={handleIdentitySuccess}
-        userId={user?.id || ''}
-      />
+      <KYCIdentityDialog isOpen={isIdentityDialogOpen} onClose={() => setIsIdentityDialogOpen(false)} onSuccess={handleIdentitySuccess} userId={user?.id || ''} />
 
-      <KYCAddressDialog
-        isOpen={isAddressDialogOpen}
-        onClose={handleAddressClose}
-        onSuccess={handleAddressSuccess}
-        userId={user?.id || ''}
-      />
+      <KYCAddressDialog isOpen={isAddressDialogOpen} onClose={handleAddressClose} onSuccess={handleAddressSuccess} userId={user?.id || ''} />
 
       <Dialog open={isExchangeDialogOpen} onOpenChange={setIsExchangeDialogOpen}>
         <DialogContent className="sm:max-w-md bg-background/95 backdrop-blur-xl border border-blue-500/10">
@@ -1450,32 +1096,18 @@ const Profile = () => {
               <label className="text-sm font-medium text-blue-500/80">
                 Amount (ETH)
               </label>
-              <Input
-                type="number"
-                step="0.0001"
-                min="0.0001"
-                value={exchangeAmount}
-                onChange={(e) => setExchangeAmount(e.target.value)}
-                placeholder="Enter amount to exchange"
-                className="bg-background/40 border-blue-500/20 focus:border-blue-500/40"
-              />
+              <Input type="number" step="0.0001" min="0.0001" value={exchangeAmount} onChange={e => setExchangeAmount(e.target.value)} placeholder="Enter amount to exchange" className="bg-background/40 border-blue-500/20 focus:border-blue-500/40" />
             </div>
             <div className="flex justify-between items-center">
               <p className="text-sm text-muted-foreground">Available to exchange: <span className="text-yellow-500 font-medium">{Number(userData?.frozen_balance || 0).toFixed(2)} ETH</span></p>
             </div>
-            <Button 
-              type="submit"
-              variant="exchange"
-              className="w-full"
-            >
+            <Button type="submit" variant="exchange" className="w-full">
               <RefreshCw className="h-4 w-4" />
               Request Exchange
             </Button>
           </form>
         </DialogContent>
       </Dialog>
-    </div>
-  );
+    </div>;
 };
-
 export default Profile;
