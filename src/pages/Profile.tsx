@@ -17,6 +17,7 @@ import FraudWarningDialog from "@/components/FraudWarningDialog";
 import KYCIdentityDialog from "@/components/KYCIdentityDialog";
 import KYCAddressDialog from "@/components/KYCAddressDialog";
 import { UserNFTCollection } from "@/components/nft/UserNFTCollection";
+
 interface Transaction {
   id: string;
   type: 'deposit' | 'withdraw' | 'purchase' | 'sale' | 'exchange';
@@ -26,6 +27,7 @@ interface Transaction {
   item?: string;
   frozen_until?: string;
 }
+
 interface UserData {
   id: string;
   email: string;
@@ -42,16 +44,19 @@ interface UserData {
   verified: boolean;
   kyc_status?: string;
 }
+
 interface TransactionTotals {
   total_deposits: number;
   total_withdrawals: number;
 }
+
 interface FrozenBalanceInfo {
   amount: number;
   days_left: number;
   unfreeze_date: string;
   transaction_id: string;
 }
+
 const Profile = () => {
   const {
     user,
@@ -84,6 +89,7 @@ const Profile = () => {
   const [showFrozenDetails, setShowFrozenDetails] = useState(false);
   const [isExchangeDialogOpen, setIsExchangeDialogOpen] = useState(false);
   const [exchangeAmount, setExchangeAmount] = useState("");
+
   const showDelayedToast = (title: string, description: string, variant: "default" | "destructive" = "default") => {
     setTimeout(() => {
       toast({
@@ -93,6 +99,7 @@ const Profile = () => {
       });
     }, 1000);
   };
+
   const handleLogout = async () => {
     try {
       await signOut();
@@ -102,6 +109,7 @@ const Profile = () => {
       showDelayedToast("Error", "Failed to log out", "destructive");
     }
   };
+
   const startKYCVerification = () => {
     try {
       if (!user?.id) {
@@ -122,6 +130,7 @@ const Profile = () => {
       });
     }
   };
+
   const handleIdentitySuccess = async () => {
     try {
       const {
@@ -144,6 +153,7 @@ const Profile = () => {
       });
     }
   };
+
   const handleAddressSuccess = async () => {
     try {
       const {
@@ -169,9 +179,11 @@ const Profile = () => {
       });
     }
   };
+
   const handleAddressClose = () => {
     setIsAddressDialogOpen(false);
   };
+
   const continueKYCVerification = () => {
     if (!user?.id) {
       toast({
@@ -183,9 +195,11 @@ const Profile = () => {
     }
     setIsAddressDialogOpen(true);
   };
+
   const handleTypeIconOnly = () => {
     return true;
   };
+
   const handleExchangeToUSDT = (e: React.FormEvent) => {
     e.preventDefault();
     const exchangeAmountNum = parseFloat(exchangeAmount);
@@ -218,7 +232,6 @@ const Profile = () => {
         }]);
         if (error) throw error;
 
-        // Fetch updated transactions
         const {
           data: transactionsData,
           error: transactionsError
@@ -262,6 +275,7 @@ const Profile = () => {
       });
     }
   };
+
   useEffect(() => {
     let isMounted = true;
     const fetchUserData = async () => {
@@ -384,10 +398,12 @@ const Profile = () => {
       isMounted = false;
     };
   }, [toast]);
+
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
+
   const handleEmailChange = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateEmail(newEmail)) {
@@ -419,6 +435,7 @@ const Profile = () => {
       });
     }
   };
+
   const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !userData?.id) return;
@@ -459,6 +476,7 @@ const Profile = () => {
       });
     }
   };
+
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmNewPassword) {
@@ -480,6 +498,7 @@ const Profile = () => {
       showDelayedToast("Error", "Failed to update password", "destructive");
     }
   };
+
   const handleWithdraw = async (e: React.FormEvent) => {
     e.preventDefault();
     const withdrawAmountNum = parseFloat(withdrawAmount);
@@ -533,6 +552,7 @@ const Profile = () => {
       });
     }
   };
+
   const handleDeposit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!userData?.wallet_address) {
@@ -556,6 +576,7 @@ const Profile = () => {
     }
     setIsDepositConfirmationOpen(true);
   };
+
   const handleDepositConfirm = () => {
     setIsDepositConfirmationOpen(false);
     setIsFraudWarningOpen(true);
@@ -565,6 +586,7 @@ const Profile = () => {
       description: `Deposit of ${depositAmount} the rejected. Please contact our support team on Telegram for transaction verification`
     });
   };
+
   const handleGenerateWalletAddress = async (address: string) => {
     try {
       const {
@@ -590,6 +612,7 @@ const Profile = () => {
       });
     }
   };
+
   if (isLoading) {
     return <div className="container mx-auto py-8 px-4 mt-16">
         <div className="max-w-4xl mx-auto">
@@ -597,6 +620,7 @@ const Profile = () => {
         </div>
       </div>;
   }
+
   return <div className="container mx-auto py-8 px-4 mt-16 min-h-screen bg-gradient-to-b from-background via-background/80 to-background/60">
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="relative p-6 sm:p-8 rounded-2xl overflow-hidden bg-gradient-to-r from-purple-500/10 via-primary/5 to-purple-500/10 border border-primary/10 backdrop-blur-sm shadow-xl">
@@ -839,7 +863,37 @@ const Profile = () => {
                         </div>
 
                         <div className="flex flex-col space-y-2 p-4">
-                          
+                          <div className="p-4 rounded-lg bg-black/20 backdrop-blur-sm border border-white/5 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-full flex items-center justify-center bg-eth/10">
+                                <img src="/lovable-uploads/45e115d6-ea04-42a5-aa1f-0d363238582f.png" alt="ETH" className="h-6 w-6" />
+                              </div>
+                              <div>
+                                <p className="text-gray-300 text-sm">Ethereum</p>
+                                <p className="text-white font-medium">ETH</p>
+                              </div>
+                            </div>
+                            <p className="text-amber-400 text-2xl font-bold">
+                              {Number(userData?.frozen_balance || 0).toFixed(2)}
+                            </p>
+                          </div>
+
+                          <div className="p-4 rounded-lg bg-black/20 backdrop-blur-sm border border-white/5 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-full flex items-center justify-center bg-usdt/10">
+                                <div className="h-6 w-6 flex items-center justify-center bg-usdt rounded-full text-white font-bold text-sm">
+                                  $
+                                </div>
+                              </div>
+                              <div>
+                                <p className="text-gray-300 text-sm">Tether</p>
+                                <p className="text-white font-medium">USDT</p>
+                              </div>
+                            </div>
+                            <p className="text-amber-400 text-2xl font-bold">
+                              {Number(userData?.frozen_usdt_balance || 0).toFixed(2)}
+                            </p>
+                          </div>
 
                           {showFrozenDetails && frozenBalanceDetails.length > 0 && <div className="mt-4 pt-4 space-y-3 border-t border-amber-500/20">
                               <p className="text-amber-400 font-medium text-sm">Upcoming Releases:</p>
@@ -1097,4 +1151,5 @@ const Profile = () => {
       </Dialog>
     </div>;
 };
+
 export default Profile;
