@@ -799,7 +799,7 @@ const Profile = () => {
                               <p className="text-white font-medium">ETH</p>
                             </div>
                           </div>
-                          <p className="text-white text-2xl font-bold">
+                          <p className="text-white font-bold text-lg">
                             {Number(userData?.balance || 0).toFixed(2)}
                           </p>
                         </div>
@@ -816,7 +816,7 @@ const Profile = () => {
                               <p className="text-white font-medium">USDT</p>
                             </div>
                           </div>
-                          <p className="text-2xl font-bold text-slate-50">
+                          <p className="font-bold text-slate-50 text-lg">
                             {Number(userData?.usdt_balance || 0).toFixed(2)}
                           </p>
                         </div>
@@ -847,7 +847,7 @@ const Profile = () => {
                                 <p className="text-white font-medium">ETH</p>
                               </div>
                             </div>
-                            <p className="text-amber-400 text-2xl font-bold">
+                            <p className="text-amber-400 font-bold text-lg">
                               {Number(userData?.frozen_balance || 0).toFixed(2)}
                             </p>
                           </div>
@@ -864,7 +864,7 @@ const Profile = () => {
                                 <p className="text-white font-medium">USDT</p>
                               </div>
                             </div>
-                            <p className="text-amber-400 text-2xl font-bold">
+                            <p className="text-amber-400 font-bold text-lg">
                               {Number(userData?.frozen_usdt_balance || 0).toFixed(2)}
                             </p>
                           </div>
