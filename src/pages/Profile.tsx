@@ -971,104 +971,131 @@ const Profile = () => {
               <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-[#1A1F2C]/90">
                 <CardContent className="p-8">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div className="bg-gradient-to-br from-primary/10 to-purple-600/5 rounded-xl border border-primary/20 p-6 shadow-md hover:shadow-primary/5 transition-all duration-300">
-                      <p className="text-sm text-muted-foreground mb-2">Available Balance</p>
-                      <div className="flex flex-col gap-3">
+                    <div className="rounded-xl bg-balance-available/90 overflow-hidden">
+                      <div className="p-4 flex justify-between items-center">
                         <div className="flex items-center gap-3">
-                          <img 
-                            src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
-                            alt="ETH"
-                            className="h-10 w-10"
-                          />
-                          <h2 className="text-4xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
-                            {Number(userData?.balance || 0).toFixed(2)}
-                          </h2>
-                        </div>
-                        <div className="flex items-center gap-3 mt-2">
-                          <div className="flex items-center justify-center bg-green-500/10 rounded-full h-10 w-10">
-                            <DollarSign className="h-6 w-6 text-green-500" />
+                          <div className="p-2 rounded-full bg-balance-available-accent/20">
+                            <Wallet className="h-5 w-5 text-balance-available-accent" />
                           </div>
-                          <h2 className="text-4xl font-bold text-green-500">
+                          <h3 className="text-lg font-semibold text-white">Available Balance</h3>
+                        </div>
+                        <div className="px-3 py-1 rounded-full bg-purple-800/50 border border-purple-500/20 text-xs font-medium text-purple-400">
+                          Active
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col space-y-2 p-4">
+                        <div className="p-4 rounded-lg bg-black/20 backdrop-blur-sm border border-white/5 flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-eth/10">
+                              <img 
+                                src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                                alt="ETH"
+                                className="h-6 w-6"
+                              />
+                            </div>
+                            <div>
+                              <p className="text-gray-300 text-sm">Ethereum</p>
+                              <p className="text-white font-medium">ETH</p>
+                            </div>
+                          </div>
+                          <p className="text-white text-2xl font-bold">
+                            {Number(userData?.balance || 0).toFixed(2)}
+                          </p>
+                        </div>
+
+                        <div className="p-4 rounded-lg bg-black/20 backdrop-blur-sm border border-white/5 flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-usdt/10">
+                              <div className="h-6 w-6 flex items-center justify-center bg-usdt rounded-full text-white font-bold text-sm">
+                                $
+                              </div>
+                            </div>
+                            <div>
+                              <p className="text-gray-300 text-sm">Tether</p>
+                              <p className="text-white font-medium">USDT</p>
+                            </div>
+                          </div>
+                          <p className="text-green-400 text-2xl font-bold">
                             {Number(userData?.usdt_balance || 0).toFixed(2)}
-                          </h2>
+                          </p>
                         </div>
                       </div>
                     </div>
-                    
+
                     {Number(userData?.frozen_balance || 0) > 0 && (
-                      <div className="bg-gradient-to-br from-yellow-500/10 to-amber-600/5 rounded-xl border border-yellow-500/20 p-6 shadow-md hover:shadow-yellow-500/5 transition-all duration-300">
-                        <div className="flex justify-between items-center">
-                          <p className="text-sm text-muted-foreground mb-2">Hold Balance</p>
-                          <div className="flex gap-2">
-                            <Button
-                              variant="outline"
-                              className="border-yellow-500/20 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 h-8 px-3"
-                              size="sm"
-                              onClick={() => setShowFrozenDetails(!showFrozenDetails)}
-                            >
-                              {showFrozenDetails ? "Hide Details" : "Show Details"}
-                            </Button>
-                          </div>
-                        </div>
-                        <div className="flex flex-col gap-3 mt-2">
+                      <div className="rounded-xl bg-balance-hold/90 overflow-hidden">
+                        <div className="p-4 flex justify-between items-center">
                           <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-full bg-yellow-500/20">
-                              <LockIcon className="h-6 w-6 text-yellow-500" />
+                            <div className="p-2 rounded-full bg-balance-hold-accent/20">
+                              <LockIcon className="h-5 w-5 text-balance-hold-accent" />
                             </div>
-                            <h2 className="text-4xl font-bold text-yellow-500">
-                              {Number(userData?.frozen_balance || 0).toFixed(2)}
-                            </h2>
+                            <h3 className="text-lg font-semibold text-white">Hold Balance</h3>
                           </div>
-                          <div className="flex items-center gap-3 mt-1">
-                            <div className="flex items-center justify-center bg-blue-500/20 rounded-full h-10 w-10">
-                              <DollarSign className="h-6 w-6 text-blue-500" />
-                            </div>
-                            <h2 className="text-4xl font-bold text-blue-500">
-                              {Number(userData?.frozen_usdt_balance || 0).toFixed(2)}
-                            </h2>
-                          </div>
-                          <Button
-                            variant="exchange"
-                            onClick={() => setIsExchangeDialogOpen(true)}
-                            className="mt-3"
+                          <Button 
+                            variant="outline" 
+                            className="px-3 py-1 h-auto border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-xs"
+                            onClick={() => setShowFrozenDetails(!showFrozenDetails)}
                           >
-                            <RefreshCw className="h-4 w-4 mr-2" />
-                            <span>Exchange to USDT</span>
+                            {showFrozenDetails ? "Hide Details" : "Show Details"}
                           </Button>
                         </div>
-                        <p className="text-sm text-yellow-500/80 mt-2">
-                          Funds from NFT sales are frozen for 15 days before being available
-                        </p>
-                        
-                        {showFrozenDetails && frozenBalanceDetails.length > 0 && (
-                          <div className="mt-4 border-t border-yellow-500/20 pt-4 space-y-3 animate-in fade-in duration-300">
-                            <p className="text-sm font-medium text-yellow-500/80">Upcoming Releases:</p>
-                            <div className="grid gap-3">
-                              {frozenBalanceDetails.map((item) => (
-                                <div 
-                                  key={item.transaction_id} 
-                                  className="bg-yellow-500/5 border border-yellow-500/20 rounded-lg p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
-                                >
-                                  <div className="flex items-center gap-2">
-                                    <Clock className="h-4 w-4 text-yellow-500/80" />
-                                    <span className="text-yellow-500/90 font-medium">{item.days_left} days left</span>
-                                  </div>
-                                  <div className="flex items-center justify-between sm:gap-4">
-                                    <div className="flex items-center gap-1.5">
-                                      <img 
-                                        src="/lovable-uploads/0e51dc88-2aac-485e-84c5-0bb4ab88f00b.png" 
-                                        alt="ETH" 
-                                        className="h-4 w-4"
-                                      />
-                                      <span className="font-bold text-yellow-500">{item.amount.toFixed(2)}</span>
-                                    </div>
-                                    <span className="text-xs text-yellow-500/70">{item.unfreeze_date}</span>
-                                  </div>
+
+                        <div className="flex flex-col space-y-2 p-4">
+                          <div className="p-4 rounded-lg bg-black/20 backdrop-blur-sm border border-white/5 flex items-center justify-between">
+                            <div className="flex flex-col space-y-1">
+                              <div className="flex items-center gap-2">
+                                <div className="w-6 h-6 rounded-full bg-yellow-600/30 flex items-center justify-center">
+                                  <LockIcon className="h-3 w-3 text-yellow-500" />
                                 </div>
-                              ))}
+                                <p className="text-gray-300 text-sm">Frozen ETH</p>
+                              </div>
+                              <p className="text-amber-400 text-sm">Hold Period: 15 days</p>
                             </div>
+                            <p className="text-amber-400 text-2xl font-bold">
+                              {Number(userData?.frozen_balance || 0).toFixed(2)}
+                            </p>
                           </div>
-                        )}
+
+                          {showFrozenDetails && frozenBalanceDetails.length > 0 && (
+                            <div className="mt-4 pt-4 space-y-3 border-t border-amber-500/20">
+                              <p className="text-amber-400 font-medium text-sm">Upcoming Releases:</p>
+                              <div className="max-h-[150px] overflow-y-auto pr-1 space-y-2 scrollbar-thin scrollbar-thumb-amber-500/20 scrollbar-track-transparent">
+                                {frozenBalanceDetails.map((item) => (
+                                  <div 
+                                    key={item.transaction_id} 
+                                    className="p-3 rounded-lg bg-black/30 border border-amber-500/20 flex items-center justify-between"
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      <Clock className="h-4 w-4 text-amber-500" />
+                                      <span className="text-amber-300 text-sm">{item.days_left} days remaining</span>
+                                    </div>
+                                    <div className="flex items-center gap-4">
+                                      <div className="flex items-center gap-1.5">
+                                        <div className="w-5 h-5 rounded-full flex items-center justify-center bg-yellow-600/30">
+                                          <LockIcon className="h-3 w-3 text-yellow-500" />
+                                        </div>
+                                        <span className="text-amber-400 font-bold">{item.amount.toFixed(2)}</span>
+                                      </div>
+                                      <span className="text-xs text-amber-400/70 px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/20">
+                                        {item.unfreeze_date}
+                                      </span>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          <Button 
+                            variant="outline" 
+                            className="w-full mt-2 bg-blue-700/50 hover:bg-blue-700/70 border-blue-600/30 text-blue-300 flex items-center justify-center gap-2"
+                            onClick={() => setIsExchangeDialogOpen(true)}
+                          >
+                            <RefreshCw className="h-4 w-4" />
+                            Exchange to USDT
+                          </Button>
+                        </div>
                       </div>
                     )}
                   </div>

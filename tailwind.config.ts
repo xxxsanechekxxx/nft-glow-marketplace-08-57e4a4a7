@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,21 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Add custom balance card colors
+				'balance-available': {
+					DEFAULT: '#2A1E57',  // Deep purple background
+					accent: '#9b87f5',   // Purple accent 
+				},
+				'balance-hold': {
+					DEFAULT: '#2A2210',  // Dark amber background
+					accent: '#f5c842',   // Amber accent
+				},
+				'eth': {
+					DEFAULT: '#627EEA',  // Ethereum blue
+				},
+				'usdt': {
+					DEFAULT: '#26A17B',  // Tether green
 				}
 			},
 			borderRadius: {
