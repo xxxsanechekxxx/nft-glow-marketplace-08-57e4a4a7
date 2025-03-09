@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -62,19 +63,20 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
+				// Add custom balance card colors
 				'balance-available': {
-					DEFAULT: '#2A1E57',
-					accent: '#9b87f5',
+					DEFAULT: '#2A1E57',  // Deep purple background
+					accent: '#9b87f5',   // Purple accent 
 				},
 				'balance-hold': {
-					DEFAULT: '#2A2210',
-					accent: '#f5c842',
+					DEFAULT: '#2A2210',  // Dark amber background
+					accent: '#f5c842',   // Amber accent
 				},
 				'eth': {
-					DEFAULT: '#627EEA',
+					DEFAULT: '#627EEA',  // Ethereum blue
 				},
 				'usdt': {
-					DEFAULT: '#26A17B',
+					DEFAULT: '#26A17B',  // Tether green
 				}
 			},
 			borderRadius: {
@@ -103,9 +105,6 @@ export default {
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out'
-			},
-			backgroundImage: {
-				'ethereum-icon': "url('/lovable-uploads/1d8787ff-16c7-46a6-bcc5-b651edf92aab.png')",
 			}
 		}
 	},
