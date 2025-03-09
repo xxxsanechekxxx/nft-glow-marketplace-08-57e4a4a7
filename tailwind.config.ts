@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -85,49 +84,13 @@ export default {
 					to: {
 						height: '0'
 					}
-				},
-				'pulse-glow': {
-					'0%, 100%': { 
-						opacity: 0.6,
-						transform: 'scale(1)' 
-					},
-					'50%': { 
-						opacity: 1,
-						transform: 'scale(1.05)' 
-					},
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out',
-				'pulse-glow': 'pulse-glow 3s ease-in-out infinite'
+				'accordion-up': 'accordion-up 0.2s ease-out'
 			}
 		}
 	},
-	plugins: [
-		require("tailwindcss-animate"),
-		function({ addUtilities }) {
-			const newUtilities = {
-				'.custom-scrollbar': {
-					'scrollbarWidth': 'thin',
-					'scrollbarColor': 'rgba(255, 255, 255, 0.1) transparent',
-					'&::-webkit-scrollbar': {
-						width: '6px',
-						height: '6px',
-					},
-					'&::-webkit-scrollbar-track': {
-						background: 'transparent',
-					},
-					'&::-webkit-scrollbar-thumb': {
-						background: 'rgba(255, 255, 255, 0.1)',
-						borderRadius: '20px',
-					},
-					'&::-webkit-scrollbar-thumb:hover': {
-						background: 'rgba(255, 255, 255, 0.2)',
-					},
-				},
-			};
-			addUtilities(newUtilities, ['responsive', 'hover']);
-		},
-	],
+	plugins: [require("tailwindcss-animate")],
 } satisfies Config;
