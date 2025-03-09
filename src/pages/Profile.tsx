@@ -875,7 +875,7 @@ const Profile = () => {
                                 {frozenBalanceDetails.map(item => <div key={item.transaction_id} className="p-3 rounded-lg bg-black/30 border border-amber-500/20 flex items-center justify-between">
                                     <div className="flex items-center gap-2">
                                       <Clock className="h-4 w-4 text-amber-500" />
-                                      <span className="text-amber-300 text-sm">{item.days_left} days remaining</span>
+                                      <span className="text-amber-300 font-semibold text-xs">{item.days_left} days remaining</span>
                                     </div>
                                     <div className="flex items-center gap-4">
                                       <div className="flex items-center gap-1.5">
