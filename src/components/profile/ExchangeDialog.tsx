@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -134,6 +135,11 @@ export const ExchangeDialog = ({
     }
   };
 
+  const toggleExchangeDirection = () => {
+    setExchangeDirection(prev => prev === 'eth_to_usdt' ? 'usdt_to_eth' : 'eth_to_usdt');
+    setExchangeAmount("");
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-md bg-gradient-to-b from-[#261E57]/95 to-[#1E1245]/95 backdrop-blur-xl border border-purple-500/20 shadow-lg shadow-purple-500/10">
@@ -148,34 +154,32 @@ export const ExchangeDialog = ({
         
         <form onSubmit={handleExchange} className="space-y-5 relative">
           <div className="p-5 rounded-xl bg-purple-500/5 border border-purple-500/10 shadow-inner">
-            <Label className="text-sm font-medium text-purple-400 mb-3 block">Select Direction</Label>
-            <div className="grid grid-cols-2 gap-2 bg-background/20 rounded-lg p-1 border border-purple-400/10">
-              <button 
-                type="button" 
-                className={`py-3 px-3 rounded-md flex items-center justify-center gap-2 transition-all ${
-                  exchangeDirection === 'eth_to_usdt' 
-                    ? 'bg-gradient-to-r from-purple-600 to-indigo-500 text-white shadow-md' 
-                    : 'text-purple-400 hover:bg-purple-500/10'
-                }`}
-                onClick={() => setExchangeDirection('eth_to_usdt')}
-              >
-                <img src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" alt="ETH" className="h-5 w-5" />
-                <span>ETH to USDT</span>
-              </button>
-              <button 
-                type="button" 
-                className={`py-3 px-3 rounded-md flex items-center justify-center gap-2 transition-all ${
-                  exchangeDirection === 'usdt_to_eth' 
-                    ? 'bg-gradient-to-r from-purple-600 to-indigo-500 text-white shadow-md' 
-                    : 'text-purple-400 hover:bg-purple-500/10'
-                }`} 
-                onClick={() => setExchangeDirection('usdt_to_eth')}
-              >
-                <div className="h-5 w-5 flex items-center justify-center bg-usdt rounded-full text-white font-bold text-xs">
-                  $
+            <Label className="text-sm font-medium text-purple-400 mb-3 block">Exchange Direction</Label>
+            
+            <div className="flex items-center justify-between">
+              <div className={`flex-1 p-3 rounded-lg ${exchangeDirection === 'eth_to_usdt' ? 'bg-purple-500/20 border border-purple-500/30' : 'bg-transparent'} text-center`}>
+                <div className="flex flex-col items-center justify-center gap-2">
+                  <img src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" alt="ETH" className="h-8 w-8" />
+                  <span className="text-sm font-medium text-purple-100">Ethereum</span>
                 </div>
-                <span>USDT to ETH</span>
+              </div>
+              
+              <button 
+                type="button"
+                onClick={toggleExchangeDirection}
+                className="w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-r from-purple-600 to-indigo-500 hover:from-purple-700 hover:to-indigo-600 text-white shadow-md shadow-purple-600/20 border border-purple-500/50 transition-all duration-300 transform hover:rotate-180 mx-2"
+              >
+                <RefreshCw className="h-5 w-5" />
               </button>
+              
+              <div className={`flex-1 p-3 rounded-lg ${exchangeDirection === 'usdt_to_eth' ? 'bg-purple-500/20 border border-purple-500/30' : 'bg-transparent'} text-center`}>
+                <div className="flex flex-col items-center justify-center gap-2">
+                  <div className="h-8 w-8 flex items-center justify-center bg-usdt rounded-full text-white font-bold text-sm">
+                    $
+                  </div>
+                  <span className="text-sm font-medium text-purple-100">USDT</span>
+                </div>
+              </div>
             </div>
           </div>
           
