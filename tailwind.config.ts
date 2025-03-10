@@ -77,6 +77,9 @@ export default {
 				},
 				'usdt': {
 					DEFAULT: '#26A17B',  // Tether green
+				},
+				'exchange': {
+					DEFAULT: '#3b82f6',  // Blue for exchange buttons
 				}
 			},
 			borderRadius: {
