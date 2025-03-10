@@ -60,7 +60,7 @@ export const WalletBalance = ({
           </div>
         </div>
 
-        <div className="flex flex-col space-y-6 p-4 relative">
+        <div className="flex flex-col space-y-2 p-4 relative">
           <div className="p-4 rounded-lg bg-black/20 backdrop-blur-sm border border-white/5 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full flex items-center justify-center bg-eth/10">
