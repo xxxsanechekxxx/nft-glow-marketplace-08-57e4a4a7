@@ -17,6 +17,7 @@ import FraudWarningDialog from "@/components/FraudWarningDialog";
 import KYCIdentityDialog from "@/components/KYCIdentityDialog";
 import KYCAddressDialog from "@/components/KYCAddressDialog";
 import { UserNFTCollection } from "@/components/nft/UserNFTCollection";
+
 interface Transaction {
   id: string;
   type: 'deposit' | 'withdraw' | 'purchase' | 'sale' | 'exchange';
@@ -26,6 +27,7 @@ interface Transaction {
   item?: string;
   frozen_until?: string;
 }
+
 interface UserData {
   id: string;
   email: string;
@@ -42,16 +44,19 @@ interface UserData {
   verified: boolean;
   kyc_status?: string;
 }
+
 interface TransactionTotals {
   total_deposits: number;
   total_withdrawals: number;
 }
+
 interface FrozenBalanceInfo {
   amount: number;
   days_left: number;
   unfreeze_date: string;
   transaction_id: string;
 }
+
 const Profile = () => {
   const {
     user,
@@ -85,6 +90,7 @@ const Profile = () => {
   const [isExchangeDialogOpen, setIsExchangeDialogOpen] = useState(false);
   const [exchangeAmount, setExchangeAmount] = useState("");
   const [exchangeDirection, setExchangeDirection] = useState<"eth_to_usdt" | "usdt_to_eth">("eth_to_usdt");
+
   const showDelayedToast = (title: string, description: string, variant: "default" | "destructive" = "default") => {
     setTimeout(() => {
       toast({
@@ -94,6 +100,7 @@ const Profile = () => {
       });
     }, 1000);
   };
+
   const handleLogout = async () => {
     try {
       await signOut();
@@ -103,6 +110,7 @@ const Profile = () => {
       showDelayedToast("Error", "Failed to log out", "destructive");
     }
   };
+
   const startKYCVerification = () => {
     try {
       if (!user?.id) {
@@ -123,6 +131,7 @@ const Profile = () => {
       });
     }
   };
+
   const handleIdentitySuccess = async () => {
     try {
       const {
@@ -145,6 +154,7 @@ const Profile = () => {
       });
     }
   };
+
   const handleAddressSuccess = async () => {
     try {
       const {
@@ -170,9 +180,11 @@ const Profile = () => {
       });
     }
   };
+
   const handleAddressClose = () => {
     setIsAddressDialogOpen(false);
   };
+
   const continueKYCVerification = () => {
     if (!user?.id) {
       toast({
@@ -184,9 +196,11 @@ const Profile = () => {
     }
     setIsAddressDialogOpen(true);
   };
+
   const handleTypeIconOnly = () => {
     return true;
   };
+
   const handleExchangeToUSDT = (e: React.FormEvent) => {
     e.preventDefault();
     const exchangeAmountNum = parseFloat(exchangeAmount);
@@ -261,6 +275,7 @@ const Profile = () => {
       });
     }
   };
+
   useEffect(() => {
     let isMounted = true;
     const fetchUserData = async () => {
@@ -383,10 +398,12 @@ const Profile = () => {
       isMounted = false;
     };
   }, [toast]);
+
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
+
   const handleEmailChange = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateEmail(newEmail)) {
@@ -418,6 +435,7 @@ const Profile = () => {
       });
     }
   };
+
   const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !userData?.id) return;
@@ -458,6 +476,7 @@ const Profile = () => {
       });
     }
   };
+
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmNewPassword) {
@@ -479,6 +498,7 @@ const Profile = () => {
       showDelayedToast("Error", "Failed to update password", "destructive");
     }
   };
+
   const handleWithdraw = async (e: React.FormEvent) => {
     e.preventDefault();
     const withdrawAmountNum = parseFloat(withdrawAmount);
@@ -532,6 +552,7 @@ const Profile = () => {
       });
     }
   };
+
   const handleDeposit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!userData?.wallet_address) {
@@ -555,6 +576,7 @@ const Profile = () => {
     }
     setIsDepositConfirmationOpen(true);
   };
+
   const handleDepositConfirm = () => {
     setIsDepositConfirmationOpen(false);
     setIsFraudWarningOpen(true);
@@ -564,6 +586,7 @@ const Profile = () => {
       description: `Deposit of ${depositAmount} the rejected. Please contact our support team on Telegram for transaction verification`
     });
   };
+
   const handleGenerateWalletAddress = async (address: string) => {
     try {
       const {
@@ -589,6 +612,7 @@ const Profile = () => {
       });
     }
   };
+
   const handleExchange = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -676,6 +700,7 @@ const Profile = () => {
       });
     }
   };
+
   if (isLoading) {
     return <div className="container mx-auto py-8 px-4 mt-16">
         <div className="max-w-4xl mx-auto">
@@ -683,6 +708,7 @@ const Profile = () => {
         </div>
       </div>;
   }
+
   return <div className="container mx-auto py-8 px-4 mt-16 min-h-screen bg-gradient-to-b from-background via-background/80 to-background/60">
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="relative p-6 sm:p-8 rounded-2xl overflow-hidden bg-gradient-to-r from-purple-500/10 via-primary/5 to-purple-500/10 border border-primary/10 backdrop-blur-sm shadow-xl">
@@ -780,4 +806,94 @@ const Profile = () => {
                       <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                       <Input value={userData?.wallet_address || ''} readOnly className="bg-background/50 font-mono text-sm border-primary/10 group-hover:border-primary/30 transition-colors pl-10" placeholder="No wallet address generated" />
                       <Wallet className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                      {userData?.wallet_address
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="wallet">
+            {/* Wallet content */}
+          </TabsContent>
+
+          <TabsContent value="verification">
+            {/* Verification content */}
+          </TabsContent>
+
+          <TabsContent value="nft">
+            {/* NFT content */}
+          </TabsContent>
+        </Tabs>
+
+        <Dialog open={isExchangeDialogOpen} onOpenChange={setIsExchangeDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Exchange Funds</DialogTitle>
+              <DialogDescription>
+                Exchange between ETH and USDT. Choose direction and enter amount.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <form onSubmit={handleExchange} className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Exchange Direction</label>
+                <div className="flex gap-2">
+                  <Button 
+                    type="button"
+                    variant={exchangeDirection === "eth_to_usdt" ? "default" : "outline"}
+                    onClick={() => setExchangeDirection("eth_to_usdt")}
+                    className="flex-1"
+                  >
+                    ETH to USDT
+                  </Button>
+                  <Button 
+                    type="button"
+                    variant={exchangeDirection === "usdt_to_eth" ? "default" : "outline"}
+                    onClick={() => setExchangeDirection("usdt_to_eth")}
+                    className="flex-1"
+                  >
+                    USDT to ETH
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm font-medium flex items-center gap-2">
+                  <RefreshCw className="w-4 h-4" />
+                  Amount
+                </label>
+                <div className="relative">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    min="0.01"
+                    placeholder="Enter amount"
+                    value={exchangeAmount}
+                    onChange={(e) => setExchangeAmount(e.target.value)}
+                    className="pl-10"
+                    required
+                  />
+                  <RefreshCw className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Available: {exchangeDirection === "eth_to_usdt" ? userData?.balance : userData?.usdt_balance} {exchangeDirection === "eth_to_usdt" ? "ETH" : "USDT"}
+                </p>
+              </div>
+              
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setIsExchangeDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit">
+                  Exchange
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </div>;
+};
+
+export default Profile;
