@@ -709,7 +709,8 @@ const Profile = () => {
       </div>;
   }
 
-  return <div className="container mx-auto py-8 px-4 mt-16 min-h-screen bg-gradient-to-b from-background via-background/80 to-background/60">
+  return (
+    <div className="container mx-auto py-8 px-4 mt-16 min-h-screen bg-gradient-to-b from-background via-background/80 to-background/60">
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="relative p-6 sm:p-8 rounded-2xl overflow-hidden bg-gradient-to-r from-purple-500/10 via-primary/5 to-purple-500/10 border border-primary/10 backdrop-blur-sm shadow-xl">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 animate-gradient"></div>
@@ -807,93 +808,3 @@ const Profile = () => {
                       <Input value={userData?.wallet_address || ''} readOnly className="bg-background/50 font-mono text-sm border-primary/10 group-hover:border-primary/30 transition-colors pl-10" placeholder="No wallet address generated" />
                       <Wallet className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                     </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="wallet">
-            {/* Wallet content */}
-          </TabsContent>
-
-          <TabsContent value="verification">
-            {/* Verification content */}
-          </TabsContent>
-
-          <TabsContent value="nft">
-            {/* NFT content */}
-          </TabsContent>
-        </Tabs>
-
-        <Dialog open={isExchangeDialogOpen} onOpenChange={setIsExchangeDialogOpen}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>Exchange Funds</DialogTitle>
-              <DialogDescription>
-                Exchange between ETH and USDT. Choose direction and enter amount.
-              </DialogDescription>
-            </DialogHeader>
-            
-            <form onSubmit={handleExchange} className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Exchange Direction</label>
-                <div className="flex gap-2">
-                  <Button 
-                    type="button"
-                    variant={exchangeDirection === "eth_to_usdt" ? "default" : "outline"}
-                    onClick={() => setExchangeDirection("eth_to_usdt")}
-                    className="flex-1"
-                  >
-                    ETH to USDT
-                  </Button>
-                  <Button 
-                    type="button"
-                    variant={exchangeDirection === "usdt_to_eth" ? "default" : "outline"}
-                    onClick={() => setExchangeDirection("usdt_to_eth")}
-                    className="flex-1"
-                  >
-                    USDT to ETH
-                  </Button>
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <label className="text-sm font-medium flex items-center gap-2">
-                  <RefreshCw className="w-4 h-4" />
-                  Amount
-                </label>
-                <div className="relative">
-                  <Input
-                    type="number"
-                    step="0.01"
-                    min="0.01"
-                    placeholder="Enter amount"
-                    value={exchangeAmount}
-                    onChange={(e) => setExchangeAmount(e.target.value)}
-                    className="pl-10"
-                    required
-                  />
-                  <RefreshCw className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Available: {exchangeDirection === "eth_to_usdt" ? userData?.balance : userData?.usdt_balance} {exchangeDirection === "eth_to_usdt" ? "ETH" : "USDT"}
-                </p>
-              </div>
-              
-              <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setIsExchangeDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button type="submit">
-                  Exchange
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
-      </div>
-    </div>;
-};
-
-export default Profile;
