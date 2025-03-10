@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -14,6 +15,7 @@ interface ExchangeDialogProps {
   userData: UserData | null;
   userId: string | undefined;
   setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>;
+  exchangeType?: 'regular' | 'frozen';
 }
 
 export const ExchangeDialog = ({ 
@@ -21,7 +23,8 @@ export const ExchangeDialog = ({
   setIsOpen, 
   userData, 
   userId,
-  setTransactions 
+  setTransactions,
+  exchangeType = 'regular'
 }: ExchangeDialogProps) => {
   const [exchangeAmount, setExchangeAmount] = useState("");
   const [exchangeDirection, setExchangeDirection] = useState<'eth_to_usdt' | 'usdt_to_eth'>('eth_to_usdt');
@@ -74,21 +77,25 @@ export const ExchangeDialog = ({
     }
 
     if (exchangeDirection === 'eth_to_usdt') {
-      const balanceNum = parseFloat(userData?.balance || "0");
+      const balanceField = exchangeType === 'regular' ? 'balance' : 'frozen_balance';
+      const balanceNum = parseFloat(exchangeType === 'regular' ? userData?.balance || "0" : userData?.frozen_balance || "0");
+      
       if (exchangeAmountNum > balanceNum) {
         toast({
           title: "Insufficient funds",
-          description: `Your ETH balance (${balanceNum} ETH) is less than the requested exchange amount`,
+          description: `Your ${exchangeType === 'regular' ? '' : 'frozen '}ETH balance (${balanceNum} ETH) is less than the requested exchange amount`,
           variant: "destructive"
         });
         return;
       }
     } else {
-      const usdtBalanceNum = parseFloat(userData?.usdt_balance || "0");
+      const usdtBalanceField = exchangeType === 'regular' ? 'usdt_balance' : 'frozen_usdt_balance';
+      const usdtBalanceNum = parseFloat(exchangeType === 'regular' ? userData?.usdt_balance || "0" : userData?.frozen_usdt_balance || "0");
+      
       if (exchangeAmountNum > usdtBalanceNum) {
         toast({
           title: "Insufficient funds",
-          description: `Your USDT balance (${usdtBalanceNum} USDT) is less than the requested exchange amount`,
+          description: `Your ${exchangeType === 'regular' ? '' : 'frozen '}USDT balance (${usdtBalanceNum} USDT) is less than the requested exchange amount`,
           variant: "destructive"
         });
         return;
@@ -101,7 +108,8 @@ export const ExchangeDialog = ({
           user_id: userId,
           type: 'exchange',
           amount: exchangeAmountNum,
-          status: 'pending'
+          status: 'pending',
+          is_frozen_exchange: exchangeType === 'frozen'
         }]);
         
         if (error) throw error;
@@ -142,7 +150,7 @@ export const ExchangeDialog = ({
       
       toast({
         title: "Exchange Requested",
-        description: `Your exchange request for ${exchangeAmount} ${exchangeDirection === 'eth_to_usdt' ? 'ETH to USDT' : 'USDT to ETH'} has been submitted`
+        description: `Your exchange request for ${exchangeAmount} ${exchangeDirection === 'eth_to_usdt' ? 'ETH to USDT' : 'USDT to ETH'} ${exchangeType === 'frozen' ? '(from frozen balance)' : ''} has been submitted`
       });
       
       setExchangeAmount("");
@@ -167,9 +175,11 @@ export const ExchangeDialog = ({
         <div className="absolute inset-0 rounded-lg bg-purple-500/5 pointer-events-none" />
         
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">Exchange Currency</DialogTitle>
+          <DialogTitle className="text-xl font-bold bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">
+            {exchangeType === 'frozen' ? 'Exchange Frozen Balance' : 'Exchange Currency'}
+          </DialogTitle>
           <DialogDescription className="text-purple-300/80">
-            Convert between ETH and USDT with ease
+            Convert between {exchangeType === 'frozen' ? 'frozen ' : ''}ETH and {exchangeType === 'frozen' ? 'frozen ' : ''}USDT with ease
           </DialogDescription>
         </DialogHeader>
         
@@ -275,8 +285,8 @@ export const ExchangeDialog = ({
               <p className="text-xs text-purple-400 mb-1">Available</p>
               <p className="text-sm text-purple-300">
                 {exchangeDirection === 'eth_to_usdt' 
-                  ? `${Number(userData?.balance || 0).toFixed(4)} ETH` 
-                  : `${Number(userData?.usdt_balance || 0).toFixed(2)} USDT`}
+                  ? `${Number(exchangeType === 'regular' ? userData?.balance || 0 : userData?.frozen_balance || 0).toFixed(4)} ETH` 
+                  : `${Number(exchangeType === 'regular' ? userData?.usdt_balance || 0 : userData?.frozen_usdt_balance || 0).toFixed(2)} USDT`}
               </p>
             </div>
           </div>

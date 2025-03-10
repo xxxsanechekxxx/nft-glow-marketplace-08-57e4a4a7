@@ -19,6 +19,7 @@ interface WalletTabProps {
   setWithdrawWalletAddress: (address: string) => void;
   handleWithdraw: (e: React.FormEvent) => void;
   transactions: Transaction[];
+  setExchangeType: (type: 'regular' | 'frozen') => void;
 }
 
 export const WalletTab = ({
@@ -33,7 +34,8 @@ export const WalletTab = ({
   withdrawWalletAddress,
   setWithdrawWalletAddress,
   handleWithdraw,
-  transactions
+  transactions,
+  setExchangeType
 }: WalletTabProps) => {
   return (
     <div className="space-y-6">
@@ -45,6 +47,7 @@ export const WalletTab = ({
             showFrozenDetails={showFrozenDetails}
             setShowFrozenDetails={setShowFrozenDetails}
             setIsExchangeDialogOpen={setIsExchangeDialogOpen}
+            setExchangeType={setExchangeType}
           />
         </CardContent>
       </Card>

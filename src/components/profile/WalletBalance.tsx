@@ -10,6 +10,7 @@ interface WalletBalanceProps {
   showFrozenDetails: boolean;
   setShowFrozenDetails: (show: boolean) => void;
   setIsExchangeDialogOpen: (open: boolean) => void;
+  setExchangeType: (type: 'regular' | 'frozen') => void;
 }
 
 export const WalletBalance = ({ 
@@ -17,7 +18,8 @@ export const WalletBalance = ({
   frozenBalanceDetails, 
   showFrozenDetails, 
   setShowFrozenDetails,
-  setIsExchangeDialogOpen
+  setIsExchangeDialogOpen,
+  setExchangeType
 }: WalletBalanceProps) => {
   const [exchangeRate, setExchangeRate] = useState<number | null>(null);
   const [isLoadingRate, setIsLoadingRate] = useState(false);
@@ -44,6 +46,16 @@ export const WalletBalance = ({
     
     return () => clearInterval(intervalId);
   }, []);
+
+  const handleRegularExchange = () => {
+    setExchangeType('regular');
+    setIsExchangeDialogOpen(true);
+  };
+
+  const handleFrozenExchange = () => {
+    setExchangeType('frozen');
+    setIsExchangeDialogOpen(true);
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -81,7 +93,7 @@ export const WalletBalance = ({
               variant="circularSmall" 
               size="circleSmall" 
               className="flex items-center justify-center circular-button-glow" 
-              onClick={() => setIsExchangeDialogOpen(true)}
+              onClick={handleRegularExchange}
               aria-label="Exchange currencies"
             >
               <ArrowRightLeft className="h-4 w-4" />
@@ -146,7 +158,7 @@ export const WalletBalance = ({
                 variant="circularSmall" 
                 size="circleSmall" 
                 className="flex items-center justify-center circular-button-glow border-amber-500/50 from-amber-600 to-orange-500 hover:from-amber-700 hover:to-orange-600 shadow-amber-600/20" 
-                onClick={() => setIsExchangeDialogOpen(true)}
+                onClick={handleFrozenExchange}
                 aria-label="Exchange frozen currencies"
               >
                 <ArrowRightLeft className="h-4 w-4" />

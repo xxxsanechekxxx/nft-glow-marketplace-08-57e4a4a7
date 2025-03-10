@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
@@ -42,6 +41,7 @@ const Profile = () => {
   const [frozenBalanceDetails, setFrozenBalanceDetails] = useState<FrozenBalanceInfo[]>([]);
   const [showFrozenDetails, setShowFrozenDetails] = useState(false);
   const [isExchangeDialogOpen, setIsExchangeDialogOpen] = useState(false);
+  const [exchangeType, setExchangeType] = useState<'regular' | 'frozen'>('regular');
 
   const showDelayedToast = (title: string, description: string, variant: "default" | "destructive" = "default") => {
     setTimeout(() => {
@@ -513,6 +513,7 @@ const Profile = () => {
               setWithdrawWalletAddress={setWithdrawWalletAddress}
               handleWithdraw={handleWithdraw}
               transactions={transactions}
+              setExchangeType={setExchangeType}
             />
           </TabsContent>
 
@@ -569,6 +570,7 @@ const Profile = () => {
         userData={userData}
         userId={user?.id}
         setTransactions={setTransactions}
+        exchangeType={exchangeType}
       />
     </div>
   );
