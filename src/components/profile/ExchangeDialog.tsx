@@ -28,7 +28,7 @@ export const ExchangeDialog = ({
   const [estimatedResult, setEstimatedResult] = useState<number | null>(null);
   const { toast } = useToast();
   
-  const exchangeRate = exchangeDirection === 'eth_to_usdt' ? 3150 : 0.000317;
+  const exchangeRate = exchangeDirection === 'eth_to_usdt' ? 2074 : 0.000482;
   
   useEffect(() => {
     if (exchangeAmount && !isNaN(parseFloat(exchangeAmount))) {
