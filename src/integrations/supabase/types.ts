@@ -155,6 +155,8 @@ export type Database = {
           created_at: string
           frozen_until: string | null
           id: string
+          is_frozen: boolean | null
+          is_frozen_exchange: boolean | null
           item: string | null
           status: Database["public"]["Enums"]["transaction_status"] | null
           type: Database["public"]["Enums"]["transaction_type"]
@@ -165,6 +167,8 @@ export type Database = {
           created_at?: string
           frozen_until?: string | null
           id?: string
+          is_frozen?: boolean | null
+          is_frozen_exchange?: boolean | null
           item?: string | null
           status?: Database["public"]["Enums"]["transaction_status"] | null
           type: Database["public"]["Enums"]["transaction_type"]
@@ -175,6 +179,8 @@ export type Database = {
           created_at?: string
           frozen_until?: string | null
           id?: string
+          is_frozen?: boolean | null
+          is_frozen_exchange?: boolean | null
           item?: string | null
           status?: Database["public"]["Enums"]["transaction_status"] | null
           type?: Database["public"]["Enums"]["transaction_type"]

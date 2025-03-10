@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -103,13 +104,17 @@ export const ExchangeDialog = ({
     
     try {
       const createTransaction = async () => {
+        // Set the correct flags based on the exchange type
+        const isFrozen = exchangeType === 'frozen';
+        const isFrozenExchange = exchangeType === 'frozen';
+        
         const { error } = await supabase.from('transactions').insert([{
           user_id: userId,
           type: 'exchange',
           amount: exchangeAmountNum,
           status: 'pending',
-          is_frozen_exchange: exchangeType === 'frozen',
-          is_frozen: exchangeType === 'frozen'
+          is_frozen: isFrozen,
+          is_frozen_exchange: isFrozenExchange
         }]);
         
         if (error) throw error;

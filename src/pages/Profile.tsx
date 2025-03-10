@@ -383,7 +383,7 @@ const Profile = () => {
           throw transactionsError;
         }
         
-        console.log("Profile data:", profileData);
+        console.log("Transaction data:", transactionsData);
         
         if (isMounted && currentUser) {
           const userData: UserData = {
