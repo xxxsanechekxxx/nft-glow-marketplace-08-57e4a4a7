@@ -50,8 +50,8 @@ export const WalletBalance = ({
             </p>
           </div>
 
-          {/* Circular exchange button - positioning fixed with proper margins */}
-          <div className="absolute left-1/2 top-[calc(50%-16px)] -translate-x-1/2 z-10">
+          {/* Circular exchange button - fixed positioning with margins for clear separation */}
+          <div className="flex justify-center items-center h-8 my-0 relative z-10">
             <Button 
               variant="circularSmall" 
               size="circleSmall" 
