@@ -257,7 +257,7 @@ export const ExchangeDialog = ({
                 <p className="text-sm text-purple-300">
                   1 {exchangeDirection === 'eth_to_usdt' ? 'ETH' : 'USDT'} = 
                 </p>
-                <p className="text-sm text-purple-100 font-semibold">
+                <p className="text-sm text-purple-300 font-medium ml-1">
                   {isLoadingRate ? (
                     <span className="text-purple-400/70">Loading...</span>
                   ) : (
