@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Wallet, LockIcon, RefreshCw } from "lucide-react";
+import { Wallet, LockIcon, ArrowRightLeft } from "lucide-react";
 import type { UserData, FrozenBalanceInfo } from "@/types/user";
 
 interface WalletBalanceProps {
@@ -84,7 +84,7 @@ export const WalletBalance = ({
               onClick={() => setIsExchangeDialogOpen(true)}
               aria-label="Exchange currencies"
             >
-              <RefreshCw className="h-4 w-4" />
+              <ArrowRightLeft className="h-4 w-4" />
             </Button>
           </div>
 
@@ -149,7 +149,7 @@ export const WalletBalance = ({
                 onClick={() => setIsExchangeDialogOpen(true)}
                 aria-label="Exchange frozen currencies"
               >
-                <RefreshCw className="h-4 w-4" />
+                <ArrowRightLeft className="h-4 w-4" />
               </Button>
             </div>
 

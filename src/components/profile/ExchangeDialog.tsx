@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { RefreshCw, DollarSign, ArrowDown, Info } from "lucide-react";
+import { ArrowRightLeft, DollarSign, ArrowDown, Info } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
 import type { UserData, Transaction } from "@/types/user";
