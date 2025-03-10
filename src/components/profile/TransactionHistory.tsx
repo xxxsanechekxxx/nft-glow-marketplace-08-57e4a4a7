@@ -35,7 +35,7 @@ export const TransactionHistory = ({ transactions }: TransactionHistoryProps) =>
               <TableBody>
                 {transactions.map(transaction => {
                   // Check if this is a frozen exchange transaction
-                  const isFrozenExchange = transaction.type === 'exchange' && transaction.is_frozen;
+                  const isFrozenExchange = transaction.type === 'exchange' && (transaction.is_frozen || transaction.is_frozen_exchange);
                   
                   return (
                     <TableRow 

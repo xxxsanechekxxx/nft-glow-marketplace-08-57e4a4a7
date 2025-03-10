@@ -141,7 +141,8 @@ export const ExchangeDialog = ({
               status: tx.status,
               item: tx.item,
               frozen_until: formattedFrozenUntil,
-              is_frozen: tx.is_frozen_exchange || tx.is_frozen
+              is_frozen: tx.is_frozen,
+              is_frozen_exchange: tx.is_frozen_exchange
             };
           }));
         }

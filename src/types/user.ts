@@ -37,4 +37,5 @@ export interface Transaction {
   item?: string;
   frozen_until?: string;
   is_frozen?: boolean;
+  is_frozen_exchange?: boolean;
 }
