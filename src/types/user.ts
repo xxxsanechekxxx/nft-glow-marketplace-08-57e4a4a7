@@ -36,4 +36,5 @@ export interface Transaction {
   status: 'pending' | 'completed' | 'failed';
   item?: string;
   frozen_until?: string;
+  is_frozen?: boolean;
 }

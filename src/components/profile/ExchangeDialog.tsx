@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -109,7 +108,8 @@ export const ExchangeDialog = ({
           type: 'exchange',
           amount: exchangeAmountNum,
           status: 'pending',
-          is_frozen_exchange: exchangeType === 'frozen'
+          is_frozen_exchange: exchangeType === 'frozen',
+          is_frozen: exchangeType === 'frozen'
         }]);
         
         if (error) throw error;
@@ -140,7 +140,8 @@ export const ExchangeDialog = ({
               created_at: formattedDate,
               status: tx.status,
               item: tx.item,
-              frozen_until: formattedFrozenUntil
+              frozen_until: formattedFrozenUntil,
+              is_frozen: tx.is_frozen_exchange || tx.is_frozen
             };
           }));
         }

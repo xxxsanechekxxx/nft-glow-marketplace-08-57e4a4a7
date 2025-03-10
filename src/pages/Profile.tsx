@@ -334,7 +334,6 @@ const Profile = () => {
           return;
         }
         
-        // Fetch transaction totals
         const { data: totalsData, error: totalsError } = await supabase.rpc(
           'get_user_transaction_totals',
           { user_uuid: currentUser.id }
@@ -349,7 +348,6 @@ const Profile = () => {
           setTransactionTotals(totalsData);
         }
         
-        // Fetch frozen balances
         const { data: frozenData, error: frozenError } = await supabase.rpc(
           'get_user_frozen_balances',
           { user_uuid: currentUser.id }
@@ -364,7 +362,6 @@ const Profile = () => {
           setFrozenBalanceDetails(frozenData[0].unfreezing_in_days || []);
         }
         
-        // Fetch profile data
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('*')
@@ -375,7 +372,6 @@ const Profile = () => {
           throw profileError;
         }
         
-        // Fetch transactions
         const { data: transactionsData, error: transactionsError } = await supabase
           .from('transactions')
           .select('*')
@@ -428,7 +424,8 @@ const Profile = () => {
                 created_at: formattedDate,
                 status: tx.status,
                 item: tx.item,
-                frozen_until: formattedFrozenUntil
+                frozen_until: formattedFrozenUntil,
+                is_frozen: tx.is_frozen_exchange || tx.is_frozen
               };
             }));
           }
@@ -531,7 +528,6 @@ const Profile = () => {
         </Tabs>
       </div>
 
-      {/* Модальные окна */}
       <WalletAddressModal 
         isOpen={isWalletModalOpen} 
         onClose={() => setIsWalletModalOpen(false)} 
