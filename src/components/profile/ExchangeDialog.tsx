@@ -7,7 +7,6 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
 import type { UserData, Transaction } from "@/types/user";
 import { Label } from "@/components/ui/label";
-
 interface ExchangeDialogProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
@@ -15,21 +14,21 @@ interface ExchangeDialogProps {
   userId: string | undefined;
   setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>;
 }
-
-export const ExchangeDialog = ({ 
-  isOpen, 
-  setIsOpen, 
-  userData, 
+export const ExchangeDialog = ({
+  isOpen,
+  setIsOpen,
+  userData,
   userId,
-  setTransactions 
+  setTransactions
 }: ExchangeDialogProps) => {
   const [exchangeAmount, setExchangeAmount] = useState("");
   const [exchangeDirection, setExchangeDirection] = useState<'eth_to_usdt' | 'usdt_to_eth'>('eth_to_usdt');
   const [estimatedResult, setEstimatedResult] = useState<number | null>(null);
   const [exchangeRate, setExchangeRate] = useState<number>(2074);
   const [isLoadingRate, setIsLoadingRate] = useState(false);
-  const { toast } = useToast();
-  
+  const {
+    toast
+  } = useToast();
   useEffect(() => {
     const fetchExchangeRate = async () => {
       try {
@@ -45,12 +44,9 @@ export const ExchangeDialog = ({
         setIsLoadingRate(false);
       }
     };
-
     fetchExchangeRate();
   }, [isOpen]);
-
-  const reverseExchangeRate = exchangeRate > 0 ? (1 / exchangeRate) : 0.000482;
-  
+  const reverseExchangeRate = exchangeRate > 0 ? 1 / exchangeRate : 0.000482;
   useEffect(() => {
     if (exchangeAmount && !isNaN(parseFloat(exchangeAmount))) {
       const rate = exchangeDirection === 'eth_to_usdt' ? exchangeRate : reverseExchangeRate;
@@ -59,11 +55,9 @@ export const ExchangeDialog = ({
       setEstimatedResult(null);
     }
   }, [exchangeAmount, exchangeRate, reverseExchangeRate, exchangeDirection]);
-
   const handleExchange = (e: React.FormEvent) => {
     e.preventDefault();
     const exchangeAmountNum = parseFloat(exchangeAmount);
-
     if (exchangeAmountNum <= 0) {
       toast({
         title: "Error",
@@ -72,7 +66,6 @@ export const ExchangeDialog = ({
       });
       return;
     }
-
     if (exchangeDirection === 'eth_to_usdt') {
       const balanceNum = parseFloat(userData?.balance || "0");
       if (exchangeAmountNum > balanceNum) {
@@ -94,37 +87,33 @@ export const ExchangeDialog = ({
         return;
       }
     }
-    
     try {
       const createTransaction = async () => {
-        const { error } = await supabase.from('transactions').insert([{
+        const {
+          error
+        } = await supabase.from('transactions').insert([{
           user_id: userId,
           type: 'exchange',
           amount: exchangeAmountNum,
           status: 'pending'
         }]);
-        
         if (error) throw error;
-
-        const { data: transactionsData, error: transactionsError } = await supabase
-          .from('transactions')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(10);
-        
+        const {
+          data: transactionsData,
+          error: transactionsError
+        } = await supabase.from('transactions').select('*').order('created_at', {
+          ascending: false
+        }).limit(10);
         if (transactionsError) throw transactionsError;
-        
         if (transactionsData) {
           setTransactions(transactionsData.map(tx => {
             const dateObj = new Date(tx.created_at);
             const formattedDate = `${dateObj.getDate().toString().padStart(2, '0')}/${(dateObj.getMonth() + 1).toString().padStart(2, '0')}`;
-            
             let formattedFrozenUntil = null;
             if (tx.frozen_until) {
               const frozenDate = new Date(tx.frozen_until);
               formattedFrozenUntil = `${frozenDate.getDate().toString().padStart(2, '0')}/${(frozenDate.getMonth() + 1).toString().padStart(2, '0')}/${frozenDate.getFullYear()}`;
             }
-            
             return {
               id: tx.id,
               type: tx.type,
@@ -137,14 +126,11 @@ export const ExchangeDialog = ({
           }));
         }
       };
-      
       createTransaction();
-      
       toast({
         title: "Exchange Requested",
         description: `Your exchange request for ${exchangeAmount} ${exchangeDirection === 'eth_to_usdt' ? 'ETH to USDT' : 'USDT to ETH'} has been submitted`
       });
-      
       setExchangeAmount("");
       setIsOpen(false);
     } catch (error) {
@@ -155,14 +141,11 @@ export const ExchangeDialog = ({
       });
     }
   };
-
   const toggleExchangeDirection = () => {
     setExchangeDirection(prev => prev === 'eth_to_usdt' ? 'usdt_to_eth' : 'eth_to_usdt');
     setExchangeAmount("");
   };
-
-  return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+  return <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-md bg-gradient-to-b from-[#261E57]/95 to-[#1E1245]/95 backdrop-blur-xl border border-purple-500/20 shadow-lg shadow-purple-500/10">
         <div className="absolute inset-0 rounded-lg bg-purple-500/5 pointer-events-none" />
         
@@ -185,11 +168,7 @@ export const ExchangeDialog = ({
                 </div>
               </div>
               
-              <button 
-                type="button"
-                onClick={toggleExchangeDirection}
-                className="w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-r from-purple-600 to-indigo-500 hover:from-purple-700 hover:to-indigo-600 text-white shadow-md shadow-purple-600/20 border border-purple-500/50 transition-all duration-300 transform hover:rotate-180 mx-2"
-              >
+              <button type="button" onClick={toggleExchangeDirection} className="w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-r from-purple-600 to-indigo-500 hover:from-purple-700 hover:to-indigo-600 text-white shadow-md shadow-purple-600/20 border border-purple-500/50 transition-all duration-300 transform hover:rotate-180 mx-2">
                 <RefreshCw className="h-5 w-5" />
               </button>
               
@@ -210,23 +189,11 @@ export const ExchangeDialog = ({
               Amount to Exchange
             </Label>
             <div className="relative">
-              <Input 
-                type="number" 
-                step="0.0001" 
-                min="0.0001" 
-                value={exchangeAmount} 
-                onChange={e => setExchangeAmount(e.target.value)} 
-                placeholder={`Enter amount in ${exchangeDirection === 'eth_to_usdt' ? 'ETH' : 'USDT'}`} 
-                className="bg-purple-900/10 border-purple-500/20 focus:border-purple-500/40 pl-12 pr-4 h-14 text-lg text-purple-100" 
-              />
+              <Input type="number" step="0.0001" min="0.0001" value={exchangeAmount} onChange={e => setExchangeAmount(e.target.value)} placeholder={`Enter amount in ${exchangeDirection === 'eth_to_usdt' ? 'ETH' : 'USDT'}`} className="bg-purple-900/10 border-purple-500/20 focus:border-purple-500/40 pl-12 pr-4 h-14 text-lg text-purple-100" />
               <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                {exchangeDirection === 'eth_to_usdt' ? (
-                  <img src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" alt="ETH" className="h-6 w-6" />
-                ) : (
-                  <div className="h-6 w-6 flex items-center justify-center bg-usdt rounded-full text-white font-bold text-xs">
+                {exchangeDirection === 'eth_to_usdt' ? <img src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" alt="ETH" className="h-6 w-6" /> : <div className="h-6 w-6 flex items-center justify-center bg-usdt rounded-full text-white font-bold text-xs">
                     $
-                  </div>
-                )}
+                  </div>}
               </div>
             </div>
           </div>
@@ -237,16 +204,12 @@ export const ExchangeDialog = ({
             </div>
             
             <div className="bg-purple-900/20 rounded-xl p-4 w-full border border-purple-500/10">
-              {estimatedResult !== null ? (
-                <div className="space-y-1">
+              {estimatedResult !== null ? <div className="space-y-1">
                   <p className="text-sm text-purple-400">You will receive approximately:</p>
                   <p className="text-xl font-semibold text-purple-100">
                     {estimatedResult.toFixed(4)} {exchangeDirection === 'eth_to_usdt' ? 'USDT' : 'ETH'}
                   </p>
-                </div>
-              ) : (
-                <p className="text-sm text-purple-400">Enter an amount to see conversion</p>
-              )}
+                </div> : <p className="text-sm text-purple-400">Enter an amount to see conversion</p>}
             </div>
           </div>
           
@@ -257,16 +220,10 @@ export const ExchangeDialog = ({
                 <p className="text-sm text-purple-300">
                   1 {exchangeDirection === 'eth_to_usdt' ? 'ETH' : 'USDT'} = 
                 </p>
-                <p className="text-sm text-purple-100 font-semibold">
-                  {isLoadingRate ? (
-                    <span className="text-purple-400/70">Loading...</span>
-                  ) : (
-                    <>
-                      {exchangeDirection === 'eth_to_usdt' 
-                        ? exchangeRate.toFixed(2) 
-                        : reverseExchangeRate.toFixed(6)} {exchangeDirection === 'eth_to_usdt' ? 'USDT' : 'ETH'}
-                    </>
-                  )}
+                <p className="text-sm text-purple-300">
+                  {isLoadingRate ? <span className="text-purple-400/70">Loading...</span> : <>
+                      {exchangeDirection === 'eth_to_usdt' ? exchangeRate.toFixed(2) : reverseExchangeRate.toFixed(6)} {exchangeDirection === 'eth_to_usdt' ? 'USDT' : 'ETH'}
+                    </>}
                 </p>
               </div>
             </div>
@@ -274,18 +231,13 @@ export const ExchangeDialog = ({
             <div className="bg-purple-900/20 p-3 rounded-lg border border-purple-500/10">
               <p className="text-xs text-purple-400 mb-1">Available</p>
               <p className="text-sm text-purple-300">
-                {exchangeDirection === 'eth_to_usdt' 
-                  ? `${Number(userData?.balance || 0).toFixed(4)} ETH` 
-                  : `${Number(userData?.usdt_balance || 0).toFixed(2)} USDT`}
+                {exchangeDirection === 'eth_to_usdt' ? `${Number(userData?.balance || 0).toFixed(4)} ETH` : `${Number(userData?.usdt_balance || 0).toFixed(2)} USDT`}
               </p>
             </div>
           </div>
           
           <div className="pt-2">
-            <Button 
-              type="submit" 
-              className="w-full bg-gradient-to-r from-purple-600 to-indigo-500 hover:from-purple-700 hover:to-indigo-600 text-white py-6 rounded-lg transition-all duration-300 shadow-md shadow-purple-600/20 border border-purple-500/50 h-12"
-            >
+            <Button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-indigo-500 hover:from-purple-700 hover:to-indigo-600 text-white py-6 rounded-lg transition-all duration-300 shadow-md shadow-purple-600/20 border border-purple-500/50 h-12">
               <RefreshCw className="h-5 w-5 mr-2" />
               Confirm Exchange
             </Button>
@@ -297,6 +249,5 @@ export const ExchangeDialog = ({
           </div>
         </form>
       </DialogContent>
-    </Dialog>
-  );
+    </Dialog>;
 };
