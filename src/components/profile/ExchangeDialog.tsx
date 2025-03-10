@@ -1,13 +1,16 @@
 
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowRightLeft, DollarSign, ArrowDown, Info } from "lucide-react";
+import { ArrowRightLeft, Info } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
 import type { UserData, Transaction } from "@/types/user";
-import { Label } from "@/components/ui/label";
+import { fetchExchangeRate, calculateReverseRate, calculateEstimatedResult } from "@/utils/exchangeRate";
+import { ExchangeDirectionSelector } from "./exchange/ExchangeDirectionSelector";
+import { ExchangeAmountInput } from "./exchange/ExchangeAmountInput";
+import { EstimatedResult } from "./exchange/EstimatedResult";
+import { ExchangeDetails } from "./exchange/ExchangeDetails";
 
 interface ExchangeDialogProps {
   isOpen: boolean;
@@ -34,39 +37,40 @@ export const ExchangeDialog = ({
   const { toast } = useToast();
   
   useEffect(() => {
-    const fetchExchangeRate = async () => {
-      try {
-        setIsLoadingRate(true);
-        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
-        const data = await response.json();
-        if (data && data.ethereum && data.ethereum.usd) {
-          setExchangeRate(data.ethereum.usd);
-        }
-      } catch (error) {
-        console.error('Error fetching exchange rate:', error);
-      } finally {
-        setIsLoadingRate(false);
-      }
+    const getExchangeRate = async () => {
+      setIsLoadingRate(true);
+      const rate = await fetchExchangeRate();
+      setExchangeRate(rate);
+      setIsLoadingRate(false);
     };
 
-    fetchExchangeRate();
+    if (isOpen) {
+      getExchangeRate();
+    }
   }, [isOpen]);
 
-  const reverseExchangeRate = exchangeRate > 0 ? (1 / exchangeRate) : 0.000482;
+  const reverseExchangeRate = calculateReverseRate(exchangeRate);
   
   useEffect(() => {
-    if (exchangeAmount && !isNaN(parseFloat(exchangeAmount))) {
-      const rate = exchangeDirection === 'eth_to_usdt' ? exchangeRate : reverseExchangeRate;
-      setEstimatedResult(parseFloat(exchangeAmount) * rate);
-    } else {
-      setEstimatedResult(null);
-    }
+    const result = calculateEstimatedResult(
+      exchangeAmount, 
+      exchangeRate, 
+      reverseExchangeRate, 
+      exchangeDirection
+    );
+    setEstimatedResult(result);
   }, [exchangeAmount, exchangeRate, reverseExchangeRate, exchangeDirection]);
 
-  const handleExchange = (e: React.FormEvent) => {
+  const toggleExchangeDirection = () => {
+    setExchangeDirection(prev => prev === 'eth_to_usdt' ? 'usdt_to_eth' : 'eth_to_usdt');
+    setExchangeAmount("");
+  };
+
+  const handleExchange = async (e: React.FormEvent) => {
     e.preventDefault();
     const exchangeAmountNum = parseFloat(exchangeAmount);
 
+    // Validation
     if (exchangeAmountNum <= 0) {
       toast({
         title: "Error",
@@ -76,6 +80,7 @@ export const ExchangeDialog = ({
       return;
     }
 
+    // Check sufficient funds
     if (exchangeDirection === 'eth_to_usdt') {
       const balanceField = exchangeType === 'regular' ? 'balance' : 'frozen_balance';
       const balanceNum = parseFloat(exchangeType === 'regular' ? userData?.balance || "0" : userData?.frozen_balance || "0");
@@ -103,63 +108,64 @@ export const ExchangeDialog = ({
     }
     
     try {
-      const createTransaction = async () => {
-        // Set the correct flags based on the exchange type
-        const isFrozen = exchangeType === 'frozen';
-        const isFrozenExchange = exchangeType === 'frozen';
-        
-        const { error } = await supabase.from('transactions').insert([{
-          user_id: userId,
-          type: 'exchange',
-          amount: exchangeAmountNum,
-          status: 'pending',
-          is_frozen: isFrozen,
-          is_frozen_exchange: isFrozenExchange
-        }]);
-        
-        if (error) throw error;
+      // Set the correct flags based on the exchange type
+      const isFrozen = exchangeType === 'frozen';
+      const isFrozenExchange = exchangeType === 'frozen';
+      
+      // Create transaction
+      const { error } = await supabase.from('transactions').insert([{
+        user_id: userId,
+        type: 'exchange',
+        amount: exchangeAmountNum,
+        status: 'pending',
+        is_frozen: isFrozen,
+        is_frozen_exchange: isFrozenExchange
+      }]);
+      
+      if (error) throw error;
 
-        const { data: transactionsData, error: transactionsError } = await supabase
-          .from('transactions')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(10);
-        
-        if (transactionsError) throw transactionsError;
-        
-        if (transactionsData) {
-          setTransactions(transactionsData.map(tx => {
-            const dateObj = new Date(tx.created_at);
-            const formattedDate = `${dateObj.getDate().toString().padStart(2, '0')}/${(dateObj.getMonth() + 1).toString().padStart(2, '0')}`;
-            
-            let formattedFrozenUntil = null;
-            if (tx.frozen_until) {
-              const frozenDate = new Date(tx.frozen_until);
-              formattedFrozenUntil = `${frozenDate.getDate().toString().padStart(2, '0')}/${(frozenDate.getMonth() + 1).toString().padStart(2, '0')}/${frozenDate.getFullYear()}`;
-            }
-            
-            return {
-              id: tx.id,
-              type: tx.type,
-              amount: tx.amount.toString(),
-              created_at: formattedDate,
-              status: tx.status,
-              item: tx.item,
-              frozen_until: formattedFrozenUntil,
-              is_frozen: tx.is_frozen,
-              is_frozen_exchange: tx.is_frozen_exchange
-            };
-          }));
-        }
-      };
+      // Fetch updated transactions
+      const { data: transactionsData, error: transactionsError } = await supabase
+        .from('transactions')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(10);
       
-      createTransaction();
+      if (transactionsError) throw transactionsError;
       
+      // Format and update transactions
+      if (transactionsData) {
+        setTransactions(transactionsData.map(tx => {
+          const dateObj = new Date(tx.created_at);
+          const formattedDate = `${dateObj.getDate().toString().padStart(2, '0')}/${(dateObj.getMonth() + 1).toString().padStart(2, '0')}`;
+          
+          let formattedFrozenUntil = null;
+          if (tx.frozen_until) {
+            const frozenDate = new Date(tx.frozen_until);
+            formattedFrozenUntil = `${frozenDate.getDate().toString().padStart(2, '0')}/${(frozenDate.getMonth() + 1).toString().padStart(2, '0')}/${frozenDate.getFullYear()}`;
+          }
+          
+          return {
+            id: tx.id,
+            type: tx.type,
+            amount: tx.amount.toString(),
+            created_at: formattedDate,
+            status: tx.status,
+            item: tx.item,
+            frozen_until: formattedFrozenUntil,
+            is_frozen: tx.is_frozen,
+            is_frozen_exchange: tx.is_frozen_exchange
+          };
+        }));
+      }
+      
+      // Show success message
       toast({
         title: "Exchange Requested",
         description: `Your exchange request for ${exchangeAmount} ${exchangeDirection === 'eth_to_usdt' ? 'ETH to USDT' : 'USDT to ETH'} ${exchangeType === 'frozen' ? '(from frozen balance)' : ''} has been submitted`
       });
       
+      // Reset form and close dialog
       setExchangeAmount("");
       setIsOpen(false);
     } catch (error) {
@@ -171,9 +177,12 @@ export const ExchangeDialog = ({
     }
   };
 
-  const toggleExchangeDirection = () => {
-    setExchangeDirection(prev => prev === 'eth_to_usdt' ? 'usdt_to_eth' : 'eth_to_usdt');
-    setExchangeAmount("");
+  const getAvailableBalance = () => {
+    if (exchangeDirection === 'eth_to_usdt') {
+      return `${Number(exchangeType === 'regular' ? userData?.balance || 0 : userData?.frozen_balance || 0).toFixed(4)} ETH`;
+    } else {
+      return `${Number(exchangeType === 'regular' ? userData?.usdt_balance || 0 : userData?.frozen_usdt_balance || 0).toFixed(2)} USDT`;
+    }
   };
 
   return (
@@ -191,112 +200,29 @@ export const ExchangeDialog = ({
         </DialogHeader>
         
         <form onSubmit={handleExchange} className="space-y-5 relative">
-          <div className="p-5 rounded-xl bg-purple-500/5 border border-purple-500/10 shadow-inner">
-            <Label className="text-sm font-medium text-purple-400 mb-3 block">Exchange Direction</Label>
-            
-            <div className="flex items-center justify-between">
-              <div className={`flex-1 p-3 rounded-lg ${exchangeDirection === 'eth_to_usdt' ? 'bg-purple-500/20 border border-purple-500/30' : 'bg-transparent'} text-center`}>
-                <div className="flex flex-col items-center justify-center gap-2">
-                  <img src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" alt="ETH" className="h-8 w-8" />
-                  <span className="text-sm font-medium text-purple-100">Ethereum</span>
-                </div>
-              </div>
-              
-              <button 
-                type="button"
-                onClick={toggleExchangeDirection}
-                className="w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-r from-purple-600 to-indigo-500 hover:from-purple-700 hover:to-indigo-600 text-white shadow-md shadow-purple-600/20 border border-purple-500/50 transition-all duration-300 transform hover:rotate-180 mx-2"
-              >
-                <ArrowRightLeft className="h-5 w-5" />
-              </button>
-              
-              <div className={`flex-1 p-3 rounded-lg ${exchangeDirection === 'usdt_to_eth' ? 'bg-purple-500/20 border border-purple-500/30' : 'bg-transparent'} text-center`}>
-                <div className="flex flex-col items-center justify-center gap-2">
-                  <div className="h-8 w-8 flex items-center justify-center bg-usdt rounded-full text-white font-bold text-sm">
-                    $
-                  </div>
-                  <span className="text-sm font-medium text-purple-100">USDT</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <ExchangeDirectionSelector 
+            direction={exchangeDirection} 
+            onToggleDirection={toggleExchangeDirection} 
+          />
           
-          <div className="space-y-1">
-            <Label className="text-sm font-medium text-purple-400/90 flex items-center gap-2">
-              <DollarSign className="h-4 w-4" />
-              Amount to Exchange
-            </Label>
-            <div className="relative">
-              <Input 
-                type="number" 
-                step="0.0001" 
-                min="0.0001" 
-                value={exchangeAmount} 
-                onChange={e => setExchangeAmount(e.target.value)} 
-                placeholder={`Enter amount in ${exchangeDirection === 'eth_to_usdt' ? 'ETH' : 'USDT'}`} 
-                className="bg-purple-900/10 border-purple-500/20 focus:border-purple-500/40 pl-12 pr-4 h-14 text-lg text-purple-100" 
-              />
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                {exchangeDirection === 'eth_to_usdt' ? (
-                  <img src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" alt="ETH" className="h-6 w-6" />
-                ) : (
-                  <div className="h-6 w-6 flex items-center justify-center bg-usdt rounded-full text-white font-bold text-xs">
-                    $
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
+          <ExchangeAmountInput 
+            exchangeAmount={exchangeAmount} 
+            exchangeDirection={exchangeDirection} 
+            setExchangeAmount={setExchangeAmount} 
+          />
           
-          <div className="flex flex-col items-center justify-center py-2 text-center">
-            <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center mb-2 border border-purple-500/20">
-              <ArrowDown className="h-5 w-5 text-purple-400" />
-            </div>
-            
-            <div className="bg-purple-900/20 rounded-xl p-4 w-full border border-purple-500/10">
-              {estimatedResult !== null ? (
-                <div className="space-y-1">
-                  <p className="text-sm text-purple-400">You will receive approximately:</p>
-                  <p className="text-xl font-semibold text-purple-100">
-                    {estimatedResult.toFixed(4)} {exchangeDirection === 'eth_to_usdt' ? 'USDT' : 'ETH'}
-                  </p>
-                </div>
-              ) : (
-                <p className="text-sm text-purple-400">Enter an amount to see conversion</p>
-              )}
-            </div>
-          </div>
+          <EstimatedResult 
+            estimatedResult={estimatedResult} 
+            exchangeDirection={exchangeDirection} 
+          />
           
-          <div className="grid grid-cols-2 gap-3">
-            <div className="bg-purple-900/20 p-3 rounded-lg border border-purple-500/10">
-              <p className="text-xs text-purple-400 mb-1">Exchange Rate</p>
-              <div className="flex items-center justify-between">
-                <p className="text-sm text-purple-300">
-                  1 {exchangeDirection === 'eth_to_usdt' ? 'ETH' : 'USDT'} = 
-                </p>
-                <p className="text-sm text-purple-300 font-medium ml-1">
-                  {isLoadingRate ? (
-                    <span className="text-purple-400/70">Loading...</span>
-                  ) : (
-                    <>
-                      {exchangeDirection === 'eth_to_usdt' 
-                        ? exchangeRate.toFixed(2) 
-                        : reverseExchangeRate.toFixed(6)} {exchangeDirection === 'eth_to_usdt' ? 'USDT' : 'ETH'}
-                    </>
-                  )}
-                </p>
-              </div>
-            </div>
-            
-            <div className="bg-purple-900/20 p-3 rounded-lg border border-purple-500/10">
-              <p className="text-xs text-purple-400 mb-1">Available</p>
-              <p className="text-sm text-purple-300">
-                {exchangeDirection === 'eth_to_usdt' 
-                  ? `${Number(exchangeType === 'regular' ? userData?.balance || 0 : userData?.frozen_balance || 0).toFixed(4)} ETH` 
-                  : `${Number(exchangeType === 'regular' ? userData?.usdt_balance || 0 : userData?.frozen_usdt_balance || 0).toFixed(2)} USDT`}
-              </p>
-            </div>
-          </div>
+          <ExchangeDetails 
+            exchangeDirection={exchangeDirection}
+            exchangeRate={exchangeRate}
+            reverseExchangeRate={reverseExchangeRate}
+            isLoadingRate={isLoadingRate}
+            availableBalance={getAvailableBalance()}
+          />
           
           <div className="pt-2">
             <Button 
