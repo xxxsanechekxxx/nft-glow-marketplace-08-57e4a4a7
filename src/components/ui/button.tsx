@@ -21,6 +21,7 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         exchange: "bg-blue-500/20 text-blue-500 hover:bg-blue-500/30",
         circular: "rounded-full bg-gradient-to-r from-purple-600 to-indigo-500 hover:from-purple-700 hover:to-indigo-600 text-white shadow-md shadow-purple-600/20 border border-purple-500/50 transition-transform",
+        circularSmall: "rounded-full bg-gradient-to-r from-purple-600 to-indigo-500 hover:from-purple-700 hover:to-indigo-600 text-white shadow-md shadow-purple-600/20 border border-purple-500/50 transition-transform hover:rotate-180",
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -28,6 +29,7 @@ const buttonVariants = cva(
         lg: "h-11 rounded-md px-8",
         icon: "h-10 w-10",
         circle: "h-12 w-12",
+        circleSmall: "h-8 w-8",
       },
     },
     defaultVariants: {

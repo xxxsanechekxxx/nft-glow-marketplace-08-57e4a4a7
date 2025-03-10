@@ -34,7 +34,7 @@ export const WalletBalance = ({
           </div>
         </div>
 
-        <div className="flex flex-col space-y-2 p-4">
+        <div className="flex flex-col space-y-2 p-4 relative">
           <div className="p-4 rounded-lg bg-black/20 backdrop-blur-sm border border-white/5 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full flex items-center justify-center bg-eth/10">
@@ -48,6 +48,19 @@ export const WalletBalance = ({
             <p className="text-white font-bold text-lg">
               {Number(userData?.balance || 0).toFixed(2)}
             </p>
+          </div>
+
+          {/* Circular exchange button */}
+          <div className="absolute left-1/2 top-[calc(50%-16px)] -translate-x-1/2 z-10">
+            <Button 
+              variant="circularSmall" 
+              size="circleSmall" 
+              className="flex items-center justify-center" 
+              onClick={() => setIsExchangeDialogOpen(true)}
+              aria-label="Exchange currencies"
+            >
+              <RefreshCw className="h-4 w-4" />
+            </Button>
           </div>
 
           <div className="p-4 rounded-lg bg-black/20 backdrop-blur-sm border border-white/5 flex items-center justify-between">
@@ -66,16 +79,6 @@ export const WalletBalance = ({
               {Number(userData?.usdt_balance || 0).toFixed(2)}
             </p>
           </div>
-          
-          {/* Exchange button */}
-          <Button 
-            variant="exchange" 
-            className="w-full mt-2 flex items-center justify-center gap-2" 
-            onClick={() => setIsExchangeDialogOpen(true)}
-          >
-            <RefreshCw className="h-4 w-4" />
-            Exchange
-          </Button>
         </div>
       </div>
 
