@@ -34,7 +34,7 @@ export const WalletBalance = ({
           </div>
         </div>
 
-        <div className="flex flex-col space-y-2 p-4 relative">
+        <div className="flex flex-col space-y-6 p-4 relative">
           <div className="p-4 rounded-lg bg-black/20 backdrop-blur-sm border border-white/5 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full flex items-center justify-center bg-eth/10">
@@ -50,12 +50,12 @@ export const WalletBalance = ({
             </p>
           </div>
 
-          {/* Circular exchange button */}
+          {/* Circular exchange button - positioning fixed with proper margins */}
           <div className="absolute left-1/2 top-[calc(50%-16px)] -translate-x-1/2 z-10">
             <Button 
               variant="circularSmall" 
               size="circleSmall" 
-              className="flex items-center justify-center" 
+              className="flex items-center justify-center circular-button-glow" 
               onClick={() => setIsExchangeDialogOpen(true)}
               aria-label="Exchange currencies"
             >
