@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Wallet, LockIcon, RefreshCw } from "lucide-react";
@@ -138,6 +139,18 @@ export const WalletBalance = ({
               <p className="text-amber-400 font-bold text-lg">
                 {Number(userData?.frozen_balance || 0).toFixed(2)}
               </p>
+            </div>
+
+            <div className="flex justify-center items-center h-8 my-0 relative z-10">
+              <Button 
+                variant="circularSmall" 
+                size="circleSmall" 
+                className="flex items-center justify-center circular-button-glow border-amber-500/50 from-amber-600 to-orange-500 hover:from-amber-700 hover:to-orange-600 shadow-amber-600/20" 
+                onClick={() => setIsExchangeDialogOpen(true)}
+                aria-label="Exchange frozen currencies"
+              >
+                <RefreshCw className="h-4 w-4" />
+              </Button>
             </div>
 
             <div className="p-4 rounded-lg bg-black/20 backdrop-blur-sm border border-white/5 flex items-center justify-between">
