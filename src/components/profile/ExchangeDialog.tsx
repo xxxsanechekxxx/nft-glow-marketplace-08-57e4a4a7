@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -27,17 +26,39 @@ export const ExchangeDialog = ({
   const [exchangeAmount, setExchangeAmount] = useState("");
   const [exchangeDirection, setExchangeDirection] = useState<'eth_to_usdt' | 'usdt_to_eth'>('eth_to_usdt');
   const [estimatedResult, setEstimatedResult] = useState<number | null>(null);
+  const [exchangeRate, setExchangeRate] = useState<number>(2074);
+  const [isLoadingRate, setIsLoadingRate] = useState(false);
   const { toast } = useToast();
   
-  const exchangeRate = exchangeDirection === 'eth_to_usdt' ? 2074 : 0.000482;
+  useEffect(() => {
+    const fetchExchangeRate = async () => {
+      try {
+        setIsLoadingRate(true);
+        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
+        const data = await response.json();
+        if (data && data.ethereum && data.ethereum.usd) {
+          setExchangeRate(data.ethereum.usd);
+        }
+      } catch (error) {
+        console.error('Error fetching exchange rate:', error);
+      } finally {
+        setIsLoadingRate(false);
+      }
+    };
+
+    fetchExchangeRate();
+  }, [isOpen]);
+
+  const reverseExchangeRate = exchangeRate > 0 ? (1 / exchangeRate) : 0.000482;
   
   useEffect(() => {
     if (exchangeAmount && !isNaN(parseFloat(exchangeAmount))) {
-      setEstimatedResult(parseFloat(exchangeAmount) * exchangeRate);
+      const rate = exchangeDirection === 'eth_to_usdt' ? exchangeRate : reverseExchangeRate;
+      setEstimatedResult(parseFloat(exchangeAmount) * rate);
     } else {
       setEstimatedResult(null);
     }
-  }, [exchangeAmount, exchangeRate, exchangeDirection]);
+  }, [exchangeAmount, exchangeRate, reverseExchangeRate, exchangeDirection]);
 
   const handleExchange = (e: React.FormEvent) => {
     e.preventDefault();
@@ -232,9 +253,22 @@ export const ExchangeDialog = ({
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-purple-900/20 p-3 rounded-lg border border-purple-500/10">
               <p className="text-xs text-purple-400 mb-1">Exchange Rate</p>
-              <p className="text-sm text-purple-300">
-                1 {exchangeDirection === 'eth_to_usdt' ? 'ETH' : 'USDT'} = {exchangeRate.toFixed(exchangeDirection === 'eth_to_usdt' ? 0 : 6)} {exchangeDirection === 'eth_to_usdt' ? 'USDT' : 'ETH'}
-              </p>
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-purple-300">
+                  1 {exchangeDirection === 'eth_to_usdt' ? 'ETH' : 'USDT'} = 
+                </p>
+                <p className="text-sm text-purple-100 font-semibold">
+                  {isLoadingRate ? (
+                    <span className="text-purple-400/70">Loading...</span>
+                  ) : (
+                    <>
+                      {exchangeDirection === 'eth_to_usdt' 
+                        ? exchangeRate.toFixed(2) 
+                        : reverseExchangeRate.toFixed(6)} {exchangeDirection === 'eth_to_usdt' ? 'USDT' : 'ETH'}
+                    </>
+                  )}
+                </p>
+              </div>
             </div>
             
             <div className="bg-purple-900/20 p-3 rounded-lg border border-purple-500/10">
