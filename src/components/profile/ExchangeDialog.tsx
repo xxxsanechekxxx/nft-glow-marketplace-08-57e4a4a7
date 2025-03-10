@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -29,7 +28,6 @@ export const ExchangeDialog = ({
   const [estimatedResult, setEstimatedResult] = useState<number | null>(null);
   const { toast } = useToast();
   
-  // Mock exchange rate - in a real app, this would come from an API
   const exchangeRate = exchangeDirection === 'eth_to_usdt' ? 3150 : 0.000317;
   
   useEffect(() => {
@@ -44,7 +42,6 @@ export const ExchangeDialog = ({
     e.preventDefault();
     const exchangeAmountNum = parseFloat(exchangeAmount);
 
-    // Validate amount is greater than zero
     if (exchangeAmountNum <= 0) {
       toast({
         title: "Error",
@@ -54,7 +51,6 @@ export const ExchangeDialog = ({
       return;
     }
 
-    // Check if user has sufficient balance based on exchange direction
     if (exchangeDirection === 'eth_to_usdt') {
       const balanceNum = parseFloat(userData?.balance || "0");
       if (exchangeAmountNum > balanceNum) {
@@ -88,7 +84,6 @@ export const ExchangeDialog = ({
         
         if (error) throw error;
 
-        // Refresh transactions list
         const { data: transactionsData, error: transactionsError } = await supabase
           .from('transactions')
           .select('*')
@@ -141,27 +136,26 @@ export const ExchangeDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-md bg-gradient-to-b from-[#1A1F2C]/95 to-[#131B31]/95 backdrop-blur-xl border border-blue-500/20 shadow-lg shadow-blue-500/10">
-        <div className="absolute inset-0 rounded-lg bg-blue-500/5 pointer-events-none" />
+      <DialogContent className="sm:max-w-md bg-gradient-to-b from-[#261E57]/95 to-[#1E1245]/95 backdrop-blur-xl border border-purple-500/20 shadow-lg shadow-purple-500/10">
+        <div className="absolute inset-0 rounded-lg bg-purple-500/5 pointer-events-none" />
         
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">Exchange Currency</DialogTitle>
-          <DialogDescription className="text-blue-300/80">
+          <DialogTitle className="text-xl font-bold bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">Exchange Currency</DialogTitle>
+          <DialogDescription className="text-purple-300/80">
             Convert between ETH and USDT with ease
           </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleExchange} className="space-y-5 relative">
-          {/* Currency Selection */}
-          <div className="p-5 rounded-xl bg-blue-500/5 border border-blue-500/10 shadow-inner">
-            <Label className="text-sm font-medium text-blue-400 mb-3 block">Select Direction</Label>
-            <div className="grid grid-cols-2 gap-2 bg-background/20 rounded-lg p-1 border border-blue-400/10">
+          <div className="p-5 rounded-xl bg-purple-500/5 border border-purple-500/10 shadow-inner">
+            <Label className="text-sm font-medium text-purple-400 mb-3 block">Select Direction</Label>
+            <div className="grid grid-cols-2 gap-2 bg-background/20 rounded-lg p-1 border border-purple-400/10">
               <button 
                 type="button" 
                 className={`py-3 px-3 rounded-md flex items-center justify-center gap-2 transition-all ${
                   exchangeDirection === 'eth_to_usdt' 
-                    ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-md' 
-                    : 'text-blue-400 hover:bg-blue-500/10'
+                    ? 'bg-gradient-to-r from-purple-600 to-indigo-500 text-white shadow-md' 
+                    : 'text-purple-400 hover:bg-purple-500/10'
                 }`}
                 onClick={() => setExchangeDirection('eth_to_usdt')}
               >
@@ -172,8 +166,8 @@ export const ExchangeDialog = ({
                 type="button" 
                 className={`py-3 px-3 rounded-md flex items-center justify-center gap-2 transition-all ${
                   exchangeDirection === 'usdt_to_eth' 
-                    ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-md' 
-                    : 'text-blue-400 hover:bg-blue-500/10'
+                    ? 'bg-gradient-to-r from-purple-600 to-indigo-500 text-white shadow-md' 
+                    : 'text-purple-400 hover:bg-purple-500/10'
                 }`} 
                 onClick={() => setExchangeDirection('usdt_to_eth')}
               >
@@ -185,9 +179,8 @@ export const ExchangeDialog = ({
             </div>
           </div>
           
-          {/* Amount Input with floating label */}
           <div className="space-y-1">
-            <Label className="text-sm font-medium text-blue-400/90 flex items-center gap-2">
+            <Label className="text-sm font-medium text-purple-400/90 flex items-center gap-2">
               <DollarSign className="h-4 w-4" />
               Amount to Exchange
             </Label>
@@ -199,7 +192,7 @@ export const ExchangeDialog = ({
                 value={exchangeAmount} 
                 onChange={e => setExchangeAmount(e.target.value)} 
                 placeholder={`Enter amount in ${exchangeDirection === 'eth_to_usdt' ? 'ETH' : 'USDT'}`} 
-                className="bg-blue-900/10 border-blue-500/20 focus:border-blue-500/40 pl-12 pr-4 h-14 text-lg text-blue-100" 
+                className="bg-purple-900/10 border-purple-500/20 focus:border-purple-500/40 pl-12 pr-4 h-14 text-lg text-purple-100" 
               />
               <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
                 {exchangeDirection === 'eth_to_usdt' ? (
@@ -213,39 +206,36 @@ export const ExchangeDialog = ({
             </div>
           </div>
           
-          {/* Exchange Rate Information */}
           <div className="flex flex-col items-center justify-center py-2 text-center">
-            <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center mb-2 border border-blue-500/20">
-              <ArrowDown className="h-5 w-5 text-blue-400" />
+            <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center mb-2 border border-purple-500/20">
+              <ArrowDown className="h-5 w-5 text-purple-400" />
             </div>
             
-            {/* Estimated result */}
-            <div className="bg-blue-900/20 rounded-xl p-4 w-full border border-blue-500/10">
+            <div className="bg-purple-900/20 rounded-xl p-4 w-full border border-purple-500/10">
               {estimatedResult !== null ? (
                 <div className="space-y-1">
-                  <p className="text-sm text-blue-400">You will receive approximately:</p>
-                  <p className="text-xl font-semibold text-blue-100">
+                  <p className="text-sm text-purple-400">You will receive approximately:</p>
+                  <p className="text-xl font-semibold text-purple-100">
                     {estimatedResult.toFixed(4)} {exchangeDirection === 'eth_to_usdt' ? 'USDT' : 'ETH'}
                   </p>
                 </div>
               ) : (
-                <p className="text-sm text-blue-400">Enter an amount to see conversion</p>
+                <p className="text-sm text-purple-400">Enter an amount to see conversion</p>
               )}
             </div>
           </div>
           
-          {/* Exchange Rate and Available Balance */}
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-blue-900/20 p-3 rounded-lg border border-blue-500/10">
-              <p className="text-xs text-blue-400 mb-1">Exchange Rate</p>
-              <p className="text-sm text-blue-300">
+            <div className="bg-purple-900/20 p-3 rounded-lg border border-purple-500/10">
+              <p className="text-xs text-purple-400 mb-1">Exchange Rate</p>
+              <p className="text-sm text-purple-300">
                 1 {exchangeDirection === 'eth_to_usdt' ? 'ETH' : 'USDT'} = {exchangeRate.toFixed(exchangeDirection === 'eth_to_usdt' ? 0 : 6)} {exchangeDirection === 'eth_to_usdt' ? 'USDT' : 'ETH'}
               </p>
             </div>
             
-            <div className="bg-blue-900/20 p-3 rounded-lg border border-blue-500/10">
-              <p className="text-xs text-blue-400 mb-1">Available</p>
-              <p className="text-sm text-blue-300">
+            <div className="bg-purple-900/20 p-3 rounded-lg border border-purple-500/10">
+              <p className="text-xs text-purple-400 mb-1">Available</p>
+              <p className="text-sm text-purple-300">
                 {exchangeDirection === 'eth_to_usdt' 
                   ? `${Number(userData?.balance || 0).toFixed(4)} ETH` 
                   : `${Number(userData?.usdt_balance || 0).toFixed(2)} USDT`}
@@ -256,15 +246,14 @@ export const ExchangeDialog = ({
           <div className="pt-2">
             <Button 
               type="submit" 
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white py-6 rounded-lg transition-all duration-300 shadow-md shadow-blue-600/20 border border-blue-500/50 h-12"
+              className="w-full bg-gradient-to-r from-purple-600 to-indigo-500 hover:from-purple-700 hover:to-indigo-600 text-white py-6 rounded-lg transition-all duration-300 shadow-md shadow-purple-600/20 border border-purple-500/50 h-12"
             >
               <RefreshCw className="h-5 w-5 mr-2" />
               Confirm Exchange
             </Button>
           </div>
           
-          {/* Disclaimer */}
-          <div className="flex items-start gap-2 text-xs text-blue-400/70 bg-blue-500/5 p-3 rounded-lg border border-blue-500/10">
+          <div className="flex items-start gap-2 text-xs text-purple-400/70 bg-purple-500/5 p-3 rounded-lg border border-purple-500/10">
             <Info className="h-4 w-4 mt-0.5 flex-shrink-0" />
             <p>Exchange requests are processed manually and may take up to 24 hours to complete. The final exchange rate may differ slightly from the estimated rate.</p>
           </div>
