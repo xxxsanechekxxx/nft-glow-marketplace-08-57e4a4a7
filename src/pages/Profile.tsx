@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -84,6 +85,8 @@ const Profile = () => {
   const [showFrozenDetails, setShowFrozenDetails] = useState(false);
   const [isExchangeDialogOpen, setIsExchangeDialogOpen] = useState(false);
   const [exchangeAmount, setExchangeAmount] = useState("");
+  const [exchangeDirection, setExchangeDirection] = useState<'eth_to_usdt' | 'usdt_to_eth'>('eth_to_usdt');
+  
   const showDelayedToast = (title: string, description: string, variant: "default" | "destructive" = "default") => {
     setTimeout(() => {
       toast({
@@ -93,6 +96,7 @@ const Profile = () => {
       });
     }, 1000);
   };
+  
   const handleLogout = async () => {
     try {
       await signOut();
@@ -102,6 +106,7 @@ const Profile = () => {
       showDelayedToast("Error", "Failed to log out", "destructive");
     }
   };
+  
   const startKYCVerification = () => {
     try {
       if (!user?.id) {
@@ -122,6 +127,7 @@ const Profile = () => {
       });
     }
   };
+  
   const handleIdentitySuccess = async () => {
     try {
       const {
@@ -144,6 +150,7 @@ const Profile = () => {
       });
     }
   };
+  
   const handleAddressSuccess = async () => {
     try {
       const {
@@ -169,9 +176,11 @@ const Profile = () => {
       });
     }
   };
+  
   const handleAddressClose = () => {
     setIsAddressDialogOpen(false);
   };
+  
   const continueKYCVerification = () => {
     if (!user?.id) {
       toast({
@@ -183,13 +192,16 @@ const Profile = () => {
     }
     setIsAddressDialogOpen(true);
   };
+  
   const handleTypeIconOnly = () => {
     return true;
   };
-  const handleExchangeToUSDT = (e: React.FormEvent) => {
+  
+  const handleExchange = (e: React.FormEvent) => {
     e.preventDefault();
     const exchangeAmountNum = parseFloat(exchangeAmount);
-    const frozenBalanceNum = parseFloat(userData?.frozen_balance || "0");
+    
+    // Validate amount is greater than zero
     if (exchangeAmountNum <= 0) {
       toast({
         title: "Error",
@@ -198,14 +210,30 @@ const Profile = () => {
       });
       return;
     }
-    if (exchangeAmountNum > frozenBalanceNum) {
-      toast({
-        title: "Insufficient funds",
-        description: `Your frozen balance (${frozenBalanceNum} ETH) is less than the requested exchange amount`,
-        variant: "destructive"
-      });
-      return;
+    
+    // Check if user has sufficient balance based on exchange direction
+    if (exchangeDirection === 'eth_to_usdt') {
+      const balanceNum = parseFloat(userData?.balance || "0");
+      if (exchangeAmountNum > balanceNum) {
+        toast({
+          title: "Insufficient funds",
+          description: `Your ETH balance (${balanceNum} ETH) is less than the requested exchange amount`,
+          variant: "destructive"
+        });
+        return;
+      }
+    } else {
+      const usdtBalanceNum = parseFloat(userData?.usdt_balance || "0");
+      if (exchangeAmountNum > usdtBalanceNum) {
+        toast({
+          title: "Insufficient funds",
+          description: `Your USDT balance (${usdtBalanceNum} USDT) is less than the requested exchange amount`,
+          variant: "destructive"
+        });
+        return;
+      }
     }
+    
     try {
       const createTransaction = async () => {
         const {
@@ -216,23 +244,30 @@ const Profile = () => {
           amount: exchangeAmountNum,
           status: 'pending'
         }]);
+        
         if (error) throw error;
+        
+        // Refresh transactions list
         const {
           data: transactionsData,
           error: transactionsError
         } = await supabase.from('transactions').select('*').order('created_at', {
           ascending: false
         }).limit(10);
+        
         if (transactionsError) throw transactionsError;
+        
         if (transactionsData) {
           setTransactions(transactionsData.map(tx => {
             const dateObj = new Date(tx.created_at);
             const formattedDate = `${dateObj.getDate().toString().padStart(2, '0')}/${(dateObj.getMonth() + 1).toString().padStart(2, '0')}`;
+            
             let formattedFrozenUntil = null;
             if (tx.frozen_until) {
               const frozenDate = new Date(tx.frozen_until);
               formattedFrozenUntil = `${frozenDate.getDate().toString().padStart(2, '0')}/${(frozenDate.getMonth() + 1).toString().padStart(2, '0')}/${frozenDate.getFullYear()}`;
             }
+            
             return {
               id: tx.id,
               type: tx.type,
@@ -245,11 +280,14 @@ const Profile = () => {
           }));
         }
       };
+      
       createTransaction();
+      
       toast({
         title: "Exchange Requested",
-        description: `Your exchange request for ${exchangeAmount} ETH to USDT has been submitted`
+        description: `Your exchange request for ${exchangeAmount} ${exchangeDirection === 'eth_to_usdt' ? 'ETH to USDT' : 'USDT to ETH'} has been submitted`
       });
+      
       setExchangeAmount("");
       setIsExchangeDialogOpen(false);
     } catch (error) {
@@ -260,6 +298,7 @@ const Profile = () => {
       });
     }
   };
+
   useEffect(() => {
     let isMounted = true;
     const fetchUserData = async () => {
@@ -382,10 +421,12 @@ const Profile = () => {
       isMounted = false;
     };
   }, [toast]);
+  
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
+  
   const handleEmailChange = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateEmail(newEmail)) {
@@ -417,6 +458,7 @@ const Profile = () => {
       });
     }
   };
+  
   const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !userData?.id) return;
@@ -457,6 +499,7 @@ const Profile = () => {
       });
     }
   };
+  
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmNewPassword) {
@@ -478,6 +521,7 @@ const Profile = () => {
       showDelayedToast("Error", "Failed to update password", "destructive");
     }
   };
+  
   const handleWithdraw = async (e: React.FormEvent) => {
     e.preventDefault();
     const withdrawAmountNum = parseFloat(withdrawAmount);
@@ -531,6 +575,7 @@ const Profile = () => {
       });
     }
   };
+  
   const handleDeposit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!userData?.wallet_address) {
@@ -554,6 +599,7 @@ const Profile = () => {
     }
     setIsDepositConfirmationOpen(true);
   };
+  
   const handleDepositConfirm = () => {
     setIsDepositConfirmationOpen(false);
     setIsFraudWarningOpen(true);
@@ -563,6 +609,7 @@ const Profile = () => {
       description: `Deposit of ${depositAmount} the rejected. Please contact our support team on Telegram for transaction verification`
     });
   };
+  
   const handleGenerateWalletAddress = async (address: string) => {
     try {
       const {
@@ -588,6 +635,7 @@ const Profile = () => {
       });
     }
   };
+  
   if (isLoading) {
     return <div className="container mx-auto py-8 px-4 mt-16">
         <div className="max-w-4xl mx-auto">
@@ -595,6 +643,7 @@ const Profile = () => {
         </div>
       </div>;
   }
+  
   return <div className="container mx-auto py-8 px-4 mt-16 min-h-screen bg-gradient-to-b from-background via-background/80 to-background/60">
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="relative p-6 sm:p-8 rounded-2xl overflow-hidden bg-gradient-to-r from-purple-500/10 via-primary/5 to-purple-500/10 border border-primary/10 backdrop-blur-sm shadow-xl">
@@ -820,6 +869,16 @@ const Profile = () => {
                             {Number(userData?.usdt_balance || 0).toFixed(2)}
                           </p>
                         </div>
+                        
+                        {/* Exchange button */}
+                        <Button 
+                          variant="exchange" 
+                          className="w-full mt-2 flex items-center justify-center gap-2"
+                          onClick={() => setIsExchangeDialogOpen(true)}
+                        >
+                          <RefreshCw className="h-4 w-4" />
+                          Exchange
+                        </Button>
                       </div>
                     </div>
 
@@ -891,11 +950,6 @@ const Profile = () => {
                                   </div>)}
                               </div>
                             </div>}
-
-                          <Button variant="outline" className="w-full mt-2 bg-blue-700/50 hover:bg-blue-700/70 border-blue-600/30 text-blue-300 flex items-center justify-center gap-2" onClick={() => setIsExchangeDialogOpen(true)}>
-                            <RefreshCw className="h-4 w-4" />
-                            Exchange to USDT
-                          </Button>
                         </div>
                       </div>}
                   </div>
@@ -1098,31 +1152,103 @@ const Profile = () => {
 
       <KYCAddressDialog isOpen={isAddressDialogOpen} onClose={handleAddressClose} onSuccess={handleAddressSuccess} userId={user?.id || ''} />
 
+      {/* Exchange Dialog */}
       <Dialog open={isExchangeDialogOpen} onOpenChange={setIsExchangeDialogOpen}>
         <DialogContent className="sm:max-w-md bg-background/95 backdrop-blur-xl border border-blue-500/10">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-blue-500">Exchange to USDT</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-blue-500">Exchange Currency</DialogTitle>
             <DialogDescription>
-              Convert your frozen ETH to USDT
+              Convert between ETH and USDT currencies
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleExchangeToUSDT} className="space-y-4">
+          <form onSubmit={handleExchange} className="space-y-6">
+            {/* Exchange Direction */}
+            <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm font-medium text-blue-400">Exchange Direction</span>
+              </div>
+              <div className="flex bg-background/60 rounded-lg p-1 border border-blue-400/20">
+                <button
+                  type="button"
+                  className={`flex-1 py-2 px-3 rounded-md flex items-center justify-center gap-2 ${
+                    exchangeDirection === 'eth_to_usdt' 
+                      ? 'bg-blue-500 text-white' 
+                      : 'text-blue-400 hover:bg-blue-500/10'
+                  } transition-all`}
+                  onClick={() => setExchangeDirection('eth_to_usdt')}
+                >
+                  <img src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" alt="ETH" className="h-4 w-4" />
+                  <span>ETH to USDT</span>
+                </button>
+                <button
+                  type="button"
+                  className={`flex-1 py-2 px-3 rounded-md flex items-center justify-center gap-2 ${
+                    exchangeDirection === 'usdt_to_eth' 
+                      ? 'bg-blue-500 text-white' 
+                      : 'text-blue-400 hover:bg-blue-500/10'
+                  } transition-all`}
+                  onClick={() => setExchangeDirection('usdt_to_eth')}
+                >
+                  <div className="h-4 w-4 flex items-center justify-center bg-usdt rounded-full text-white font-bold text-[10px]">
+                    $
+                  </div>
+                  <span>USDT to ETH</span>
+                </button>
+              </div>
+            </div>
+            
+            {/* Amount Input */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-blue-500/80">
-                Amount (ETH)
+              <label className="text-sm font-medium text-blue-500/80 flex items-center gap-2">
+                <DollarSign className="h-4 w-4" />
+                Amount to Exchange
               </label>
-              <Input type="number" step="0.0001" min="0.0001" value={exchangeAmount} onChange={e => setExchangeAmount(e.target.value)} placeholder="Enter amount to exchange" className="bg-background/40 border-blue-500/20 focus:border-blue-500/40" />
+              <div className="relative">
+                <Input 
+                  type="number" 
+                  step="0.0001" 
+                  min="0.0001" 
+                  value={exchangeAmount} 
+                  onChange={e => setExchangeAmount(e.target.value)} 
+                  placeholder={`Enter amount in ${exchangeDirection === 'eth_to_usdt' ? 'ETH' : 'USDT'}`} 
+                  className="bg-background/40 border-blue-500/20 focus:border-blue-500/40 pl-10" 
+                />
+                {exchangeDirection === 'eth_to_usdt' ? (
+                  <img src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" alt="ETH" className="h-5 w-5 absolute left-3 top-1/2 -translate-y-1/2" />
+                ) : (
+                  <div className="h-5 w-5 flex items-center justify-center bg-usdt rounded-full text-white font-bold text-xs absolute left-3 top-1/2 -translate-y-1/2">
+                    $
+                  </div>
+                )}
+              </div>
             </div>
-            <div className="flex justify-between items-center">
-              <p className="text-sm text-muted-foreground">Available to exchange: <span className="text-yellow-500 font-medium">{Number(userData?.frozen_balance || 0).toFixed(2)} ETH</span></p>
+            
+            {/* Available Balance Info */}
+            <div className="flex justify-between items-center bg-blue-900/20 p-3 rounded-lg border border-blue-500/20">
+              <p className="text-sm text-blue-300">
+                Available to exchange: 
+              </p>
+              <p className="text-blue-400 font-medium">
+                {exchangeDirection === 'eth_to_usdt' 
+                  ? `${Number(userData?.balance || 0).toFixed(2)} ETH` 
+                  : `${Number(userData?.usdt_balance || 0).toFixed(2)} USDT`}
+              </p>
             </div>
+            
+            {/* Exchange Rate Info */}
+            <div className="flex items-center gap-2 justify-center text-sm text-blue-400">
+              <RefreshCw className="h-4 w-4" />
+              <span>Exchange rate: 1:1</span>
+            </div>
+            
             <Button type="submit" variant="exchange" className="w-full">
               <RefreshCw className="h-4 w-4" />
-              Request Exchange
+              Confirm Exchange
             </Button>
           </form>
         </DialogContent>
       </Dialog>
     </div>;
 };
+
 export default Profile;
