@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -191,7 +190,7 @@ export const ExchangeDialog = ({
                 onClick={toggleExchangeDirection}
                 className="w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-r from-purple-600 to-indigo-500 hover:from-purple-700 hover:to-indigo-600 text-white shadow-md shadow-purple-600/20 border border-purple-500/50 transition-all duration-300 transform hover:rotate-180 mx-2"
               >
-                <RefreshCw className="h-5 w-5" />
+                <ArrowRightLeft className="h-5 w-5" />
               </button>
               
               <div className={`flex-1 p-3 rounded-lg ${exchangeDirection === 'usdt_to_eth' ? 'bg-purple-500/20 border border-purple-500/30' : 'bg-transparent'} text-center`}>
@@ -287,7 +286,7 @@ export const ExchangeDialog = ({
               type="submit" 
               className="w-full bg-gradient-to-r from-purple-600 to-indigo-500 hover:from-purple-700 hover:to-indigo-600 text-white py-6 rounded-lg transition-all duration-300 shadow-md shadow-purple-600/20 border border-purple-500/50 h-12"
             >
-              <RefreshCw className="h-5 w-5 mr-2" />
+              <ArrowRightLeft className="h-5 w-5 mr-2" />
               Confirm Exchange
             </Button>
           </div>
