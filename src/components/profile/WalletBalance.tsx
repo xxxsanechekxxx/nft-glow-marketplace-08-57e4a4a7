@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Wallet, LockIcon, RefreshCw } from "lucide-react";
 import type { UserData, FrozenBalanceInfo } from "@/types/user";
@@ -19,6 +18,32 @@ export const WalletBalance = ({
   setShowFrozenDetails,
   setIsExchangeDialogOpen
 }: WalletBalanceProps) => {
+  const [exchangeRate, setExchangeRate] = useState<number | null>(null);
+  const [isLoadingRate, setIsLoadingRate] = useState(false);
+
+  useEffect(() => {
+    const fetchExchangeRate = async () => {
+      try {
+        setIsLoadingRate(true);
+        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
+        const data = await response.json();
+        if (data && data.ethereum && data.ethereum.usd) {
+          setExchangeRate(data.ethereum.usd);
+        }
+      } catch (error) {
+        console.error('Error fetching exchange rate:', error);
+        setExchangeRate(2074);
+      } finally {
+        setIsLoadingRate(false);
+      }
+    };
+
+    fetchExchangeRate();
+    const intervalId = setInterval(fetchExchangeRate, 5 * 60 * 1000);
+    
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
       <div className="rounded-xl bg-balance-available/90 overflow-hidden">
@@ -35,6 +60,15 @@ export const WalletBalance = ({
         </div>
 
         <div className="flex flex-col space-y-6 p-4 relative">
+          {exchangeRate && (
+            <div className="p-2 rounded-lg bg-purple-900/80 border border-purple-500/20 flex items-center justify-between mb-2">
+              <div className="text-purple-200 font-medium text-sm">Exchange Rate</div>
+              <div className="text-white font-semibold">
+                1 ETH = {exchangeRate.toFixed(2)} USDT
+              </div>
+            </div>
+          )}
+
           <div className="p-4 rounded-lg bg-black/20 backdrop-blur-sm border border-white/5 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full flex items-center justify-center bg-eth/10">
@@ -50,7 +84,6 @@ export const WalletBalance = ({
             </p>
           </div>
 
-          {/* Circular exchange button - fixed positioning with margins for clear separation */}
           <div className="flex justify-center items-center h-8 my-0 relative z-10">
             <Button 
               variant="circularSmall" 
