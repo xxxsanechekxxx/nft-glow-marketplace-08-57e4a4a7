@@ -114,6 +114,7 @@ export const useExchange = ({
       // Set the correct flags based on the exchange type
       const isFrozen = exchangeType === 'frozen';
       const isFrozenExchange = exchangeType === 'frozen';
+      const currencyType = exchangeDirection === 'eth_to_usdt' ? 'usdt' : 'eth';
       
       // Create transaction
       const { error } = await supabase.from('transactions').insert([{
@@ -122,7 +123,8 @@ export const useExchange = ({
         amount: exchangeAmountNum,
         status: 'pending',
         is_frozen: isFrozen,
-        is_frozen_exchange: isFrozenExchange
+        is_frozen_exchange: isFrozenExchange,
+        currency_type: currencyType
       }]);
       
       if (error) throw error;
@@ -157,7 +159,8 @@ export const useExchange = ({
             item: tx.item,
             frozen_until: formattedFrozenUntil,
             is_frozen: tx.is_frozen,
-            is_frozen_exchange: tx.is_frozen_exchange
+            is_frozen_exchange: tx.is_frozen_exchange,
+            currency_type: tx.currency_type
           };
         }));
       }

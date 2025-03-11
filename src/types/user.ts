@@ -4,6 +4,7 @@ export interface FrozenBalanceInfo {
   days_left: number;
   unfreeze_date: string;
   transaction_id: string;
+  currency_type?: 'eth' | 'usdt';
 }
 
 export interface TransactionTotals {
@@ -38,4 +39,6 @@ export interface Transaction {
   frozen_until?: string;
   is_frozen?: boolean;
   is_frozen_exchange?: boolean;
+  currency_type?: 'eth' | 'usdt';
 }
+

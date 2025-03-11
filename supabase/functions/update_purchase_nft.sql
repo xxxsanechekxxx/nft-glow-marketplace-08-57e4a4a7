@@ -53,8 +53,8 @@ BEGIN
     WHERE user_id = v_owner_id;
     
     -- Record transaction for seller (sale) with frozen_until date
-    INSERT INTO public.transactions (amount, type, item, status, user_id, frozen_until)
-    VALUES (v_seller_receives, 'sale', nft_id::text, 'completed', v_owner_id, v_frozen_until)
+    INSERT INTO public.transactions (amount, type, item, status, user_id, frozen_until, currency_type)
+    VALUES (v_seller_receives, 'sale', nft_id::text, 'completed', v_owner_id, v_frozen_until, 'eth')
     RETURNING id INTO v_seller_transaction_id;
   END IF;
   
@@ -69,8 +69,8 @@ BEGIN
   WHERE user_id = auth.uid();
   
   -- Record transaction for buyer (purchase)
-  INSERT INTO public.transactions (amount, type, item, status, user_id)
-  VALUES (v_nft_price, 'purchase', nft_id::text, 'completed', auth.uid())
+  INSERT INTO public.transactions (amount, type, item, status, user_id, currency_type)
+  VALUES (v_nft_price, 'purchase', nft_id::text, 'completed', auth.uid(), 'eth')
   RETURNING id INTO v_transaction_id;
   
   RETURN json_build_object(
@@ -80,3 +80,4 @@ BEGIN
   );
 END;
 $function$;
+

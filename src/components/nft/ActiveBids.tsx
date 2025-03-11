@@ -47,6 +47,7 @@ const ActiveBids = ({
     platformFee: number;
     receivedAmount: number;
     freezeDuration: number;
+    currencyType: string;
   } | null>(null);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [loadingStage, setLoadingStage] = useState(0);
@@ -119,11 +120,15 @@ const ActiveBids = ({
       const platformFee = bidAmount * (PLATFORM_FEE_PERCENT / 100);
       const receivedAmount = bidAmount - platformFee;
       
+      // The initial currency type for NFT sales is always ETH
+      const currencyType = "eth";
+      
       setProcessingDetails({
         amount: bidAmount,
         platformFee: platformFee,
         receivedAmount: receivedAmount,
-        freezeDuration: 15
+        freezeDuration: 15,
+        currencyType: currencyType
       });
       
       // Start the progress animation that will run for 20 seconds
@@ -275,7 +280,7 @@ const ActiveBids = ({
                 <span className="font-medium text-right text-red-400">-{processingDetails.platformFee.toFixed(2)} ETH</span>
                 
                 <span className="text-muted-foreground font-medium">You Receive:</span>
-                <span className="font-bold text-right text-yellow-500">{processingDetails.receivedAmount.toFixed(2)} ETH</span>
+                <span className="font-bold text-right text-yellow-500">{processingDetails.receivedAmount.toFixed(2)} {processingDetails.currencyType.toUpperCase()}</span>
               </div>
             </div>
             
