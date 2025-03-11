@@ -43,8 +43,67 @@ BEGIN
 END;
 $function$;
 
--- Make sure the trigger exists
+-- Make sure the trigger exists (replace if it already exists)
+DROP TRIGGER IF EXISTS unfrozen_balance_update ON public.transactions;
+
 CREATE TRIGGER unfrozen_balance_update
 AFTER UPDATE OF frozen_until ON public.transactions
 FOR EACH ROW
 EXECUTE FUNCTION public.unfreeze_balances();
+
+-- Create a function to process expired frozen transactions
+CREATE OR REPLACE FUNCTION public.process_expired_frozen_transactions()
+ RETURNS integer
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+AS $function$
+DECLARE
+  affected_rows integer := 0;
+BEGIN
+  -- Find and update transactions where frozen_until has passed
+  UPDATE public.transactions
+  SET frozen_until = NULL
+  WHERE frozen_until IS NOT NULL 
+    AND frozen_until <= NOW();
+  
+  GET DIAGNOSTICS affected_rows = ROW_COUNT;
+  
+  RETURN affected_rows;
+END;
+$function$;
+
+-- Create a cron job function that will run periodically to check for expired frozen transactions
+CREATE OR REPLACE FUNCTION public.scheduled_process_expired_frozen_transactions()
+ RETURNS void
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+AS $function$
+DECLARE
+  v_count integer;
+BEGIN
+  SELECT public.process_expired_frozen_transactions() INTO v_count;
+  
+  -- Log the execution
+  INSERT INTO public.cron_job_logs (
+    job_name,
+    details,
+    created_at
+  ) VALUES (
+    'process_expired_frozen_transactions',
+    json_build_object('transactions_processed', v_count),
+    NOW()
+  );
+  
+EXCEPTION WHEN OTHERS THEN
+  -- Log any errors
+  INSERT INTO public.cron_job_logs (
+    job_name,
+    details,
+    created_at
+  ) VALUES (
+    'process_expired_frozen_transactions',
+    json_build_object('error', SQLERRM),
+    NOW()
+  );
+END;
+$function$;

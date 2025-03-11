@@ -75,7 +75,9 @@ export const TransactionHistory = ({ transactions }: TransactionHistoryProps) =>
                         }`}>
                           {transaction.status === 'pending' && isFrozenExchange 
                             ? 'Frozen Exchange (Pending)' 
-                            : transaction.status}
+                            : transaction.frozen_until
+                              ? 'Frozen'
+                              : transaction.status}
                         </span>
                       </TableCell>
                       <TableCell className="currency-column">
@@ -86,7 +88,7 @@ export const TransactionHistory = ({ transactions }: TransactionHistoryProps) =>
                               ? 'bg-green-500/20 text-green-300'
                               : 'bg-gray-500/20 text-gray-300'
                         }`}>
-                          {transaction.currency_type?.toUpperCase() || '-'}
+                          {transaction.currency_type?.toUpperCase() || 'ETH'}
                         </span>
                       </TableCell>
                     </TableRow>

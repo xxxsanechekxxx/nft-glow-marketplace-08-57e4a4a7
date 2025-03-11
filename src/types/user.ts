@@ -41,4 +41,3 @@ export interface Transaction {
   is_frozen_exchange?: boolean;
   currency_type?: 'eth' | 'usdt';
 }
-
