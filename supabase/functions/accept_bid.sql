@@ -12,6 +12,7 @@ DECLARE
   v_seller_receives numeric;
   v_platform_fee_percent numeric := 2.5;
   v_frozen_until timestamp;
+  v_currency_type text := 'eth'; -- Default currency is ETH
 BEGIN
   -- Get bid details
   SELECT b.nft_id, b.bid_amount, b.bidder_address, n.owner_id
@@ -47,7 +48,7 @@ BEGIN
   
   -- Record the sale transaction with currency_type
   INSERT INTO public.transactions (user_id, type, amount, status, item, frozen_until, currency_type)
-  VALUES (auth.uid(), 'sale', v_seller_receives, 'completed', v_nft_id::text, v_frozen_until, 'eth');
+  VALUES (auth.uid(), 'sale', v_seller_receives, 'completed', v_nft_id::text, v_frozen_until, v_currency_type);
   
   -- Mark the bid as accepted
   DELETE FROM public.nft_bids WHERE id = bid_id;

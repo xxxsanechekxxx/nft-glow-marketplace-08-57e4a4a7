@@ -7,14 +7,14 @@ AS $function$
 DECLARE
   v_transaction_record transactions%ROWTYPE;
 BEGIN
-  -- Get the transaction record
+  -- Get the transaction record (remove user_id check for admin access)
   SELECT * INTO v_transaction_record
   FROM public.transactions
-  WHERE id = transaction_id AND user_id = auth.uid(); -- Only allow users to update their own transactions
+  WHERE id = transaction_id;
   
-  -- Check if transaction exists and belongs to the user
+  -- Check if transaction exists
   IF NOT FOUND THEN
-    RETURN json_build_object('success', false, 'message', 'Transaction not found or not authorized');
+    RETURN json_build_object('success', false, 'message', 'Transaction not found');
   END IF;
   
   -- Check if transaction is frozen (has frozen_until date)
@@ -29,7 +29,8 @@ BEGIN
   
   RETURN json_build_object(
     'success', true,
-    'message', 'Transaction currency updated successfully'
+    'message', 'Transaction currency updated successfully',
+    'updated_currency', new_currency_type
   );
 END;
 $function$;

@@ -12,6 +12,7 @@ DECLARE
   v_usdt_amount numeric;
   v_currency_from text;
   v_currency_to text;
+  v_transaction_id uuid;
 BEGIN
   -- Get the user ID from the auth context
   v_user_id := auth.uid();
@@ -41,7 +42,16 @@ BEGIN
     
     -- Record transaction
     INSERT INTO public.transactions (user_id, type, amount, status, is_frozen, is_frozen_exchange, currency_type)
-    VALUES (v_user_id, 'exchange', amount, 'completed', true, true, v_currency_to);
+    VALUES (v_user_id, 'exchange', amount, 'completed', true, true, v_currency_to)
+    RETURNING id INTO v_transaction_id;
+    
+    -- Update all frozen transactions from ETH to USDT for this user
+    UPDATE public.transactions 
+    SET currency_type = v_currency_to
+    WHERE user_id = v_user_id 
+      AND frozen_until IS NOT NULL 
+      AND currency_type = v_currency_from 
+      AND type = 'sale';
     
   ELSE
     -- Exchange from regular ETH balance
@@ -62,7 +72,8 @@ BEGIN
     
     -- Record transaction
     INSERT INTO public.transactions (user_id, type, amount, status, currency_type)
-    VALUES (v_user_id, 'exchange', amount, 'completed', v_currency_to);
+    VALUES (v_user_id, 'exchange', amount, 'completed', v_currency_to)
+    RETURNING id INTO v_transaction_id;
   END IF;
   
   RETURN json_build_object(
@@ -71,7 +82,8 @@ BEGIN
     'from_currency', v_currency_from,
     'to_currency', v_currency_to,
     'amount', amount,
-    'usdt_amount', v_usdt_amount
+    'usdt_amount', v_usdt_amount,
+    'transaction_id', v_transaction_id
   );
 END;
 $function$;
