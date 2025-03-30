@@ -32,8 +32,11 @@ export const ProfileInfo = ({ userData, setIsWalletModalOpen }: ProfileInfoProps
   };
 
   return (
-    <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-[#1A1F2C]/90">
-      <CardHeader className="space-y-2 border-b border-primary/10 pb-4">
+    <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-gradient-to-br from-[#1A1F2C]/95 to-[#1A1F2C]/80 overflow-hidden relative">
+      <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:20px_20px] opacity-30"></div>
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-600/50 via-primary/40 to-purple-600/50"></div>
+      
+      <CardHeader className="space-y-2 border-b border-primary/10 pb-4 relative z-10">
         <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
           <div className="p-2 rounded-lg bg-primary/20">
             <UserRound className="w-6 h-6 text-primary" />
@@ -41,11 +44,12 @@ export const ProfileInfo = ({ userData, setIsWalletModalOpen }: ProfileInfoProps
           Profile Information
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6 p-6">
+      
+      <CardContent className="space-y-8 p-6 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Email Field */}
           <div className="space-y-2 group relative">
-            <label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
+            <label className="text-sm font-medium flex items-center gap-2 text-white/70">
               <Mail className="w-4 h-4" />
               Email
             </label>
@@ -54,7 +58,7 @@ export const ProfileInfo = ({ userData, setIsWalletModalOpen }: ProfileInfoProps
               <Input 
                 value={userData?.email} 
                 readOnly 
-                className="bg-background/50 border-primary/10 group-hover:border-primary/30 transition-colors pl-10 font-medium text-white/90" 
+                className="bg-white/5 border-white/10 group-hover:border-primary/30 transition-colors pl-10 font-medium text-white/90 h-12" 
               />
               <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-primary/60" />
             </div>
@@ -62,7 +66,7 @@ export const ProfileInfo = ({ userData, setIsWalletModalOpen }: ProfileInfoProps
           
           {/* Country Field */}
           <div className="space-y-2 group">
-            <label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
+            <label className="text-sm font-medium flex items-center gap-2 text-white/70">
               <Globe className="w-4 h-4" />
               Country
             </label>
@@ -71,7 +75,7 @@ export const ProfileInfo = ({ userData, setIsWalletModalOpen }: ProfileInfoProps
               <Input 
                 value={userData?.country} 
                 readOnly 
-                className="bg-background/50 border-primary/10 group-hover:border-primary/30 transition-colors pl-10 font-medium text-white/90" 
+                className="bg-white/5 border-white/10 group-hover:border-primary/30 transition-colors pl-10 font-medium text-white/90 h-12" 
               />
               <Globe className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-primary/60" />
             </div>
@@ -80,13 +84,13 @@ export const ProfileInfo = ({ userData, setIsWalletModalOpen }: ProfileInfoProps
         
         {/* Verification Status */}
         <div className="space-y-2 group">
-          <label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
+          <label className="text-sm font-medium flex items-center gap-2 text-white/70">
             <HelpCircle className="w-4 h-4" />
             Verification Status
           </label>
           <div className="relative overflow-hidden rounded-lg transition-all duration-300">
             <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <div className="bg-background/50 border border-primary/10 group-hover:border-primary/30 transition-colors rounded-lg p-3 pl-10 flex items-center">
+            <div className="bg-white/5 border border-white/10 group-hover:border-primary/30 transition-colors rounded-lg p-3 pl-10 flex items-center">
               {userData?.verified ? (
                 <div className="flex items-center gap-2 text-green-500 font-medium">
                   <CheckCircle2 className="w-4 h-4" />
@@ -105,7 +109,7 @@ export const ProfileInfo = ({ userData, setIsWalletModalOpen }: ProfileInfoProps
         
         {/* Wallet Address */}
         <div className="space-y-2 group">
-          <label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
+          <label className="text-sm font-medium flex items-center gap-2 text-white/70">
             <Wallet className="w-4 h-4" />
             Wallet Address
           </label>
@@ -115,7 +119,7 @@ export const ProfileInfo = ({ userData, setIsWalletModalOpen }: ProfileInfoProps
               <Input 
                 value={userData?.wallet_address || ''} 
                 readOnly 
-                className="bg-background/50 font-mono text-sm border-primary/10 group-hover:border-primary/30 transition-colors pl-10 pr-16 truncate text-white/90" 
+                className="bg-white/5 font-mono text-sm border-white/10 group-hover:border-primary/30 transition-colors pl-10 pr-16 truncate text-white/90 h-12" 
                 placeholder="No wallet address generated" 
               />
               <Wallet className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-primary/60" />
@@ -134,7 +138,7 @@ export const ProfileInfo = ({ userData, setIsWalletModalOpen }: ProfileInfoProps
                           {copiedWallet ? <CheckCircle2 className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent>
+                      <TooltipContent className="bg-[#1A1F2C] border border-primary/20">
                         <p>{copiedWallet ? 'Copied!' : 'Copy address'}</p>
                       </TooltipContent>
                     </Tooltip>
@@ -152,9 +156,9 @@ export const ProfileInfo = ({ userData, setIsWalletModalOpen }: ProfileInfoProps
               ) : (
                 <Button 
                   onClick={() => setIsWalletModalOpen(true)} 
-                  className="bg-primary/20 text-primary hover:bg-primary/30 transition-colors flex items-center gap-2 group relative overflow-hidden"
+                  className="bg-gradient-to-r from-purple-600/20 to-primary/20 border border-primary/10 text-primary hover:from-purple-600/30 hover:to-primary/30 transition-colors flex items-center gap-2 group relative overflow-hidden h-12"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <Wallet className="w-4 h-4 relative z-10" />
                   <span className="relative z-10">Generate Address</span>
                 </Button>
