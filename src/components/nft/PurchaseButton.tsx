@@ -2,9 +2,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { AuthModal } from "@/components/AuthModal";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface PurchaseButtonProps {
   isLoggedIn: boolean;
@@ -15,6 +15,7 @@ interface PurchaseButtonProps {
 export const PurchaseButton = ({ isLoggedIn, onPurchase, nftId }: PurchaseButtonProps) => {
   const [isPurchasing, setIsPurchasing] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handlePurchase = async () => {
     if (!isLoggedIn) return;
@@ -62,6 +63,15 @@ export const PurchaseButton = ({ isLoggedIn, onPurchase, nftId }: PurchaseButton
     }
   };
 
+  const handleLoginRedirect = () => {
+    // Store current NFT page URL to redirect back after login
+    const currentPath = window.location.pathname;
+    localStorage.setItem('redirectAfterLogin', currentPath);
+    
+    // Navigate to login page
+    navigate('/login');
+  };
+
   return isLoggedIn ? (
     <Button 
       onClick={handlePurchase} 
@@ -79,12 +89,12 @@ export const PurchaseButton = ({ isLoggedIn, onPurchase, nftId }: PurchaseButton
       )}
     </Button>
   ) : (
-    <AuthModal 
-      trigger={
-        <Button className="flex-1 bg-gradient-to-r from-primary via-purple-500 to-pink-500 hover:from-primary/90 hover:via-purple-500/90 hover:to-pink-500/90 transition-all duration-500 shadow-lg hover:shadow-primary/20 text-lg py-6" size="lg">
-          Login to Purchase
-        </Button>
-      }
-    />
+    <Button 
+      onClick={handleLoginRedirect}
+      className="flex-1 bg-gradient-to-r from-primary via-purple-500 to-pink-500 hover:from-primary/90 hover:via-purple-500/90 hover:to-pink-500/90 transition-all duration-500 shadow-lg hover:shadow-primary/20 text-lg py-6" 
+      size="lg"
+    >
+      Login to Purchase
+    </Button>
   );
 };
