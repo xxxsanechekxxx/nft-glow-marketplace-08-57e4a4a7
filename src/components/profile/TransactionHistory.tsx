@@ -114,14 +114,19 @@ export const TransactionHistory = ({ transactions }: TransactionHistoryProps) =>
 
   return (
     <div className="mt-6">
-      <h3 className="text-sm font-medium mb-2 text-white/90">Transaction History</h3>
-      <div className="overflow-hidden rounded-lg border border-primary/20 bg-white/5">
-        <div className="overflow-x-auto">
+      <h3 className="text-sm font-medium mb-3 text-white/90 flex items-center">
+        <span className="bg-primary/10 p-1.5 rounded-md mr-2">
+          <RotateCw className="h-4 w-4 text-primary" />
+        </span>
+        Transaction History
+      </h3>
+      <div className="overflow-hidden rounded-lg border border-primary/20 bg-white/5 backdrop-blur-sm transition-all hover:border-primary/30 hover:bg-white/[0.07]">
+        <div className="overflow-x-auto scrollbar-none">
           <Table>
             <TableHeader>
               <TableRow className="border-b border-primary/10 hover:bg-transparent">
                 <TableHead className="w-20 text-xs font-medium">Date</TableHead>
-                <TableHead className="text-xs font-medium">Type</TableHead>
+                {!isMobile && <TableHead className="text-xs font-medium">Type</TableHead>}
                 <TableHead className="text-xs font-medium text-right">Amount</TableHead>
                 <TableHead className="text-xs font-medium text-right">Status</TableHead>
               </TableRow>
@@ -131,28 +136,33 @@ export const TransactionHistory = ({ transactions }: TransactionHistoryProps) =>
                 const typeDetails = getTypeDetails(transaction.type);
                 const statusDetails = getStatusDetails(
                   transaction.status,
-                  transaction.is_frozen,
-                  transaction.is_frozen_exchange
+                  transaction.is_frozen || false,
+                  transaction.is_frozen_exchange || false
                 );
                 
                 return (
-                  <TableRow key={transaction.id} className="border-primary/10">
-                    <TableCell className="py-2 text-xs text-white/80">{transaction.created_at}</TableCell>
-                    <TableCell className="py-2">
-                      <div className="flex items-center gap-1.5">
-                        {typeDetails.icon}
-                        <span className={`text-xs ${typeDetails.color}`}>
-                          {typeDetails.label}
+                  <TableRow key={transaction.id} className="border-primary/10 transition-colors hover:bg-primary/5">
+                    <TableCell className="py-2.5 text-xs text-white/80">{transaction.created_at}</TableCell>
+                    {!isMobile && (
+                      <TableCell className="py-2.5">
+                        <div className="flex items-center gap-1.5">
+                          {typeDetails.icon}
+                          <span className={`text-xs ${typeDetails.color}`}>
+                            {typeDetails.label}
+                          </span>
+                        </div>
+                      </TableCell>
+                    )}
+                    <TableCell className="py-2.5 text-right">
+                      <div className="flex items-center gap-1 justify-end">
+                        {isMobile && typeDetails.icon}
+                        <span className={`text-xs font-medium ${transaction.type === 'deposit' || transaction.type === 'sale' ? 'text-green-500' : transaction.type === 'withdraw' || transaction.type === 'purchase' ? 'text-red-500' : 'text-white/80'}`}>
+                          {transaction.type === 'deposit' || transaction.type === 'sale' ? '+' : transaction.type === 'withdraw' || transaction.type === 'purchase' ? '-' : ''}
+                          {parseFloat(transaction.amount).toFixed(transaction.currency_type === 'eth' ? 3 : 2)} {transaction.currency_type === 'usdt' ? 'USDT' : ''}
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell className="py-2 text-right">
-                      <span className={`text-xs font-medium ${transaction.type === 'deposit' || transaction.type === 'sale' ? 'text-green-500' : transaction.type === 'withdraw' || transaction.type === 'purchase' ? 'text-red-500' : 'text-white/80'}`}>
-                        {transaction.type === 'deposit' || transaction.type === 'sale' ? '+' : transaction.type === 'withdraw' || transaction.type === 'purchase' ? '-' : ''}
-                        {parseFloat(transaction.amount).toFixed(transaction.currency_type === 'eth' ? 3 : 2)} {transaction.currency_type === 'eth' ? '' : 'USDT'}
-                      </span>
-                    </TableCell>
-                    <TableCell className="py-2 text-right">
+                    <TableCell className="py-2.5 text-right">
                       <div className="flex justify-end">
                         <span className={`inline-flex px-2 py-0.5 text-xs rounded-full ${statusDetails.bgColor} ${statusDetails.color} border ${statusDetails.borderColor}`}>
                           {statusDetails.text}
