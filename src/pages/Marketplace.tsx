@@ -92,7 +92,7 @@ const Marketplace = () => {
     gcTime: 3600000,
   });
 
-  // При изменении параметров сортировки или поиска, делаем новый запрос
+  // Upon search or sort parameter changes, make a new request
   useEffect(() => {
     refetch();
   }, [sortBy, searchQuery, refetch]);
@@ -116,12 +116,18 @@ const Marketplace = () => {
   const allNFTs = data?.pages.flatMap(page => page.data) || [];
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-b from-background via-background/80 to-background/60">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-purple-500/10 via-pink-500/5 to-primary/10 blur-3xl -z-10" />
-      <div className="absolute inset-0 bg-[conic-gradient(at_bottom_left,_var(--tw-gradient-stops))] from-primary/5 via-purple-500/5 to-pink-500/5 blur-3xl -z-10" />
+    <div className="min-h-screen relative overflow-hidden bg-[#09081A]">
+      {/* Enhanced background effects */}
+      <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/70 to-background/90">
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-1/4 w-[800px] h-[800px] bg-purple-600/5 rounded-full blur-[120px] animate-[pulse_15s_ease-in-out_infinite]"></div>
+          <div className="absolute bottom-0 right-1/4 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] animate-[pulse_18s_ease-in-out_infinite] delay-700"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-pink-500/5 rounded-full blur-[150px] animate-[pulse_20s_ease-in-out_infinite] delay-1000"></div>
+        </div>
+      </div>
       
-      <div className="container mx-auto px-4 pt-24 pb-16">
-        <div className="text-center mb-12 space-y-8">
+      <div className="container mx-auto px-4 pt-28 pb-20 relative z-10">
+        <div className="text-center mb-14 space-y-8">
           <div className="space-y-4 opacity-0 animate-[fadeIn_1s_ease-out_forwards] min-h-[120px] flex flex-col items-center justify-center relative">
             <h1 className="text-5xl sm:text-7xl font-bold bg-gradient-to-r from-white via-primary to-purple-500 bg-clip-text text-transparent animate-gradient bg-300% drop-shadow-sm py-6">
               NFT Marketplace
@@ -129,6 +135,7 @@ const Marketplace = () => {
             <p className="text-lg sm:text-xl text-muted-foreground/80 max-w-2xl mx-auto leading-relaxed">
               Discover and collect extraordinary NFTs from talented creators around the world
             </p>
+            <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-primary/10 rounded-full blur-3xl animate-[pulse_10s_ease-in-out_infinite]"></div>
           </div>
 
           <MarketplaceStats />
