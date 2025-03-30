@@ -191,21 +191,27 @@ export const WalletBalance = ({
                 <p className="text-amber-400 font-medium text-sm">Upcoming Releases:</p>
                 <div className="max-h-[150px] overflow-y-auto pr-1 space-y-2 scrollbar-thin scrollbar-thumb-amber-500/20 scrollbar-track-transparent">
                   {frozenBalanceDetails.map(item => (
-                    <div key={item.transaction_id} className="p-3 rounded-lg bg-black/30 border border-amber-500/20 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <LockIcon className="h-4 w-4 text-amber-500" />
-                        <span className="text-amber-300 font-semibold text-xs">{item.days_left} days remaining</span>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-1.5">
-                          <div className="w-5 h-5 rounded-full flex items-center justify-center bg-yellow-600/30">
-                            <LockIcon className="h-3 w-3 text-yellow-500" />
+                    <div key={item.transaction_id} className="p-3 rounded-lg bg-black/30 border border-amber-500/20">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        {/* Top section with days remaining and amount */}
+                        <div className="flex items-center gap-2">
+                          <div className="min-w-6 h-6 rounded-full bg-amber-500/20 flex items-center justify-center">
+                            <LockIcon className="h-3.5 w-3.5 text-amber-500" />
                           </div>
-                          <span className="text-amber-400 font-bold">{item.amount.toFixed(2)}</span>
+                          <span className="text-amber-300 font-semibold text-xs whitespace-nowrap">
+                            {item.days_left} days remaining
+                          </span>
                         </div>
-                        <span className="text-xs text-amber-400/70 px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/20">
-                          {item.unfreeze_date}
-                        </span>
+                        
+                        {/* Amount and date section - improved for mobile */}
+                        <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-3">
+                          <span className="text-amber-400 font-bold bg-amber-500/10 px-2 py-1 rounded-md border border-amber-500/20">
+                            {item.amount.toFixed(2)}
+                          </span>
+                          <span className="text-xs text-amber-400/70 px-2 py-1 rounded-md bg-amber-500/10 border border-amber-500/20 whitespace-nowrap">
+                            {item.unfreeze_date}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   ))}
