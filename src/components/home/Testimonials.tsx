@@ -1,27 +1,23 @@
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { StarIcon, Quote } from "lucide-react";
 
 const testimonials = [
   {
     name: "Alex Thompson",
     role: "Digital Artist",
-    avatar: "/lovable-uploads/c6dc18ec-17e1-432d-bb25-474f413e9615.png",
     content: "PureNFT completely transformed my career as a digital artist. Their platform made it easy to monetize my work and connect with a global audience of collectors.",
     rating: 5
   },
   {
     name: "Sarah Williams",
     role: "NFT Collector",
-    avatar: "/lovable-uploads/7d7924fa-23c2-468e-b4e6-439e242022e9.png",
     content: "I've used several NFT marketplaces, but PureNFT stands out for their security and user experience. The verification process ensures I'm only buying authentic pieces.",
     rating: 5
   },
   {
     name: "Michael Chen",
     role: "Blockchain Developer",
-    avatar: "/lovable-uploads/2a47993b-b343-4016-9b9c-e3a372d31ba7.png",
     content: "From a technical perspective, PureNFT's implementation of smart contracts is impeccable. Their gas fee optimization and security protocols are industry-leading.",
     rating: 5
   }
@@ -70,24 +66,20 @@ export const Testimonials = () => {
                     <Quote className="w-10 h-10 text-primary/20 rotate-180" />
                   </div>
                   
-                  <div className="flex items-center gap-4 mb-8">
-                    <Avatar className="h-16 w-16 border-2 border-primary/20 ring-4 ring-primary/5">
-                      <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
-                      <AvatarFallback className="bg-primary/20 text-lg font-semibold">{testimonial.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-semibold text-lg">{testimonial.name}</p>
-                      <p className="text-muted-foreground">{testimonial.role}</p>
+                  <div className="mb-6">
+                    <div className="text-center">
+                      <p className="font-semibold text-lg bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-400 to-pink-500">{testimonial.name}</p>
+                      <p className="text-muted-foreground text-sm">{testimonial.role}</p>
                     </div>
                   </div>
                   
-                  <div className="flex mb-4">
+                  <div className="flex justify-center mb-4">
                     {[...Array(testimonial.rating)].map((_, i) => (
                       <StarIcon key={i} className="w-5 h-5 fill-yellow-500 text-yellow-500 mr-1" />
                     ))}
                   </div>
                   
-                  <p className="text-muted-foreground group-hover:text-foreground/90 transition-colors duration-500 italic leading-relaxed">
+                  <p className="text-muted-foreground group-hover:text-foreground/90 transition-colors duration-500 italic leading-relaxed text-center">
                     "{testimonial.content}"
                   </p>
                 </div>
