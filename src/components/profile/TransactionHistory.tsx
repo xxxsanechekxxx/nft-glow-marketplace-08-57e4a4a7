@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/lib/supabase";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface TransactionHistoryProps {
   transactions: Transaction[];
@@ -22,6 +23,7 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
   const [hasMore, setHasMore] = useState(true);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadingRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     setTransactions(initialTransactions);
@@ -321,7 +323,7 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
               ) : (
                 <ArrowDownCircle className="w-4 h-4 mr-1" />
               )}
-              <span className="hidden sm:inline">Deposits</span>
+              <span className="inline">Deposits</span>
             </Button>
             <Button 
               variant="outline" 
@@ -341,7 +343,7 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
               ) : (
                 <ArrowRightLeft className="w-4 h-4 mr-1" />
               )}
-              <span className="hidden sm:inline">Exchanges</span>
+              <span className="inline">Exchanges</span>
             </Button>
           </div>
         </div>
@@ -360,14 +362,14 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
           </div>
         ) : filteredTransactions.length > 0 ? (
           <ScrollArea className="h-[400px] pr-1">
-            <div className="w-full overflow-x-auto scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
-              <Table className="transaction-table">
+            <div className="w-full overflow-hidden">
+              <Table className="w-full min-w-[400px]">
                 <TableHeader>
                   <TableRow className="hover:bg-primary/5 border-b border-primary/10">
-                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium w-[60px] sm:w-auto">Date</TableHead>
-                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium">Type</TableHead>
-                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium">Amount</TableHead>
-                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium">Status</TableHead>
+                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium w-[20%] sm:w-[15%]">Date</TableHead>
+                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium w-[20%] sm:w-[20%]">Type</TableHead>
+                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium w-[20%] sm:w-[20%]">Amount</TableHead>
+                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium w-[40%] sm:w-[45%]">Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -382,15 +384,15 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                           isFrozenExchange ? 'bg-amber-500/5' : ''
                         }`}
                       >
-                        <TableCell className="py-2 sm:py-3 text-xs sm:text-sm">
-                          <div className="flex items-center gap-1 sm:gap-2">
-                            <Calendar className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground" />
-                            <span>{transaction.created_at}</span>
+                        <TableCell className="py-3 px-2 text-xs sm:text-sm">
+                          <div className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
+                            <span className="whitespace-nowrap">{transaction.created_at}</span>
                           </div>
                         </TableCell>
                         
-                        <TableCell className="text-xs sm:text-sm">
-                          <div className="flex items-center gap-1 sm:gap-2">
+                        <TableCell className="py-3 px-2 text-xs sm:text-sm">
+                          <div className="flex items-center gap-1">
                             <div className={`p-1 sm:p-1.5 rounded-full ${
                               transaction.type === 'deposit' ? 'bg-emerald-500/10' :
                               transaction.type === 'withdraw' ? 'bg-rose-500/10' : 
@@ -400,33 +402,29 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                             }`}>
                               {getTypeIcon(transaction.type, isFrozenExchange)}
                             </div>
-                            <span className="font-medium whitespace-nowrap">
-                              {isFrozenExchange ? 
-                                <span className="hidden sm:inline">Frozen Exchange</span> : 
-                                <span className="hidden sm:inline">{getTypeLabel(transaction.type)}</span>
-                              }
-                              <span className="sm:hidden">
-                                {isFrozenExchange ? 'Frozen' : getTypeLabel(transaction.type).substring(0, 3)}
+                            {!isMobile && (
+                              <span className="font-medium whitespace-nowrap">
+                                {isFrozenExchange ? "Frozen Exchange" : getTypeLabel(transaction.type)}
                               </span>
-                            </span>
+                            )}
                           </div>
                         </TableCell>
                         
-                        <TableCell className="font-medium text-xs sm:text-sm">
+                        <TableCell className="py-3 px-2 font-medium text-xs sm:text-sm">
                           <span className={`${
                             transaction.type === 'deposit' || transaction.type === 'sale' ? 'text-emerald-500' :
                             transaction.type === 'withdraw' || transaction.type === 'purchase' ? 'text-rose-500' :
                             'text-indigo-500'
-                          }`}>
+                          } whitespace-nowrap`}>
                             {transaction.type === 'deposit' || transaction.type === 'sale' ? '+' : 
                              transaction.type === 'withdraw' || transaction.type === 'purchase' ? '-' : ''}
                             {Number(transaction.amount).toFixed(2)}
                           </span>
                         </TableCell>
                         
-                        <TableCell className="text-xs sm:text-sm">
-                          <div className="flex items-center gap-2">
-                            <span className={`px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-xs font-medium ${
+                        <TableCell className="py-3 px-2 text-xs sm:text-sm">
+                          <div className="flex items-center">
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium truncate max-w-[120px] sm:max-w-full ${
                               transaction.status === 'completed' 
                                 ? transaction.frozen_until 
                                   ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30' 
@@ -438,18 +436,10 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                                   : 'bg-rose-500/20 text-rose-500 border border-rose-500/30'
                             }`}>
                               {transaction.status === 'pending' && isFrozenExchange 
-                                ? <span className="hidden sm:inline">Frozen Exchange</span>
+                                ? "Frozen Exchange"
                                 : transaction.frozen_until
-                                  ? <span className="hidden sm:inline">{`Frozen until ${transaction.frozen_until}`}</span>
-                                  : <span className="hidden sm:inline">{transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}</span>
-                              }
-                              <span className="sm:hidden">
-                                {transaction.status === 'pending' && isFrozenExchange 
-                                  ? 'Frozen'
-                                  : transaction.frozen_until
-                                    ? 'Frozen'
-                                    : transaction.status === 'completed' ? 'Done' : 'Pend'}
-                              </span>
+                                  ? isMobile ? "Frozen" : `Frozen until ${transaction.frozen_until}`
+                                  : transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
                             </span>
                           </div>
                         </TableCell>
