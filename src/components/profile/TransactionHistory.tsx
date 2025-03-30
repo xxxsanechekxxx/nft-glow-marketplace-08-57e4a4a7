@@ -2,12 +2,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowDownCircle, ArrowUpCircle, ShoppingBag, ArrowRightLeft, Clock, Calendar, Search, Filter, ChevronDown } from "lucide-react";
+import { ArrowDownCircle, ArrowUpCircle, ShoppingBag, ArrowRightLeft, Clock, Calendar, Search, Filter, ChevronDown, Loader2 } from "lucide-react";
 import type { Transaction } from "@/types/user";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/lib/supabase";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface TransactionHistoryProps {
   transactions: Transaction[];
@@ -18,6 +19,7 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
   const [filterType, setFilterType] = useState<string | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
   const [loading, setLoading] = useState(false);
+  const [filterLoading, setFilterLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadingRef = useRef<HTMLDivElement>(null);
@@ -96,7 +98,7 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
   const loadMoreDeposits = async () => {
     if (loading) return;
     
-    setLoading(true);
+    setFilterLoading(true);
     setTransactions([]); // Clear existing transactions when switching to deposits
     
     try {
@@ -139,8 +141,73 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
     } catch (error) {
       console.error("Error fetching deposits:", error);
     } finally {
+      setFilterLoading(false);
       setLoading(false);
     }
+  };
+
+  const loadExchangeTransactions = async () => {
+    setFilterLoading(true);
+    setTransactions([]); // Clear existing transactions
+    
+    try {
+      const { data: exchangeData, error } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('type', 'exchange')
+        .order('created_at', { ascending: false })
+        .limit(20);
+      
+      if (error) throw error;
+      
+      if (exchangeData && exchangeData.length > 0) {
+        const formattedExchanges = exchangeData.map(tx => {
+          const dateObj = new Date(tx.created_at);
+          const formattedDate = `${dateObj.getDate().toString().padStart(2, '0')}/${(dateObj.getMonth() + 1).toString().padStart(2, '0')}`;
+          
+          let formattedFrozenUntil = null;
+          if (tx.frozen_until) {
+            const frozenDate = new Date(tx.frozen_until);
+            formattedFrozenUntil = `${frozenDate.getDate().toString().padStart(2, '0')}/${(frozenDate.getMonth() + 1).toString().padStart(2, '0')}/${frozenDate.getFullYear()}`;
+          }
+          
+          return {
+            id: tx.id,
+            type: tx.type,
+            amount: tx.amount.toString(),
+            created_at: formattedDate,
+            raw_created_at: tx.created_at,
+            status: tx.status,
+            item: tx.item,
+            frozen_until: formattedFrozenUntil,
+            is_frozen: tx.is_frozen,
+            is_frozen_exchange: tx.is_frozen_exchange,
+            currency_type: tx.currency_type
+          };
+        });
+        
+        setTransactions(formattedExchanges);
+        setFilterType('exchange');
+        setHasMore(exchangeData.length === 20);
+      } else {
+        setTransactions([]);
+        setFilterType('exchange');
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error("Error fetching exchange transactions:", error);
+    } finally {
+      setFilterLoading(false);
+    }
+  };
+
+  const resetFilters = () => {
+    setFilterLoading(true);
+    setTimeout(() => {
+      setFilterType(null);
+      setTransactions(initialTransactions);
+      setFilterLoading(false);
+    }, 300); // Small delay to show the loading state
   };
 
   useEffect(() => {
@@ -224,6 +291,7 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-8 h-9 bg-background/50 border-primary/20 focus:border-primary/50"
+              disabled={filterLoading}
             />
           </div>
           
@@ -232,11 +300,12 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
               variant="outline" 
               size="sm" 
               className={`px-3 h-9 border-primary/20 ${filterType === null ? 'bg-primary/20 text-primary' : 'bg-background/50'}`}
-              onClick={() => {
-                setFilterType(null);
-                setTransactions(initialTransactions);
-              }}
+              onClick={resetFilters}
+              disabled={filterLoading}
             >
+              {filterLoading && filterType === null ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-1" />
+              ) : null}
               All
             </Button>
             <Button 
@@ -245,14 +314,19 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
               className={`px-3 h-9 border-primary/20 ${filterType === 'deposit' ? 'bg-emerald-500/20 text-emerald-500' : 'bg-background/50'}`}
               onClick={() => {
                 if (filterType === 'deposit') {
-                  setFilterType(null);
-                  setTransactions(initialTransactions);
+                  resetFilters();
                 } else {
                   loadMoreDeposits();
                 }
               }}
+              disabled={filterLoading}
             >
-              <ArrowDownCircle className="w-4 h-4 mr-1" /> Deposits
+              {filterLoading && filterType === 'deposit' ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-1" />
+              ) : (
+                <ArrowDownCircle className="w-4 h-4 mr-1" />
+              )}
+              Deposits
             </Button>
             <Button 
               variant="outline" 
@@ -260,22 +334,36 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
               className={`px-3 h-9 border-primary/20 ${filterType === 'exchange' ? 'bg-indigo-500/20 text-indigo-500' : 'bg-background/50'}`}
               onClick={() => {
                 if (filterType === 'exchange') {
-                  setFilterType(null);
-                  setTransactions(initialTransactions);
+                  resetFilters();
                 } else {
-                  setFilterType('exchange');
-                  setTransactions(transactions.filter(tx => tx.type === 'exchange'));
+                  loadExchangeTransactions();
                 }
               }}
+              disabled={filterLoading}
             >
-              <ArrowRightLeft className="w-4 h-4 mr-1" /> Exchanges
+              {filterLoading && filterType === 'exchange' ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-1" />
+              ) : (
+                <ArrowRightLeft className="w-4 h-4 mr-1" />
+              )}
+              Exchanges
             </Button>
           </div>
         </div>
       </CardHeader>
       
       <CardContent className="p-0">
-        {filteredTransactions.length > 0 ? (
+        {filterLoading ? (
+          <div className="p-4">
+            <div className="space-y-3">
+              <Skeleton className="w-full h-12" />
+              <Skeleton className="w-full h-12" />
+              <Skeleton className="w-full h-12" />
+              <Skeleton className="w-full h-12" />
+              <Skeleton className="w-full h-12" />
+            </div>
+          </div>
+        ) : filteredTransactions.length > 0 ? (
           <ScrollArea className="h-[400px] pr-1">
             <div className="w-full overflow-x-auto scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
               <Table className="transaction-table">
