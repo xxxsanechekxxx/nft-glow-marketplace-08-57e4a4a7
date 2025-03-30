@@ -30,51 +30,60 @@ const testimonials = [
 export const Testimonials = () => {
   return (
     <div className="py-24 bg-secondary/5 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-t from-primary/5 via-purple-500/5 to-pink-500/5"></div>
+      {/* Enhanced background effects */}
+      <div className="absolute inset-0 bg-gradient-to-t from-primary/10 via-purple-500/5 to-pink-500/5"></div>
       <div className="absolute inset-0">
-        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[150px] animate-[pulse_8s_ease-in-out_infinite]"></div>
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-[150px] animate-[pulse_10s_ease-in-out_infinite] delay-1000"></div>
+        <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[120px] animate-[pulse_8s_ease-in-out_infinite]"></div>
+        <div className="absolute top-0 right-1/4 w-[400px] h-[400px] bg-purple-500/5 rounded-full blur-[120px] animate-[pulse_10s_ease-in-out_infinite] delay-1000"></div>
       </div>
       
       <div className="container mx-auto px-4 relative">
-        <div className="text-center mb-16 max-w-2xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-400 to-pink-500">
+        <div className="text-center mb-16 max-w-3xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-400 to-pink-500 leading-tight">
             Community Testimonials
           </h2>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-muted-foreground text-lg md:text-xl">
             Hear what our users have to say about their experience with PureNFT
           </p>
+          
+          {/* Added divider with glow effect */}
+          <div className="relative h-1 w-24 mx-auto mt-8 mb-2">
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/50 via-purple-500 to-pink-500/50 rounded-full"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-primary via-purple-500 to-pink-500 rounded-full animate-pulse"></div>
+          </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {testimonials.map((testimonial, index) => (
             <Card 
               key={index} 
-              className="bg-background/30 backdrop-blur-xl border border-primary/10 hover:border-primary/30 transition-all duration-700 hover:scale-[1.03] group overflow-hidden animate-fade-in"
+              className="bg-background/70 backdrop-blur-xl border border-primary/10 hover:border-primary/30 transition-all duration-700 hover:translate-y-[-8px] group overflow-hidden shadow-xl shadow-primary/5 hover:shadow-primary/10"
               style={{ animationDelay: `${index * 200}ms` }}
             >
-              <CardContent className="p-6 relative">
+              <CardContent className="p-8 relative">
+                {/* Enhanced gradient hover effect */}
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-lg blur opacity-0 group-hover:opacity-75 transition duration-700 group-hover:duration-200"></div>
                 
                 <div className="relative z-10">
-                  <div className="flex items-center gap-4 mb-6">
-                    <Avatar className="h-12 w-12 border-2 border-primary/20">
+                  <div className="flex items-center gap-4 mb-8">
+                    <Avatar className="h-16 w-16 border-2 border-primary/20 ring-4 ring-primary/5">
                       <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
-                      <AvatarFallback>{testimonial.name.charAt(0)}</AvatarFallback>
+                      <AvatarFallback className="bg-primary/20 text-lg font-semibold">{testimonial.name.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="font-semibold">{testimonial.name}</p>
-                      <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                      <p className="font-semibold text-lg">{testimonial.name}</p>
+                      <p className="text-muted-foreground">{testimonial.role}</p>
                     </div>
                   </div>
                   
                   <div className="flex mb-4">
                     {[...Array(testimonial.rating)].map((_, i) => (
-                      <StarIcon key={i} className="w-4 h-4 fill-yellow-500 text-yellow-500" />
+                      <StarIcon key={i} className="w-5 h-5 fill-yellow-500 text-yellow-500 mr-1" />
                     ))}
                   </div>
                   
-                  <p className="text-muted-foreground group-hover:text-muted-foreground/80 transition-colors duration-500">
+                  <p className="text-muted-foreground group-hover:text-foreground/90 transition-colors duration-500 italic leading-relaxed">
                     "{testimonial.content}"
                   </p>
                 </div>
