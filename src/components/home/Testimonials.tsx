@@ -1,7 +1,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { StarIcon } from "lucide-react";
+import { StarIcon, Quote } from "lucide-react";
 
 const testimonials = [
   {
@@ -29,7 +29,7 @@ const testimonials = [
 
 export const Testimonials = () => {
   return (
-    <div className="py-24 bg-secondary/5 relative overflow-hidden">
+    <div className="py-24 bg-background/30 relative overflow-hidden">
       {/* Enhanced background effects */}
       <div className="absolute inset-0 bg-gradient-to-t from-primary/10 via-purple-500/5 to-pink-500/5"></div>
       <div className="absolute inset-0">
@@ -57,7 +57,7 @@ export const Testimonials = () => {
           {testimonials.map((testimonial, index) => (
             <Card 
               key={index} 
-              className="bg-background/70 backdrop-blur-xl border border-primary/10 hover:border-primary/30 transition-all duration-700 hover:translate-y-[-8px] group overflow-hidden shadow-xl shadow-primary/5 hover:shadow-primary/10"
+              className="bg-background/50 backdrop-blur-xl border border-primary/10 hover:border-primary/30 transition-all duration-700 hover:translate-y-[-8px] group overflow-hidden shadow-xl shadow-primary/5 hover:shadow-primary/10"
               style={{ animationDelay: `${index * 200}ms` }}
             >
               <CardContent className="p-8 relative">
@@ -66,6 +66,10 @@ export const Testimonials = () => {
                 <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-lg blur opacity-0 group-hover:opacity-75 transition duration-700 group-hover:duration-200"></div>
                 
                 <div className="relative z-10">
+                  <div className="absolute top-0 right-0">
+                    <Quote className="w-10 h-10 text-primary/20 rotate-180" />
+                  </div>
+                  
                   <div className="flex items-center gap-4 mb-8">
                     <Avatar className="h-16 w-16 border-2 border-primary/20 ring-4 ring-primary/5">
                       <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
