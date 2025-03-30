@@ -1,192 +1,528 @@
 
-import React, { useState } from "react";
-import { ArrowUpRight, ArrowDownLeft, RefreshCw, Filter, Clock } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { ArrowDownCircle, ArrowUpCircle, ShoppingBag, ArrowRightLeft, Clock, Calendar, Search, Filter, ChevronDown, Loader2 } from "lucide-react";
 import type { Transaction } from "@/types/user";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { supabase } from "@/lib/supabase";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface TransactionHistoryProps {
   transactions: Transaction[];
-  isLoading?: boolean;
 }
 
-export const TransactionHistory = ({ transactions, isLoading = false }: TransactionHistoryProps) => {
-  const [filter, setFilter] = useState<string | null>(null);
-  const isMobile = useIsMobile();
-  
-  const filteredTransactions = filter 
-    ? transactions.filter(tx => tx.type === filter)
-    : transactions;
+export const TransactionHistory = ({ transactions: initialTransactions }: TransactionHistoryProps) => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState<string | null>(null);
+  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
+  const [loading, setLoading] = useState(false);
+  const [filterLoading, setFilterLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const loadingRef = useRef<HTMLDivElement>(null);
 
-  const getTransactionIcon = (type: string) => {
-    switch (type) {
-      case 'deposit':
-        return <ArrowDownLeft className="transaction-type-icon text-green-500" />;
-      case 'withdraw':
-        return <ArrowUpRight className="transaction-type-icon text-red-500" />;
-      case 'exchange':
-        return <RefreshCw className="transaction-type-icon text-blue-500" />;
-      default:
-        return <Clock className="transaction-type-icon text-gray-500" />;
-    }
-  };
+  useEffect(() => {
+    setTransactions(initialTransactions);
+  }, [initialTransactions]);
 
-  const getTransactionLabel = (type: string) => {
-    switch (type) {
-      case 'deposit':
-        return 'Deposit';
-      case 'withdraw':
-        return 'Withdraw';
-      case 'exchange':
-        return 'Exchange';
-      default:
-        return type.charAt(0).toUpperCase() + type.slice(1);
-    }
-  };
-
-  const getStatusBadge = (status: string) => {
-    let color = "";
-    switch (status) {
-      case 'completed':
-        color = "bg-green-500/20 text-green-500 border border-green-500/30";
-        break;
-      case 'pending':
-        color = "bg-yellow-500/20 text-yellow-500 border border-yellow-500/30";
-        break;
-      case 'failed':
-        color = "bg-red-500/20 text-red-500 border border-red-500/30";
-        break;
-      default:
-        color = "bg-gray-500/20 text-gray-400 border border-gray-500/30";
-    }
-    return (
-      <Badge className={`transaction-status-badge px-2 py-0.5 rounded-full text-xs font-medium ${color}`}>
-        {status.charAt(0).toUpperCase() + status.slice(1)}
-      </Badge>
-    );
-  };
-
-  const getFormatAmount = (transaction: Transaction) => {
-    // Fix the type conditions - using 'withdraw' instead of 'withdrawal'
-    const sign = transaction.type === 'deposit' ? '+' : transaction.type === 'withdraw' ? '-' : '';
-    const amount = `${sign}${transaction.amount}`;
-    const currencySymbol = transaction.currency_type === 'usdt' ? '$' : 'Ξ';
+  const fetchMoreTransactions = async () => {
+    if (loading || !hasMore) return;
     
-    return (
-      <span className={transaction.type === 'deposit' ? 'text-green-500' : transaction.type === 'withdraw' ? 'text-red-500' : ''}>
-        {amount} {currencySymbol}
-      </span>
+    setLoading(true);
+    
+    try {
+      const lastTransaction = transactions[transactions.length - 1];
+      
+      let query = supabase
+        .from('transactions')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(10);
+      
+      if (filterType) {
+        query = query.eq('type', filterType);
+      }
+      
+      if (transactions.length > 0 && lastTransaction.raw_created_at) {
+        query = query.lt('created_at', lastTransaction.raw_created_at);
+      }
+      
+      const { data: transactionsData, error } = await query;
+      
+      if (error) throw error;
+      
+      if (transactionsData && transactionsData.length > 0) {
+        const formattedTransactions = transactionsData.map(tx => {
+          const dateObj = new Date(tx.created_at);
+          const formattedDate = `${dateObj.getDate().toString().padStart(2, '0')}/${(dateObj.getMonth() + 1).toString().padStart(2, '0')}`;
+          
+          let formattedFrozenUntil = null;
+          if (tx.frozen_until) {
+            const frozenDate = new Date(tx.frozen_until);
+            formattedFrozenUntil = `${frozenDate.getDate().toString().padStart(2, '0')}/${(frozenDate.getMonth() + 1).toString().padStart(2, '0')}/${frozenDate.getFullYear()}`;
+          }
+          
+          return {
+            id: tx.id,
+            type: tx.type,
+            amount: tx.amount.toString(),
+            created_at: formattedDate,
+            raw_created_at: tx.created_at,
+            status: tx.status,
+            item: tx.item,
+            frozen_until: formattedFrozenUntil,
+            is_frozen: tx.is_frozen,
+            is_frozen_exchange: tx.is_frozen_exchange,
+            currency_type: tx.currency_type
+          };
+        });
+        
+        setTransactions(prev => [...prev, ...formattedTransactions]);
+        setHasMore(formattedTransactions.length === 10);
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error("Error fetching more transactions:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadMoreDeposits = async () => {
+    if (loading) return;
+    
+    setFilterLoading(true);
+    setTransactions([]);
+    
+    try {
+      const { data: depositsData, error } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('type', 'deposit')
+        .order('created_at', { ascending: false })
+        .limit(20);
+      
+      if (error) throw error;
+      
+      if (depositsData && depositsData.length > 0) {
+        const formattedDeposits = depositsData.map(tx => {
+          const dateObj = new Date(tx.created_at);
+          const formattedDate = `${dateObj.getDate().toString().padStart(2, '0')}/${(dateObj.getMonth() + 1).toString().padStart(2, '0')}`;
+          
+          return {
+            id: tx.id,
+            type: tx.type,
+            amount: tx.amount.toString(),
+            created_at: formattedDate,
+            raw_created_at: tx.created_at,
+            status: tx.status,
+            item: tx.item,
+            frozen_until: null,
+            is_frozen: tx.is_frozen,
+            is_frozen_exchange: tx.is_frozen_exchange,
+            currency_type: tx.currency_type
+          };
+        });
+        
+        setTransactions(formattedDeposits);
+        setFilterType('deposit');
+        setHasMore(depositsData.length === 20);
+      } else {
+        setFilterType('deposit');
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error("Error fetching deposits:", error);
+    } finally {
+      setFilterLoading(false);
+      setLoading(false);
+    }
+  };
+
+  const loadExchangeTransactions = async () => {
+    setFilterLoading(true);
+    setTransactions([]);
+    
+    try {
+      const { data: exchangeData, error } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('type', 'exchange')
+        .order('created_at', { ascending: false })
+        .limit(20);
+      
+      if (error) throw error;
+      
+      if (exchangeData && exchangeData.length > 0) {
+        const formattedExchanges = exchangeData.map(tx => {
+          const dateObj = new Date(tx.created_at);
+          const formattedDate = `${dateObj.getDate().toString().padStart(2, '0')}/${(dateObj.getMonth() + 1).toString().padStart(2, '0')}`;
+          
+          let formattedFrozenUntil = null;
+          if (tx.frozen_until) {
+            const frozenDate = new Date(tx.frozen_until);
+            formattedFrozenUntil = `${frozenDate.getDate().toString().padStart(2, '0')}/${(frozenDate.getMonth() + 1).toString().padStart(2, '0')}/${frozenDate.getFullYear()}`;
+          }
+          
+          return {
+            id: tx.id,
+            type: tx.type,
+            amount: tx.amount.toString(),
+            created_at: formattedDate,
+            raw_created_at: tx.created_at,
+            status: tx.status,
+            item: tx.item,
+            frozen_until: formattedFrozenUntil,
+            is_frozen: tx.is_frozen,
+            is_frozen_exchange: tx.is_frozen_exchange,
+            currency_type: tx.currency_type
+          };
+        });
+        
+        setTransactions(formattedExchanges);
+        setFilterType('exchange');
+        setHasMore(exchangeData.length === 20);
+      } else {
+        setTransactions([]);
+        setFilterType('exchange');
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error("Error fetching exchange transactions:", error);
+    } finally {
+      setFilterLoading(false);
+    }
+  };
+
+  const resetFilters = () => {
+    setFilterLoading(true);
+    setTimeout(() => {
+      setFilterType(null);
+      setTransactions(initialTransactions);
+      setFilterLoading(false);
+    }, 300);
+  };
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && hasMore && !loading) {
+          fetchMoreTransactions();
+        }
+      },
+      { threshold: 0.5 }
     );
+    
+    observerRef.current = observer;
+    
+    if (loadingRef.current) {
+      observer.observe(loadingRef.current);
+    }
+    
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [hasMore, loading, transactions, filterType]);
+
+  const filteredTransactions = transactions.filter(transaction => {
+    const matchesSearch = searchTerm === "" || 
+      transaction.amount.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      transaction.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      transaction.status.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesFilter = filterType === null || transaction.type === filterType;
+    
+    return matchesSearch && matchesFilter;
+  });
+
+  const getTypeIcon = (type: string, isFrozenExchange: boolean) => {
+    switch(type) {
+      case 'deposit':
+        return <ArrowDownCircle className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0" />;
+      case 'withdraw':
+        return <ArrowUpCircle className="w-4 h-4 sm:w-5 sm:h-5 text-rose-500 flex-shrink-0" />;
+      case 'purchase':
+        return <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500 flex-shrink-0" />;
+      case 'sale':
+        return <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0" />;
+      case 'exchange':
+        return <ArrowRightLeft className={`w-4 h-4 sm:w-5 sm:h-5 ${isFrozenExchange ? 'text-amber-500' : 'text-indigo-500'} flex-shrink-0`} />;
+      default:
+        return null;
+    }
+  };
+
+  const getTypeLabel = (type: string) => {
+    switch(type) {
+      case 'deposit': return 'Deposit';
+      case 'withdraw': return 'Withdraw';
+      case 'purchase': return 'Purchase';
+      case 'sale': return 'Sale';
+      case 'exchange': return 'Exchange';
+      default: return type;
+    }
+  };
+
+  // Get short label for mobile display
+  const getShortTypeLabel = (type: string) => {
+    switch(type) {
+      case 'deposit': return 'Dep';
+      case 'withdraw': return 'With';
+      case 'purchase': return 'Pur';
+      case 'sale': return 'Sale';
+      case 'exchange': return 'Exch';
+      default: return type.substring(0, 3);
+    }
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center mb-4 px-1 md:px-0">
-        <h3 className="text-lg font-semibold">Transaction History</h3>
-        <div className="flex space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setFilter(null)}
-            className={`transaction-filter-button ${!filter ? 'transaction-filter-active bg-primary/10 text-primary' : ''}`}
-          >
-            <Filter className="w-3.5 h-3.5 mr-1" />
-            {!isMobile && <span>All</span>}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setFilter('deposit')}
-            className={`transaction-filter-button ${filter === 'deposit' ? 'transaction-filter-active bg-primary/10 text-primary' : ''}`}
-          >
-            <ArrowDownLeft className="w-3.5 h-3.5 mr-1" />
-            {!isMobile && <span>Deposits</span>}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setFilter('withdraw')}
-            className={`transaction-filter-button ${filter === 'withdraw' ? 'transaction-filter-active bg-primary/10 text-primary' : ''}`}
-          >
-            <ArrowUpRight className="w-3.5 h-3.5 mr-1" />
-            {!isMobile && <span>Withdrawals</span>}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setFilter('exchange')}
-            className={`transaction-filter-button ${filter === 'exchange' ? 'transaction-filter-active bg-primary/10 text-primary' : ''}`}
-          >
-            <RefreshCw className="w-3.5 h-3.5 mr-1" />
-            {!isMobile && <span>Exchange</span>}
-          </Button>
+    <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-[#1A1F2C]/90 mt-6">
+      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-2 space-y-3 sm:space-y-0">
+        <CardTitle className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-2 sm:gap-3">
+          <div className="p-1.5 sm:p-2 rounded-lg bg-primary/20">
+            <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+          </div>
+          Transaction History
+        </CardTitle>
+        
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
+          <div className="relative w-full sm:w-48">
+            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-8 h-9 bg-background/50 border-primary/20 focus:border-primary/50 w-full"
+              disabled={filterLoading}
+            />
+          </div>
+          
+          <div className="flex flex-wrap gap-1 w-full sm:w-auto">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className={`px-2 sm:px-3 h-9 border-primary/20 ${filterType === null ? 'bg-primary/20 text-primary' : 'bg-background/50'}`}
+              onClick={resetFilters}
+              disabled={filterLoading}
+            >
+              {filterLoading && filterType === null ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-1" />
+              ) : null}
+              All
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className={`px-2 sm:px-3 h-9 border-primary/20 ${filterType === 'deposit' ? 'bg-emerald-500/20 text-emerald-500' : 'bg-background/50'}`}
+              onClick={() => {
+                if (filterType === 'deposit') {
+                  resetFilters();
+                } else {
+                  loadMoreDeposits();
+                }
+              }}
+              disabled={filterLoading}
+            >
+              {filterLoading && filterType === 'deposit' ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-1" />
+              ) : (
+                <ArrowDownCircle className="w-4 h-4 mr-1" />
+              )}
+              <span className="hidden sm:inline">Deposits</span>
+              <span className="sm:hidden">Dep</span>
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className={`px-2 sm:px-3 h-9 border-primary/20 ${filterType === 'exchange' ? 'bg-indigo-500/20 text-indigo-500' : 'bg-background/50'}`}
+              onClick={() => {
+                if (filterType === 'exchange') {
+                  resetFilters();
+                } else {
+                  loadExchangeTransactions();
+                }
+              }}
+              disabled={filterLoading}
+            >
+              {filterLoading && filterType === 'exchange' ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-1" />
+              ) : (
+                <ArrowRightLeft className="w-4 h-4 mr-1" />
+              )}
+              <span className="hidden sm:inline">Exchanges</span>
+              <span className="sm:hidden">Exch</span>
+            </Button>
+          </div>
         </div>
-      </div>
-
-      <div className="transaction-table-container bg-primary/5 rounded-lg border border-primary/10 overflow-hidden">
-        <Table className="transaction-table">
-          <TableHeader>
-            <TableRow>
-              <TableHead className="date-column py-3 px-3 md:px-4">Date</TableHead>
-              <TableHead className="type-column py-3 px-3 md:px-4">Type</TableHead>
-              <TableHead className="amount-column py-3 px-3 md:px-4">Amount</TableHead>
-              <TableHead className="status-column py-3 px-3 md:px-4">Status</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              Array(5).fill(null).map((_, i) => (
-                <TableRow key={i}>
-                  <TableCell className="py-3 px-3 md:px-4"><Skeleton className="h-5 w-12" /></TableCell>
-                  <TableCell className="py-3 px-3 md:px-4"><Skeleton className="h-5 w-20" /></TableCell>
-                  <TableCell className="py-3 px-3 md:px-4"><Skeleton className="h-5 w-16" /></TableCell>
-                  <TableCell className="py-3 px-3 md:px-4"><Skeleton className="h-5 w-16" /></TableCell>
-                </TableRow>
-              ))
-            ) : filteredTransactions.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={4} className="text-center py-4">
-                  No transactions found
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredTransactions.map((transaction) => (
-                <TableRow key={transaction.id}>
-                  <TableCell className="transaction-date py-3 px-3 md:px-4 text-xs">
-                    {transaction.created_at}
-                  </TableCell>
-                  <TableCell className="py-3 px-3 md:px-4">
-                    <div className="transaction-type-cell flex items-center">
-                      <div className={`transaction-type-badge p-1.5 rounded-full flex-shrink-0 ${
-                        transaction.type === 'deposit' ? 'bg-green-500/20' : 
-                        transaction.type === 'withdraw' ? 'bg-red-500/20' : 
-                        'bg-blue-500/20'
-                      }`}>
-                        {getTransactionIcon(transaction.type)}
-                      </div>
-                      {!isMobile && (
-                        <span className="transaction-type-label ml-1.5 text-sm">
-                          {getTransactionLabel(transaction.type)}
-                        </span>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="transaction-amount py-3 px-3 md:px-4 font-medium text-sm">
-                    {getFormatAmount(transaction)}
-                  </TableCell>
-                  <TableCell className="py-3 px-3 md:px-4">
-                    {getStatusBadge(transaction.status)}
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
-    </div>
+      </CardHeader>
+      
+      <CardContent className="p-0">
+        {filterLoading ? (
+          <div className="p-4">
+            <div className="space-y-3">
+              <Skeleton className="w-full h-12" />
+              <Skeleton className="w-full h-12" />
+              <Skeleton className="w-full h-12" />
+              <Skeleton className="w-full h-12" />
+              <Skeleton className="w-full h-12" />
+            </div>
+          </div>
+        ) : filteredTransactions.length > 0 ? (
+          <ScrollArea className="h-[400px] pr-1">
+            <div className="w-full overflow-x-auto scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
+              <Table className="transaction-table">
+                <TableHeader>
+                  <TableRow className="hover:bg-primary/5 border-b border-primary/10">
+                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium w-[60px] sm:w-auto">Date</TableHead>
+                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium">Type</TableHead>
+                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium">Amount</TableHead>
+                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium">Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredTransactions.map(transaction => {
+                    const isFrozenExchange = transaction.type === 'exchange' && (transaction.is_frozen || transaction.is_frozen_exchange);
+                    
+                    return (
+                      <TableRow 
+                        key={transaction.id} 
+                        className={`transition-colors border-b border-primary/5 hover:bg-primary/5 animate-fade-in ${
+                          transaction.frozen_until ? 'bg-yellow-500/5' : 
+                          isFrozenExchange ? 'bg-amber-500/5' : ''
+                        }`}
+                      >
+                        <TableCell className="py-2 sm:py-3 text-xs sm:text-sm">
+                          <div className="flex items-center gap-1 sm:gap-2">
+                            <Calendar className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground" />
+                            <span>{transaction.created_at}</span>
+                          </div>
+                        </TableCell>
+                        
+                        <TableCell className="text-xs sm:text-sm">
+                          <div className="flex items-center gap-1 sm:gap-2">
+                            <div className={`p-1 sm:p-1.5 rounded-full ${
+                              transaction.type === 'deposit' ? 'bg-emerald-500/10' :
+                              transaction.type === 'withdraw' ? 'bg-rose-500/10' : 
+                              transaction.type === 'purchase' ? 'bg-blue-500/10' :
+                              transaction.type === 'sale' ? 'bg-emerald-500/10' :
+                              isFrozenExchange ? 'bg-amber-500/10' : 'bg-indigo-500/10'
+                            }`}>
+                              {getTypeIcon(transaction.type, isFrozenExchange)}
+                            </div>
+                            <span className="font-medium whitespace-nowrap">
+                              {isFrozenExchange ? (
+                                <>
+                                  <span className="hidden sm:inline">Frozen Exchange</span>
+                                  <span className="sm:hidden">Frozen</span>
+                                </>
+                              ) : (
+                                <>
+                                  <span className="hidden sm:inline">{getTypeLabel(transaction.type)}</span>
+                                  <span className="sm:hidden">{getShortTypeLabel(transaction.type)}</span>
+                                </>
+                              )}
+                            </span>
+                          </div>
+                        </TableCell>
+                        
+                        <TableCell className="font-medium text-xs sm:text-sm">
+                          <span className={`${
+                            transaction.type === 'deposit' || transaction.type === 'sale' ? 'text-emerald-500' :
+                            transaction.type === 'withdraw' || transaction.type === 'purchase' ? 'text-rose-500' :
+                            'text-indigo-500'
+                          }`}>
+                            {transaction.type === 'deposit' || transaction.type === 'sale' ? '+' : 
+                             transaction.type === 'withdraw' || transaction.type === 'purchase' ? '-' : ''}
+                            {Number(transaction.amount).toFixed(2)}
+                          </span>
+                        </TableCell>
+                        
+                        <TableCell className="text-xs sm:text-sm">
+                          <div className="flex items-center gap-2">
+                            <span className={`px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-xs font-medium ${
+                              transaction.status === 'completed' 
+                                ? transaction.frozen_until 
+                                  ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30' 
+                                  : 'bg-emerald-500/20 text-emerald-500 border border-emerald-500/30' 
+                                : transaction.status === 'pending' 
+                                  ? isFrozenExchange
+                                    ? 'bg-amber-500/20 text-amber-500 border border-amber-500/30'
+                                    : 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30' 
+                                  : 'bg-rose-500/20 text-rose-500 border border-rose-500/30'
+                            }`}>
+                              {transaction.status === 'pending' && isFrozenExchange 
+                                ? (
+                                  <>
+                                    <span className="hidden sm:inline">Frozen Exchange</span>
+                                    <span className="sm:hidden">Frozen</span>
+                                  </>
+                                )
+                                : transaction.frozen_until
+                                  ? (
+                                    <>
+                                      <span className="hidden sm:inline">{`Frozen until ${transaction.frozen_until}`}</span>
+                                      <span className="sm:hidden">Frozen</span>
+                                    </>
+                                  )
+                                  : (
+                                    <>
+                                      <span className="hidden sm:inline">{transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}</span>
+                                      <span className="sm:hidden">
+                                        {transaction.status === 'pending' ? 'Pend' : 
+                                         transaction.status === 'completed' ? 'Done' : 'Fail'}
+                                      </span>
+                                    </>
+                                  )
+                              }
+                            </span>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+              
+              <div 
+                ref={loadingRef} 
+                className="py-4 flex justify-center items-center"
+              >
+                {loading ? (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <div className="animate-spin w-4 h-4 border-2 border-primary border-t-transparent rounded-full"></div>
+                    <span className="text-xs sm:text-sm">Loading more transactions...</span>
+                  </div>
+                ) : hasMore ? (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="px-3 h-9 border-primary/20"
+                    onClick={fetchMoreTransactions}
+                  >
+                    <ChevronDown className="w-4 h-4 mr-1" /> <span className="text-xs sm:text-sm">Load More</span>
+                  </Button>
+                ) : (
+                  <span className="text-xs sm:text-sm text-muted-foreground">No more transactions</span>
+                )}
+              </div>
+            </div>
+          </ScrollArea>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-12 text-muted-foreground bg-black/20 rounded-b-xl">
+            <Filter className="w-10 h-10 sm:w-12 sm:h-12 text-muted-foreground/50 mb-3" />
+            <p className="text-base sm:text-lg font-medium mb-1">No transactions found</p>
+            <p className="text-xs sm:text-sm text-muted-foreground/70 text-center px-4">
+              {searchTerm || filterType ? "Try adjusting your filters" : "Your transaction history will appear here"}
+            </p>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 };
-
