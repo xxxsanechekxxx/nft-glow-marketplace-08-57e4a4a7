@@ -90,7 +90,7 @@ export const TransactionHistory = ({ transactions, isLoading = false }: Transact
             variant="outline"
             size="sm"
             onClick={() => setFilter(null)}
-            className={`transaction-filter-button ${!filter ? 'transaction-filter-active' : ''}`}
+            className={`transaction-filter-button ${!filter ? 'bg-primary/10' : ''}`}
           >
             <Filter className="w-3.5 h-3.5 mr-1" />
             {!isMobile && <span>All</span>}
@@ -99,7 +99,7 @@ export const TransactionHistory = ({ transactions, isLoading = false }: Transact
             variant="outline"
             size="sm"
             onClick={() => setFilter('deposit')}
-            className={`transaction-filter-button ${filter === 'deposit' ? 'transaction-filter-active' : ''}`}
+            className={`transaction-filter-button ${filter === 'deposit' ? 'bg-primary/10' : ''}`}
           >
             <ArrowDownLeft className="w-3.5 h-3.5 mr-1" />
             {!isMobile && <span>Deposits</span>}
@@ -108,7 +108,7 @@ export const TransactionHistory = ({ transactions, isLoading = false }: Transact
             variant="outline"
             size="sm"
             onClick={() => setFilter('withdrawal')}
-            className={`transaction-filter-button ${filter === 'withdrawal' ? 'transaction-filter-active' : ''}`}
+            className={`transaction-filter-button ${filter === 'withdrawal' ? 'bg-primary/10' : ''}`}
           >
             <ArrowUpRight className="w-3.5 h-3.5 mr-1" />
             {!isMobile && <span>Withdrawals</span>}
@@ -117,7 +117,7 @@ export const TransactionHistory = ({ transactions, isLoading = false }: Transact
             variant="outline"
             size="sm"
             onClick={() => setFilter('exchange')}
-            className={`transaction-filter-button ${filter === 'exchange' ? 'transaction-filter-active' : ''}`}
+            className={`transaction-filter-button ${filter === 'exchange' ? 'bg-primary/10' : ''}`}
           >
             <RefreshCw className="w-3.5 h-3.5 mr-1" />
             {!isMobile && <span>Exchange</span>}
@@ -129,20 +129,20 @@ export const TransactionHistory = ({ transactions, isLoading = false }: Transact
         <Table className="transaction-table">
           <TableHeader>
             <TableRow>
-              <TableHead className="date-column py-2 px-3">Date</TableHead>
-              <TableHead className="type-column py-2 px-3">Type</TableHead>
-              <TableHead className="amount-column py-2 px-3">Amount</TableHead>
-              <TableHead className="status-column py-2 px-3">Status</TableHead>
+              <TableHead className="date-column py-3 px-4">Date</TableHead>
+              <TableHead className="type-column py-3 px-4">Type</TableHead>
+              <TableHead className="amount-column py-3 px-4">Amount</TableHead>
+              <TableHead className="status-column py-3 px-4">Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               Array(5).fill(null).map((_, i) => (
                 <TableRow key={i}>
-                  <TableCell className="py-2 px-3"><Skeleton className="h-5 w-12" /></TableCell>
-                  <TableCell className="py-2 px-3"><Skeleton className="h-5 w-20" /></TableCell>
-                  <TableCell className="py-2 px-3"><Skeleton className="h-5 w-16" /></TableCell>
-                  <TableCell className="py-2 px-3"><Skeleton className="h-5 w-16" /></TableCell>
+                  <TableCell className="py-3 px-4"><Skeleton className="h-5 w-12" /></TableCell>
+                  <TableCell className="py-3 px-4"><Skeleton className="h-5 w-20" /></TableCell>
+                  <TableCell className="py-3 px-4"><Skeleton className="h-5 w-16" /></TableCell>
+                  <TableCell className="py-3 px-4"><Skeleton className="h-5 w-16" /></TableCell>
                 </TableRow>
               ))
             ) : filteredTransactions.length === 0 ? (
@@ -154,11 +154,11 @@ export const TransactionHistory = ({ transactions, isLoading = false }: Transact
             ) : (
               filteredTransactions.map((transaction) => (
                 <TableRow key={transaction.id}>
-                  <TableCell className="transaction-date py-2 px-3 text-xs">
+                  <TableCell className="transaction-date py-3 px-4 text-xs">
                     {transaction.created_at}
                   </TableCell>
-                  <TableCell className="py-2 px-3">
-                    <div className="transaction-type-cell">
+                  <TableCell className="py-3 px-4">
+                    <div className="transaction-type-cell flex items-center">
                       <div className={`transaction-type-badge p-1 rounded-full flex-shrink-0 ${
                         transaction.type === 'deposit' ? 'bg-green-500/20' : 
                         transaction.type === 'withdrawal' ? 'bg-red-500/20' : 
@@ -173,10 +173,10 @@ export const TransactionHistory = ({ transactions, isLoading = false }: Transact
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="transaction-amount py-2 px-3 font-medium">
+                  <TableCell className="transaction-amount py-3 px-4 font-medium">
                     {getFormatAmount(transaction)}
                   </TableCell>
-                  <TableCell className="py-2 px-3">
+                  <TableCell className="py-3 px-4">
                     {getStatusBadge(transaction.status)}
                   </TableCell>
                 </TableRow>
