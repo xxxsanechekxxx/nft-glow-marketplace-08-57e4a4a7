@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   Card,
@@ -9,8 +8,8 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { CheckCircle, Clock, Loader2, XCircle } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client"; // Use the correct Supabase client
+import { CheckCircle, Clock, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
 interface Bid {
@@ -163,7 +162,7 @@ const ActiveBids = ({
             description: error.message || "Failed to accept bid",
             variant: "destructive",
           });
-        } else if (data?.success) {
+        } else if (data && typeof data === 'object' && 'success' in data) {
           toast({
             title: "Success",
             description: `The bid has been accepted. ${receivedAmount.toFixed(2)} ETH will be available in your wallet after a 15-day security period.`,
@@ -175,7 +174,9 @@ const ActiveBids = ({
         } else {
           toast({
             title: "Error",
-            description: data?.message || "Failed to accept bid",
+            description: (data && typeof data === 'object' && 'message' in data) 
+              ? String(data.message) 
+              : "Failed to accept bid",
             variant: "destructive",
           });
         }
@@ -207,7 +208,6 @@ const ActiveBids = ({
       
       console.log("Declining bid:", bidId);
       
-      // Make sure we're using the right Supabase client and proper error handling
       const { error } = await supabase
         .from('nft_bids')
         .delete()
@@ -218,7 +218,6 @@ const ActiveBids = ({
         throw error;
       }
       
-      // Update the local state
       setBids(prevBids => prevBids.filter(bid => bid.id !== bidId));
       
       toast({
@@ -357,7 +356,7 @@ const ActiveBids = ({
               </div>
 
               {isOwner && (
-                <div className="action-buttons flex gap-2">
+                <div className="action-buttons">
                   <Button
                     onClick={() => handleAcceptBid(bid.id, bid.bid_amount)}
                     className="accept-button px-4 py-2"
@@ -369,18 +368,6 @@ const ActiveBids = ({
                       <CheckCircle className="h-4 w-4 mr-2" />
                     )}
                     Confirm Sale
-                  </Button>
-                  <Button
-                    className="decline-button px-4 py-2"
-                    disabled={!!processingBidId}
-                    onClick={() => handleDeclineBid(bid.id)}
-                  >
-                    {processingBidId === bid.id ? (
-                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                    ) : (
-                      <XCircle className="h-4 w-4 mr-2" />
-                    )}
-                    Decline
                   </Button>
                 </div>
               )}
