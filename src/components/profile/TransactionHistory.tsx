@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -402,11 +403,10 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                             }`}>
                               {getTypeIcon(transaction.type, isFrozenExchange)}
                             </div>
-                            {!isMobile && (
-                              <span className="font-medium whitespace-nowrap">
-                                {isFrozenExchange ? "Frozen" : getTypeLabel(transaction.type)}
-                              </span>
-                            )}
+                            {/* Only show text on non-mobile devices */}
+                            <span className="font-medium whitespace-nowrap hidden sm:inline">
+                              {isFrozenExchange ? "Frozen" : getTypeLabel(transaction.type)}
+                            </span>
                           </div>
                         </TableCell>
                         
