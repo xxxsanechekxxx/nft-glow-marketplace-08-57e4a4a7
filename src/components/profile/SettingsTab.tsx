@@ -3,20 +3,52 @@ import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Mail, Key, Settings, LogOut } from "lucide-react";
+import { Mail, Key, Settings, LogOut, Save, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { Separator } from "@/components/ui/separator";
 
 interface SettingsTabProps {
   handleLogout: () => void;
 }
 
+const emailSchema = z.object({
+  email: z.string().email({ message: "Please enter a valid email address" }),
+});
+
+const passwordSchema = z.object({
+  currentPassword: z.string().min(1, { message: "Current password is required" }),
+  newPassword: z.string().min(8, { message: "Password must be at least 8 characters" }),
+  confirmNewPassword: z.string(),
+}).refine(data => data.newPassword === data.confirmNewPassword, {
+  message: "Passwords do not match",
+  path: ["confirmNewPassword"],
+});
+
 export const SettingsTab = ({ handleLogout }: SettingsTabProps) => {
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmNewPassword, setConfirmNewPassword] = useState("");
-  const [newEmail, setNewEmail] = useState("");
   const { toast } = useToast();
+  const [isEmailSubmitting, setIsEmailSubmitting] = useState(false);
+  const [isPasswordSubmitting, setIsPasswordSubmitting] = useState(false);
+
+  const emailForm = useForm<z.infer<typeof emailSchema>>({
+    resolver: zodResolver(emailSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
+
+  const passwordForm = useForm<z.infer<typeof passwordSchema>>({
+    resolver: zodResolver(passwordSchema),
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmNewPassword: "",
+    },
+  });
 
   const showDelayedToast = (title: string, description: string, variant: "default" | "destructive" = "default") => {
     setTimeout(() => {
@@ -28,31 +60,18 @@ export const SettingsTab = ({ handleLogout }: SettingsTabProps) => {
     }, 1000);
   };
 
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const handleEmailChange = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateEmail(newEmail)) {
-      toast({
-        title: "Invalid Email",
-        description: "Please enter a valid email address",
-        variant: "destructive"
-      });
-      return;
-    }
+  const onEmailSubmit = async (values: z.infer<typeof emailSchema>) => {
+    setIsEmailSubmitting(true);
     try {
       const { error } = await supabase.auth.updateUser({
-        email: newEmail
+        email: values.email
       });
       if (error) throw error;
       toast({
         title: "Success",
         description: "Email update request has been sent. Please check your new email for verification."
       });
-      setNewEmail("");
+      emailForm.reset();
     } catch (error: any) {
       console.error("Email update error:", error);
       toast({
@@ -60,26 +79,24 @@ export const SettingsTab = ({ handleLogout }: SettingsTabProps) => {
         description: error.message || "Failed to update email",
         variant: "destructive"
       });
+    } finally {
+      setIsEmailSubmitting(false);
     }
   };
 
-  const handlePasswordChange = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newPassword !== confirmNewPassword) {
-      showDelayedToast("Error", "New passwords do not match", "destructive");
-      return;
-    }
+  const onPasswordSubmit = async (values: z.infer<typeof passwordSchema>) => {
+    setIsPasswordSubmitting(true);
     try {
       const { error } = await supabase.auth.updateUser({
-        password: newPassword
+        password: values.newPassword
       });
       if (error) throw error;
       showDelayedToast("Success", "Password has been updated");
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmNewPassword("");
-    } catch (error) {
-      showDelayedToast("Error", "Failed to update password", "destructive");
+      passwordForm.reset();
+    } catch (error: any) {
+      showDelayedToast("Error", error.message || "Failed to update password", "destructive");
+    } finally {
+      setIsPasswordSubmitting(false);
     }
   };
 
@@ -94,70 +111,114 @@ export const SettingsTab = ({ handleLogout }: SettingsTabProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-6">
-          <form onSubmit={handleEmailChange} className="space-y-4 p-6 rounded-xl bg-primary/5 border border-primary/10 backdrop-blur-sm transition-all duration-300 hover:shadow-lg">
-            <div className="space-y-2">
-              <label className="text-sm font-medium flex items-center gap-2">
-                <Mail className="w-4 h-4 text-primary" />
-                New Email
-              </label>
-              <div className="relative">
-                <Input 
-                  type="email" 
-                  value={newEmail} 
-                  onChange={e => setNewEmail(e.target.value)} 
-                  placeholder="Enter new email address" 
-                  required 
-                  className="bg-background/50 border-primary/10 group-hover:border-primary/30 transition-colors pl-10" 
+        <div className="space-y-8">
+          {/* Email Update Form */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Mail className="w-5 h-5 text-primary" />
+              <h3 className="text-lg font-semibold text-white/90">Email Address</h3>
+            </div>
+            <Separator className="bg-primary/10" />
+            
+            <Form {...emailForm}>
+              <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="space-y-4 p-4 rounded-xl bg-primary/5 border border-primary/10 backdrop-blur-sm transition-all duration-300 hover:shadow-lg">
+                <FormField
+                  control={emailForm.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem className="space-y-2">
+                      <FormLabel className="text-sm font-medium flex items-center gap-2 text-white/80">
+                        New Email Address
+                      </FormLabel>
+                      <div className="relative">
+                        <FormControl>
+                          <Input 
+                            {...field} 
+                            type="email" 
+                            placeholder="Enter new email address" 
+                            className="bg-background/50 border-primary/10 pl-10 transition-all duration-300 focus:border-primary/30 focus:ring-primary/30" 
+                          />
+                        </FormControl>
+                        <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                      </div>
+                      <FormMessage className="text-red-400 text-xs flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3" />
+                        <span></span>
+                      </FormMessage>
+                    </FormItem>
+                  )}
                 />
-                <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              </div>
-            </div>
-            <Button 
-              type="submit" 
-              className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-colors group relative overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <span className="relative z-10">Update Email</span>
-            </Button>
-          </form>
+                <Button 
+                  type="submit" 
+                  disabled={isEmailSubmitting}
+                  className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-colors group relative overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <span className="relative z-10 flex items-center gap-2">
+                    {isEmailSubmitting ? 'Updating...' : 'Update Email'}
+                    <Save className="w-4 h-4" />
+                  </span>
+                </Button>
+              </form>
+            </Form>
+          </div>
 
-          <form onSubmit={handlePasswordChange} className="space-y-4 p-6 rounded-xl bg-primary/5 border border-primary/10 backdrop-blur-sm transition-all duration-300 hover:shadow-lg">
-            <div className="space-y-4">
-              {["Current Password", "New Password", "Confirm New Password"].map((label, index) => (
-                <div key={label} className="space-y-2">
-                  <label className="text-sm font-medium flex items-center gap-2">
-                    <Key className="w-4 h-4 text-primary" />
-                    {label}
-                  </label>
-                  <div className="relative">
-                    <Input 
-                      type="password" 
-                      value={index === 0 ? currentPassword : index === 1 ? newPassword : confirmNewPassword} 
-                      onChange={e => {
-                        const value = e.target.value;
-                        index === 0 ? setCurrentPassword(value) : index === 1 ? setNewPassword(value) : setConfirmNewPassword(value);
-                      }} 
-                      required 
-                      className="bg-background/50 border-primary/10 pl-10 transition-all duration-300 focus:border-primary/30 focus:ring-primary/30" 
-                    />
-                    <Key className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  </div>
-                </div>
-              ))}
+          {/* Password Update Form */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Key className="w-5 h-5 text-primary" />
+              <h3 className="text-lg font-semibold text-white/90">Change Password</h3>
             </div>
-            <Button 
-              type="submit" 
-              className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-colors group relative overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <span className="relative z-10">Update Password</span>
-            </Button>
-          </form>
+            <Separator className="bg-primary/10" />
+            
+            <Form {...passwordForm}>
+              <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} className="space-y-4 p-4 rounded-xl bg-primary/5 border border-primary/10 backdrop-blur-sm transition-all duration-300 hover:shadow-lg">
+                {["currentPassword", "newPassword", "confirmNewPassword"].map((name, index) => (
+                  <FormField
+                    key={name}
+                    control={passwordForm.control}
+                    name={name as "currentPassword" | "newPassword" | "confirmNewPassword"}
+                    render={({ field }) => (
+                      <FormItem className="space-y-2">
+                        <FormLabel className="text-sm font-medium flex items-center gap-2 text-white/80">
+                          {index === 0 ? "Current Password" : index === 1 ? "New Password" : "Confirm New Password"}
+                        </FormLabel>
+                        <div className="relative">
+                          <FormControl>
+                            <Input 
+                              {...field} 
+                              type="password" 
+                              className="bg-background/50 border-primary/10 pl-10 transition-all duration-300 focus:border-primary/30 focus:ring-primary/30" 
+                            />
+                          </FormControl>
+                          <Key className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                        </div>
+                        <FormMessage className="text-red-400 text-xs flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3" />
+                          <span></span>
+                        </FormMessage>
+                      </FormItem>
+                    )}
+                  />
+                ))}
+                <Button 
+                  type="submit" 
+                  disabled={isPasswordSubmitting}
+                  className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-colors group relative overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <span className="relative z-10 flex items-center gap-2">
+                    {isPasswordSubmitting ? 'Updating...' : 'Update Password'}
+                    <Save className="w-4 h-4" />
+                  </span>
+                </Button>
+              </form>
+            </Form>
+          </div>
         </div>
       </CardContent>
 
-      <div className="px-6 pb-6">
+      <div className="px-6 pb-6 mt-6">
         <Button 
           variant="destructive" 
           className="w-full hover:bg-destructive/90 transition-colors flex items-center justify-center gap-2 group relative overflow-hidden" 
