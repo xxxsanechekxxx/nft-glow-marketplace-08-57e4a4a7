@@ -50,6 +50,7 @@ export const ProfileInfo = ({ userData, setIsWalletModalOpen }: ProfileInfoProps
           {/* Email Field */}
           <div className="space-y-2 group relative">
             <label className="text-sm font-medium flex items-center gap-2 text-white/70">
+              <Mail className="w-4 h-4" />
               Email
             </label>
             <div className="relative overflow-hidden rounded-lg transition-all duration-300">
@@ -102,7 +103,7 @@ export const ProfileInfo = ({ userData, setIsWalletModalOpen }: ProfileInfoProps
                 </div>
               )}
             </div>
-            {/* Removed the duplicate HelpCircle icon that was here */}
+            <HelpCircle className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-primary/60" />
           </div>
         </div>
         
