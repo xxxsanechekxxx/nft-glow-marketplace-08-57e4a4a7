@@ -31,7 +31,14 @@ const Login = () => {
         description: "Logged in successfully",
       });
       
-      navigate("/profile");
+      // Check if there's a redirect URL stored in localStorage
+      const redirectPath = localStorage.getItem('redirectAfterLogin');
+      
+      // Clear the stored redirect path
+      localStorage.removeItem('redirectAfterLogin');
+      
+      // Navigate to the stored path or fallback to profile page
+      navigate(redirectPath || "/profile");
     } catch (error) {
       toast({
         title: "Error",
