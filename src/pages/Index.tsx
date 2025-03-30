@@ -1,4 +1,3 @@
-
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -7,6 +6,8 @@ import { supabase } from "@/lib/supabase";
 import { HeroSection } from "@/components/home/HeroSection";
 import { StatsSection } from "@/components/home/StatsSection";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
+import { TrustIndicators } from "@/components/home/TrustIndicators";
+import { Testimonials } from "@/components/home/Testimonials";
 import {
   Carousel,
   CarouselContent,
@@ -33,6 +34,8 @@ const Index = () => {
   const statsRef = useRef(null);
   const featuredRef = useRef(null);
   const howItWorksRef = useRef(null);
+  const trustRef = useRef(null);
+  const testimonialsRef = useRef(null);
 
   const { data: featuredNFTs } = useQuery({
     queryKey: ['featured-nfts'],
@@ -115,6 +118,38 @@ const Index = () => {
       }
     );
 
+    gsap.fromTo(trustRef.current,
+      { opacity: 0, y: 30 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 1.5,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: trustRef.current,
+          start: "top 80%",
+          end: "bottom center",
+          toggleActions: "play none none reverse"
+        }
+      }
+    );
+
+    gsap.fromTo(testimonialsRef.current,
+      { opacity: 0, y: 30 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 1.5,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: testimonialsRef.current,
+          start: "top 80%",
+          end: "bottom center",
+          toggleActions: "play none none reverse"
+        }
+      }
+    );
+
     return () => {
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
@@ -125,7 +160,6 @@ const Index = () => {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-purple-500/5 to-pink-500/5 -z-10"></div>
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background/80 to-background/60 -z-10"></div>
       
-      {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[150px] animate-[pulse_8s_ease-in-out_infinite]"></div>
         <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[150px] animate-[pulse_12s_ease-in-out_infinite] delay-1000"></div>
@@ -139,9 +173,17 @@ const Index = () => {
       <div ref={howItWorksRef}>
         <HowItWorksSection />
       </div>
+      
+      <div ref={trustRef}>
+        <TrustIndicators />
+      </div>
 
       <div ref={statsRef}>
         <StatsSection />
+      </div>
+      
+      <div ref={testimonialsRef}>
+        <Testimonials />
       </div>
 
       <div ref={featuredRef} className="py-24 bg-background/50 relative overflow-hidden">

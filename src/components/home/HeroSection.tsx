@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles, Rocket, Star } from "lucide-react";
+import { ArrowRight, Sparkles, Rocket, Star, Shield, CheckCircle2 } from "lucide-react";
 
 export const HeroSection = () => {
   return (
@@ -36,6 +36,22 @@ export const HeroSection = () => {
           <p className="text-xl md:text-2xl text-muted-foreground/90 animate-fade-in backdrop-blur-sm max-w-2xl mx-auto leading-relaxed">
             PureNFT is the world's first and largest NFT marketplace with unique digital assets waiting to be discovered
           </p>
+          
+          {/* New trust indicators above CTA */}
+          <div className="flex flex-wrap justify-center gap-6 pt-6 animate-fade-in">
+            <div className="flex items-center gap-2">
+              <Shield className="w-5 h-5 text-primary" />
+              <span className="text-sm text-muted-foreground/90">100% Secure Payments</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-primary" />
+              <span className="text-sm text-muted-foreground/90">Verified Artists</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Star className="w-5 h-5 text-primary" />
+              <span className="text-sm text-muted-foreground/90">5-Star Support</span>
+            </div>
+          </div>
 
           <div className="flex flex-wrap justify-center gap-4 animate-fade-in pt-8">
             <Link 
@@ -68,6 +84,22 @@ export const HeroSection = () => {
             <div className="text-center space-y-1">
               <p className="text-3xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-400">1M+</p>
               <p className="text-sm text-muted-foreground">NFTs Created</p>
+            </div>
+          </div>
+
+          {/* New trust badges */}
+          <div className="pt-8 flex flex-wrap justify-center gap-6 animate-fade-in">
+            <div className="bg-background/30 backdrop-blur-sm border border-primary/10 rounded-full px-4 py-1 flex items-center gap-2">
+              <Shield className="w-4 h-4 text-primary" />
+              <span className="text-xs font-medium">Escrow Protection</span>
+            </div>
+            <div className="bg-background/30 backdrop-blur-sm border border-primary/10 rounded-full px-4 py-1 flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-primary" />
+              <span className="text-xs font-medium">Verified Smart Contracts</span>
+            </div>
+            <div className="bg-background/30 backdrop-blur-sm border border-primary/10 rounded-full px-4 py-1 flex items-center gap-2">
+              <Star className="w-4 h-4 text-primary" />
+              <span className="text-xs font-medium">Trusted by 50,000+ Users</span>
             </div>
           </div>
 
