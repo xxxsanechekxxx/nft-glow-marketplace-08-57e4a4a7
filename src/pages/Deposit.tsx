@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CountdownTimer } from "@/components/CountdownTimer";
-import { Loader2, HelpCircle, ExternalLink, ArrowLeft, ArrowDownCircle, Copy, CheckCircle } from "lucide-react";
+import { Loader2, HelpCircle, ExternalLink, ArrowLeft, ArrowDownCircle, Copy, CheckCircle, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   Tooltip,
@@ -49,10 +49,23 @@ const Deposit = () => {
     try {
       await new Promise(resolve => setTimeout(resolve, 1500));
       
+      const { error } = await supabase
+        .from('transactions')
+        .insert([{
+          user_id: user?.id,
+          type: 'deposit',
+          amount: parseFloat(depositAmount),
+          status: 'pending',
+          wallet_address: walletAddress,
+          hash: transactionHash
+        }]);
+      
+      if (error) throw error;
+      
       toast({
-        variant: "destructive",
-        title: "Rejected",
-        description: "Please contact support"
+        title: "Deposit Requested",
+        description: `Your deposit request for ${depositAmount} ETH has been submitted`,
+        variant: "default"
       });
       
       navigate('/profile');
@@ -114,9 +127,9 @@ const Deposit = () => {
           Back to profile
         </Button>
         
-        <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-[#1A1F2C]/90 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-green-500/5 via-background/95 to-background/90" />
-          <CardHeader className="relative flex flex-row items-center justify-between">
+        <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-gradient-to-b from-[#1A1F2C]/95 to-[#131925]/95 overflow-hidden">
+          <div className="absolute inset-0 bg-green-500/5 rounded-lg pointer-events-none" />
+          <CardHeader className="relative flex flex-row items-center justify-between pb-2">
             <div>
               <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-green-500/20">
@@ -129,12 +142,12 @@ const Deposit = () => {
               </CardDescription>
             </div>
           </CardHeader>
-          <CardContent className="relative space-y-6">
+          <CardContent className="relative space-y-6 pt-4">
             {step === 'amount' ? (
               <div className="space-y-4">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium text-primary/80">
+                    <label className="text-sm font-medium text-green-400/90">
                       Amount (ETH)
                     </label>
                     <span className="text-xs text-muted-foreground">
@@ -149,13 +162,32 @@ const Deposit = () => {
                       value={depositAmount}
                       onChange={(e) => setDepositAmount(e.target.value)}
                       placeholder="Enter amount"
-                      className="bg-background/40 border-primary/20 focus:border-primary/40 pr-16"
+                      className="bg-background/40 border-green-500/20 focus:border-green-500/40 focus-visible:ring-green-500/20 pr-16"
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-green-400">
                       ETH
                     </span>
                   </div>
                 </div>
+
+                {parseFloat(depositAmount) > 0 && (
+                  <div className="p-3 border border-primary/10 rounded-lg bg-primary/5 space-y-1 animate-in fade-in">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Deposit Amount:</span>
+                      <span className="font-medium text-green-400">{depositAmount} ETH</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Network Fee (est.):</span>
+                      <span className="font-medium text-yellow-400">0.0005 ETH</span>
+                    </div>
+                    <div className="h-px bg-primary/10 my-1"></div>
+                    <div className="flex justify-between text-sm font-medium">
+                      <span className="text-muted-foreground">You'll receive:</span>
+                      <span className="text-green-400">{parseFloat(depositAmount) > 0 ? parseFloat(depositAmount).toFixed(4) : '0.0000'} ETH</span>
+                    </div>
+                  </div>
+                )}
+
                 <Button 
                   className="w-full bg-green-500/20 hover:bg-green-500/30 text-green-500 transition-colors" 
                   onClick={handleNextStep}
@@ -169,16 +201,24 @@ const Deposit = () => {
                   <p className="text-center text-sm text-green-400 font-medium">
                     Request created for {depositAmount} ETH
                   </p>
-                </div>
-                
-                <div className="mt-4">
-                  <h3 className="font-medium text-primary/90 mb-2">Time remaining</h3>
-                  <CountdownTimer endTime={new Date(new Date().getTime() + 30 * 60000).toISOString()} />
+                  
+                  <div className="mt-3 bg-green-950/30 rounded-lg p-2">
+                    <div className="flex justify-between items-center text-xs text-green-300/80">
+                      <span>Time remaining</span>
+                      <span>Complete deposit before timer ends</span>
+                    </div>
+                    <div className="mt-1">
+                      <CountdownTimer endTime={new Date(new Date().getTime() + 30 * 60000).toISOString()} />
+                    </div>
+                  </div>
                 </div>
                 
                 <div className="space-y-3 mt-4">
-                  <h3 className="font-medium text-primary/90">Send ETH to this address:</h3>
-                  <div className="bg-background/40 p-4 rounded-md border border-primary/10 hover:border-primary/20 transition-colors">
+                  <h3 className="font-medium text-green-400/90 flex items-center gap-2">
+                    <ArrowDownCircle className="h-4 w-4" />
+                    Send ETH to this address
+                  </h3>
+                  <div className="bg-green-950/20 p-4 rounded-md border border-green-500/20 hover:border-green-500/40 transition-colors group">
                     <div className="flex justify-between items-center">
                       <div className="break-all font-mono text-primary/80 text-sm">
                         {walletAddress}
@@ -187,35 +227,27 @@ const Deposit = () => {
                         variant="ghost" 
                         size="icon" 
                         onClick={copyToClipboard}
-                        className="ml-2 h-8 w-8 text-primary/60 hover:text-primary hover:bg-primary/10"
+                        className="ml-2 h-8 w-8 text-primary/60 hover:text-green-500 hover:bg-green-500/10 group-hover:bg-green-500/10 group-hover:text-green-400"
                       >
                         {copied ? <CheckCircle className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
                       </Button>
                     </div>
-                    <div className="mt-2 text-xs text-muted-foreground">
-                      (ERC-20 Network)
+                    <div className="mt-2 text-xs text-green-400/60 flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />
+                      ERC-20 Network Only
                     </div>
                   </div>
-                  <div className="text-xs text-muted-foreground">
+                  <div className="text-xs text-muted-foreground bg-primary/5 p-3 rounded-lg border border-primary/10">
                     <div className="flex items-start gap-2">
+                      <AlertCircle className="h-3.5 w-3.5 flex-shrink-0 text-yellow-500 mt-0.5" />
                       <p>If you have already transferred Ethereum, but the timer has expired, the funds will be credited back to your original wallet.</p>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <HelpCircle className="h-3.5 w-3.5 flex-shrink-0 text-primary/60" />
-                          </TooltipTrigger>
-                          <TooltipContent className="max-w-sm bg-background/95 backdrop-blur-sm border-primary/20">
-                            <p>We give time limits due to frequent fraudulent activities. During this time, the transfer is guaranteed to be secure for both parties. You cannot cancel deposits more than 3 times per 24 hours.</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <label className="text-sm font-medium text-primary/80">
+                    <label className="text-sm font-medium text-green-400/90">
                       Transaction Hash
                     </label>
                     <TooltipProvider>
@@ -227,7 +259,7 @@ const Deposit = () => {
                           <p>This is the transaction ID. After successful withdrawal of funds from another wallet, you will need to provide a confirmation with the number that appears in the other wallet.</p>
                           <Button 
                             variant="link" 
-                            className="mt-2 h-auto p-0 text-primary"
+                            className="mt-2 h-auto p-0 text-green-400"
                             onClick={handleTelegramHelp}
                           >
                             I need help <ExternalLink className="ml-1 h-3 w-3" />
@@ -240,7 +272,7 @@ const Deposit = () => {
                     value={transactionHash}
                     onChange={(e) => setTransactionHash(e.target.value)}
                     placeholder="Enter transaction hash"
-                    className="font-mono bg-background/40 border-primary/20 focus:border-primary/40"
+                    className="font-mono bg-background/40 border-green-500/20 focus:border-green-500/40 focus-visible:ring-green-500/20"
                   />
                 </div>
 
@@ -271,10 +303,10 @@ const Deposit = () => {
                 <div className="text-center mt-2">
                   <Button
                     variant="link"
-                    className="text-primary h-auto p-0 hover:text-primary/80"
+                    className="text-green-400 h-auto p-0 hover:text-green-500"
                     onClick={handleTelegramHelp}
                   >
-                    Need help?<ExternalLink className="ml-0.5 h-3 w-3" />
+                    Need help? <ExternalLink className="ml-0.5 h-3 w-3" />
                   </Button>
                 </div>
               </>

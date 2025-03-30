@@ -83,6 +83,16 @@ const Withdraw = () => {
       return;
     }
     
+    // Basic Ethereum address validation
+    if (!withdrawWalletAddress.match(/^0x[a-fA-F0-9]{40}$/)) {
+      toast({
+        title: "Invalid wallet address",
+        description: "Please enter a valid Ethereum wallet address",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setIsLoading(true);
     
     try {
@@ -142,9 +152,9 @@ const Withdraw = () => {
           Back to profile
         </Button>
         
-        <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-[#1A1F2C]/90 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-destructive/5 via-background/95 to-background/90" />
-          <CardHeader className="relative flex flex-row items-center justify-between">
+        <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-gradient-to-b from-[#1A1F2C]/95 to-[#131925]/95 overflow-hidden">
+          <div className="absolute inset-0 bg-destructive/5 rounded-lg pointer-events-none" />
+          <CardHeader className="relative flex flex-row items-center justify-between pb-2">
             <div>
               <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-destructive/20">
@@ -157,7 +167,7 @@ const Withdraw = () => {
               </CardDescription>
             </div>
           </CardHeader>
-          <CardContent className="relative">
+          <CardContent className="relative pt-4">
             <form onSubmit={handleWithdraw} className="space-y-6">
               {isLoadingBalance ? (
                 <div className="p-3 border border-primary/10 rounded-lg bg-primary/5 flex items-center justify-center">
@@ -185,7 +195,7 @@ const Withdraw = () => {
                     <Button 
                       type="button" 
                       variant="ghost" 
-                      className="h-auto py-0 px-1 text-xs text-primary/70 hover:text-primary"
+                      className="h-auto py-0 px-1 text-xs text-destructive/70 hover:text-destructive"
                       onClick={() => userData && setWithdrawAmount(userData.balance)}
                     >
                       Max
@@ -199,7 +209,7 @@ const Withdraw = () => {
                       value={withdrawAmount} 
                       onChange={e => setWithdrawAmount(e.target.value)} 
                       placeholder="Enter amount" 
-                      className="bg-background/40 border-destructive/20 focus:border-destructive/40 pr-16" 
+                      className="bg-background/40 border-destructive/20 focus:border-destructive/40 focus-visible:ring-destructive/20 pr-16" 
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-destructive/80">
                       ETH
@@ -208,29 +218,39 @@ const Withdraw = () => {
                 </div>
 
                 {withdrawAmount && parseFloat(withdrawAmount) > 0 && (
-                  <div className="space-y-2 p-3 border border-primary/10 rounded-lg bg-primary/5">
+                  <div className="space-y-2 p-3 border border-primary/10 rounded-lg bg-primary/5 animate-in fade-in">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Withdrawal Amount:</span>
+                      <span className="font-medium text-destructive/80">{withdrawAmount} ETH</span>
+                    </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Fee (2%):</span>
-                      <span>{calculateFee(withdrawAmount)} ETH</span>
+                      <span className="font-medium text-yellow-400">{calculateFee(withdrawAmount)} ETH</span>
                     </div>
+                    <div className="h-px bg-primary/10 my-1"></div>
                     <div className="flex justify-between text-sm font-medium">
                       <span className="text-muted-foreground">You will receive:</span>
-                      <span>{calculateReceiveAmount(withdrawAmount)} ETH</span>
+                      <span className="text-destructive/80">{calculateReceiveAmount(withdrawAmount)} ETH</span>
                     </div>
                   </div>
                 )}
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-destructive/80">
+                  <label className="text-sm font-medium text-destructive/80 flex items-center gap-1.5">
+                    <ArrowUpCircle className="w-4 h-4" />
                     Wallet Address
                   </label>
                   <Input 
                     type="text" 
                     value={withdrawWalletAddress} 
                     onChange={e => setWithdrawWalletAddress(e.target.value)} 
-                    placeholder="Enter wallet address" 
-                    className="font-mono text-sm bg-background/40 border-destructive/20 focus:border-destructive/40" 
+                    placeholder="Enter your ETH wallet address" 
+                    className="font-mono text-sm bg-background/40 border-destructive/20 focus:border-destructive/40 focus-visible:ring-destructive/20" 
                   />
+                  <div className="text-xs text-muted-foreground flex items-start gap-1.5">
+                    <AlertCircle className="h-3.5 w-3.5 flex-shrink-0 mt-0.5 text-yellow-500" />
+                    <p>Make sure to double-check the wallet address. Transactions cannot be reversed after submission.</p>
+                  </div>
                 </div>
                 <Button 
                   type="submit" 
@@ -246,6 +266,13 @@ const Withdraw = () => {
                     "Confirm Withdrawal"
                   )}
                 </Button>
+
+                <div className="text-xs text-muted-foreground bg-primary/5 p-3 rounded-lg border border-primary/10">
+                  <div className="flex items-start gap-2">
+                    <AlertCircle className="h-3.5 w-3.5 flex-shrink-0 mt-0.5 text-yellow-500" />
+                    <p>Withdrawal requests are processed manually and may take up to 24 hours to complete. If you need urgent assistance, please contact our support team.</p>
+                  </div>
+                </div>
               </div>
             </form>
           </CardContent>
