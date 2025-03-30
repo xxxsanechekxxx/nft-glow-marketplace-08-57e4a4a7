@@ -2,7 +2,7 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Mail, Globe, HelpCircle, Wallet, UserRound, Copy, CheckCircle2 } from "lucide-react";
+import { Globe, HelpCircle, Wallet, UserRound, Copy, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useState } from "react";
@@ -50,7 +50,6 @@ export const ProfileInfo = ({ userData, setIsWalletModalOpen }: ProfileInfoProps
           {/* Email Field */}
           <div className="space-y-2 group relative">
             <label className="text-sm font-medium flex items-center gap-2 text-white/70">
-              <Mail className="w-4 h-4" />
               Email
             </label>
             <div className="relative overflow-hidden rounded-lg transition-all duration-300">
@@ -66,7 +65,6 @@ export const ProfileInfo = ({ userData, setIsWalletModalOpen }: ProfileInfoProps
           {/* Country Field */}
           <div className="space-y-2 group">
             <label className="text-sm font-medium flex items-center gap-2 text-white/70">
-              <Globe className="w-4 h-4" />
               Country
             </label>
             <div className="relative overflow-hidden rounded-lg transition-all duration-300">
@@ -84,7 +82,6 @@ export const ProfileInfo = ({ userData, setIsWalletModalOpen }: ProfileInfoProps
         {/* Verification Status */}
         <div className="space-y-2 group">
           <label className="text-sm font-medium flex items-center gap-2 text-white/70">
-            <HelpCircle className="w-4 h-4" />
             Verification Status
           </label>
           <div className="relative overflow-hidden rounded-lg transition-all duration-300">
@@ -109,7 +106,6 @@ export const ProfileInfo = ({ userData, setIsWalletModalOpen }: ProfileInfoProps
         {/* Wallet Address */}
         <div className="space-y-2 group">
           <label className="text-sm font-medium flex items-center gap-2 text-white/70">
-            <Wallet className="w-4 h-4" />
             Wallet Address
           </label>
           <div className="flex gap-4 items-start">
