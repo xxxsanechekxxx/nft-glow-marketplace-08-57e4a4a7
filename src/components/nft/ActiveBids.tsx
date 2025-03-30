@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { CheckCircle, Clock, Loader2, XCircle } from "lucide-react";
-import { supabase } from "@/lib/supabase"; // Make sure this import is correct
+import { supabase } from "@/integrations/supabase/client"; // Use the correct Supabase client
 import { useAuth } from "@/hooks/useAuth";
 
 interface Bid {
@@ -207,7 +207,7 @@ const ActiveBids = ({
       
       console.log("Declining bid:", bidId);
       
-      // Use a direct delete operation instead of RPC
+      // Make sure we're using the right Supabase client and proper error handling
       const { error } = await supabase
         .from('nft_bids')
         .delete()
@@ -219,7 +219,7 @@ const ActiveBids = ({
       }
       
       // Update the local state
-      setBids(bids.filter(bid => bid.id !== bidId));
+      setBids(prevBids => prevBids.filter(bid => bid.id !== bidId));
       
       toast({
         title: "Success",

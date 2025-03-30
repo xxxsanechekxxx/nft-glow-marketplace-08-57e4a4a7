@@ -59,9 +59,11 @@ const NFTDetail = () => {
   };
 
   const handleBidDeclined = () => {
+    // Invalidate both the nft and nft_bids queries to ensure fresh data is fetched
     queryClient.invalidateQueries({ queryKey: ['nft', id] });
     queryClient.invalidateQueries({ queryKey: ['user-balance', user?.id] });
     queryClient.invalidateQueries({ queryKey: ['nfts'] });
+    queryClient.invalidateQueries({ queryKey: ['nft_bids'] });
     
     toast({
       title: "Bid Declined",
