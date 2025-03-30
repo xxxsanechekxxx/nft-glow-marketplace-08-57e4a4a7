@@ -64,7 +64,7 @@ const getTypeDetails = (type: string) => {
         label: "Deposit",
         color: "text-green-500"
       };
-    case "withdrawal":
+    case "withdraw":
       return {
         icon: <ArrowUpRight className="h-4 w-4 text-red-500" />,
         label: "Withdrawal",
@@ -147,8 +147,8 @@ export const TransactionHistory = ({ transactions }: TransactionHistoryProps) =>
                       </div>
                     </TableCell>
                     <TableCell className="py-2 text-right">
-                      <span className={`text-xs font-medium ${transaction.type === 'deposit' || transaction.type === 'sale' ? 'text-green-500' : transaction.type === 'withdrawal' || transaction.type === 'purchase' ? 'text-red-500' : 'text-white/80'}`}>
-                        {transaction.type === 'deposit' || transaction.type === 'sale' ? '+' : transaction.type === 'withdrawal' || transaction.type === 'purchase' ? '-' : ''}
+                      <span className={`text-xs font-medium ${transaction.type === 'deposit' || transaction.type === 'sale' ? 'text-green-500' : transaction.type === 'withdraw' || transaction.type === 'purchase' ? 'text-red-500' : 'text-white/80'}`}>
+                        {transaction.type === 'deposit' || transaction.type === 'sale' ? '+' : transaction.type === 'withdraw' || transaction.type === 'purchase' ? '-' : ''}
                         {parseFloat(transaction.amount).toFixed(transaction.currency_type === 'eth' ? 3 : 2)} {transaction.currency_type === 'eth' ? '' : 'USDT'}
                       </span>
                     </TableCell>
