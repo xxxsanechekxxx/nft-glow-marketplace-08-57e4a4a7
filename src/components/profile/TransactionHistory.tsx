@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -364,16 +363,19 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
         ) : filteredTransactions.length > 0 ? (
           <ScrollArea className="h-[400px] pr-1">
             <div className="w-full overflow-hidden">
-              <Table className="w-full min-w-[400px]">
+              <Table className="w-full min-w-[300px]">
                 <TableHeader>
                   <TableRow className="hover:bg-primary/5 border-b border-primary/10">
-                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium w-[20%] sm:w-[15%]">Date</TableHead>
+                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium w-[25%] sm:w-[15%]">Date</TableHead>
                     <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium w-[15%] sm:w-[20%]">
                       <span className="hidden sm:inline">Type</span>
                       <span className="sm:hidden"></span>
                     </TableHead>
-                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium w-[25%] sm:w-[20%]">Amount</TableHead>
-                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium w-[40%] sm:w-[45%]">Status</TableHead>
+                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium w-[30%] sm:w-[20%]">Amount</TableHead>
+                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium w-[30%] sm:w-[45%]">
+                      <span className="hidden sm:inline">Status</span>
+                      <span className="sm:hidden">Stat</span>
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -395,8 +397,8 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                           </div>
                         </TableCell>
                         
-                        <TableCell className="py-2 px-1 sm:py-3 sm:px-2 text-xs sm:text-sm">
-                          <div className="flex items-center gap-1">
+                        <TableCell className="py-2 px-0 sm:py-3 sm:px-2 text-xs sm:text-sm">
+                          <div className="flex items-center gap-1 justify-center sm:justify-start">
                             <div className={`p-1 sm:p-1.5 rounded-full ${
                               transaction.type === 'deposit' ? 'bg-emerald-500/10' :
                               transaction.type === 'withdraw' ? 'bg-rose-500/10' : 
@@ -425,9 +427,9 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                           </span>
                         </TableCell>
                         
-                        <TableCell className="py-2 px-1 sm:py-3 sm:px-2 text-xs sm:text-sm">
-                          <div className="flex items-center">
-                            <span className={`px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium truncate max-w-[80px] sm:max-w-full ${
+                        <TableCell className="py-2 px-0 sm:py-3 sm:px-2 text-xs sm:text-sm text-center sm:text-left">
+                          <div className="flex items-center justify-center sm:justify-start">
+                            <span className={`px-1 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium truncate max-w-[50px] sm:max-w-full ${
                               transaction.status === 'completed' 
                                 ? transaction.frozen_until 
                                   ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30' 
@@ -440,9 +442,9 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                             }`}>
                               {isMobile ? (
                                 transaction.status === 'pending' && isFrozenExchange 
-                                  ? "Frozen"
+                                  ? "F"
                                   : transaction.frozen_until
-                                    ? "Frozen"
+                                    ? "F"
                                     : transaction.status === 'completed' ? 'Done' : 'Pend'
                               ) : (
                                 transaction.status === 'pending' && isFrozenExchange 
