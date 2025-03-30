@@ -18,7 +18,7 @@ interface WalletTabProps {
   withdrawWalletAddress: string;
   setWithdrawWalletAddress: (address: string) => void;
   handleWithdraw: (e: React.FormEvent) => void;
-  transactions?: Transaction[];
+  transactions: Transaction[];
   setExchangeType: (type: 'regular' | 'frozen') => void;
 }
 
