@@ -194,45 +194,6 @@
   @apply bg-transparent border border-red-500 text-red-400 hover:bg-red-950/30 w-full flex justify-center items-center;
 }
 
-/* Updated transaction table styles for better mobile experience */
-.transaction-table {
-  @apply w-full border-collapse;
-}
-
-.transaction-table th,
-.transaction-table td {
-  @apply p-1.5 sm:p-2 text-left;
-}
-
-.transaction-table th {
-  @apply text-xs sm:text-sm font-semibold text-muted-foreground sticky top-0 bg-background/80 backdrop-blur-sm z-10;
-}
-
-.transaction-type-cell {
-  @apply flex items-center gap-1.5;
-}
-
-.transaction-icon-container {
-  @apply p-1 rounded-full flex-shrink-0;
-}
-
-.transaction-type-label {
-  @apply font-medium text-xs sm:text-sm whitespace-nowrap overflow-hidden text-ellipsis;
-}
-
-.transaction-status-badge {
-  @apply px-1.5 sm:px-2.5 py-0.5 rounded-full text-xs font-medium inline-flex items-center justify-center;
-  max-width: 100%;
-}
-
-.transaction-amount {
-  @apply font-medium text-xs sm:text-sm;
-}
-
-.transaction-date {
-  @apply text-xs sm:text-sm flex items-center gap-1;
-}
-
 /* Mobile-specific styles */
 @media (max-width: 640px) {
   /* General padding adjustments for mobile */
@@ -315,31 +276,35 @@
 
   /* Improved transaction table for mobile */
   .transaction-table {
-    @apply table-fixed w-full !important;
+    display: table !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    table-layout: fixed !important;
+    overflow-x: visible !important;
   }
   
   .transaction-table th, 
   .transaction-table td {
-    @apply p-1.5 !important;
-    @apply text-xs !important;
-    @apply whitespace-nowrap !important;
+    padding: 0.5rem 0.25rem !important;
+    font-size: 0.75rem !important;
+    white-space: nowrap !important;
   }
   
   .transaction-table .date-column {
-    @apply w-[22%] !important;
+    width: 15% !important;
   }
   
   .transaction-table .type-column {
-    @apply w-[25%] !important;
-    @apply text-center !important;
+    width: 15% !important;
+    text-align: center !important;
   }
   
   .transaction-table .amount-column {
-    @apply w-[23%] !important;
+    width: 20% !important;
   }
   
   .transaction-table .status-column {
-    @apply w-[30%] !important;
+    width: 50% !important;
   }
   
   /* Username truncation on mobile */
@@ -417,23 +382,6 @@
   .mobile-form-field {
     height: 42px !important;
     font-size: 0.875rem !important;
-  }
-
-  /* Transaction type icons and labels */
-  .transaction-type-icon {
-    @apply w-4 h-4 !important;
-  }
-  
-  .transaction-type-label {
-    @apply max-w-[50px] overflow-hidden text-ellipsis !important;
-  }
-  
-  .transaction-status-badge {
-    @apply text-[10px] px-1 py-0.5 !important;
-    max-width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 }
 
@@ -513,29 +461,6 @@
 
 .circular-button-glow:hover::before {
   opacity: 1;
-}
-
-/* Transaction history table specific styles */
-.transaction-history-card {
-  @apply rounded-xl overflow-hidden border border-primary/10;
-}
-
-.transaction-history-header {
-  @apply bg-gradient-to-r from-background/90 to-background/70 backdrop-blur-sm;
-}
-
-.transaction-filter-button {
-  @apply text-xs sm:text-sm px-2 py-1 rounded-md flex items-center gap-1 transition-all;
-}
-
-.transaction-type-badge {
-  @apply rounded-full p-1 flex items-center justify-center;
-  width: 24px;
-  height: 24px;
-}
-
-.transaction-filter-active {
-  @apply bg-primary/20 text-primary;
 }
 
 /* Additional mobile optimizations */

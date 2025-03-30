@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -269,18 +268,6 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
     }
   };
 
-  // Get short label for mobile display
-  const getShortTypeLabel = (type: string) => {
-    switch(type) {
-      case 'deposit': return 'Dep';
-      case 'withdraw': return 'With';
-      case 'purchase': return 'Pur';
-      case 'sale': return 'Sale';
-      case 'exchange': return 'Exch';
-      default: return type.substring(0, 3);
-    }
-  };
-
   return (
     <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-[#1A1F2C]/90 mt-6">
       <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-2 space-y-3 sm:space-y-0">
@@ -335,7 +322,6 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                 <ArrowDownCircle className="w-4 h-4 mr-1" />
               )}
               <span className="hidden sm:inline">Deposits</span>
-              <span className="sm:hidden">Dep</span>
             </Button>
             <Button 
               variant="outline" 
@@ -356,7 +342,6 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                 <ArrowRightLeft className="w-4 h-4 mr-1" />
               )}
               <span className="hidden sm:inline">Exchanges</span>
-              <span className="sm:hidden">Exch</span>
             </Button>
           </div>
         </div>
@@ -416,17 +401,13 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                               {getTypeIcon(transaction.type, isFrozenExchange)}
                             </div>
                             <span className="font-medium whitespace-nowrap">
-                              {isFrozenExchange ? (
-                                <>
-                                  <span className="hidden sm:inline">Frozen Exchange</span>
-                                  <span className="sm:hidden">Frozen</span>
-                                </>
-                              ) : (
-                                <>
-                                  <span className="hidden sm:inline">{getTypeLabel(transaction.type)}</span>
-                                  <span className="sm:hidden">{getShortTypeLabel(transaction.type)}</span>
-                                </>
-                              )}
+                              {isFrozenExchange ? 
+                                <span className="hidden sm:inline">Frozen Exchange</span> : 
+                                <span className="hidden sm:inline">{getTypeLabel(transaction.type)}</span>
+                              }
+                              <span className="sm:hidden">
+                                {isFrozenExchange ? 'Frozen' : getTypeLabel(transaction.type).substring(0, 3)}
+                              </span>
                             </span>
                           </div>
                         </TableCell>
@@ -457,29 +438,18 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                                   : 'bg-rose-500/20 text-rose-500 border border-rose-500/30'
                             }`}>
                               {transaction.status === 'pending' && isFrozenExchange 
-                                ? (
-                                  <>
-                                    <span className="hidden sm:inline">Frozen Exchange</span>
-                                    <span className="sm:hidden">Frozen</span>
-                                  </>
-                                )
+                                ? <span className="hidden sm:inline">Frozen Exchange</span>
                                 : transaction.frozen_until
-                                  ? (
-                                    <>
-                                      <span className="hidden sm:inline">{`Frozen until ${transaction.frozen_until}`}</span>
-                                      <span className="sm:hidden">Frozen</span>
-                                    </>
-                                  )
-                                  : (
-                                    <>
-                                      <span className="hidden sm:inline">{transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}</span>
-                                      <span className="sm:hidden">
-                                        {transaction.status === 'pending' ? 'Pend' : 
-                                         transaction.status === 'completed' ? 'Done' : 'Fail'}
-                                      </span>
-                                    </>
-                                  )
+                                  ? <span className="hidden sm:inline">{`Frozen until ${transaction.frozen_until}`}</span>
+                                  : <span className="hidden sm:inline">{transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}</span>
                               }
+                              <span className="sm:hidden">
+                                {transaction.status === 'pending' && isFrozenExchange 
+                                  ? 'Frozen'
+                                  : transaction.frozen_until
+                                    ? 'Frozen'
+                                    : transaction.status === 'completed' ? 'Done' : 'Pend'}
+                              </span>
                             </span>
                           </div>
                         </TableCell>
