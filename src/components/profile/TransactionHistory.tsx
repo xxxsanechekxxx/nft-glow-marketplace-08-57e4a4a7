@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -34,7 +33,6 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
     setLoading(true);
     
     try {
-      // Get the last transaction for pagination
       const lastTransaction = transactions[transactions.length - 1];
       
       let query = supabase
@@ -43,12 +41,10 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
         .order('created_at', { ascending: false })
         .limit(10);
       
-      // Apply type filter if needed
       if (filterType) {
         query = query.eq('type', filterType);
       }
       
-      // Use the original timestamp for pagination
       if (transactions.length > 0 && lastTransaction.raw_created_at) {
         query = query.lt('created_at', lastTransaction.raw_created_at);
       }
@@ -73,7 +69,7 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
             type: tx.type,
             amount: tx.amount.toString(),
             created_at: formattedDate,
-            raw_created_at: tx.created_at, // Store the original timestamp for pagination
+            raw_created_at: tx.created_at,
             status: tx.status,
             item: tx.item,
             frozen_until: formattedFrozenUntil,
@@ -99,7 +95,7 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
     if (loading) return;
     
     setFilterLoading(true);
-    setTransactions([]); // Clear existing transactions when switching to deposits
+    setTransactions([]);
     
     try {
       const { data: depositsData, error } = await supabase
@@ -121,7 +117,7 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
             type: tx.type,
             amount: tx.amount.toString(),
             created_at: formattedDate,
-            raw_created_at: tx.created_at, // Store the original timestamp
+            raw_created_at: tx.created_at,
             status: tx.status,
             item: tx.item,
             frozen_until: null,
@@ -148,7 +144,7 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
 
   const loadExchangeTransactions = async () => {
     setFilterLoading(true);
-    setTransactions([]); // Clear existing transactions
+    setTransactions([]);
     
     try {
       const { data: exchangeData, error } = await supabase
@@ -207,11 +203,10 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
       setFilterType(null);
       setTransactions(initialTransactions);
       setFilterLoading(false);
-    }, 300); // Small delay to show the loading state
+    }, 300);
   };
 
   useEffect(() => {
-    // Observer for infinite scrolling
     const observer = new IntersectionObserver(
       entries => {
         if (entries[0].isIntersecting && hasMore && !loading) {
@@ -248,15 +243,15 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
   const getTypeIcon = (type: string, isFrozenExchange: boolean) => {
     switch(type) {
       case 'deposit':
-        return <ArrowDownCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />;
+        return <ArrowDownCircle className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0" />;
       case 'withdraw':
-        return <ArrowUpCircle className="w-5 h-5 text-rose-500 flex-shrink-0" />;
+        return <ArrowUpCircle className="w-4 h-4 sm:w-5 sm:h-5 text-rose-500 flex-shrink-0" />;
       case 'purchase':
-        return <ShoppingBag className="w-5 h-5 text-blue-500 flex-shrink-0" />;
+        return <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500 flex-shrink-0" />;
       case 'sale':
-        return <ShoppingBag className="w-5 h-5 text-emerald-500 flex-shrink-0" />;
+        return <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0" />;
       case 'exchange':
-        return <ArrowRightLeft className={`w-5 h-5 ${isFrozenExchange ? 'text-amber-500' : 'text-indigo-500'} flex-shrink-0`} />;
+        return <ArrowRightLeft className={`w-4 h-4 sm:w-5 sm:h-5 ${isFrozenExchange ? 'text-amber-500' : 'text-indigo-500'} flex-shrink-0`} />;
       default:
         return null;
     }
@@ -275,31 +270,31 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
 
   return (
     <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-[#1A1F2C]/90 mt-6">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-primary/20">
-            <Clock className="w-6 h-6 text-primary" />
+      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-2 space-y-3 sm:space-y-0">
+        <CardTitle className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-2 sm:gap-3">
+          <div className="p-1.5 sm:p-2 rounded-lg bg-primary/20">
+            <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
           </div>
           Transaction History
         </CardTitle>
         
-        <div className="flex items-center gap-2">
-          <div className="relative w-48">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
+          <div className="relative w-full sm:w-48">
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search transactions..."
+              placeholder="Search..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8 h-9 bg-background/50 border-primary/20 focus:border-primary/50"
+              className="pl-8 h-9 bg-background/50 border-primary/20 focus:border-primary/50 w-full"
               disabled={filterLoading}
             />
           </div>
           
-          <div className="flex">
+          <div className="flex flex-wrap gap-1 w-full sm:w-auto">
             <Button 
               variant="outline" 
               size="sm" 
-              className={`px-3 h-9 border-primary/20 ${filterType === null ? 'bg-primary/20 text-primary' : 'bg-background/50'}`}
+              className={`px-2 sm:px-3 h-9 border-primary/20 ${filterType === null ? 'bg-primary/20 text-primary' : 'bg-background/50'}`}
               onClick={resetFilters}
               disabled={filterLoading}
             >
@@ -311,7 +306,7 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
             <Button 
               variant="outline" 
               size="sm" 
-              className={`px-3 h-9 border-primary/20 ${filterType === 'deposit' ? 'bg-emerald-500/20 text-emerald-500' : 'bg-background/50'}`}
+              className={`px-2 sm:px-3 h-9 border-primary/20 ${filterType === 'deposit' ? 'bg-emerald-500/20 text-emerald-500' : 'bg-background/50'}`}
               onClick={() => {
                 if (filterType === 'deposit') {
                   resetFilters();
@@ -326,12 +321,12 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
               ) : (
                 <ArrowDownCircle className="w-4 h-4 mr-1" />
               )}
-              Deposits
+              <span className="hidden sm:inline">Deposits</span>
             </Button>
             <Button 
               variant="outline" 
               size="sm" 
-              className={`px-3 h-9 border-primary/20 ${filterType === 'exchange' ? 'bg-indigo-500/20 text-indigo-500' : 'bg-background/50'}`}
+              className={`px-2 sm:px-3 h-9 border-primary/20 ${filterType === 'exchange' ? 'bg-indigo-500/20 text-indigo-500' : 'bg-background/50'}`}
               onClick={() => {
                 if (filterType === 'exchange') {
                   resetFilters();
@@ -346,7 +341,7 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
               ) : (
                 <ArrowRightLeft className="w-4 h-4 mr-1" />
               )}
-              Exchanges
+              <span className="hidden sm:inline">Exchanges</span>
             </Button>
           </div>
         </div>
@@ -369,15 +364,14 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
               <Table className="transaction-table">
                 <TableHeader>
                   <TableRow className="hover:bg-primary/5 border-b border-primary/10">
-                    <TableHead className="text-muted-foreground font-medium">Date</TableHead>
-                    <TableHead className="text-muted-foreground font-medium">Type</TableHead>
-                    <TableHead className="text-muted-foreground font-medium">Amount</TableHead>
-                    <TableHead className="text-muted-foreground font-medium">Status</TableHead>
+                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium w-[60px] sm:w-auto">Date</TableHead>
+                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium">Type</TableHead>
+                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium">Amount</TableHead>
+                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium">Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredTransactions.map(transaction => {
-                    // Check if this is a frozen exchange transaction
                     const isFrozenExchange = transaction.type === 'exchange' && (transaction.is_frozen || transaction.is_frozen_exchange);
                     
                     return (
@@ -388,16 +382,16 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                           isFrozenExchange ? 'bg-amber-500/5' : ''
                         }`}
                       >
-                        <TableCell className="py-3">
-                          <div className="flex items-center gap-2">
-                            <Calendar className="w-4 h-4 text-muted-foreground" />
+                        <TableCell className="py-2 sm:py-3 text-xs sm:text-sm">
+                          <div className="flex items-center gap-1 sm:gap-2">
+                            <Calendar className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground" />
                             <span>{transaction.created_at}</span>
                           </div>
                         </TableCell>
                         
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <div className={`p-1.5 rounded-full ${
+                        <TableCell className="text-xs sm:text-sm">
+                          <div className="flex items-center gap-1 sm:gap-2">
+                            <div className={`p-1 sm:p-1.5 rounded-full ${
                               transaction.type === 'deposit' ? 'bg-emerald-500/10' :
                               transaction.type === 'withdraw' ? 'bg-rose-500/10' : 
                               transaction.type === 'purchase' ? 'bg-blue-500/10' :
@@ -406,13 +400,19 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                             }`}>
                               {getTypeIcon(transaction.type, isFrozenExchange)}
                             </div>
-                            <span className="font-medium">
-                              {isFrozenExchange ? 'Frozen Exchange' : getTypeLabel(transaction.type)}
+                            <span className="font-medium whitespace-nowrap">
+                              {isFrozenExchange ? 
+                                <span className="hidden sm:inline">Frozen Exchange</span> : 
+                                <span className="hidden sm:inline">{getTypeLabel(transaction.type)}</span>
+                              }
+                              <span className="sm:hidden">
+                                {isFrozenExchange ? 'Frozen' : getTypeLabel(transaction.type).substring(0, 3)}
+                              </span>
                             </span>
                           </div>
                         </TableCell>
                         
-                        <TableCell className="font-medium">
+                        <TableCell className="font-medium text-xs sm:text-sm">
                           <span className={`${
                             transaction.type === 'deposit' || transaction.type === 'sale' ? 'text-emerald-500' :
                             transaction.type === 'withdraw' || transaction.type === 'purchase' ? 'text-rose-500' :
@@ -424,9 +424,9 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                           </span>
                         </TableCell>
                         
-                        <TableCell>
+                        <TableCell className="text-xs sm:text-sm">
                           <div className="flex items-center gap-2">
-                            <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+                            <span className={`px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-xs font-medium ${
                               transaction.status === 'completed' 
                                 ? transaction.frozen_until 
                                   ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30' 
@@ -438,10 +438,18 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                                   : 'bg-rose-500/20 text-rose-500 border border-rose-500/30'
                             }`}>
                               {transaction.status === 'pending' && isFrozenExchange 
-                                ? 'Frozen Exchange' 
+                                ? <span className="hidden sm:inline">Frozen Exchange</span>
                                 : transaction.frozen_until
-                                  ? `Frozen until ${transaction.frozen_until}`
-                                  : transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
+                                  ? <span className="hidden sm:inline">{`Frozen until ${transaction.frozen_until}`}</span>
+                                  : <span className="hidden sm:inline">{transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}</span>
+                              }
+                              <span className="sm:hidden">
+                                {transaction.status === 'pending' && isFrozenExchange 
+                                  ? 'Frozen'
+                                  : transaction.frozen_until
+                                    ? 'Frozen'
+                                    : transaction.status === 'completed' ? 'Done' : 'Pend'}
+                              </span>
                             </span>
                           </div>
                         </TableCell>
@@ -458,7 +466,7 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                 {loading ? (
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <div className="animate-spin w-4 h-4 border-2 border-primary border-t-transparent rounded-full"></div>
-                    Loading more transactions...
+                    <span className="text-xs sm:text-sm">Loading more transactions...</span>
                   </div>
                 ) : hasMore ? (
                   <Button 
@@ -467,19 +475,19 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                     className="px-3 h-9 border-primary/20"
                     onClick={fetchMoreTransactions}
                   >
-                    <ChevronDown className="w-4 h-4 mr-1" /> Load More
+                    <ChevronDown className="w-4 h-4 mr-1" /> <span className="text-xs sm:text-sm">Load More</span>
                   </Button>
                 ) : (
-                  <span className="text-sm text-muted-foreground">No more transactions</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground">No more transactions</span>
                 )}
               </div>
             </div>
           </ScrollArea>
         ) : (
           <div className="flex flex-col items-center justify-center py-12 text-muted-foreground bg-black/20 rounded-b-xl">
-            <Filter className="w-12 h-12 text-muted-foreground/50 mb-3" />
-            <p className="text-lg font-medium mb-1">No transactions found</p>
-            <p className="text-sm text-muted-foreground/70">
+            <Filter className="w-10 h-10 sm:w-12 sm:h-12 text-muted-foreground/50 mb-3" />
+            <p className="text-base sm:text-lg font-medium mb-1">No transactions found</p>
+            <p className="text-xs sm:text-sm text-muted-foreground/70 text-center px-4">
               {searchTerm || filterType ? "Try adjusting your filters" : "Your transaction history will appear here"}
             </p>
           </div>
