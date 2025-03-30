@@ -180,8 +180,11 @@ export const SettingsTab = ({
   const passwordStrength = getPasswordStrength(newPassword);
 
   return (
-    <Card className="border-primary/10 shadow-lg transition-all duration-300 backdrop-blur-sm bg-[#1A1F2C]/90">
-      <CardHeader className="border-b border-primary/10 pb-4">
+    <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-gradient-to-br from-[#1A1F2C]/95 to-[#1A1F2C]/80 overflow-hidden relative">
+      <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:20px_20px] opacity-30"></div>
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-600/50 via-primary/40 to-purple-600/50"></div>
+      
+      <CardHeader className="space-y-2 border-b border-primary/10 pb-4 relative z-10">
         <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
           <div className="p-2 rounded-lg bg-primary/20">
             <Settings className="w-6 h-6 text-primary" />
@@ -190,7 +193,7 @@ export const SettingsTab = ({
         </CardTitle>
       </CardHeader>
       
-      <CardContent className="p-6 space-y-8">
+      <CardContent className="space-y-8 p-6 relative z-10">
         {/* Account Security Section */}
         <div className="space-y-2">
           <h3 className="text-lg font-semibold flex items-center gap-2 text-white/90">
@@ -217,15 +220,16 @@ export const SettingsTab = ({
           </div>
           
           <div className="relative group">
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
             <Input 
               type="email" 
               value={newEmail} 
               onChange={e => setNewEmail(e.target.value)} 
               placeholder="Enter new email address" 
               required 
-              className="bg-background/50 border-primary/10 transition-all pl-10 focus:border-primary/30 focus:ring-1 focus:ring-primary/20 pr-10 group-hover:border-primary/20"
+              className="bg-white/5 border-white/10 group-hover:border-primary/30 transition-all pl-10 focus:border-primary/30 focus:ring-1 focus:ring-primary/20 pr-10 text-white/90 h-12"
             />
-            <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-primary/50" />
+            <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-primary/60" />
             
             {emailSent && (
               <div className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500">
@@ -244,9 +248,9 @@ export const SettingsTab = ({
           <Button 
             type="submit" 
             disabled={isEmailLoading}
-            className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-all relative overflow-hidden group"
+            className="w-full bg-gradient-to-r from-purple-600/20 to-primary/20 border border-primary/10 text-primary hover:from-purple-600/30 hover:to-primary/30 transition-colors flex items-center gap-2 group relative overflow-hidden h-12"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             <span className="relative z-10 flex items-center gap-2">
               {isEmailLoading ? (
                 <>
@@ -298,14 +302,15 @@ export const SettingsTab = ({
                 </button>
               </label>
               <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
                 <Input 
                   type={showPassword ? "text" : "password"}
                   value={currentPassword} 
                   onChange={e => setCurrentPassword(e.target.value)} 
                   required 
-                  className="bg-background/50 border-primary/10 pl-10 transition-all focus:border-primary/30 focus:ring-1 focus:ring-primary/20 group-hover:border-primary/20" 
+                  className="bg-white/5 border-white/10 group-hover:border-primary/30 pl-10 transition-all focus:border-primary/30 focus:ring-1 focus:ring-primary/20 text-white/90 h-12" 
                 />
-                <Key className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-primary/50" />
+                <Key className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-primary/60" />
               </div>
             </div>
             
@@ -313,14 +318,15 @@ export const SettingsTab = ({
             <div className="space-y-1">
               <label className="text-xs font-medium text-white/70">New Password</label>
               <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
                 <Input 
                   type={showPassword ? "text" : "password"}
                   value={newPassword} 
                   onChange={e => setNewPassword(e.target.value)} 
                   required 
-                  className="bg-background/50 border-primary/10 pl-10 transition-all focus:border-primary/30 focus:ring-1 focus:ring-primary/20 group-hover:border-primary/20" 
+                  className="bg-white/5 border-white/10 group-hover:border-primary/30 pl-10 transition-all focus:border-primary/30 focus:ring-1 focus:ring-primary/20 text-white/90 h-12" 
                 />
-                <Key className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-primary/50" />
+                <Key className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-primary/60" />
               </div>
               
               {newPassword && (
@@ -351,18 +357,19 @@ export const SettingsTab = ({
             <div className="space-y-1">
               <label className="text-xs font-medium text-white/70">Confirm New Password</label>
               <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
                 <Input 
                   type={showPassword ? "text" : "password"}
                   value={confirmNewPassword} 
                   onChange={e => setConfirmNewPassword(e.target.value)} 
                   required 
-                  className={`bg-background/50 border-primary/10 pl-10 transition-all focus:border-primary/30 focus:ring-1 focus:ring-primary/20 group-hover:border-primary/20 ${
+                  className={`bg-white/5 border-white/10 group-hover:border-primary/30 pl-10 transition-all focus:border-primary/30 focus:ring-1 focus:ring-primary/20 text-white/90 h-12 ${
                     newPassword && confirmNewPassword && newPassword !== confirmNewPassword
                       ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
                       : ""
                   }`} 
                 />
-                <Key className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-primary/50" />
+                <Key className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-primary/60" />
                 
                 {newPassword && confirmNewPassword && (
                   <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -394,9 +401,9 @@ export const SettingsTab = ({
           <Button 
             type="submit"
             disabled={isLoading || (newPassword && confirmNewPassword && newPassword !== confirmNewPassword)} 
-            className="w-full bg-primary/20 text-primary hover:bg-primary/30 transition-all group relative overflow-hidden"
+            className="w-full bg-gradient-to-r from-purple-600/20 to-primary/20 border border-primary/10 text-primary hover:from-purple-600/30 hover:to-primary/30 transition-colors group relative overflow-hidden h-12"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             <span className="relative z-10 flex items-center gap-2">
               {isLoading ? (
                 <>
@@ -411,10 +418,10 @@ export const SettingsTab = ({
         </form>
       </CardContent>
       
-      <CardFooter className="p-6 pt-0 border-t border-primary/10 mt-6">
+      <CardFooter className="p-6 pt-0 border-t border-primary/10 mt-6 relative z-10">
         <Button 
           variant="destructive" 
-          className="w-full hover:bg-destructive/90 transition-all flex items-center justify-center gap-2 group relative overflow-hidden"
+          className="w-full hover:bg-destructive/90 transition-all flex items-center justify-center gap-2 group relative overflow-hidden h-12"
           onClick={handleLogout}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-destructive/20 to-red-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
