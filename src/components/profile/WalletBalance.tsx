@@ -59,7 +59,9 @@ export const WalletBalance = ({
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-      <div className="rounded-xl bg-balance-available/90 overflow-hidden">
+      <div className="rounded-xl bg-balance-available/90 overflow-hidden relative">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-600/50 via-primary/40 to-purple-600/50"></div>
+        
         <div className="p-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-full bg-balance-available-accent/20">
@@ -120,7 +122,9 @@ export const WalletBalance = ({
       </div>
 
       {Number(userData?.frozen_balance || 0) > 0 && (
-        <div className="rounded-xl bg-balance-hold/90 overflow-hidden">
+        <div className="rounded-xl bg-balance-hold/90 overflow-hidden relative">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-600/50 via-primary/40 to-purple-600/50"></div>
+          
           <div className="p-4 flex justify-between items-center">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-full bg-balance-hold-accent/20">
