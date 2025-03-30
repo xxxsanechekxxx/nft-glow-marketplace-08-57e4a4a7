@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   Card,
@@ -52,7 +51,6 @@ const ActiveBids = ({
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [loadingStage, setLoadingStage] = useState(0);
 
-  // If no bids were passed as props, fetch them from the database
   useEffect(() => {
     const fetchUserBids = async () => {
       if (initialBids) {
@@ -66,7 +64,6 @@ const ActiveBids = ({
       try {
         setIsLoading(true);
         
-        // Get all NFTs owned by the user
         const { data: userNfts, error: nftError } = await supabase
           .from('nfts')
           .select('id')
@@ -80,7 +77,6 @@ const ActiveBids = ({
           return;
         }
         
-        // Get all bids for the user's NFTs
         const nftIds = userNfts.map(nft => nft.id);
         
         const { data: bidData, error: bidError } = await supabase
@@ -116,11 +112,9 @@ const ActiveBids = ({
       setProcessingBidId(bidId);
       setIsTransactionLoading(true);
       
-      // Calculate amounts for display in the loading state
       const platformFee = bidAmount * (PLATFORM_FEE_PERCENT / 100);
       const receivedAmount = bidAmount - platformFee;
       
-      // The initial currency type for NFT sales is always ETH
       const currencyType = "eth";
       
       setProcessingDetails({
@@ -131,7 +125,6 @@ const ActiveBids = ({
         currencyType: currencyType
       });
       
-      // Start the progress animation that will run for 20 seconds
       setLoadingProgress(0);
       setLoadingStage(1);
       
@@ -142,7 +135,6 @@ const ActiveBids = ({
             return 100;
           }
           
-          // Update loading stage based on progress
           if (prev >= 75 && loadingStage < 3) {
             setLoadingStage(3);
           } else if (prev >= 40 && loadingStage < 2) {
@@ -151,14 +143,12 @@ const ActiveBids = ({
           
           return prev + 1;
         });
-      }, 200); // 20 seconds total duration
+      }, 200);
       
-      // Make the actual API call to accept the bid
       const { data, error } = await supabase.rpc("accept_bid", {
         bid_id: bidId,
       });
 
-      // Artificially ensure that the loading UI shows for at least 5 seconds
       setTimeout(() => {
         clearInterval(progressInterval);
         setLoadingProgress(100);
@@ -176,10 +166,8 @@ const ActiveBids = ({
             description: `The bid has been accepted. ${receivedAmount.toFixed(2)} ETH will be available in your wallet after a 15-day security period.`,
           });
           
-          // Notify parent component to refresh
           if (onBidAccepted) onBidAccepted();
           
-          // Remove the accepted bid from the local state
           setBids(bids.filter(bid => bid.id !== bidId));
         } else {
           toast({
@@ -189,7 +177,6 @@ const ActiveBids = ({
           });
         }
         
-        // Reset states after a delay to show 100% completion
         setTimeout(() => {
           setProcessingBidId(null);
           setIsTransactionLoading(false);
@@ -208,6 +195,37 @@ const ActiveBids = ({
       setProcessingBidId(null);
       setIsTransactionLoading(false);
       setProcessingDetails(null);
+    }
+  };
+
+  const handleDeclineBid = async (bidId: string) => {
+    try {
+      setProcessingBidId(bidId);
+      
+      const { error } = await supabase
+        .from('nft_bids')
+        .delete()
+        .eq('id', bidId);
+      
+      if (error) {
+        throw error;
+      }
+      
+      setBids(bids.filter(bid => bid.id !== bidId));
+      
+      toast({
+        title: "Success",
+        description: "Bid declined successfully",
+      });
+    } catch (error: any) {
+      console.error("Error declining bid:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to decline bid",
+        variant: "destructive",
+      });
+    } finally {
+      setProcessingBidId(null);
     }
   };
 
@@ -345,8 +363,13 @@ const ActiveBids = ({
                   <Button
                     className="decline-button px-4 py-2"
                     disabled={!!processingBidId}
+                    onClick={() => handleDeclineBid(bid.id)}
                   >
-                    <XCircle className="h-4 w-4 mr-2" />
+                    {processingBidId === bid.id ? (
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    ) : (
+                      <XCircle className="h-4 w-4 mr-2" />
+                    )}
                     Decline
                   </Button>
                 </div>
