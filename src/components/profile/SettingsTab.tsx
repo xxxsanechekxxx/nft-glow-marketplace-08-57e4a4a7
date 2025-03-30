@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -12,6 +13,160 @@ interface SettingsTabProps {
 }
 
 export const SettingsTab = ({ handleLogout }: SettingsTabProps) => {
+  const { toast } = useToast();
+  const [newEmail, setNewEmail] = useState("");
+  const [emailSent, setEmailSent] = useState(false);
+  const [isEmailLoading, setIsEmailLoading] = useState(false);
+  
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [passwordChanged, setPasswordChanged] = useState(false);
+  
+  const [passwordStrength, setPasswordStrength] = useState<{
+    strength: number;
+    text: string;
+    color: string;
+  }>({
+    strength: 0,
+    text: "",
+    color: ""
+  });
+  
+  const togglePasswordVisibility = () => {
+    setShowPassword(prev => !prev);
+  };
+  
+  const handleEmailChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newEmail) return;
+    
+    try {
+      setIsEmailLoading(true);
+      const { error } = await supabase.auth.updateUser({ email: newEmail });
+      
+      if (error) throw error;
+      
+      setEmailSent(true);
+      toast({
+        title: "Verification email sent",
+        description: "Please check your email to verify the change"
+      });
+      
+      setTimeout(() => {
+        setEmailSent(false);
+        setNewEmail("");
+      }, 5000);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update email",
+        variant: "destructive"
+      });
+    } finally {
+      setIsEmailLoading(false);
+    }
+  };
+  
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentPassword || !newPassword || !confirmNewPassword) return;
+    
+    if (newPassword !== confirmNewPassword) {
+      toast({
+        title: "Passwords don't match",
+        description: "Please make sure your passwords match",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    try {
+      setIsLoading(true);
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      
+      if (error) throw error;
+      
+      setPasswordChanged(true);
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmNewPassword("");
+      
+      toast({
+        title: "Password updated",
+        description: "Your password has been successfully updated"
+      });
+      
+      setTimeout(() => {
+        setPasswordChanged(false);
+      }, 5000);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update password",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  // Calculate password strength
+  React.useEffect(() => {
+    if (!newPassword) {
+      setPasswordStrength({
+        strength: 0,
+        text: "",
+        color: ""
+      });
+      return;
+    }
+    
+    let strength = 0;
+    
+    // Length check
+    if (newPassword.length >= 8) strength += 1;
+    
+    // Contains lowercase
+    if (/[a-z]/.test(newPassword)) strength += 1;
+    
+    // Contains uppercase
+    if (/[A-Z]/.test(newPassword)) strength += 1;
+    
+    // Contains number
+    if (/[0-9]/.test(newPassword)) strength += 1;
+    
+    let text = "";
+    let color = "";
+    
+    switch (strength) {
+      case 0:
+      case 1:
+        text = "Weak";
+        color = "bg-red-500";
+        break;
+      case 2:
+        text = "Fair";
+        color = "bg-orange-500";
+        break;
+      case 3:
+        text = "Good";
+        color = "bg-yellow-500";
+        break;
+      case 4:
+        text = "Strong";
+        color = "bg-green-500";
+        break;
+      default:
+        text = "";
+        color = "";
+    }
+    
+    setPasswordStrength({ strength, text, color });
+  }, [newPassword]);
+
   return (
     <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-gradient-to-br from-[#1A1F2C]/95 to-[#1A1F2C]/80 overflow-hidden relative">
       <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:20px_20px] opacity-30"></div>
