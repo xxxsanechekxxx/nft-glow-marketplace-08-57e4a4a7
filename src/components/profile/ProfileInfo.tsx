@@ -58,9 +58,8 @@ export const ProfileInfo = ({ userData, setIsWalletModalOpen }: ProfileInfoProps
               <Input 
                 value={userData?.email} 
                 readOnly 
-                className="bg-white/5 border-white/10 group-hover:border-primary/30 transition-colors pl-10 font-medium text-white/90 h-12" 
+                className="bg-white/5 border-white/10 group-hover:border-primary/30 transition-colors font-medium text-white/90 h-12" 
               />
-              <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-primary/60" />
             </div>
           </div>
           
