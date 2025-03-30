@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { CheckCircle, Clock, Loader2, XCircle } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase"; // Make sure this import is correct
 import { useAuth } from "@/hooks/useAuth";
 
 interface Bid {
@@ -205,17 +205,17 @@ const ActiveBids = ({
     try {
       setProcessingBidId(bidId);
       
-      // Call the decline_bid RPC function
-      const { data, error } = await supabase.rpc("decline_bid", {
-        bid_id: bidId,
-      });
+      console.log("Declining bid:", bidId);
+      
+      // Use a direct delete operation instead of RPC
+      const { error } = await supabase
+        .from('nft_bids')
+        .delete()
+        .eq('id', bidId);
       
       if (error) {
+        console.error("Delete error:", error);
         throw error;
-      }
-      
-      if (!data.success) {
-        throw new Error(data.message || "Failed to decline bid");
       }
       
       // Update the local state
