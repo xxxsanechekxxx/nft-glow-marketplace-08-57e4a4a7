@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import {
   Dialog,
@@ -9,6 +10,7 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { supabase } from '@/lib/supabase';
 import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface WalletAddressModalProps {
   isOpen: boolean;
@@ -21,6 +23,7 @@ const WalletAddressModal = ({ isOpen, onClose, onGenerated }: WalletAddressModal
   const [isGenerating, setIsGenerating] = useState(true);
   const [generatedAddress, setGeneratedAddress] = useState("");
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (isOpen && isGenerating) {
@@ -70,7 +73,7 @@ const WalletAddressModal = ({ isOpen, onClose, onGenerated }: WalletAddressModal
             ) : (
               <div className="space-y-4 mt-4">
                 <p>Your address has been generated successfully!</p>
-                <p className="font-mono bg-muted p-2 rounded-md break-all">
+                <p className={`font-mono bg-muted p-2 rounded-md ${isMobile ? 'text-xs break-all' : 'break-all'}`}>
                   {generatedAddress}
                 </p>
                 <p>You can now transfer your Ethereum to this address to fund your balance.</p>

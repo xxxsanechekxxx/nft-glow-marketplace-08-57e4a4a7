@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 import type { UserData } from "@/types/user";
 
 interface ProfileInfoProps {
@@ -17,6 +18,7 @@ interface ProfileInfoProps {
 export const ProfileInfo = ({ userData, setIsWalletModalOpen }: ProfileInfoProps) => {
   const [copiedWallet, setCopiedWallet] = useState(false);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -82,7 +84,7 @@ export const ProfileInfo = ({ userData, setIsWalletModalOpen }: ProfileInfoProps
           </div>
         </div>
         
-        {/* Verification Status */}
+        {/* Verification Status - Removed redundant HelpCircle icon */}
         <div className="space-y-2 group">
           <label className="text-sm font-medium flex items-center gap-2 text-white/70">
             <HelpCircle className="w-4 h-4" />
@@ -103,23 +105,23 @@ export const ProfileInfo = ({ userData, setIsWalletModalOpen }: ProfileInfoProps
                 </div>
               )}
             </div>
-            <HelpCircle className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-primary/60" />
+            {/* Removed the duplicate HelpCircle icon that was here */}
           </div>
         </div>
         
-        {/* Wallet Address */}
+        {/* Wallet Address - Improved responsive layout */}
         <div className="space-y-2 group">
           <label className="text-sm font-medium flex items-center gap-2 text-white/70">
             <Wallet className="w-4 h-4" />
             Wallet Address
           </label>
-          <div className="flex gap-4 items-start">
-            <div className="flex-grow flex gap-2 items-center relative overflow-hidden rounded-lg transition-all duration-300">
+          <div className={`flex ${isMobile ? 'flex-col' : 'gap-4'} items-start`}>
+            <div className={`${isMobile ? 'w-full mb-3' : 'flex-grow'} flex gap-2 items-center relative overflow-hidden rounded-lg transition-all duration-300`}>
               <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               <Input 
                 value={userData?.wallet_address || ''} 
                 readOnly 
-                className="bg-white/5 font-mono text-sm border-white/10 group-hover:border-primary/30 transition-colors pl-10 pr-16 truncate text-white/90 h-12" 
+                className="bg-white/5 font-mono text-sm border-white/10 group-hover:border-primary/30 transition-colors pl-10 pr-16 truncate text-white/90 h-12 w-full" 
                 placeholder="No wallet address generated" 
               />
               <Wallet className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-primary/60" />
@@ -147,16 +149,16 @@ export const ProfileInfo = ({ userData, setIsWalletModalOpen }: ProfileInfoProps
               )}
             </div>
             
-            <div className="flex items-center">
+            <div className={`flex items-center ${isMobile ? 'w-full' : ''}`}>
               {userData?.wallet_address ? (
-                <div className="bg-primary/20 px-3 py-1.5 rounded-md text-sm text-primary font-medium flex items-center gap-1.5">
+                <div className="bg-primary/20 px-3 py-1.5 rounded-md text-sm text-primary font-medium flex items-center gap-1.5 w-full justify-center md:justify-start">
                   <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
                   ERC-20
                 </div>
               ) : (
                 <Button 
                   onClick={() => setIsWalletModalOpen(true)} 
-                  className="bg-gradient-to-r from-purple-600/20 to-primary/20 border border-primary/10 text-primary hover:from-purple-600/30 hover:to-primary/30 transition-colors flex items-center gap-2 group relative overflow-hidden h-12"
+                  className={`bg-gradient-to-r from-purple-600/20 to-primary/20 border border-primary/10 text-primary hover:from-purple-600/30 hover:to-primary/30 transition-colors flex items-center gap-2 group relative overflow-hidden h-12 ${isMobile ? 'w-full' : ''}`}
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <Wallet className="w-4 h-4 relative z-10" />
