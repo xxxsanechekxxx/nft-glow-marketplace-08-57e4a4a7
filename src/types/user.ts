@@ -34,9 +34,10 @@ export interface Transaction {
   type: 'deposit' | 'withdraw' | 'purchase' | 'sale' | 'exchange';
   amount: string;
   created_at: string;
+  raw_created_at?: string; // Added for storing original timestamp
   status: 'pending' | 'completed' | 'failed';
   item?: string;
-  frozen_until?: string;
+  frozen_until?: string | null;
   is_frozen?: boolean;
   is_frozen_exchange?: boolean;
   currency_type?: 'eth' | 'usdt';

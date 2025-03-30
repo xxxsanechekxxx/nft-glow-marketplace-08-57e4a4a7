@@ -17,7 +17,6 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState<string | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
-  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -33,13 +32,27 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
     setLoading(true);
     
     try {
-      const { data: transactionsData, error } = await supabase
+      // Important: We need to store the original created_at timestamp in the transaction object
+      // rather than just the formatted date for pagination purposes
+      const lastTransaction = transactions[transactions.length - 1];
+      
+      let query = supabase
         .from('transactions')
         .select('*')
         .order('created_at', { ascending: false })
-        .eq(filterType ? 'type' : 'id', filterType || transactions[transactions.length - 1]?.id)
-        .gt(filterType ? 'id' : 'created_at', filterType ? transactions[transactions.length - 1]?.id : transactions[transactions.length - 1]?.created_at)
         .limit(10);
+      
+      // Apply the appropriate filter based on whether we're filtering by type
+      if (filterType) {
+        query = query.eq('type', filterType);
+      }
+      
+      // Use the last transaction's ID to paginate
+      if (transactions.length > 0) {
+        query = query.lt('created_at', lastTransaction.raw_created_at || lastTransaction.created_at);
+      }
+      
+      const { data: transactionsData, error } = await query;
       
       if (error) throw error;
       
@@ -59,6 +72,7 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
             type: tx.type,
             amount: tx.amount.toString(),
             created_at: formattedDate,
+            raw_created_at: tx.created_at, // Store the original timestamp for pagination
             status: tx.status,
             item: tx.item,
             frozen_until: formattedFrozenUntil,
@@ -105,6 +119,7 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
             type: tx.type,
             amount: tx.amount.toString(),
             created_at: formattedDate,
+            raw_created_at: tx.created_at, // Store the original timestamp
             status: tx.status,
             item: tx.item,
             frozen_until: null,
@@ -369,3 +384,4 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
     </Card>
   );
 };
+
