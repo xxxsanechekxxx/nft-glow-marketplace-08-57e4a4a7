@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
@@ -318,11 +317,13 @@ const Profile = () => {
                 type: tx.type,
                 amount: tx.amount.toString(),
                 created_at: formattedDate,
+                raw_created_at: tx.created_at,
                 status: tx.status,
                 item: tx.item,
                 frozen_until: formattedFrozenUntil,
                 is_frozen: tx.is_frozen,
-                is_frozen_exchange: tx.is_frozen_exchange
+                is_frozen_exchange: tx.is_frozen_exchange,
+                currency_type: tx.currency_type
               };
             }));
           }

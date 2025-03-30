@@ -32,8 +32,7 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
     setLoading(true);
     
     try {
-      // Important: We need to store the original created_at timestamp in the transaction object
-      // rather than just the formatted date for pagination purposes
+      // Get the last transaction for pagination
       const lastTransaction = transactions[transactions.length - 1];
       
       let query = supabase
@@ -42,14 +41,14 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
         .order('created_at', { ascending: false })
         .limit(10);
       
-      // Apply the appropriate filter based on whether we're filtering by type
+      // Apply type filter if needed
       if (filterType) {
         query = query.eq('type', filterType);
       }
       
-      // Use the last transaction's ID to paginate
-      if (transactions.length > 0) {
-        query = query.lt('created_at', lastTransaction.raw_created_at || lastTransaction.created_at);
+      // Use the original timestamp for pagination
+      if (transactions.length > 0 && lastTransaction.raw_created_at) {
+        query = query.lt('created_at', lastTransaction.raw_created_at);
       }
       
       const { data: transactionsData, error } = await query;
@@ -98,6 +97,7 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
     if (loading) return;
     
     setLoading(true);
+    setTransactions([]); // Clear existing transactions when switching to deposits
     
     try {
       const { data: depositsData, error } = await supabase
@@ -131,6 +131,10 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
         
         setTransactions(formattedDeposits);
         setFilterType('deposit');
+        setHasMore(depositsData.length === 20);
+      } else {
+        setFilterType('deposit');
+        setHasMore(false);
       }
     } catch (error) {
       console.error("Error fetching deposits:", error);
@@ -161,7 +165,7 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
         observerRef.current.disconnect();
       }
     };
-  }, [hasMore, loading, transactions]);
+  }, [hasMore, loading, transactions, filterType]);
 
   const filteredTransactions = transactions.filter(transaction => {
     const matchesSearch = searchTerm === "" || 
@@ -228,7 +232,10 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
               variant="outline" 
               size="sm" 
               className={`px-3 h-9 border-primary/20 ${filterType === null ? 'bg-primary/20 text-primary' : 'bg-background/50'}`}
-              onClick={() => setFilterType(null)}
+              onClick={() => {
+                setFilterType(null);
+                setTransactions(initialTransactions);
+              }}
             >
               All
             </Button>
@@ -239,6 +246,7 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
               onClick={() => {
                 if (filterType === 'deposit') {
                   setFilterType(null);
+                  setTransactions(initialTransactions);
                 } else {
                   loadMoreDeposits();
                 }
@@ -250,7 +258,15 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
               variant="outline" 
               size="sm" 
               className={`px-3 h-9 border-primary/20 ${filterType === 'exchange' ? 'bg-indigo-500/20 text-indigo-500' : 'bg-background/50'}`}
-              onClick={() => setFilterType(filterType === 'exchange' ? null : 'exchange')}
+              onClick={() => {
+                if (filterType === 'exchange') {
+                  setFilterType(null);
+                  setTransactions(initialTransactions);
+                } else {
+                  setFilterType('exchange');
+                  setTransactions(transactions.filter(tx => tx.type === 'exchange'));
+                }
+              }}
             >
               <ArrowRightLeft className="w-4 h-4 mr-1" /> Exchanges
             </Button>
@@ -384,4 +400,3 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
     </Card>
   );
 };
-
