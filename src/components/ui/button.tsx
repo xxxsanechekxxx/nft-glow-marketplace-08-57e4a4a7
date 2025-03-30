@@ -22,6 +22,8 @@ const buttonVariants = cva(
         exchange: "bg-blue-500/20 text-blue-500 hover:bg-blue-500/30",
         circular: "rounded-full bg-gradient-to-r from-purple-600 to-indigo-500 hover:from-purple-700 hover:to-indigo-600 text-white shadow-md shadow-purple-600/20 border border-purple-500/50 transition-transform",
         circularSmall: "rounded-full bg-gradient-to-r from-purple-600 to-indigo-500 hover:from-purple-700 hover:to-indigo-600 text-white shadow-md shadow-purple-600/20 border border-purple-500/50 transition-transform hover:rotate-180",
+        gradient: "bg-gradient-to-r from-purple-600/20 to-primary/20 border border-primary/10 text-primary hover:from-purple-600/30 hover:to-primary/30 transition-colors relative overflow-hidden group",
+        gradientDestructive: "bg-gradient-to-r from-destructive/20 to-red-500/20 border border-destructive/10 text-destructive hover:from-destructive/30 hover:to-red-500/30 transition-colors relative overflow-hidden group",
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -30,6 +32,7 @@ const buttonVariants = cva(
         icon: "h-10 w-10",
         circle: "h-12 w-12",
         circleSmall: "h-8 w-8",
+        settings: "h-12 w-full",
       },
     },
     defaultVariants: {

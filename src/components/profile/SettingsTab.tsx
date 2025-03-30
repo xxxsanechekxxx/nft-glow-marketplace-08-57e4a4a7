@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -248,7 +247,9 @@ export const SettingsTab = ({
           <Button 
             type="submit" 
             disabled={isEmailLoading}
-            className="w-full bg-gradient-to-r from-purple-600/20 to-primary/20 border border-primary/10 text-primary hover:from-purple-600/30 hover:to-primary/30 transition-colors flex items-center gap-2 group relative overflow-hidden h-12"
+            variant="gradient"
+            size="settings"
+            className="group"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             <span className="relative z-10 flex items-center gap-2">
@@ -401,7 +402,9 @@ export const SettingsTab = ({
           <Button 
             type="submit"
             disabled={isLoading || (newPassword && confirmNewPassword && newPassword !== confirmNewPassword)} 
-            className="w-full bg-gradient-to-r from-purple-600/20 to-primary/20 border border-primary/10 text-primary hover:from-purple-600/30 hover:to-primary/30 transition-colors group relative overflow-hidden h-12"
+            variant="gradient"
+            size="settings"
+            className="group"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             <span className="relative z-10 flex items-center gap-2">
@@ -420,11 +423,12 @@ export const SettingsTab = ({
       
       <CardFooter className="p-6 pt-0 border-t border-primary/10 mt-6 relative z-10">
         <Button 
-          variant="destructive" 
-          className="w-full hover:bg-destructive/90 transition-all flex items-center justify-center gap-2 group relative overflow-hidden h-12"
+          variant="gradientDestructive" 
+          size="settings"
+          className="group"
           onClick={handleLogout}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-destructive/20 to-red-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-destructive/10 to-red-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <LogOut className="w-4 h-4 relative z-10" />
           <span className="relative z-10">Logout</span>
         </Button>
