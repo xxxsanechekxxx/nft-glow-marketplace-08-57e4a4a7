@@ -19,21 +19,6 @@ interface NFT {
 
 const ITEMS_PER_PAGE = 4; // Reduced items per page for better mobile experience
 
-const fetchNFTs = async ({ pageParam = 0 }) => {
-  const from = pageParam * ITEMS_PER_PAGE;
-  const to = from + ITEMS_PER_PAGE - 1;
-
-  const { data, error, count } = await supabase
-    .from('nfts')
-    .select('*', { count: 'exact' })
-    .or('owner_id.is.null,for_sale.eq.true') // Show NFTs without owner OR with for_sale=true
-    .range(from, to)
-    .order('created_at', { ascending: false });
-
-  if (error) throw error;
-  return { data, count, nextPage: to < (count || 0) ? pageParam + 1 : undefined };
-};
-
 const Marketplace = () => {
   useEffect(() => {
     document.title = "PureNFT - Marketplace";
@@ -46,15 +31,60 @@ const Marketplace = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("newest");
 
+  const fetchNFTs = async ({ pageParam = 0 }) => {
+    const from = pageParam * ITEMS_PER_PAGE;
+    const to = from + ITEMS_PER_PAGE - 1;
+
+    // Создаем базовый запрос
+    let query = supabase
+      .from('nfts')
+      .select('*', { count: 'exact' })
+      .or('owner_id.is.null,for_sale.eq.true'); // Show NFTs without owner OR with for_sale=true
+    
+    // Если есть поисковый запрос, добавляем фильтрацию
+    if (searchQuery) {
+      query = query
+        .or(`name.ilike.%${searchQuery}%,creator.ilike.%${searchQuery}%`);
+    }
+    
+    // Добавляем сортировку в зависимости от выбранного параметра
+    switch (sortBy) {
+      case "newest":
+        query = query.order('created_at', { ascending: false });
+        break;
+      case "oldest":
+        query = query.order('created_at', { ascending: true });
+        break;
+      case "price-asc":
+        query = query.order('price', { ascending: true });
+        break;
+      case "price-desc":
+        query = query.order('price', { ascending: false });
+        break;
+      default:
+        query = query.order('created_at', { ascending: false });
+    }
+    
+    // Добавляем пагинацию
+    query = query.range(from, to);
+    
+    // Выполняем запрос
+    const { data, error, count } = await query;
+
+    if (error) throw error;
+    return { data, count, nextPage: to < (count || 0) ? pageParam + 1 : undefined };
+  };
+
   const {
     data,
     isLoading,
     error,
     fetchNextPage,
     hasNextPage,
-    isFetchingNextPage
+    isFetchingNextPage,
+    refetch
   } = useInfiniteQuery({
-    queryKey: ['nfts'],
+    queryKey: ['nfts', searchQuery, sortBy],
     queryFn: fetchNFTs,
     getNextPageParam: (lastPage) => lastPage.nextPage,
     initialPageParam: 0,
@@ -62,35 +92,10 @@ const Marketplace = () => {
     gcTime: 3600000,
   });
 
-  const sortNFTs = (nftsToSort: NFT[]) => {
-    switch (sortBy) {
-      case "newest":
-        return [...nftsToSort].sort((a, b) => 
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        );
-      case "oldest":
-        return [...nftsToSort].sort((a, b) => 
-          new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-        );
-      case "price-asc":
-        return [...nftsToSort].sort((a, b) => 
-          parseFloat(a.price) - parseFloat(b.price)
-        );
-      case "price-desc":
-        return [...nftsToSort].sort((a, b) => 
-          parseFloat(b.price) - parseFloat(a.price)
-        );
-      default:
-        return nftsToSort;
-    }
-  };
-
-  const allNFTs = data?.pages.flatMap(page => page.data) || [];
-  const filteredNFTs = allNFTs.filter(nft => 
-    nft.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    nft.creator.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-  const sortedAndFilteredNFTs = filteredNFTs ? sortNFTs(filteredNFTs) : [];
+  // При изменении параметров сортировки или поиска, делаем новый запрос
+  useEffect(() => {
+    refetch();
+  }, [sortBy, searchQuery, refetch]);
 
   useEffect(() => {
     if (inView && !isLoading && !isFetchingNextPage && hasNextPage) {
@@ -107,6 +112,8 @@ const Marketplace = () => {
       </div>
     );
   }
+
+  const allNFTs = data?.pages.flatMap(page => page.data) || [];
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-b from-background via-background/80 to-background/60">
@@ -135,7 +142,7 @@ const Marketplace = () => {
         </div>
 
         <NFTGrid
-          nfts={sortedAndFilteredNFTs}
+          nfts={allNFTs}
           isLoading={isLoading}
           isFetchingNextPage={isFetchingNextPage}
           lastElementRef={ref}
