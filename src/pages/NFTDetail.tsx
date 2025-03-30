@@ -1,4 +1,3 @@
-
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
@@ -50,18 +49,24 @@ const NFTDetail = () => {
   });
 
   const handlePurchaseComplete = () => {
-    // Invalidate and refetch queries to update UI
     queryClient.invalidateQueries({ queryKey: ['nft', id] });
     queryClient.invalidateQueries({ queryKey: ['user-balance', user?.id] });
     queryClient.invalidateQueries({ queryKey: ['nfts'] });
     
-    // Navigate to profile page after successful purchase
-    setTimeout(() => {
-      navigate('/profile');
-    }, 2000);
+    navigate('/profile');
   };
 
-  // Get marketplace display name
+  const handleBidDeclined = () => {
+    queryClient.invalidateQueries({ queryKey: ['nft', id] });
+    queryClient.invalidateQueries({ queryKey: ['user-balance', user?.id] });
+    queryClient.invalidateQueries({ queryKey: ['nfts'] });
+    
+    toast({
+      title: "Bid Declined",
+      description: "The bid has been successfully declined."
+    });
+  };
+
   const getMarketplaceDisplay = () => {
     if (!nft?.marketplace) return null;
     
@@ -77,10 +82,8 @@ const NFTDetail = () => {
     return marketplaceMap[nft.marketplace] || nft.marketplace;
   };
 
-  // Check if the NFT is owned by the current user
   const isOwned = nft?.owner_id === user?.id;
   
-  // Check if NFT is for sale
   const isForSale = nft?.for_sale === true;
 
   if (isLoading) {
@@ -136,7 +139,6 @@ const NFTDetail = () => {
           <div className="space-y-6 sm:space-y-8 animate-fade-in">
             <NFTHeader name={nft.name} creator={nft.creator} />
             
-            {/* Display NFT Price */}
             <div className="relative group">
               <div className="absolute -inset-px bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-xl blur opacity-75 group-hover:opacity-100 transition-all duration-700" />
               <div className="relative flex items-center justify-between backdrop-blur-xl bg-white/5 p-4 sm:p-6 rounded-xl border border-white/10 group-hover:border-primary/20 transition-all duration-300 group-hover:bg-white/10 shadow-lg group-hover:shadow-primary/20">
@@ -201,6 +203,16 @@ const NFTDetail = () => {
               tokenStandard={nft.token_standard}
               properties={nft.properties}
             />
+            
+            {isOwned && (
+              <ActiveBids
+                nftId={nft.id}
+                ownerId={nft.owner_id}
+                currentUserId={user?.id}
+                onBidAccepted={handlePurchaseComplete}
+                onBidDeclined={handleBidDeclined}
+              />
+            )}
           </div>
         </div>
       </div>

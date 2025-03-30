@@ -26,6 +26,7 @@ interface ActiveBidsProps {
   currentUserId?: string | undefined;
   bids?: Bid[];
   onBidAccepted?: () => void;
+  onBidDeclined?: () => void;
 }
 
 const ActiveBids = ({
@@ -34,6 +35,7 @@ const ActiveBids = ({
   currentUserId,
   bids: initialBids,
   onBidAccepted,
+  onBidDeclined,
 }: ActiveBidsProps = {}) => {
   const { toast } = useToast();
   const { user } = useAuth();
@@ -217,6 +219,8 @@ const ActiveBids = ({
         title: "Success",
         description: "Bid declined successfully",
       });
+      
+      if (onBidDeclined) onBidDeclined();
     } catch (error: any) {
       console.error("Error declining bid:", error);
       toast({
