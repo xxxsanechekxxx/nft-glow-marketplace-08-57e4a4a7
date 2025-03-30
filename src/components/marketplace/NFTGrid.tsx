@@ -2,6 +2,7 @@
 import { NFTCard } from "@/components/NFTCard";
 import { Loader2, Search } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface NFT {
   id: string;
@@ -27,6 +28,8 @@ export const NFTGrid = ({
   isFetchingNextPage,
   lastElementRef,
 }: NFTGridProps) => {
+  const isMobile = useIsMobile();
+  
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[200px] space-y-4">
@@ -53,16 +56,16 @@ export const NFTGrid = ({
   }
 
   return (
-    <div className="relative">
+    <div className="relative px-2 md:px-0">
       <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-purple-500/5 to-pink-500/5 rounded-xl blur-2xl" />
       <div className="absolute inset-0">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[100px] animate-pulse" />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-[100px] animate-pulse delay-700" />
       </div>
       
-      <ScrollArea className="h-[calc(100vh-400px)] rounded-xl backdrop-blur-sm border border-primary/20 shadow-[0_0_15px_rgba(0,0,0,0.1)] relative">
-        <div className="p-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 marketplace-nft-grid">
+      <ScrollArea className={`${isMobile ? 'h-[calc(100vh-350px)]' : 'h-[calc(100vh-400px)]'} rounded-xl backdrop-blur-sm border border-primary/20 shadow-[0_0_15px_rgba(0,0,0,0.1)] relative`}>
+        <div className="p-4 md:p-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8 marketplace-nft-grid">
             {nfts.map((nft, index) => (
               <div
                 key={nft.id}

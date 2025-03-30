@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, User } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const { user } = useAuth();
+  const isMobile = useIsMobile();
 
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -22,12 +24,12 @@ export const Header = () => {
       </div>
       
       <div className="container mx-auto px-4 relative">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-14 md:h-16">
           <Link to="/" className="flex items-center space-x-2 group relative">
             <div className="absolute -inset-2 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-full blur opacity-0 group-hover:opacity-75 transition duration-500"></div>
             <div className="relative flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-purple-400 animate-[pulse_5s_ease-in-out_infinite] group-hover:scale-110 transition-all duration-1000 shadow-lg shadow-primary/20"></div>
-              <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-400 to-pink-500 group-hover:opacity-80 transition-all duration-1000">
+              <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-gradient-to-br from-primary to-purple-400 animate-[pulse_5s_ease-in-out_infinite] group-hover:scale-110 transition-all duration-1000 shadow-lg shadow-primary/20"></div>
+              <span className="text-lg md:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-400 to-pink-500 group-hover:opacity-80 transition-all duration-1000 header-logo">
                 PureNFT
               </span>
             </div>
@@ -58,7 +60,7 @@ export const Header = () => {
             </Link>
             {user ? (
               <Link to="/profile">
-                <Button variant="outline" className="flex items-center gap-2 bg-white/5 backdrop-blur-xl border-white/10 hover:border-primary/40 hover:bg-primary/10 transition-all duration-300 shadow-lg hover:shadow-primary/20 relative group">
+                <Button variant="outline" className="flex items-center gap-2 bg-white/5 backdrop-blur-xl border-white/10 hover:border-primary/40 hover:bg-primary/10 transition-all duration-300 shadow-lg hover:shadow-primary/20 relative group h-9 md:h-10">
                   <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <User className="w-4 h-4 relative z-10" />
                   <span className="relative z-10">{user.user_metadata.login || 'Profile'}</span>
@@ -66,7 +68,7 @@ export const Header = () => {
               </Link>
             ) : (
               <Link to="/login">
-                <Button variant="outline" className="flex items-center gap-2 bg-white/5 backdrop-blur-xl border-white/10 hover:border-primary/40 hover:bg-primary/10 transition-all duration-300 shadow-lg hover:shadow-primary/20 relative group">
+                <Button variant="outline" className="flex items-center gap-2 bg-white/5 backdrop-blur-xl border-white/10 hover:border-primary/40 hover:bg-primary/10 transition-all duration-300 shadow-lg hover:shadow-primary/20 relative group h-9 md:h-10">
                   <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <User className="w-4 h-4 relative z-10" />
                   <span className="relative z-10">Login</span>
@@ -90,7 +92,7 @@ export const Header = () => {
       </div>
 
       {isMenuOpen && (
-        <div className="md:hidden absolute top-16 left-0 right-0 bg-background/95 backdrop-blur-xl border-b border-primary/10 animate-fade-in">
+        <div className="md:hidden absolute top-14 left-0 right-0 bg-background/95 backdrop-blur-xl border-b border-primary/10 animate-fade-in mobile-menu">
           <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-purple-500/5 to-pink-500/5"></div>
           <div className="container mx-auto px-4 py-4 relative">
             <nav className="flex flex-col space-y-4">
@@ -114,15 +116,15 @@ export const Header = () => {
               </Link>
               {user ? (
                 <Link to="/profile" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="outline" className="w-full flex items-center gap-2 justify-center bg-white/5 backdrop-blur-xl border-white/10 hover:border-primary/40 hover:bg-primary/10 transition-all duration-300 relative group">
+                  <Button variant="outline" className="w-full flex items-center gap-2 justify-center bg-white/5 backdrop-blur-xl border-white/10 hover:border-primary/40 hover:bg-primary/10 transition-all duration-300 relative group min-h-[42px]">
                     <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <User className="w-4 h-4 relative z-10" />
-                    <span className="relative z-10">{user.user_metadata.login || 'Profile'}</span>
+                    <span className="relative z-10 username-truncate">{user.user_metadata.login || 'Profile'}</span>
                   </Button>
                 </Link>
               ) : (
                 <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="outline" className="w-full flex items-center gap-2 justify-center bg-white/5 backdrop-blur-xl border-white/10 hover:border-primary/40 hover:bg-primary/10 transition-all duration-300 relative group">
+                  <Button variant="outline" className="w-full flex items-center gap-2 justify-center bg-white/5 backdrop-blur-xl border-white/10 hover:border-primary/40 hover:bg-primary/10 transition-all duration-300 relative group min-h-[42px]">
                     <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <User className="w-4 h-4 relative z-10" />
                     <span className="relative z-10">Login</span>

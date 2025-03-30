@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -195,6 +196,43 @@
 
 /* Mobile-specific styles */
 @media (max-width: 640px) {
+  /* General padding adjustments for mobile */
+  .container {
+    @apply px-4;
+  }
+  
+  /* Fix header spacing for mobile */
+  header {
+    @apply py-2;
+  }
+  
+  /* Adjust font sizes for better mobile reading */
+  h1 {
+    @apply text-3xl;
+  }
+  
+  h2 {
+    @apply text-2xl;
+  }
+  
+  h3 {
+    @apply text-xl;
+  }
+  
+  p {
+    @apply text-sm;
+  }
+  
+  /* Smaller buttons on mobile */
+  .btn-mobile {
+    @apply px-3 py-1.5 text-sm;
+  }
+  
+  /* Adjust card padding for mobile */
+  .card-mobile {
+    @apply p-3;
+  }
+  
   .accordion-content {
     padding-left: 0.75rem !important;
     padding-right: 0.75rem !important;
@@ -281,7 +319,7 @@
   /* Fix for marketplace grid on mobile */
   .marketplace-nft-grid {
     grid-template-columns: 1fr !important;
-    gap: 2rem !important;
+    gap: 1.5rem !important;
   }
   
   /* Make NFT cards fully visible on mobile */
@@ -310,6 +348,40 @@
     overflow-x: visible !important;
     width: 100% !important;
     max-width: 100% !important;
+  }
+  
+  /* Add more padding to the hero section on mobile */
+  .hero-section {
+    padding-top: 5rem !important;
+    padding-bottom: 3rem !important;
+  }
+  
+  /* Adjust spacing between sections on mobile */
+  .section-spacing {
+    margin-top: 2rem !important;
+    margin-bottom: 2rem !important;
+  }
+  
+  /* Additional mobile-specific header adjustments */
+  .mobile-header {
+    height: 60px !important;
+  }
+  
+  /* Mobile menu dropdown adjustments */
+  .mobile-menu {
+    top: 60px !important;
+  }
+  
+  /* Adjust icon sizes for mobile */
+  .mobile-icon {
+    width: 1rem !important;
+    height: 1rem !important;
+  }
+  
+  /* Improve form fields on mobile */
+  .mobile-form-field {
+    height: 42px !important;
+    font-size: 0.875rem !important;
   }
 }
 
@@ -389,4 +461,41 @@
 
 .circular-button-glow:hover::before {
   opacity: 1;
+}
+
+/* Additional mobile optimizations */
+@media (max-width: 768px) {
+  .header-logo {
+    font-size: 1.25rem !important;
+  }
+  
+  .header-logo-icon {
+    width: 1.5rem !important;
+    height: 1.5rem !important;
+  }
+  
+  /* Adjust spacing for content below fixed header */
+  .main-content {
+    padding-top: 4.5rem !important;
+  }
+  
+  /* Make buttons easier to tap on mobile */
+  button, 
+  .button,
+  a.button,
+  [role="button"] {
+    min-height: 42px !important;
+    min-width: 42px !important;
+  }
+  
+  /* Improve form elements spacing on mobile */
+  .form-group {
+    margin-bottom: 1rem !important;
+  }
+  
+  /* Adjust card styling for mobile */
+  .card {
+    border-radius: 0.75rem !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+  }
 }
