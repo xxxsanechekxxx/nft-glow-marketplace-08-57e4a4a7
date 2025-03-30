@@ -84,7 +84,7 @@ export const ProfileInfo = ({ userData, setIsWalletModalOpen }: ProfileInfoProps
           </div>
         </div>
         
-        {/* Verification Status - Removed redundant HelpCircle icon */}
+        {/* Verification Status - Fixed padding issues */}
         <div className="space-y-2 group">
           <label className="text-sm font-medium flex items-center gap-2 text-white/70">
             <HelpCircle className="w-4 h-4" />
@@ -92,20 +92,20 @@ export const ProfileInfo = ({ userData, setIsWalletModalOpen }: ProfileInfoProps
           </label>
           <div className="relative overflow-hidden rounded-lg transition-all duration-300">
             <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-purple-500/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <div className="bg-white/5 border border-white/10 group-hover:border-primary/30 transition-colors rounded-lg p-3 pl-10 flex items-center">
+            <div className="bg-white/5 border border-white/10 group-hover:border-primary/30 transition-colors rounded-lg p-3 flex items-center">
               {userData?.verified ? (
-                <div className="flex items-center gap-2 text-green-500 font-medium">
+                <div className="flex items-center gap-2 text-green-500 font-medium pl-7">
                   <CheckCircle2 className="w-4 h-4" />
                   <span>Verified Account</span>
                 </div>
               ) : (
-                <div className="flex items-center gap-2 text-yellow-500 font-medium">
+                <div className="flex items-center gap-2 text-yellow-500 font-medium pl-7">
                   <HelpCircle className="w-4 h-4" />
                   <span>Not Verified</span>
                 </div>
               )}
             </div>
-            {/* Removed the duplicate HelpCircle icon that was here */}
+            <HelpCircle className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-primary/60" />
           </div>
         </div>
         
