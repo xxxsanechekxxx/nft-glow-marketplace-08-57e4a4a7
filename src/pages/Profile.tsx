@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
@@ -6,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import WalletAddressModal from "@/components/WalletAddressModal";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
-import DepositConfirmationDialog from "@/components/DepositConfirmationDialog";
 import FraudWarningDialog from "@/components/FraudWarningDialog";
 import KYCIdentityDialog from "@/components/KYCIdentityDialog";
 import KYCAddressDialog from "@/components/KYCAddressDialog";
@@ -23,14 +23,10 @@ const Profile = () => {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [withdrawAmount, setWithdrawAmount] = useState("");
-  const [withdrawWalletAddress, setWithdrawWalletAddress] = useState("");
-  const [depositAmount, setDepositAmount] = useState("");
   const [userData, setUserData] = useState<UserData | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
-  const [isDepositConfirmationOpen, setIsDepositConfirmationOpen] = useState(false);
   const [isFraudWarningOpen, setIsFraudWarningOpen] = useState(false);
   const [transactionTotals, setTransactionTotals] = useState<TransactionTotals>({
     total_deposits: 0,
@@ -148,106 +144,6 @@ const Profile = () => {
       return;
     }
     setIsAddressDialogOpen(true);
-  };
-
-  const handleWithdraw = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const withdrawAmountNum = parseFloat(withdrawAmount);
-    const balanceNum = parseFloat(userData?.balance || "0");
-    
-    if (withdrawAmountNum <= 0) {
-      toast({
-        title: "Error",
-        description: "Please enter a valid amount greater than 0",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    if (withdrawAmountNum > balanceNum) {
-      toast({
-        title: "Insufficient funds",
-        description: `Your balance (${balanceNum} ETH) is less than the requested withdrawal amount`,
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    if (!withdrawWalletAddress) {
-      toast({
-        title: "Error",
-        description: "Please enter a wallet address for the withdrawal",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    try {
-      const { error } = await supabase
-        .from('transactions')
-        .insert([{
-          user_id: user?.id,
-          type: 'withdraw',
-          amount: withdrawAmountNum,
-          status: 'pending',
-          wallet_address: withdrawWalletAddress
-        }]);
-      
-      if (error) throw error;
-      
-      toast({
-        title: "Withdrawal Requested",
-        description: `Your withdrawal request for ${withdrawAmount} ETH has been submitted`
-      });
-      
-      setWithdrawAmount("");
-      setWithdrawWalletAddress("");
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to process withdrawal. Please try again.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleDeposit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!userData?.wallet_address) {
-      toast({
-        title: "Error",
-        description: "You need to generate a wallet address in your profile first",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    const amount = parseFloat(depositAmount);
-    
-    if (!depositAmount || amount <= 0) {
-      setTimeout(() => {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Please enter a valid amount greater than 0"
-        });
-      }, 1000);
-      return;
-    }
-    
-    setIsDepositConfirmationOpen(true);
-  };
-
-  const handleDepositConfirm = () => {
-    setIsDepositConfirmationOpen(false);
-    setIsFraudWarningOpen(true);
-    setDepositAmount("");
-    
-    toast({
-      title: "Rejected",
-      description: `Deposit of ${depositAmount} the rejected. Please contact our support team on Telegram for transaction verification`
-    });
   };
 
   const handleGenerateWalletAddress = async (address: string) => {
@@ -504,12 +400,6 @@ const Profile = () => {
               showFrozenDetails={showFrozenDetails}
               setShowFrozenDetails={setShowFrozenDetails}
               setIsExchangeDialogOpen={setIsExchangeDialogOpen}
-              setIsDepositConfirmationOpen={setIsDepositConfirmationOpen}
-              withdrawAmount={withdrawAmount}
-              setWithdrawAmount={setWithdrawAmount}
-              withdrawWalletAddress={withdrawWalletAddress}
-              setWithdrawWalletAddress={setWithdrawWalletAddress}
-              handleWithdraw={handleWithdraw}
               transactions={transactions}
               setExchangeType={setExchangeType}
             />
@@ -533,13 +423,6 @@ const Profile = () => {
         isOpen={isWalletModalOpen} 
         onClose={() => setIsWalletModalOpen(false)} 
         onGenerated={handleGenerateWalletAddress} 
-      />
-
-      <DepositConfirmationDialog 
-        isOpen={isDepositConfirmationOpen} 
-        onClose={() => setIsDepositConfirmationOpen(false)} 
-        amount={depositAmount} 
-        onConfirm={handleDepositConfirm} 
       />
 
       <FraudWarningDialog 

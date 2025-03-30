@@ -12,12 +12,6 @@ interface WalletTabProps {
   showFrozenDetails: boolean;
   setShowFrozenDetails: (show: boolean) => void;
   setIsExchangeDialogOpen: (open: boolean) => void;
-  setIsDepositConfirmationOpen: (isOpen: boolean) => void;
-  withdrawAmount: string;
-  setWithdrawAmount: (amount: string) => void;
-  withdrawWalletAddress: string;
-  setWithdrawWalletAddress: (address: string) => void;
-  handleWithdraw: (e: React.FormEvent) => void;
   transactions: Transaction[];
   setExchangeType: (type: 'regular' | 'frozen') => void;
 }
@@ -28,12 +22,6 @@ export const WalletTab = ({
   showFrozenDetails,
   setShowFrozenDetails,
   setIsExchangeDialogOpen,
-  setIsDepositConfirmationOpen,
-  withdrawAmount,
-  setWithdrawAmount,
-  withdrawWalletAddress,
-  setWithdrawWalletAddress,
-  handleWithdraw,
   transactions,
   setExchangeType
 }: WalletTabProps) => {
@@ -52,14 +40,7 @@ export const WalletTab = ({
         </CardContent>
       </Card>
 
-      <TransactionButtons 
-        setIsDepositConfirmationOpen={setIsDepositConfirmationOpen}
-        withdrawAmount={withdrawAmount}
-        setWithdrawAmount={setWithdrawAmount}
-        withdrawWalletAddress={withdrawWalletAddress}
-        setWithdrawWalletAddress={setWithdrawWalletAddress}
-        handleWithdraw={handleWithdraw}
-      />
+      <TransactionButtons />
 
       <TransactionHistory transactions={transactions} />
     </div>
