@@ -30,7 +30,6 @@ export const TransactionHistory = ({ transactions }: TransactionHistoryProps) =>
                   <TableHead className="type-column text-center">Type</TableHead>
                   <TableHead className="amount-column">Amount</TableHead>
                   <TableHead className="status-column">Status</TableHead>
-                  <TableHead className="currency-column">Currency</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -78,17 +77,6 @@ export const TransactionHistory = ({ transactions }: TransactionHistoryProps) =>
                             : transaction.frozen_until
                               ? 'Frozen'
                               : transaction.status}
-                        </span>
-                      </TableCell>
-                      <TableCell className="currency-column">
-                        <span className={`px-1.5 py-0.5 rounded-full text-xs ${
-                          transaction.currency_type === 'eth' 
-                            ? 'bg-blue-500/20 text-blue-300' 
-                            : transaction.currency_type === 'usdt'
-                              ? 'bg-green-500/20 text-green-300'
-                              : 'bg-gray-500/20 text-gray-300'
-                        }`}>
-                          {transaction.currency_type?.toUpperCase() || 'ETH'}
                         </span>
                       </TableCell>
                     </TableRow>
