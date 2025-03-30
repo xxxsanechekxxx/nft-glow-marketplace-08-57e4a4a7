@@ -368,7 +368,10 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                 <TableHeader>
                   <TableRow className="hover:bg-primary/5 border-b border-primary/10">
                     <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium w-[20%] sm:w-[15%]">Date</TableHead>
-                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium w-[15%] sm:w-[20%]">Type</TableHead>
+                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium w-[15%] sm:w-[20%]">
+                      <span className="hidden sm:inline">Type</span>
+                      <span className="sm:hidden"></span>
+                    </TableHead>
                     <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium w-[25%] sm:w-[20%]">Amount</TableHead>
                     <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium w-[40%] sm:w-[45%]">Status</TableHead>
                   </TableRow>
