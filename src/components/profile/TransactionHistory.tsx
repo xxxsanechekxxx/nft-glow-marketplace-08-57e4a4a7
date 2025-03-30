@@ -149,7 +149,7 @@ export const TransactionHistory = ({ transactions }: TransactionHistoryProps) =>
                     <TableCell className="py-2 text-right">
                       <span className={`text-xs font-medium ${transaction.type === 'deposit' || transaction.type === 'sale' ? 'text-green-500' : transaction.type === 'withdrawal' || transaction.type === 'purchase' ? 'text-red-500' : 'text-white/80'}`}>
                         {transaction.type === 'deposit' || transaction.type === 'sale' ? '+' : transaction.type === 'withdrawal' || transaction.type === 'purchase' ? '-' : ''}
-                        {parseFloat(transaction.amount).toFixed(transaction.currency_type === 'eth' ? 3 : 2)} {transaction.currency_type === 'eth' ? 'ETH' : 'USDT'}
+                        {parseFloat(transaction.amount).toFixed(transaction.currency_type === 'eth' ? 3 : 2)} {transaction.currency_type === 'eth' ? '' : 'USDT'}
                       </span>
                     </TableCell>
                     <TableCell className="py-2 text-right">
