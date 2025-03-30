@@ -153,6 +153,7 @@ export type Database = {
         Row: {
           amount: number
           created_at: string
+          currency_type: string | null
           frozen_until: string | null
           id: string
           is_frozen: boolean | null
@@ -165,6 +166,7 @@ export type Database = {
         Insert: {
           amount: number
           created_at?: string
+          currency_type?: string | null
           frozen_until?: string | null
           id?: string
           is_frozen?: boolean | null
@@ -177,6 +179,7 @@ export type Database = {
         Update: {
           amount?: number
           created_at?: string
+          currency_type?: string | null
           frozen_until?: string | null
           id?: string
           is_frozen?: boolean | null
@@ -231,6 +234,13 @@ export type Database = {
       purchase_nft: {
         Args: {
           nft_id: string
+        }
+        Returns: Json
+      }
+      update_frozen_transaction_currency: {
+        Args: {
+          transaction_id: string
+          new_currency_type: string
         }
         Returns: Json
       }
