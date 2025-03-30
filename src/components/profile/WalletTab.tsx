@@ -40,7 +40,7 @@ export const WalletTab = ({
         </CardTitle>
       </CardHeader>
       
-      <CardContent className="p-6 relative z-10">
+      <CardContent className="p-6 relative z-10 space-y-6">
         <WalletBalance 
           userData={userData}
           frozenBalanceDetails={frozenBalanceDetails}
