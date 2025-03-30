@@ -11,8 +11,8 @@ const steps = [
     color: "from-blue-500 to-cyan-400"
   },
   {
-    title: "Connect Wallet",
-    description: "Connect your crypto wallet to securely buy, sell and manage your digital assets.",
+    title: "Create Wallet",
+    description: "Create your crypto wallet to securely buy, sell and manage your digital assets.",
     icon: Wallet,
     color: "from-purple-500 to-indigo-500"
   },

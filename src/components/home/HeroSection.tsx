@@ -52,21 +52,6 @@ export const HeroSection = () => {
                 <div className="absolute inset-0 bg-gradient-to-r from-primary via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
               </Button>
             </Link>
-            
-            <Link 
-              to="/create-nft" 
-              className="group relative overflow-hidden"
-            >
-              <Button 
-                size="lg" 
-                variant="outline"
-                className="h-14 px-8 text-lg border-primary/20 hover:border-primary/50 backdrop-blur-sm shadow-lg hover:shadow-primary/10 transition-all duration-700"
-              >
-                <Star className="w-5 h-5 mr-2 text-primary group-hover:rotate-45 transition-transform duration-700" />
-                <span className="relative z-10 transition-all duration-700 group-hover:scale-105 group-hover:text-primary group-hover:font-semibold group-active:scale-95">Create NFT</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
-              </Button>
-            </Link>
           </div>
 
           <div className="pt-20 flex justify-center gap-10 animate-fade-in">
