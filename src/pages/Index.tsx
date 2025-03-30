@@ -15,6 +15,9 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { NFTCard } from "@/components/NFTCard";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -145,10 +148,25 @@ const Index = () => {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/5 via-purple-500/5 to-pink-500/5"></div>
         
         <div className="container mx-auto px-4 relative">
-          <div className="min-h-[100px] flex items-center justify-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-white via-primary to-purple-400 animate-gradient bg-300% py-6">
-              Featured Collections
-            </h2>
+          <div className="flex flex-col md:flex-row justify-between items-center mb-12">
+            <div className="mb-6 md:mb-0">
+              <h2 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-primary to-purple-400 animate-gradient bg-300% py-2">
+                Featured Collections
+              </h2>
+              <p className="text-muted-foreground mt-2 max-w-md">
+                Discover unique digital art from top creators around the world
+              </p>
+            </div>
+            
+            <Link to="/marketplace">
+              <Button 
+                variant="outline" 
+                className="border-primary/20 hover:border-primary/50 backdrop-blur-sm hover:bg-primary/10 transition-all duration-500 group"
+              >
+                View All Collections 
+                <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+              </Button>
+            </Link>
           </div>
           
           <div className="relative">
@@ -157,17 +175,30 @@ const Index = () => {
               <Carousel className="w-full max-w-5xl mx-auto">
                 <CarouselContent>
                   {featuredNFTs?.map((nft) => (
-                    <CarouselItem key={nft.id} className="md:basis-1/2 lg:basis-1/3">
-                      <div className="p-1">
+                    <CarouselItem key={nft.id} className="md:basis-1/2 lg:basis-1/3 p-1">
+                      <div className="p-1 h-full">
                         <NFTCard {...nft} />
                       </div>
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious className="bg-background/80 backdrop-blur-sm border-primary/20 hover:bg-primary/20 transition-colors duration-300 -left-12" />
-                <CarouselNext className="bg-background/80 backdrop-blur-sm border-primary/20 hover:bg-primary/20 transition-colors duration-300 -right-12" />
+                <CarouselPrevious className="bg-background/80 backdrop-blur-sm border-primary/20 hover:bg-primary/20 transition-colors duration-300 -left-6 lg:-left-12" />
+                <CarouselNext className="bg-background/80 backdrop-blur-sm border-primary/20 hover:bg-primary/20 transition-colors duration-300 -right-6 lg:-right-12" />
               </Carousel>
             </div>
+          </div>
+          
+          <div className="mt-16 text-center">
+            <Link to="/marketplace" className="inline-block">
+              <Button 
+                size="lg" 
+                className="relative overflow-hidden bg-primary/90 hover:bg-primary backdrop-blur-sm px-8 text-lg shadow-lg hover:shadow-primary/20 transition-all duration-700 group"
+              >
+                <span className="relative z-10">Explore Marketplace</span>
+                <ArrowRight className="ml-2 w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-r from-primary via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
