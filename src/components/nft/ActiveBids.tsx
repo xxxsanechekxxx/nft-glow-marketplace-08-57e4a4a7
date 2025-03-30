@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import {
   Card,
@@ -7,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { CheckCircle, Clock, Loader2, XCircle } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
@@ -204,15 +205,20 @@ const ActiveBids = ({
     try {
       setProcessingBidId(bidId);
       
-      const { error } = await supabase
-        .from('nft_bids')
-        .delete()
-        .eq('id', bidId);
+      // Call the decline_bid RPC function
+      const { data, error } = await supabase.rpc("decline_bid", {
+        bid_id: bidId,
+      });
       
       if (error) {
         throw error;
       }
       
+      if (!data.success) {
+        throw new Error(data.message || "Failed to decline bid");
+      }
+      
+      // Update the local state
       setBids(bids.filter(bid => bid.id !== bidId));
       
       toast({

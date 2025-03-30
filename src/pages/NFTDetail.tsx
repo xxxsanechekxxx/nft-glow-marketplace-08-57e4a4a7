@@ -1,3 +1,4 @@
+
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
@@ -9,6 +10,7 @@ import { NFTHeader } from "@/components/nft/NFTHeader";
 import { NFTDetails } from "@/components/nft/NFTDetails";
 import { PurchaseButton } from "@/components/nft/PurchaseButton";
 import { Badge } from "@/components/ui/badge";
+import ActiveBids from "@/components/nft/ActiveBids";
 import type { NFT } from "@/types/nft";
 
 const NFTDetail = () => {
