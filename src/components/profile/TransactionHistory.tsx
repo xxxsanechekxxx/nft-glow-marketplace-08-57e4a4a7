@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -8,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/lib/supabase";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useIsMobile, useIsExtraSmall } from "@/hooks/use-mobile";
+import { useIsMobile, useIsExtraSmall, useIsTiny } from "@/hooks/use-mobile";
 
 interface TransactionHistoryProps {
   transactions: Transaction[];
@@ -25,6 +26,7 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
   const loadingRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const isExtraSmall = useIsExtraSmall();
+  const isTiny = useIsTiny();
 
   useEffect(() => {
     setTransactions(initialTransactions);
@@ -246,15 +248,15 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
   const getTypeIcon = (type: string, isFrozenExchange: boolean) => {
     switch(type) {
       case 'deposit':
-        return <ArrowDownCircle className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0" />;
+        return <ArrowDownCircle className="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0" />;
       case 'withdraw':
-        return <ArrowUpCircle className="w-4 h-4 sm:w-5 sm:h-5 text-rose-500 flex-shrink-0" />;
+        return <ArrowUpCircle className="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5 text-rose-500 flex-shrink-0" />;
       case 'purchase':
-        return <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500 flex-shrink-0" />;
+        return <ShoppingBag className="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5 text-blue-500 flex-shrink-0" />;
       case 'sale':
-        return <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0" />;
+        return <ShoppingBag className="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5 text-emerald-500 flex-shrink-0" />;
       case 'exchange':
-        return <ArrowRightLeft className={`w-4 h-4 sm:w-5 sm:h-5 ${isFrozenExchange ? 'text-amber-500' : 'text-indigo-500'} flex-shrink-0`} />;
+        return <ArrowRightLeft className={`w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5 ${isFrozenExchange ? 'text-amber-500' : 'text-indigo-500'} flex-shrink-0`} />;
       default:
         return null;
     }
@@ -272,14 +274,14 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
   };
 
   const getShortStatus = (status: string, isFrozen: boolean, isFrozenExchange: boolean) => {
-    if (isFrozenExchange) return "FrzEx";
-    if (isFrozen) return "Frzn";
-    return status === 'completed' ? 'Done' : 'Pend';
+    if (isFrozenExchange) return isTiny ? "FE" : "FrzEx";
+    if (isFrozen) return isTiny ? "F" : "Frzn";
+    return status === 'completed' ? (isTiny ? "D" : "Done") : (isTiny ? "P" : "Pend");
   };
 
   return (
     <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-[#1A1F2C]/90 mt-6">
-      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-2 space-y-3 sm:space-y-0">
+      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-2 space-y-3 sm:space-y-0 px-2 xs:px-3 sm:px-4">
         <CardTitle className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-2 sm:gap-3">
           <div className="p-1.5 sm:p-2 rounded-lg bg-primary/20">
             <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
@@ -289,12 +291,12 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
         
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
           <div className="relative w-full sm:w-48">
-            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 h-3 xs:w-4 xs:h-4 text-muted-foreground" />
             <Input
               placeholder="Search..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8 h-9 bg-background/50 border-primary/20 focus:border-primary/50 w-full"
+              className="pl-7 h-8 xs:h-9 bg-background/50 border-primary/20 focus:border-primary/50 w-full text-2xs xs:text-xs"
               disabled={filterLoading}
             />
           </div>
@@ -303,19 +305,19 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
             <Button 
               variant="outline" 
               size="sm" 
-              className={`px-1 xs:px-2 sm:px-3 h-9 border-primary/20 ${filterType === null ? 'bg-primary/20 text-primary' : 'bg-background/50'}`}
+              className={`px-1 h-7 xs:h-8 text-2xs xs:text-xs border-primary/20 ${filterType === null ? 'bg-primary/20 text-primary' : 'bg-background/50'}`}
               onClick={resetFilters}
               disabled={filterLoading}
             >
               {filterLoading && filterType === null ? (
-                <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                <Loader2 className="h-3 h-3 xs:w-4 xs:h-4 animate-spin mr-1" />
               ) : null}
               All
             </Button>
             <Button 
               variant="outline" 
               size="sm" 
-              className={`px-1 xs:px-2 sm:px-3 h-9 border-primary/20 ${filterType === 'deposit' ? 'bg-emerald-500/20 text-emerald-500' : 'bg-background/50'}`}
+              className={`px-1 h-7 xs:h-8 text-2xs xs:text-xs border-primary/20 ${filterType === 'deposit' ? 'bg-emerald-500/20 text-emerald-500' : 'bg-background/50'}`}
               onClick={() => {
                 if (filterType === 'deposit') {
                   resetFilters();
@@ -326,16 +328,17 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
               disabled={filterLoading}
             >
               {filterLoading && filterType === 'deposit' ? (
-                <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                <Loader2 className="h-3 h-3 xs:w-4 xs:h-4 animate-spin mr-1" />
               ) : (
-                <ArrowDownCircle className="w-4 h-4 mr-0.5 xs:mr-1" />
+                <ArrowDownCircle className="w-3 h-3 xs:w-4 xs:h-4" />
               )}
-              <span className={isExtraSmall ? "hidden xs:inline" : "inline"}>Deposits</span>
+              <span className={isTiny ? "hidden" : ""}>D</span>
+              <span className={isTiny ? "hidden" : isExtraSmall ? "hidden xs:inline" : "inline"}>eposits</span>
             </Button>
             <Button 
               variant="outline" 
               size="sm" 
-              className={`px-1 xs:px-2 sm:px-3 h-9 border-primary/20 ${filterType === 'exchange' ? 'bg-indigo-500/20 text-indigo-500' : 'bg-background/50'}`}
+              className={`px-1 h-7 xs:h-8 text-2xs xs:text-xs border-primary/20 ${filterType === 'exchange' ? 'bg-indigo-500/20 text-indigo-500' : 'bg-background/50'}`}
               onClick={() => {
                 if (filterType === 'exchange') {
                   resetFilters();
@@ -346,11 +349,12 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
               disabled={filterLoading}
             >
               {filterLoading && filterType === 'exchange' ? (
-                <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                <Loader2 className="h-3 h-3 xs:w-4 xs:h-4 animate-spin mr-1" />
               ) : (
-                <ArrowRightLeft className="w-4 h-4 mr-0.5 xs:mr-1" />
+                <ArrowRightLeft className="w-3 h-3 xs:w-4 xs:h-4" />
               )}
-              <span className={isExtraSmall ? "hidden xs:inline" : "inline"}>Exchanges</span>
+              <span className={isTiny ? "hidden" : ""}>E</span>
+              <span className={isTiny ? "hidden" : isExtraSmall ? "hidden xs:inline" : "inline"}>xchanges</span>
             </Button>
           </div>
         </div>
@@ -373,14 +377,14 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
               <Table className="w-full min-w-[280px]">
                 <TableHeader>
                   <TableRow className="hover:bg-primary/5 border-b border-primary/10">
-                    <TableHead className="text-2xs xs:text-xs sm:text-sm text-muted-foreground font-medium w-[25%] sm:w-[15%]">Date</TableHead>
-                    <TableHead className="text-2xs xs:text-xs sm:text-sm text-muted-foreground font-medium w-[15%] sm:w-[20%] text-center sm:text-left">
-                      <span className="">Type</span>
+                    <TableHead className="text-2xs xs:text-xs sm:text-sm text-muted-foreground font-medium w-[30%] xs:w-[25%] sm:w-[15%]">Date</TableHead>
+                    <TableHead className="text-2xs xs:text-xs sm:text-sm text-muted-foreground font-medium w-[10%] xs:w-[15%] sm:w-[20%] text-center sm:text-left">
+                      <span className={isTiny ? "hidden" : ""}>Type</span>
                     </TableHead>
-                    <TableHead className="text-2xs xs:text-xs sm:text-sm text-muted-foreground font-medium w-[30%] sm:w-[20%]">Amount</TableHead>
-                    <TableHead className="text-2xs xs:text-xs sm:text-sm text-muted-foreground font-medium w-[30%] sm:w-[45%] text-center xs:text-center sm:text-left">
-                      <span className={isExtraSmall ? "" : "hidden xs:inline"}>Stat</span>
-                      <span className={isExtraSmall ? "hidden" : "xs:hidden sm:inline"}>Status</span>
+                    <TableHead className="text-2xs xs:text-xs sm:text-sm text-muted-foreground font-medium w-[30%] xs:w-[30%] sm:w-[20%]">Amount</TableHead>
+                    <TableHead className="text-2xs xs:text-xs sm:text-sm text-muted-foreground font-medium w-[30%] xs:w-[30%] sm:w-[45%] text-center sm:text-left">
+                      <span className={isTiny ? "hidden" : isExtraSmall ? "" : "hidden xs:inline"}>Stat</span>
+                      <span className={isTiny ? "hidden" : isExtraSmall ? "hidden" : "xs:hidden sm:inline"}>Status</span>
                     </TableHead>
                   </TableRow>
                 </TableHeader>
@@ -396,15 +400,15 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                           isFrozenExchange ? 'bg-amber-500/5' : ''
                         }`}
                       >
-                        <TableCell className="py-1.5 px-0.5 xs:px-1 sm:px-2 text-2xs xs:text-xs sm:text-sm">
+                        <TableCell className="py-1 px-0 text-2xs xs:text-xs sm:text-sm">
                           <div className="flex items-center gap-0.5 xs:gap-1">
-                            <Calendar className="w-2.5 h-2.5 xs:w-3 xs:h-3 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
+                            <Calendar className="w-2 h-2 xs:w-3 xs:h-3 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
                             <span className="whitespace-nowrap">{transaction.created_at}</span>
                           </div>
                         </TableCell>
                         
-                        <TableCell className="py-1.5 px-0 xs:px-0 sm:px-2 text-2xs xs:text-xs sm:text-sm">
-                          <div className="flex items-center gap-0.5 xs:gap-1 justify-center sm:justify-start">
+                        <TableCell className="py-1 px-0 text-2xs xs:text-xs sm:text-sm">
+                          <div className="flex items-center justify-center sm:justify-start">
                             <div className={`p-0.5 xs:p-1 sm:p-1.5 rounded-full ${
                               transaction.type === 'deposit' ? 'bg-emerald-500/10' :
                               transaction.type === 'withdraw' ? 'bg-rose-500/10' : 
@@ -414,14 +418,10 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                             }`}>
                               {getTypeIcon(transaction.type, isFrozenExchange)}
                             </div>
-                            {/* Only show text on non-extra-small devices */}
-                            <span className="font-medium whitespace-nowrap hidden xs:hidden sm:inline">
-                              {isFrozenExchange ? "Frozen" : getTypeLabel(transaction.type)}
-                            </span>
                           </div>
                         </TableCell>
                         
-                        <TableCell className="py-1.5 px-0.5 xs:px-1 sm:px-2 font-medium text-2xs xs:text-xs sm:text-sm">
+                        <TableCell className="py-1 px-0 font-medium text-2xs xs:text-xs sm:text-sm">
                           <span className={`${
                             transaction.type === 'deposit' || transaction.type === 'sale' ? 'text-emerald-500' :
                             transaction.type === 'withdraw' || transaction.type === 'purchase' ? 'text-rose-500' :
@@ -429,15 +429,17 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                           } whitespace-nowrap`}>
                             {transaction.type === 'deposit' || transaction.type === 'sale' ? '+' : 
                              transaction.type === 'withdraw' || transaction.type === 'purchase' ? '-' : ''}
-                            {isExtraSmall 
+                            {isTiny 
                               ? Number(transaction.amount).toFixed(1) 
-                              : Number(transaction.amount).toFixed(2)}
+                              : isExtraSmall 
+                                ? Number(transaction.amount).toFixed(1)
+                                : Number(transaction.amount).toFixed(2)}
                           </span>
                         </TableCell>
                         
-                        <TableCell className="py-1.5 px-0.5 xs:px-0 sm:px-2 text-2xs xs:text-xs sm:text-sm text-center xs:text-center sm:text-left">
+                        <TableCell className="py-1 px-0 text-2xs xs:text-xs sm:text-sm text-center sm:text-left">
                           <div className="flex items-center justify-center sm:justify-start">
-                            <span className={`px-0.5 xs:px-1 py-0.5 sm:px-2 sm:py-1 rounded-full text-2xs xs:text-xs font-medium truncate max-w-[40px] xs:max-w-[50px] sm:max-w-full ${
+                            <span className={`text-2xs px-0.5 py-0.5 xs:px-1 xs:py-0.5 sm:px-2 sm:py-1 rounded-full font-medium truncate max-w-[40px] xs:max-w-[50px] sm:max-w-full ${
                               transaction.status === 'completed' 
                                 ? transaction.frozen_until 
                                   ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30' 
@@ -448,7 +450,9 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                                     : 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30' 
                                   : 'bg-rose-500/20 text-rose-500 border border-rose-500/30'
                             }`}>
-                              {isExtraSmall ? (
+                              {isTiny ? (
+                                getShortStatus(transaction.status, !!transaction.frozen_until, isFrozenExchange)
+                              ) : isExtraSmall ? (
                                 getShortStatus(transaction.status, !!transaction.frozen_until, isFrozenExchange)
                               ) : isMobile ? (
                                 transaction.status === 'pending' && isFrozenExchange 
@@ -478,14 +482,14 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
               >
                 {loading ? (
                   <div className="flex items-center gap-2 text-muted-foreground">
-                    <div className="animate-spin w-4 h-4 border-2 border-primary border-t-transparent rounded-full"></div>
+                    <div className="animate-spin w-3 h-3 xs:w-4 xs:h-4 border-2 border-primary border-t-transparent rounded-full"></div>
                     <span className="text-2xs xs:text-xs sm:text-sm">Loading more transactions...</span>
                   </div>
                 ) : hasMore ? (
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="px-2 xs:px-3 h-8 xs:h-9 border-primary/20"
+                    className="px-2 h-7 xs:h-8 border-primary/20 text-2xs xs:text-xs"
                     onClick={fetchMoreTransactions}
                   >
                     <ChevronDown className="w-3 h-3 xs:w-4 xs:h-4 mr-1" /> 
