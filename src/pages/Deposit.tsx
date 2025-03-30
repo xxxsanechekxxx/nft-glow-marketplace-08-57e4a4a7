@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -175,10 +174,6 @@ const Deposit = () => {
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Deposit Amount:</span>
                       <span className="font-medium text-green-400">{depositAmount} ETH</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Network Fee (est.):</span>
-                      <span className="font-medium text-yellow-400">0.0005 ETH</span>
                     </div>
                     <div className="h-px bg-primary/10 my-1"></div>
                     <div className="flex justify-between text-sm font-medium">
