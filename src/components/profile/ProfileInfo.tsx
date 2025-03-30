@@ -2,7 +2,7 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Mail, Globe, HelpCircle, Wallet, UserRound, ExternalLink, Copy, CheckCircle2 } from "lucide-react";
+import { Mail, Globe, HelpCircle, Wallet, UserRound, Copy, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useState } from "react";
@@ -136,24 +136,6 @@ export const ProfileInfo = ({ userData, setIsWalletModalOpen }: ProfileInfoProps
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>{copiedWallet ? 'Copied!' : 'Copy address'}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-8 w-8 rounded-full hover:bg-primary/20 hover:text-primary transition-colors"
-                          onClick={() => window.open(`https://etherscan.io/address/${userData.wallet_address}`, '_blank')}
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>View on Etherscan</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
