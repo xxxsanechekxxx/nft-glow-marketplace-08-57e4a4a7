@@ -367,8 +367,8 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                 <TableHeader>
                   <TableRow className="hover:bg-primary/5 border-b border-primary/10">
                     <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium w-[20%] sm:w-[15%]">Date</TableHead>
-                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium w-[20%] sm:w-[20%]">Type</TableHead>
-                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium w-[20%] sm:w-[20%]">Amount</TableHead>
+                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium w-[15%] sm:w-[20%]">Type</TableHead>
+                    <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium w-[25%] sm:w-[20%]">Amount</TableHead>
                     <TableHead className="text-xs sm:text-sm text-muted-foreground font-medium w-[40%] sm:w-[45%]">Status</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -384,14 +384,14 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                           isFrozenExchange ? 'bg-amber-500/5' : ''
                         }`}
                       >
-                        <TableCell className="py-3 px-2 text-xs sm:text-sm">
+                        <TableCell className="py-2 px-1 sm:py-3 sm:px-2 text-xs sm:text-sm">
                           <div className="flex items-center gap-1">
                             <Calendar className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
                             <span className="whitespace-nowrap">{transaction.created_at}</span>
                           </div>
                         </TableCell>
                         
-                        <TableCell className="py-3 px-2 text-xs sm:text-sm">
+                        <TableCell className="py-2 px-1 sm:py-3 sm:px-2 text-xs sm:text-sm">
                           <div className="flex items-center gap-1">
                             <div className={`p-1 sm:p-1.5 rounded-full ${
                               transaction.type === 'deposit' ? 'bg-emerald-500/10' :
@@ -404,13 +404,13 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                             </div>
                             {!isMobile && (
                               <span className="font-medium whitespace-nowrap">
-                                {isFrozenExchange ? "Frozen Exchange" : getTypeLabel(transaction.type)}
+                                {isFrozenExchange ? "Frozen" : getTypeLabel(transaction.type)}
                               </span>
                             )}
                           </div>
                         </TableCell>
                         
-                        <TableCell className="py-3 px-2 font-medium text-xs sm:text-sm">
+                        <TableCell className="py-2 px-1 sm:py-3 sm:px-2 font-medium text-xs sm:text-sm">
                           <span className={`${
                             transaction.type === 'deposit' || transaction.type === 'sale' ? 'text-emerald-500' :
                             transaction.type === 'withdraw' || transaction.type === 'purchase' ? 'text-rose-500' :
@@ -422,9 +422,9 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                           </span>
                         </TableCell>
                         
-                        <TableCell className="py-3 px-2 text-xs sm:text-sm">
+                        <TableCell className="py-2 px-1 sm:py-3 sm:px-2 text-xs sm:text-sm">
                           <div className="flex items-center">
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium truncate max-w-[120px] sm:max-w-full ${
+                            <span className={`px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium truncate max-w-[80px] sm:max-w-full ${
                               transaction.status === 'completed' 
                                 ? transaction.frozen_until 
                                   ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30' 
@@ -435,11 +435,19 @@ export const TransactionHistory = ({ transactions: initialTransactions }: Transa
                                     : 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30' 
                                   : 'bg-rose-500/20 text-rose-500 border border-rose-500/30'
                             }`}>
-                              {transaction.status === 'pending' && isFrozenExchange 
-                                ? "Frozen Exchange"
-                                : transaction.frozen_until
-                                  ? isMobile ? "Frozen" : `Frozen until ${transaction.frozen_until}`
-                                  : transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
+                              {isMobile ? (
+                                transaction.status === 'pending' && isFrozenExchange 
+                                  ? "Frozen"
+                                  : transaction.frozen_until
+                                    ? "Frozen"
+                                    : transaction.status === 'completed' ? 'Done' : 'Pend'
+                              ) : (
+                                transaction.status === 'pending' && isFrozenExchange 
+                                  ? "Frozen Exchange"
+                                  : transaction.frozen_until
+                                    ? `Frozen until ${transaction.frozen_until}`
+                                    : transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)
+                              )}
                             </span>
                           </div>
                         </TableCell>
