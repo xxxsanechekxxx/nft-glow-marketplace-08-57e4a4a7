@@ -13,8 +13,11 @@ interface VerificationTabProps {
 
 export const VerificationTab = ({ userData, startKYCVerification, continueKYCVerification }: VerificationTabProps) => {
   return (
-    <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-[#1A1F2C]/90">
-      <CardHeader className="space-y-2">
+    <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-gradient-to-br from-[#1A1F2C]/95 to-[#1A1F2C]/80 overflow-hidden relative">
+      <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:20px_20px] opacity-30"></div>
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-600/50 via-primary/40 to-purple-600/50"></div>
+      
+      <CardHeader className="space-y-2 border-b border-primary/10 pb-4 relative z-10">
         <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
           <div className="p-2 rounded-lg bg-primary/20">
             <Shield className="w-6 h-6 text-primary" />
@@ -22,7 +25,8 @@ export const VerificationTab = ({ userData, startKYCVerification, continueKYCVer
           KYC Verification
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-8">
+      
+      <CardContent className="space-y-8 relative z-10">
         <div className="p-6 rounded-xl bg-[#12151C]/80 border border-primary/10 space-y-4">
           <div className="flex items-start gap-4">
             <div className={`p-3 rounded-lg ${userData?.verified ? 'bg-green-500/10 border border-green-500/20' : 'bg-orange-500/10 border border-orange-500/20'}`}>
