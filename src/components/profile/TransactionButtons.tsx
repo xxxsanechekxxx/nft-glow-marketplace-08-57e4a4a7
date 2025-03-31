@@ -1,6 +1,7 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowDownCircle, ArrowUpCircle, CircleDollarSign, Wallet } from "lucide-react";
+import { ArrowDownCircle, ArrowUpCircle, Wallet } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 export const TransactionButtons = () => {
   const navigate = useNavigate();
@@ -15,13 +16,13 @@ export const TransactionButtons = () => {
         {/* Content wrapper with z-index to appear above particles */}
         <div className="relative z-10 flex items-center justify-between w-full">
           <div className="flex items-center gap-4">
-            <div className="flex-shrink-0 w-14 h-14 flex items-center justify-center bg-gradient-to-br from-green-400/30 to-emerald-600/30 rounded-xl border border-green-400/30 backdrop-blur-md shadow-inner">
-              <CircleDollarSign className="w-8 h-8 text-white" strokeWidth={1.5} />
+            <div className="flex-shrink-0 w-14 h-14 flex items-center justify-center bg-gradient-to-br from-green-400/30 to-emerald-600/30 rounded-xl border border-green-500/30 backdrop-blur-md shadow-inner">
+              <Wallet className="w-8 h-8 text-white" strokeWidth={1.5} />
             </div>
             
             <div className="flex flex-col items-start">
               <span className="text-2xl font-bold mb-1 bg-gradient-to-r from-white to-green-100 bg-clip-text text-transparent">Deposit</span>
-              
+              <span className="text-sm text-green-200/80">Add funds to your account</span>
             </div>
           </div>
           
@@ -47,7 +48,7 @@ export const TransactionButtons = () => {
             
             <div className="flex flex-col items-start">
               <span className="text-2xl font-bold mb-1 bg-gradient-to-r from-white to-orange-100 bg-clip-text text-transparent">Withdraw</span>
-              
+              <span className="text-sm text-orange-200/80">Withdraw funds to your bank</span>
             </div>
           </div>
           
