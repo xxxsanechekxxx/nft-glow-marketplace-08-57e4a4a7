@@ -24,7 +24,9 @@ const buttonVariants = cva(
         circularSmall: "rounded-full bg-gradient-to-r from-purple-600 to-indigo-500 hover:from-purple-700 hover:to-indigo-600 text-white shadow-md shadow-purple-600/20 border border-purple-500/50 transition-transform hover:rotate-180",
         gradient: "bg-gradient-to-r from-purple-600/20 to-primary/20 border border-primary/10 text-primary hover:from-purple-600/30 hover:to-primary/30 transition-colors relative overflow-hidden group",
         gradientDestructive: "bg-gradient-to-r from-destructive/20 to-red-500/20 border border-destructive/10 text-destructive hover:from-destructive/30 hover:to-red-500/30 transition-colors relative overflow-hidden group",
-        // Новые варианты для кнопок транзакций
+        // New transaction button styles
+        glassDeposit: "bg-gradient-to-br from-emerald-600/90 to-green-700/90 text-white border border-green-500/20 hover:from-emerald-500/90 hover:to-green-600/90 shadow-lg shadow-green-900/20 hover:shadow-green-900/30 transition-all duration-300 backdrop-blur-sm rounded-xl overflow-hidden relative",
+        glassWithdraw: "bg-gradient-to-br from-orange-600/90 to-red-600/90 text-white border border-orange-500/20 hover:from-orange-500/90 hover:to-red-500/90 shadow-lg shadow-red-900/20 hover:shadow-red-900/30 transition-all duration-300 backdrop-blur-sm rounded-xl overflow-hidden relative",
         depositButton: "bg-gradient-to-br from-green-600 to-emerald-700 text-white border border-green-500/30 shadow-lg shadow-green-800/20 hover:shadow-green-800/30 hover:from-green-700 hover:to-emerald-800 transition-all duration-300",
         withdrawButton: "bg-gradient-to-br from-orange-600 to-red-700 text-white border border-red-500/30 shadow-lg shadow-red-800/20 hover:shadow-red-800/30 hover:from-orange-700 hover:to-red-800 transition-all duration-300",
       },
@@ -36,8 +38,9 @@ const buttonVariants = cva(
         circle: "h-12 w-12",
         circleSmall: "h-8 w-8",
         settings: "h-12 w-full",
-        // Новый размер для кнопок транзакций
         transaction: "h-auto py-5 px-6 rounded-xl",
+        // New size for the redesigned transaction buttons
+        actionCard: "h-auto py-6 px-6 rounded-xl w-full",
       },
     },
     defaultVariants: {
