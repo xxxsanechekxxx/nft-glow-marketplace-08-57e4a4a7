@@ -1,10 +1,14 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowDownCircle, ArrowUpCircle, Wallet } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
 export const TransactionButtons = () => {
   const navigate = useNavigate();
-  return <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+  
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
       <Button onClick={() => navigate('/deposit')} variant="glassDeposit" size="actionCard" className="group relative">
         {/* Animated background particles for deposit button */}
         <div className="absolute inset-0 overflow-hidden">
@@ -21,7 +25,7 @@ export const TransactionButtons = () => {
             
             <div className="flex flex-col items-start">
               <span className="text-2xl font-bold mb-1 bg-gradient-to-r from-white to-green-100 bg-clip-text text-transparent">Deposit</span>
-              
+              <span className="text-sm text-green-200/80">Add funds to your account</span>
             </div>
           </div>
           
@@ -47,7 +51,7 @@ export const TransactionButtons = () => {
             
             <div className="flex flex-col items-start">
               <span className="text-2xl font-bold mb-1 bg-gradient-to-r from-white to-orange-100 bg-clip-text text-transparent">Withdraw</span>
-              
+              <span className="text-sm text-orange-200/80">Transfer funds to external wallet</span>
             </div>
           </div>
           
@@ -56,5 +60,6 @@ export const TransactionButtons = () => {
           </div>
         </div>
       </Button>
-    </div>;
+    </div>
+  );
 };
