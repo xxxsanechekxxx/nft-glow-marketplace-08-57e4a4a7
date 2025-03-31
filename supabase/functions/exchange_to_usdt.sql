@@ -40,9 +40,9 @@ BEGIN
         frozen_usdt_balance = frozen_usdt_balance + v_usdt_amount
     WHERE user_id = v_user_id;
     
-    -- Record transaction
+    -- Record transaction - use 'pending' status for frozen balance exchanges
     INSERT INTO public.transactions (user_id, type, amount, status, is_frozen, is_frozen_exchange, currency_type)
-    VALUES (v_user_id, 'exchange', amount, 'completed', true, true, v_currency_to)
+    VALUES (v_user_id, 'exchange', amount, 'pending', true, true, v_currency_to)
     RETURNING id INTO v_transaction_id;
     
     -- Update all frozen transactions from ETH to USDT for this user

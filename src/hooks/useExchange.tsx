@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { UserData, Transaction } from "@/types/user";
@@ -80,7 +79,7 @@ export const useExchange = ({
         description: "Please enter a valid amount greater than 0",
         variant: "destructive"
       });
-      return;
+      return false;
     }
 
     // Check sufficient funds
@@ -94,7 +93,7 @@ export const useExchange = ({
           description: `Your ${exchangeType === 'regular' ? '' : 'frozen '}ETH balance (${balanceNum} ETH) is less than the requested exchange amount`,
           variant: "destructive"
         });
-        return;
+        return false;
       }
     } else {
       const usdtBalanceField = exchangeType === 'regular' ? 'usdt_balance' : 'frozen_usdt_balance';
@@ -106,7 +105,7 @@ export const useExchange = ({
           description: `Your ${exchangeType === 'regular' ? '' : 'frozen '}USDT balance (${usdtBalanceNum} USDT) is less than the requested exchange amount`,
           variant: "destructive"
         });
-        return;
+        return false;
       }
     }
     
@@ -116,8 +115,8 @@ export const useExchange = ({
       const isFrozenExchange = exchangeType === 'frozen';
       const currencyType = exchangeDirection === 'eth_to_usdt' ? 'usdt' : 'eth';
       
-      // Create transaction
-      const { error } = await supabase.from('transactions').insert([{
+      // Create transaction - always with status pending, regardless of exchange type
+      const { data, error } = await supabase.from('transactions').insert([{
         user_id: userId,
         type: 'exchange',
         amount: exchangeAmountNum,
@@ -125,44 +124,30 @@ export const useExchange = ({
         is_frozen: isFrozen,
         is_frozen_exchange: isFrozenExchange,
         currency_type: currencyType
-      }]);
+      }]).select('*');
       
       if (error) throw error;
 
-      // Fetch updated transactions
-      const { data: transactionsData, error: transactionsError } = await supabase
-        .from('transactions')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(10);
-      
-      if (transactionsError) throw transactionsError;
-      
-      // Format and update transactions
-      if (transactionsData) {
-        setTransactions(transactionsData.map(tx => {
-          const dateObj = new Date(tx.created_at);
-          const formattedDate = `${dateObj.getDate().toString().padStart(2, '0')}/${(dateObj.getMonth() + 1).toString().padStart(2, '0')}`;
-          
-          let formattedFrozenUntil = null;
-          if (tx.frozen_until) {
-            const frozenDate = new Date(tx.frozen_until);
-            formattedFrozenUntil = `${frozenDate.getDate().toString().padStart(2, '0')}/${(frozenDate.getMonth() + 1).toString().padStart(2, '0')}/${frozenDate.getFullYear()}`;
-          }
-          
-          return {
-            id: tx.id,
-            type: tx.type,
-            amount: tx.amount.toString(),
-            created_at: formattedDate,
-            status: tx.status,
-            item: tx.item,
-            frozen_until: formattedFrozenUntil,
-            is_frozen: tx.is_frozen,
-            is_frozen_exchange: tx.is_frozen_exchange,
-            currency_type: tx.currency_type
-          };
-        }));
+      // Add the new transaction to the list
+      if (data && data.length > 0) {
+        const newTransaction = data[0];
+        const dateObj = new Date(newTransaction.created_at);
+        const formattedDate = `${dateObj.getDate().toString().padStart(2, '0')}/${(dateObj.getMonth() + 1).toString().padStart(2, '0')}`;
+        
+        const formattedTransaction: Transaction = {
+          id: newTransaction.id,
+          type: newTransaction.type,
+          amount: newTransaction.amount.toString(),
+          created_at: formattedDate,
+          status: newTransaction.status,
+          item: newTransaction.item,
+          frozen_until: null,
+          is_frozen: newTransaction.is_frozen,
+          is_frozen_exchange: newTransaction.is_frozen_exchange,
+          currency_type: newTransaction.currency_type
+        };
+        
+        setTransactions(prev => [formattedTransaction, ...prev]);
       }
       
       // Show success message
@@ -176,6 +161,7 @@ export const useExchange = ({
       
       return true; // Return success status
     } catch (error) {
+      console.error("Error processing exchange:", error);
       toast({
         title: "Error",
         description: "Failed to process exchange. Please try again.",

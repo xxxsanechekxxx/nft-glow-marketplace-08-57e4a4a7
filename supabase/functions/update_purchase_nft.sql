@@ -53,9 +53,9 @@ BEGIN
     SET frozen_balance = frozen_balance + v_seller_receives
     WHERE user_id = v_owner_id;
     
-    -- Record transaction for seller (sale) with frozen_until date
-    INSERT INTO public.transactions (amount, type, item, status, user_id, frozen_until, currency_type)
-    VALUES (v_seller_receives, 'sale', nft_id::text, 'completed', v_owner_id, v_frozen_until, v_currency_type)
+    -- Record transaction for seller (sale) with frozen_until date and is_frozen flag set to true
+    INSERT INTO public.transactions (amount, type, item, status, user_id, frozen_until, is_frozen, currency_type)
+    VALUES (v_seller_receives, 'sale', nft_id::text, 'completed', v_owner_id, v_frozen_until, true, v_currency_type)
     RETURNING id INTO v_seller_transaction_id;
   END IF;
   

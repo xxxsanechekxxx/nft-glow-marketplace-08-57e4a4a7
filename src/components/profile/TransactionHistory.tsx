@@ -14,12 +14,40 @@ import { ArrowUpRight, ArrowDownLeft, RotateCw, ShoppingCart, Tag, Calendar } fr
 import type { Transaction } from "@/types/user";
 
 // Function to determine status color and text
-const getStatusDetails = (status: string, isFrozen: boolean, isFrozenExchange: boolean) => {
-  if (isFrozen || isFrozenExchange) {
+const getStatusDetails = (status: string, isFrozen: boolean, isFrozenExchange: boolean, type: string) => {
+  // For exchange transactions, check if it's pending first
+  if (type === 'exchange' && status === 'pending') {
+    return {
+      variant: "outline" as const,
+      className: "border-blue-500/30 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 hover:text-blue-400",
+      text: "Pending"
+    };
+  }
+  
+  // For sale transactions, they should be shown as frozen if funds go to hold
+  if (type === 'sale' && isFrozen) {
     return {
       variant: "outline" as const,
       className: "border-yellow-500/30 bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 hover:text-yellow-400",
       text: "Frozen"
+    };
+  }
+  
+  // For frozen balance but not frozen exchange, show as Frozen
+  if (isFrozen && !isFrozenExchange) {
+    return {
+      variant: "outline" as const,
+      className: "border-yellow-500/30 bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 hover:text-yellow-400",
+      text: "Frozen"
+    };
+  }
+  
+  // For exchange transactions from frozen balance, they're pending not frozen
+  if (isFrozenExchange) {
+    return {
+      variant: "outline" as const,
+      className: "border-blue-500/30 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 hover:text-blue-400",
+      text: "Pending"
     };
   }
   
@@ -143,7 +171,8 @@ export const TransactionHistory = ({ transactions }: TransactionHistoryProps) =>
                 const statusDetails = getStatusDetails(
                   transaction.status,
                   transaction.is_frozen || false,
-                  transaction.is_frozen_exchange || false
+                  transaction.is_frozen_exchange || false,
+                  transaction.type
                 );
                 
                 return (
@@ -189,7 +218,7 @@ export const TransactionHistory = ({ transactions }: TransactionHistoryProps) =>
                         }`}>
                           {transaction.type === 'deposit' || transaction.type === 'sale' ? '+' : transaction.type === 'withdraw' || transaction.type === 'purchase' ? '-' : ''}
                           {parseFloat(transaction.amount).toFixed(transaction.currency_type === 'eth' ? 3 : 2)}
-                          {transaction.currency_type === 'usdt' ? ' USDT' : ''}
+                          {transaction.currency_type === 'usdt' ? ' USDT' : ' ETH'}
                         </span>
                       </div>
                     </TableCell>
