@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Input } from "@/components/ui/input";
-import { Check, X, ExternalLink, Edit } from "lucide-react";
+import { Check, X, ExternalLink, Edit, Tag } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -57,6 +57,13 @@ export const NFTCard = ({
   const isOwner = user?.id === owner_id;
   const isForSale = for_sale === true;
   const isGridView = viewMode === 'grid';
+
+  // Handle sell NFT
+  const handleSellNFT = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate(`/sell-nft/${id}`);
+  };
 
   const handleEditPrice = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -150,7 +157,7 @@ export const NFTCard = ({
               )}
               
               {/* NFT Image */}
-              <div className="aspect-square w-full overflow-hidden relative max-h-[250px]">
+              <div className="aspect-square w-full overflow-hidden flex items-center justify-center relative">
                 <img
                   src={image}
                   alt={name}
@@ -211,28 +218,42 @@ export const NFTCard = ({
                   )}
                   
                   {/* Action buttons */}
-                  {isProfileView && isForSale && (
+                  {isProfileView && (
                     <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
-                      {!isEditingPrice && (
+                      {isForSale ? (
+                        <>
+                          {!isEditingPrice && (
+                            <Button 
+                              onClick={handleEditPrice} 
+                              size="nftAction"
+                              variant="secondary"
+                              className="h-6 px-2 py-0 text-xs rounded-md bg-purple-500/20"
+                              title="Edit Price"
+                            >
+                              <Edit className="h-3 w-3" />
+                            </Button>
+                          )}
+                          <Button 
+                            onClick={openCancelDialog} 
+                            size="nftAction"
+                            variant="secondary"
+                            className="h-6 px-2 py-0 text-xs rounded-md bg-red-500/20 text-red-300"
+                            title="Cancel Sale"
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </>
+                      ) : (
                         <Button 
-                          onClick={handleEditPrice} 
+                          onClick={handleSellNFT} 
                           size="nftAction"
-                          variant="secondary"
-                          className="h-6 px-2 py-0 text-xs rounded-md bg-purple-500/20"
-                          title="Edit Price"
+                          variant="nftSell"
+                          className="h-6 px-2 py-0 text-xs"
+                          title="Sell NFT"
                         >
-                          <Edit className="h-3 w-3" />
+                          <Tag className="h-3 w-3" />
                         </Button>
                       )}
-                      <Button 
-                        onClick={openCancelDialog} 
-                        size="nftAction"
-                        variant="secondary"
-                        className="h-6 px-2 py-0 text-xs rounded-md bg-red-500/20 text-red-300"
-                        title="Cancel Sale"
-                      >
-                        <X className="h-3 w-3" />
-                      </Button>
                     </div>
                   )}
                 </div>
@@ -281,7 +302,7 @@ export const NFTCard = ({
             <div className="flex flex-col sm:flex-row">
               {/* Image section */}
               <div className="sm:w-1/4 lg:w-1/5 relative">
-                <div className="h-full aspect-square overflow-hidden">
+                <div className="h-full aspect-square overflow-hidden flex items-center justify-center">
                   <img
                     src={image}
                     alt={name}
@@ -367,29 +388,43 @@ export const NFTCard = ({
                 </div>
                 
                 <div className="flex items-center justify-end gap-2 mt-4 sm:mt-0">
-                  {isProfileView && isForSale && (
+                  {isProfileView && (
                     <div onClick={(e) => e.stopPropagation()}>
                       <div className="flex gap-2">
-                        {!isEditingPrice && (
+                        {isForSale ? (
+                          <>
+                            {!isEditingPrice && (
+                              <Button 
+                                onClick={handleEditPrice} 
+                                variant="secondary"
+                                className="h-8 px-3 text-xs rounded-md bg-purple-500/20"
+                                title="Edit Price"
+                              >
+                                <Edit className="h-3.5 w-3.5 mr-1" />
+                                Edit
+                              </Button>
+                            )}
+                            <Button 
+                              onClick={openCancelDialog} 
+                              variant="secondary"
+                              className="h-8 px-3 text-xs rounded-md bg-red-500/20 text-red-300"
+                              title="Cancel Sale"
+                            >
+                              <X className="h-3.5 w-3.5 mr-1" />
+                              Cancel
+                            </Button>
+                          </>
+                        ) : (
                           <Button 
-                            onClick={handleEditPrice} 
-                            variant="secondary"
-                            className="h-8 px-3 text-xs rounded-md bg-purple-500/20"
-                            title="Edit Price"
+                            onClick={handleSellNFT} 
+                            variant="nftSell"
+                            className="h-8 px-3 text-xs"
+                            title="Sell NFT"
                           >
-                            <Edit className="h-3.5 w-3.5 mr-1" />
-                            Edit
+                            <Tag className="h-3.5 w-3.5 mr-1" />
+                            Sell
                           </Button>
                         )}
-                        <Button 
-                          onClick={openCancelDialog} 
-                          variant="secondary"
-                          className="h-8 px-3 text-xs rounded-md bg-red-500/20 text-red-300"
-                          title="Cancel Sale"
-                        >
-                          <X className="h-3.5 w-3.5 mr-1" />
-                          Cancel
-                        </Button>
                       </div>
                     </div>
                   )}
@@ -430,3 +465,4 @@ export const NFTCard = ({
     </>
   );
 };
+

@@ -29,11 +29,11 @@ export const NFTImage = ({ image, name }: NFTImageProps) => {
   return (
     <div className="relative">
       <div className="bg-[#2E2243] border border-[#65539E]/30 rounded-xl overflow-hidden relative">
-        <div className="aspect-square w-full overflow-hidden flex items-center justify-center relative">
+        <div className="aspect-square w-full overflow-hidden flex items-center justify-center">
           <img
             src={image}
             alt={name}
-            className="w-full h-full object-contain"
+            className="w-full h-full object-cover"
           />
           <div className="absolute top-4 right-4 flex gap-2">
             <Button
