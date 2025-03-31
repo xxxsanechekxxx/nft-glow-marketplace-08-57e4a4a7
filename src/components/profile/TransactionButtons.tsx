@@ -11,7 +11,7 @@ export const TransactionButtons = () => {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
       <Button onClick={() => navigate('/deposit')} variant="glassDeposit" size="actionCard" className="group relative">
         {/* Animated background particles for deposit button */}
-        <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden rounded-xl">
           <div className="absolute -right-4 -top-4 w-24 h-24 rounded-full bg-green-400/20 blur-xl animate-pulse"></div>
           <div className="absolute left-1/2 bottom-0 w-16 h-16 rounded-full bg-emerald-500/20 blur-lg animate-pulse"></div>
         </div>
@@ -37,7 +37,7 @@ export const TransactionButtons = () => {
 
       <Button onClick={() => navigate('/withdraw')} variant="glassWithdraw" size="actionCard" className="group relative">
         {/* Animated background particles for withdraw button */}
-        <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden rounded-xl">
           <div className="absolute -left-4 -top-4 w-24 h-24 rounded-full bg-red-400/20 blur-xl animate-pulse"></div>
           <div className="absolute right-1/2 bottom-0 w-16 h-16 rounded-full bg-orange-500/20 blur-lg animate-pulse"></div>
         </div>
