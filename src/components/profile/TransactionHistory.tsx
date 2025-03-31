@@ -8,17 +8,17 @@ import {
   TableHeader,
   TableRow
 } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { ArrowUpRight, ArrowDownLeft, RotateCw, ShoppingCart, Tag } from "lucide-react";
+import { ArrowUpRight, ArrowDownLeft, RotateCw, ShoppingCart, Tag, Calendar } from "lucide-react";
 import type { Transaction } from "@/types/user";
 
 // Function to determine status color and text
 const getStatusDetails = (status: string, isFrozen: boolean, isFrozenExchange: boolean) => {
   if (isFrozen || isFrozenExchange) {
     return {
-      color: "text-yellow-500",
-      bgColor: "bg-yellow-500/10",
-      borderColor: "border-yellow-500/20",
+      variant: "outline" as const,
+      className: "border-yellow-500/30 bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 hover:text-yellow-400",
       text: "Frozen"
     };
   }
@@ -26,30 +26,27 @@ const getStatusDetails = (status: string, isFrozen: boolean, isFrozenExchange: b
   switch (status) {
     case "completed":
       return {
-        color: "text-green-500",
-        bgColor: "bg-green-500/10",
-        borderColor: "border-green-500/20",
+        variant: "outline" as const,
+        className: "border-green-500/30 bg-green-500/10 text-green-400 hover:bg-green-500/20 hover:text-green-400",
         text: "Completed"
       };
     case "pending":
       return {
-        color: "text-blue-500",
-        bgColor: "bg-blue-500/10",
-        borderColor: "border-blue-500/20",
+        variant: "outline" as const,
+        className: "border-blue-500/30 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 hover:text-blue-400",
         text: "Pending"
       };
     case "cancelled":
+    case "failed":
       return {
-        color: "text-red-500",
-        bgColor: "bg-red-500/10",
-        borderColor: "border-red-500/20",
-        text: "Cancelled"
+        variant: "outline" as const,
+        className: "border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-400",
+        text: status === "cancelled" ? "Cancelled" : "Failed"
       };
     default:
       return {
-        color: "text-gray-500",
-        bgColor: "bg-gray-500/10",
-        borderColor: "border-gray-500/20",
+        variant: "outline" as const,
+        className: "border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary",
         text: status.charAt(0).toUpperCase() + status.slice(1)
       };
   }
@@ -60,39 +57,39 @@ const getTypeDetails = (type: string) => {
   switch (type) {
     case "deposit":
       return {
-        icon: <ArrowDownLeft className="h-4 w-4 text-green-500" />,
+        icon: <ArrowDownLeft className="h-4 w-4" />,
         label: "Deposit",
-        color: "text-green-500"
+        className: "text-green-400 bg-green-500/10"
       };
     case "withdraw":
       return {
-        icon: <ArrowUpRight className="h-4 w-4 text-red-500" />,
+        icon: <ArrowUpRight className="h-4 w-4" />,
         label: "Withdrawal",
-        color: "text-red-500"
+        className: "text-red-400 bg-red-500/10"
       };
     case "exchange":
       return {
-        icon: <RotateCw className="h-4 w-4 text-blue-500" />,
+        icon: <RotateCw className="h-4 w-4" />,
         label: "Exchange",
-        color: "text-blue-500"
+        className: "text-blue-400 bg-blue-500/10"
       };
     case "purchase":
       return {
-        icon: <ShoppingCart className="h-4 w-4 text-purple-500" />,
+        icon: <ShoppingCart className="h-4 w-4" />,
         label: "Purchase",
-        color: "text-purple-500"
+        className: "text-purple-400 bg-purple-500/10"
       };
     case "sale":
       return {
-        icon: <Tag className="h-4 w-4 text-amber-500" />,
+        icon: <Tag className="h-4 w-4" />,
         label: "Sale",
-        color: "text-amber-500"
+        className: "text-amber-400 bg-amber-500/10"
       };
     default:
       return {
-        icon: <RotateCw className="h-4 w-4 text-gray-500" />,
+        icon: <RotateCw className="h-4 w-4" />,
         label: type.charAt(0).toUpperCase() + type.slice(1),
-        color: "text-gray-500"
+        className: "text-gray-400 bg-gray-500/10"
       };
   }
 };
@@ -106,7 +103,7 @@ export const TransactionHistory = ({ transactions }: TransactionHistoryProps) =>
   
   if (!transactions || transactions.length === 0) {
     return (
-      <div className="mt-6 text-center">
+      <div className="mt-6 text-center p-8 rounded-lg border border-primary/20 bg-white/5 backdrop-blur-sm">
         <p className="text-sm text-muted-foreground">No transactions found</p>
       </div>
     );
@@ -114,21 +111,30 @@ export const TransactionHistory = ({ transactions }: TransactionHistoryProps) =>
 
   return (
     <div className="mt-6">
-      <h3 className="text-sm font-medium mb-3 text-white/90 flex items-center">
-        <span className="bg-primary/10 p-1.5 rounded-md mr-2">
-          <RotateCw className="h-4 w-4 text-primary" />
-        </span>
-        Transaction History
-      </h3>
-      <div className="overflow-hidden rounded-lg border border-primary/20 bg-white/5 backdrop-blur-sm transition-all hover:border-primary/30 hover:bg-white/[0.07]">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-base font-semibold text-white/90 flex items-center">
+          <span className="bg-primary/15 p-1.5 rounded-md mr-2">
+            <RotateCw className="h-4 w-4 text-primary" />
+          </span>
+          Transaction History
+        </h3>
+        
+        {transactions.length > 0 && (
+          <span className="text-xs text-muted-foreground bg-white/5 px-2 py-1 rounded-md border border-primary/10">
+            {transactions.length} transactions
+          </span>
+        )}
+      </div>
+      
+      <div className="overflow-hidden rounded-lg border border-primary/20 bg-black/40 backdrop-blur-sm transition-all hover:border-primary/30 shadow-[0_4px_12px_-2px_rgba(0,0,0,0.3)]">
         <div className="overflow-x-auto scrollbar-none">
           <Table>
             <TableHeader>
               <TableRow className="border-b border-primary/10 hover:bg-transparent">
-                <TableHead className="w-20 text-xs font-medium">Date</TableHead>
-                {!isMobile && <TableHead className="text-xs font-medium">Type</TableHead>}
-                <TableHead className="text-xs font-medium text-right">Amount</TableHead>
-                <TableHead className="text-xs font-medium text-right">Status</TableHead>
+                <TableHead className="w-[100px] text-2xs uppercase tracking-wider font-semibold text-white/50">Date</TableHead>
+                {!isMobile && <TableHead className="text-2xs uppercase tracking-wider font-semibold text-white/50">Type</TableHead>}
+                <TableHead className="text-2xs uppercase tracking-wider font-semibold text-white/50 text-right">Amount</TableHead>
+                <TableHead className="text-2xs uppercase tracking-wider font-semibold text-white/50 text-right">Status</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -141,33 +147,60 @@ export const TransactionHistory = ({ transactions }: TransactionHistoryProps) =>
                 );
                 
                 return (
-                  <TableRow key={transaction.id} className="border-primary/10 transition-colors hover:bg-primary/5">
-                    <TableCell className="py-2.5 text-xs text-white/80">{transaction.created_at}</TableCell>
+                  <TableRow 
+                    key={transaction.id} 
+                    className="border-b border-primary/10 hover:bg-white/[0.03]"
+                  >
+                    <TableCell className="py-3 text-xs text-white/70">
+                      <div className="flex items-center gap-1.5">
+                        <span className="inline-block p-1 rounded-full bg-white/10">
+                          <Calendar className="h-3 w-3 text-white/60" />
+                        </span>
+                        <span>{transaction.created_at}</span>
+                      </div>
+                    </TableCell>
+                    
                     {!isMobile && (
-                      <TableCell className="py-2.5">
-                        <div className="flex items-center gap-1.5">
-                          {typeDetails.icon}
-                          <span className={`text-xs ${typeDetails.color}`}>
+                      <TableCell className="py-3">
+                        <div className="flex items-center gap-2">
+                          <div className={`p-1.5 rounded-full ${typeDetails.className}`}>
+                            {typeDetails.icon}
+                          </div>
+                          <span className={`text-xs font-medium ${typeDetails.className.replace('bg-', 'text-').split(' ')[0]}`}>
                             {typeDetails.label}
                           </span>
                         </div>
                       </TableCell>
                     )}
-                    <TableCell className="py-2.5 text-right">
-                      <div className="flex items-center gap-1 justify-end">
-                        {isMobile && typeDetails.icon}
-                        <span className={`text-xs font-medium ${transaction.type === 'deposit' || transaction.type === 'sale' ? 'text-green-500' : transaction.type === 'withdraw' || transaction.type === 'purchase' ? 'text-red-500' : 'text-white/80'}`}>
+                    
+                    <TableCell className="py-3 text-right">
+                      <div className="flex items-center gap-2 justify-end">
+                        {isMobile && (
+                          <div className={`p-1 rounded-full ${typeDetails.className}`}>
+                            {typeDetails.icon}
+                          </div>
+                        )}
+                        <span className={`text-xs font-medium ${
+                          transaction.type === 'deposit' || transaction.type === 'sale' 
+                            ? 'text-green-400' 
+                            : transaction.type === 'withdraw' || transaction.type === 'purchase' 
+                              ? 'text-red-400' 
+                              : 'text-white/80'
+                        }`}>
                           {transaction.type === 'deposit' || transaction.type === 'sale' ? '+' : transaction.type === 'withdraw' || transaction.type === 'purchase' ? '-' : ''}
-                          {parseFloat(transaction.amount).toFixed(transaction.currency_type === 'eth' ? 3 : 2)} {transaction.currency_type === 'usdt' ? 'USDT' : ''}
+                          {parseFloat(transaction.amount).toFixed(transaction.currency_type === 'eth' ? 3 : 2)}
+                          {transaction.currency_type === 'usdt' ? ' USDT' : ''}
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell className="py-2.5 text-right">
-                      <div className="flex justify-end">
-                        <span className={`inline-flex px-2 py-0.5 text-xs rounded-full ${statusDetails.bgColor} ${statusDetails.color} border ${statusDetails.borderColor}`}>
-                          {statusDetails.text}
-                        </span>
-                      </div>
+                    
+                    <TableCell className="py-3 text-right">
+                      <Badge 
+                        variant={statusDetails.variant} 
+                        className={`font-medium text-2xs px-2 py-0.5 ${statusDetails.className}`}
+                      >
+                        {statusDetails.text}
+                      </Badge>
                     </TableCell>
                   </TableRow>
                 );
