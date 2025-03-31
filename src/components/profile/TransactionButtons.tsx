@@ -30,7 +30,7 @@ export const TransactionButtons = () => {
             
             <div className="flex flex-col items-start">
               <span className="text-2xl font-bold mb-1 bg-gradient-to-r from-white to-green-100 bg-clip-text text-transparent">Deposit</span>
-              <span className="text-sm text-green-100/90">Add funds to your wallet</span>
+              <span className="text-sm text-green-100/90">Add funds to your account</span>
             </div>
           </div>
           
@@ -61,7 +61,7 @@ export const TransactionButtons = () => {
             
             <div className="flex flex-col items-start">
               <span className="text-2xl font-bold mb-1 bg-gradient-to-r from-white to-orange-100 bg-clip-text text-transparent">Withdraw</span>
-              <span className="text-sm text-orange-100/90">Transfer to your account</span>
+              <span className="text-sm text-orange-100/90">Withdraw funds to your bank</span>
             </div>
           </div>
           
