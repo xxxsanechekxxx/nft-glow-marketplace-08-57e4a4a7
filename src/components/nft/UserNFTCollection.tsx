@@ -59,12 +59,12 @@ export const UserNFTCollection = () => {
     if (!user?.id) return;
     
     try {
+      // Remove the marketplace_status field that doesn't exist in the database
       const { error } = await supabase
         .from('nfts')
         .update({ 
           for_sale: false,
-          marketplace: null,
-          marketplace_status: 'not_listed'
+          marketplace: null
         })
         .eq('id', id)
         .eq('owner_id', user.id);
@@ -74,7 +74,7 @@ export const UserNFTCollection = () => {
       setNfts(prevNfts => 
         prevNfts.map(nft => 
           nft.id === id 
-            ? { ...nft, for_sale: false, marketplace: null, marketplace_status: 'not_listed' } 
+            ? { ...nft, for_sale: false, marketplace: null } 
             : nft
         )
       );
