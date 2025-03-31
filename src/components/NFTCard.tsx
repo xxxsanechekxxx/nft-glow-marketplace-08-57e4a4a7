@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Input } from "@/components/ui/input";
-import { Check, X, ExternalLink, Edit, Tag } from "lucide-react";
+import { Check, X, ExternalLink, Edit, Tag, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -31,6 +31,7 @@ interface NFTCardProps {
   viewMode?: 'grid' | 'list';
   onCancelSale?: (id: string) => Promise<void>;
   onUpdatePrice?: (id: string, price: string) => Promise<void>;
+  onViewBids?: (id: string) => void;
 }
 
 export const NFTCard = ({ 
@@ -45,7 +46,8 @@ export const NFTCard = ({
   isProfileView = false,
   viewMode = 'grid',
   onCancelSale,
-  onUpdatePrice
+  onUpdatePrice,
+  onViewBids
 }: NFTCardProps) => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -107,6 +109,14 @@ export const NFTCard = ({
     if (onCancelSale) {
       await onCancelSale(id);
       setShowCancelDialog(false);
+    }
+  };
+
+  const handleViewBids = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onViewBids) {
+      onViewBids(id);
     }
   };
 
@@ -257,6 +267,21 @@ export const NFTCard = ({
                     </div>
                   )}
                 </div>
+                
+                {/* View Bids button (relocated) */}
+                {isProfileView && isForSale && (
+                  <div className="mt-2" onClick={(e) => e.stopPropagation()}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleViewBids}
+                      className="w-full text-xs justify-between bg-[#2E2243] hover:bg-[#3B2C59] border-[#65539E]/30 text-purple-300"
+                    >
+                      <span>View Bids</span>
+                      <ArrowRight className="h-3 w-3 ml-1" />
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -385,6 +410,21 @@ export const NFTCard = ({
                       ) : price}
                     </span>
                   </div>
+                  
+                  {/* View Bids button for list view */}
+                  {isProfileView && isForSale && (
+                    <div className="mt-3" onClick={(e) => e.stopPropagation()}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleViewBids}
+                        className="text-xs bg-[#2E2243] hover:bg-[#3B2C59] border-[#65539E]/30 text-purple-300"
+                      >
+                        <span>View Bids</span>
+                        <ArrowRight className="h-3 w-3 ml-1" />
+                      </Button>
+                    </div>
+                  )}
                 </div>
                 
                 <div className="flex items-center justify-end gap-2 mt-4 sm:mt-0">
@@ -465,4 +505,3 @@ export const NFTCard = ({
     </>
   );
 };
-

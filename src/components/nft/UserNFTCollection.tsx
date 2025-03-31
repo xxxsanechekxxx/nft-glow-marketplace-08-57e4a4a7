@@ -129,8 +129,18 @@ export const UserNFTCollection = () => {
   };
   
   const handleViewBids = (nftId: string) => {
-    setSelectedNft(nftId);
-    setShowBids(true);
+    // Проверяем, что NFT выставлена на продажу перед просмотром ставок
+    const nft = nfts.find(n => n.id === nftId);
+    if (nft && nft.for_sale) {
+      setSelectedNft(nftId);
+      setShowBids(true);
+    } else {
+      toast({
+        title: "Информация",
+        description: "Ставки доступны только для NFT, выставленных на продажу.",
+        variant: "default"
+      });
+    }
   };
   
   const handleBidAccepted = () => {
@@ -241,6 +251,36 @@ export const UserNFTCollection = () => {
         </div>
       </div>
       
+      {/* Active bids popup */}
+      {showBids && selectedNft && (
+        <Card className="border-[#65539E]/20 bg-[#23193A] overflow-hidden relative rounded-xl animate-in fade-in slide-in-from-top-4 duration-300">
+          <CardHeader className="flex flex-row items-center justify-between border-b border-[#65539E]/20 pb-4 relative z-10">
+            <div>
+              <CardTitle className="text-xl font-medium text-white">Active Bids</CardTitle>
+              <CardDescription className="text-purple-300/70">Review and accept bids for your NFT</CardDescription>
+            </div>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setShowBids(false)}
+              className="text-purple-300/70 hover:text-white"
+            >
+              Close
+            </Button>
+          </CardHeader>
+          
+          <CardContent className="p-6 relative z-10">
+            <ActiveBids 
+              nftId={selectedNft}
+              ownerId={user?.id}
+              currentUserId={user?.id}
+              onBidAccepted={handleBidAccepted}
+              onBidDeclined={handleBidDeclined}
+            />
+          </CardContent>
+        </Card>
+      )}
+      
       {/* Main content area */}
       <div className="relative">
         {isLoading ? (
@@ -254,36 +294,6 @@ export const UserNFTCollection = () => {
           </div>
         ) : nfts.length > 0 ? (
           <div className="space-y-8">
-            {/* Active bids popup */}
-            {showBids && selectedNft && (
-              <Card className="border-[#65539E]/20 bg-[#23193A] overflow-hidden relative rounded-xl animate-in fade-in slide-in-from-top-4 duration-300">
-                <CardHeader className="flex flex-row items-center justify-between border-b border-[#65539E]/20 pb-4 relative z-10">
-                  <div>
-                    <CardTitle className="text-xl font-medium text-white">Active Bids</CardTitle>
-                    <CardDescription className="text-purple-300/70">Review and accept bids for your NFT</CardDescription>
-                  </div>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={() => setShowBids(false)}
-                    className="text-purple-300/70 hover:text-white"
-                  >
-                    Close
-                  </Button>
-                </CardHeader>
-                
-                <CardContent className="p-6 relative z-10">
-                  <ActiveBids 
-                    nftId={selectedNft}
-                    ownerId={user?.id}
-                    currentUserId={user?.id}
-                    onBidAccepted={handleBidAccepted}
-                    onBidDeclined={handleBidDeclined}
-                  />
-                </CardContent>
-              </Card>
-            )}
-            
             {/* Listed NFTs section */}
             {hasListedNFTs && (
               <Card className="border-[#65539E]/20 bg-[#23193A] overflow-hidden relative rounded-xl">
@@ -303,33 +313,22 @@ export const UserNFTCollection = () => {
                     : "flex flex-col gap-4 md:gap-5"
                   }>
                     {listedNFTs.map(nft => (
-                      <div key={nft.id} className="relative">
-                        <NFTCard
-                          id={nft.id}
-                          name={nft.name}
-                          image={nft.image}
-                          price={nft.price}
-                          creator={nft.creator}
-                          owner_id={nft.owner_id}
-                          for_sale={nft.for_sale}
-                          marketplace={nft.marketplace}
-                          isProfileView={true}
-                          onCancelSale={handleCancelSale}
-                          onUpdatePrice={handleUpdatePrice}
-                          viewMode={viewMode}
-                        />
-                        
-                        <div className="mt-2 flex justify-end">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleViewBids(nft.id)}
-                            className="text-xs bg-[#2E2243] hover:bg-[#3B2C59] border-[#65539E]/30 text-purple-300"
-                          >
-                            View Bids
-                          </Button>
-                        </div>
-                      </div>
+                      <NFTCard
+                        key={nft.id}
+                        id={nft.id}
+                        name={nft.name}
+                        image={nft.image}
+                        price={nft.price}
+                        creator={nft.creator}
+                        owner_id={nft.owner_id}
+                        for_sale={nft.for_sale}
+                        marketplace={nft.marketplace}
+                        isProfileView={true}
+                        onCancelSale={handleCancelSale}
+                        onUpdatePrice={handleUpdatePrice}
+                        viewMode={viewMode}
+                        onViewBids={() => handleViewBids(nft.id)}
+                      />
                     ))}
                   </div>
                 </CardContent>
@@ -355,33 +354,22 @@ export const UserNFTCollection = () => {
                     : "flex flex-col gap-4 md:gap-5"
                   }>
                     {unlistedNFTs.map(nft => (
-                      <div key={nft.id} className="relative">
-                        <NFTCard
-                          id={nft.id}
-                          name={nft.name}
-                          image={nft.image}
-                          price={nft.price}
-                          creator={nft.creator}
-                          owner_id={nft.owner_id}
-                          for_sale={nft.for_sale}
-                          marketplace={nft.marketplace}
-                          isProfileView={true}
-                          onCancelSale={handleCancelSale}
-                          onUpdatePrice={handleUpdatePrice}
-                          viewMode={viewMode}
-                        />
-                        
-                        <div className="mt-2 flex justify-end">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleViewBids(nft.id)}
-                            className="text-xs bg-[#2E2243] hover:bg-[#3B2C59] border-[#65539E]/30 text-purple-300"
-                          >
-                            View Bids
-                          </Button>
-                        </div>
-                      </div>
+                      <NFTCard
+                        key={nft.id}
+                        id={nft.id}
+                        name={nft.name}
+                        image={nft.image}
+                        price={nft.price}
+                        creator={nft.creator}
+                        owner_id={nft.owner_id}
+                        for_sale={nft.for_sale}
+                        marketplace={nft.marketplace}
+                        isProfileView={true}
+                        onCancelSale={handleCancelSale}
+                        onUpdatePrice={handleUpdatePrice}
+                        viewMode={viewMode}
+                        onViewBids={() => handleViewBids(nft.id)}
+                      />
                     ))}
                   </div>
                 </CardContent>
