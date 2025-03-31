@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { CheckCircle, Clock, Loader2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 
 interface Bid {
@@ -61,39 +61,58 @@ const ActiveBids = ({
         return;
       }
       
-      if (!user?.id) return;
+      if (!nftId && !user?.id) {
+        setIsLoading(false);
+        setBids([]);
+        return;
+      }
 
       try {
         setIsLoading(true);
         
-        const { data: userNfts, error: nftError } = await supabase
-          .from('nfts')
-          .select('id')
-          .eq('owner_id', user.id);
-        
-        if (nftError) throw nftError;
-        
-        if (!userNfts || userNfts.length === 0) {
-          setBids([]);
+        if (nftId) {
+          const { data: bidData, error: bidError } = await supabase
+            .from('nft_bids')
+            .select('*')
+            .eq('nft_id', nftId);
+          
+          if (bidError) throw bidError;
+          
+          setBids(bidData || []);
           setIsLoading(false);
           return;
         }
         
-        const nftIds = userNfts.map(nft => nft.id);
-        
-        const { data: bidData, error: bidError } = await supabase
-          .from('nft_bids')
-          .select('*')
-          .in('nft_id', nftIds);
-        
-        if (bidError) throw bidError;
-        
-        setBids(bidData || []);
+        if (user?.id) {
+          const { data: userNfts, error: nftError } = await supabase
+            .from('nfts')
+            .select('id')
+            .eq('owner_id', user.id);
+          
+          if (nftError) throw nftError;
+          
+          if (!userNfts || userNfts.length === 0) {
+            setBids([]);
+            setIsLoading(false);
+            return;
+          }
+          
+          const nftIds = userNfts.map(nft => nft.id);
+          
+          const { data: bidData, error: bidError } = await supabase
+            .from('nft_bids')
+            .select('*')
+            .in('nft_id', nftIds);
+          
+          if (bidError) throw bidError;
+          
+          setBids(bidData || []);
+        }
       } catch (error) {
-        console.error("Error fetching user bids:", error);
+        console.error("Error fetching bids:", error);
         toast({
           title: "Error",
-          description: "Failed to load your bids",
+          description: "Failed to load bids",
           variant: "destructive"
         });
       } finally {
@@ -102,7 +121,7 @@ const ActiveBids = ({
     };
 
     fetchUserBids();
-  }, [initialBids, user?.id, toast]);
+  }, [initialBids, nftId, user?.id, toast]);
   
   const isOwner = currentUserId === ownerId || (user?.id && !ownerId);
   const hasBids = bids.length > 0;
@@ -267,7 +286,7 @@ const ActiveBids = ({
       <Card className="bg-[#131B31] border-[#2A3047]">
         <CardHeader>
           <CardTitle className="text-xl">Active Bids</CardTitle>
-          <CardDescription>No active bids for your NFTs</CardDescription>
+          <CardDescription>No active bids for this NFT</CardDescription>
         </CardHeader>
       </Card>
     );

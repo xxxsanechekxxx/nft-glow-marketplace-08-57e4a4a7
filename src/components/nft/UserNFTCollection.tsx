@@ -128,17 +128,56 @@ export const UserNFTCollection = () => {
     }
   };
   
-  const handleViewBids = (nftId: string) => {
-    // Проверяем, что NFT выставлена на продажу перед просмотром ставок
+  const handleViewBids = async (nftId: string) => {
+    // Check if the NFT is for sale before showing bids
     const nft = nfts.find(n => n.id === nftId);
-    if (nft && nft.for_sale) {
+    
+    if (!nft) {
+      toast({
+        title: "Error",
+        description: "NFT not found",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (!nft.for_sale) {
+      toast({
+        title: "Information",
+        description: "Bids are only available for NFTs that are listed for sale.",
+        variant: "default"
+      });
+      return;
+    }
+    
+    // Check if there are any bids for this NFT
+    try {
+      const { data, error } = await supabase
+        .from('nft_bids')
+        .select('*')
+        .eq('nft_id', nftId);
+      
+      if (error) throw error;
+      
+      if (!data || data.length === 0) {
+        toast({
+          title: "Information",
+          description: "There are no bids for this NFT yet.",
+          variant: "default"
+        });
+        return;
+      }
+      
+      // Set the selected NFT and show bids
       setSelectedNft(nftId);
       setShowBids(true);
-    } else {
+      
+    } catch (error) {
+      console.error("Error checking bids:", error);
       toast({
-        title: "Информация",
-        description: "Ставки доступны только для NFT, выставленных на продажу.",
-        variant: "default"
+        title: "Error",
+        description: "Failed to check bids for this NFT",
+        variant: "destructive"
       });
     }
   };
