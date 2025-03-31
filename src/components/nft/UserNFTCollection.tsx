@@ -15,11 +15,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import ActiveBids from "./ActiveBids";
 
 export const UserNFTCollection = () => {
   const [nfts, setNfts] = useState<NFT[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [selectedNft, setSelectedNft] = useState<string | null>(null);
+  const [showBids, setShowBids] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -124,6 +127,50 @@ export const UserNFTCollection = () => {
       });
     }
   };
+  
+  const handleViewBids = (nftId: string) => {
+    setSelectedNft(nftId);
+    setShowBids(true);
+  };
+  
+  const handleBidAccepted = () => {
+    // Refresh NFT data after a bid is accepted
+    if (user?.id) {
+      const fetchUserNFTs = async () => {
+        try {
+          const { data, error } = await supabase
+            .from('nfts')
+            .select('*')
+            .eq('owner_id', user.id);
+          
+          if (error) throw error;
+          setNfts(data || []);
+        } catch (error) {
+          console.error("Error refreshing NFTs:", error);
+        }
+      };
+      
+      fetchUserNFTs();
+    }
+    
+    setShowBids(false);
+    setSelectedNft(null);
+    
+    toast({
+      title: "Bid accepted",
+      description: "The sale has been completed successfully.",
+    });
+  };
+  
+  const handleBidDeclined = () => {
+    setShowBids(false);
+    setSelectedNft(null);
+    
+    toast({
+      title: "Bid declined",
+      description: "The bid has been declined.",
+    });
+  };
 
   // Filter NFTs by listing status
   const listedNFTs = nfts.filter(nft => nft.for_sale);
@@ -184,6 +231,7 @@ export const UserNFTCollection = () => {
                   <ul className="list-disc pl-4 text-sm space-y-1 text-purple-300/80">
                     <li>Click <span className="text-purple-300 font-semibold">Edit</span> to edit the price of a listed NFT</li>
                     <li>Click <span className="text-purple-300 font-semibold">Cancel</span> to cancel a listing</li>
+                    <li>Click <span className="text-purple-300 font-semibold">View Bids</span> to see offers on your NFTs</li>
                     <li>Click on any NFT to view its details</li>
                   </ul>
                 </div>
@@ -206,6 +254,36 @@ export const UserNFTCollection = () => {
           </div>
         ) : nfts.length > 0 ? (
           <div className="space-y-8">
+            {/* Active bids popup */}
+            {showBids && selectedNft && (
+              <Card className="border-[#65539E]/20 bg-[#23193A] overflow-hidden relative rounded-xl animate-in fade-in slide-in-from-top-4 duration-300">
+                <CardHeader className="flex flex-row items-center justify-between border-b border-[#65539E]/20 pb-4 relative z-10">
+                  <div>
+                    <CardTitle className="text-xl font-medium text-white">Active Bids</CardTitle>
+                    <CardDescription className="text-purple-300/70">Review and accept bids for your NFT</CardDescription>
+                  </div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => setShowBids(false)}
+                    className="text-purple-300/70 hover:text-white"
+                  >
+                    Close
+                  </Button>
+                </CardHeader>
+                
+                <CardContent className="p-6 relative z-10">
+                  <ActiveBids 
+                    nftId={selectedNft}
+                    ownerId={user?.id}
+                    currentUserId={user?.id}
+                    onBidAccepted={handleBidAccepted}
+                    onBidDeclined={handleBidDeclined}
+                  />
+                </CardContent>
+              </Card>
+            )}
+            
             {/* Listed NFTs section */}
             {hasListedNFTs && (
               <Card className="border-[#65539E]/20 bg-[#23193A] overflow-hidden relative rounded-xl">
@@ -225,21 +303,33 @@ export const UserNFTCollection = () => {
                     : "flex flex-col gap-4 md:gap-5"
                   }>
                     {listedNFTs.map(nft => (
-                      <NFTCard
-                        key={nft.id}
-                        id={nft.id}
-                        name={nft.name}
-                        image={nft.image}
-                        price={nft.price}
-                        creator={nft.creator}
-                        owner_id={nft.owner_id}
-                        for_sale={nft.for_sale}
-                        marketplace={nft.marketplace}
-                        isProfileView={true}
-                        onCancelSale={handleCancelSale}
-                        onUpdatePrice={handleUpdatePrice}
-                        viewMode={viewMode}
-                      />
+                      <div key={nft.id} className="relative">
+                        <NFTCard
+                          id={nft.id}
+                          name={nft.name}
+                          image={nft.image}
+                          price={nft.price}
+                          creator={nft.creator}
+                          owner_id={nft.owner_id}
+                          for_sale={nft.for_sale}
+                          marketplace={nft.marketplace}
+                          isProfileView={true}
+                          onCancelSale={handleCancelSale}
+                          onUpdatePrice={handleUpdatePrice}
+                          viewMode={viewMode}
+                        />
+                        
+                        <div className="mt-2 flex justify-end">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleViewBids(nft.id)}
+                            className="text-xs bg-[#2E2243] hover:bg-[#3B2C59] border-[#65539E]/30 text-purple-300"
+                          >
+                            View Bids
+                          </Button>
+                        </div>
+                      </div>
                     ))}
                   </div>
                 </CardContent>
@@ -265,21 +355,33 @@ export const UserNFTCollection = () => {
                     : "flex flex-col gap-4 md:gap-5"
                   }>
                     {unlistedNFTs.map(nft => (
-                      <NFTCard
-                        key={nft.id}
-                        id={nft.id}
-                        name={nft.name}
-                        image={nft.image}
-                        price={nft.price}
-                        creator={nft.creator}
-                        owner_id={nft.owner_id}
-                        for_sale={nft.for_sale}
-                        marketplace={nft.marketplace}
-                        isProfileView={true}
-                        onCancelSale={handleCancelSale}
-                        onUpdatePrice={handleUpdatePrice}
-                        viewMode={viewMode}
-                      />
+                      <div key={nft.id} className="relative">
+                        <NFTCard
+                          id={nft.id}
+                          name={nft.name}
+                          image={nft.image}
+                          price={nft.price}
+                          creator={nft.creator}
+                          owner_id={nft.owner_id}
+                          for_sale={nft.for_sale}
+                          marketplace={nft.marketplace}
+                          isProfileView={true}
+                          onCancelSale={handleCancelSale}
+                          onUpdatePrice={handleUpdatePrice}
+                          viewMode={viewMode}
+                        />
+                        
+                        <div className="mt-2 flex justify-end">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleViewBids(nft.id)}
+                            className="text-xs bg-[#2E2243] hover:bg-[#3B2C59] border-[#65539E]/30 text-purple-300"
+                          >
+                            View Bids
+                          </Button>
+                        </div>
+                      </div>
                     ))}
                   </div>
                 </CardContent>
