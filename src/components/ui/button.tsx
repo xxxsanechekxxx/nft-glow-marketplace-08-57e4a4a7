@@ -30,7 +30,7 @@ const buttonVariants = cva(
         depositButton: "bg-gradient-to-br from-green-600 to-emerald-700 text-white border border-green-500/30 shadow-lg shadow-green-800/20 hover:shadow-green-800/30 hover:from-green-700 hover:to-emerald-800 transition-all duration-300",
         withdrawButton: "bg-gradient-to-br from-orange-600 to-red-700 text-white border border-red-500/30 shadow-lg shadow-red-800/20 hover:shadow-red-800/30 hover:from-orange-700 hover:to-red-800 transition-all duration-300",
         // NFT action buttons
-        nftAction: "bg-gradient-to-r from-primary/20 to-purple-500/20 border border-primary/20 text-primary hover:from-primary/30 hover:to-purple-500/30 transition-all duration-300 shadow hover:shadow-primary/20",
+        nftAction: "bg-[#65539E]/30 border border-[#65539E]/30 text-white hover:bg-[#65539E]/50 transition-all duration-300 shadow",
         nftSell: "bg-gradient-to-r from-emerald-500/20 to-green-500/20 border border-emerald-500/20 text-emerald-400 hover:from-emerald-500/30 hover:to-green-500/30 transition-all duration-300 shadow hover:shadow-emerald-500/20",
         nftCancel: "bg-gradient-to-r from-red-500/20 to-destructive/20 border border-red-500/20 text-red-400 hover:from-red-500/30 hover:to-destructive/30 transition-all duration-300 shadow hover:shadow-red-500/20",
       },
