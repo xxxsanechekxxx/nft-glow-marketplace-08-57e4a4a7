@@ -122,6 +122,21 @@ const getTypeDetails = (type: string) => {
   }
 };
 
+// Function to get currency badge style
+const getCurrencyBadge = (currencyType: string) => {
+  if (currencyType === 'usdt') {
+    return {
+      text: "USDT",
+      className: "border-green-500/20 bg-green-500/5 text-green-400"
+    };
+  } else {
+    return {
+      text: "ETH",
+      className: "border-blue-500/20 bg-blue-500/5 text-blue-400"
+    };
+  }
+};
+
 interface TransactionHistoryProps {
   transactions: Transaction[];
 }
@@ -174,6 +189,7 @@ export const TransactionHistory = ({ transactions }: TransactionHistoryProps) =>
                   transaction.is_frozen_exchange || false,
                   transaction.type
                 );
+                const currencyBadge = getCurrencyBadge(transaction.currency_type || 'eth');
                 
                 return (
                   <TableRow 
@@ -209,17 +225,21 @@ export const TransactionHistory = ({ transactions }: TransactionHistoryProps) =>
                             {typeDetails.icon}
                           </div>
                         )}
-                        <span className={`text-xs font-medium ${
-                          transaction.type === 'deposit' || transaction.type === 'sale' 
-                            ? 'text-green-400' 
-                            : transaction.type === 'withdraw' || transaction.type === 'purchase' 
-                              ? 'text-red-400' 
-                              : 'text-white/80'
-                        }`}>
-                          {transaction.type === 'deposit' || transaction.type === 'sale' ? '+' : transaction.type === 'withdraw' || transaction.type === 'purchase' ? '-' : ''}
-                          {parseFloat(transaction.amount).toFixed(transaction.currency_type === 'eth' ? 3 : 2)}
-                          {transaction.currency_type === 'usdt' ? ' USDT' : ' ETH'}
-                        </span>
+                        <div className="flex items-center gap-1.5">
+                          <span className={`text-xs font-medium ${
+                            transaction.type === 'deposit' || transaction.type === 'sale' 
+                              ? 'text-green-400' 
+                              : transaction.type === 'withdraw' || transaction.type === 'purchase' 
+                                ? 'text-red-400' 
+                                : 'text-white/80'
+                          }`}>
+                            {transaction.type === 'deposit' || transaction.type === 'sale' ? '+' : transaction.type === 'withdraw' || transaction.type === 'purchase' ? '-' : ''}
+                            {parseFloat(transaction.amount).toFixed(transaction.currency_type === 'eth' ? 3 : 2)}
+                          </span>
+                          <Badge variant="outline" className={`px-1.5 py-0 text-[10px] ${currencyBadge.className}`}>
+                            {currencyBadge.text}
+                          </Badge>
+                        </div>
                       </div>
                     </TableCell>
                     
