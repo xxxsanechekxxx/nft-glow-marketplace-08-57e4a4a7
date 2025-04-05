@@ -13,29 +13,41 @@ export const EstimatedResult = ({
   exchangeDirection,
   accentColor = 'purple'
 }: EstimatedResultProps) => {
+  const getGlowEffect = () => {
+    return accentColor === 'amber' 
+      ? 'shadow-[0_0_15px_rgba(245,158,11,0.3)]'
+      : 'shadow-[0_0_15px_rgba(147,51,234,0.3)]';
+  };
+
+  const getTextColor = () => {
+    return accentColor === 'amber' ? 'text-amber-300' : 'text-indigo-300';
+  };
+
   return (
     <div className="flex flex-col items-center">
-      <div className={`h-8 w-8 rounded-full bg-${accentColor}-500/20 flex items-center justify-center mb-2`}>
-        <ArrowDownIcon className={`h-4 w-4 text-${accentColor}-400`} />
+      <div className={`h-10 w-10 rounded-full bg-${accentColor}-500/30 flex items-center justify-center mb-3 ${getGlowEffect()}`}>
+        <ArrowDownIcon className={`h-5 w-5 text-${accentColor}-400`} />
       </div>
       
-      <div className={`w-full p-4 rounded-lg bg-${accentColor}-500/10 border border-${accentColor}-500/20 flex items-center justify-between shadow-inner`}>
-        <div className="flex items-center gap-2">
+      <div className={`w-full p-4 rounded-lg bg-${accentColor}-500/10 border border-${accentColor}-500/20 flex items-center justify-between shadow-inner backdrop-blur-lg ${getGlowEffect()}`}>
+        <div className="flex items-center gap-3">
           {exchangeDirection === 'eth_to_usdt' ? (
-            <div className="h-6 w-6 flex items-center justify-center bg-usdt rounded-full text-white font-bold text-xs">
+            <div className="h-8 w-8 flex items-center justify-center bg-usdt rounded-full text-white font-bold text-sm">
               $
             </div>
           ) : (
-            <img src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" alt="ETH" className="h-6 w-6" />
+            <div className="h-8 w-8 rounded-full bg-black/30 p-1 backdrop-blur-sm flex items-center justify-center">
+              <img src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" alt="ETH" className="h-6 w-6" />
+            </div>
           )}
-          <span className="text-sm text-white/70">You'll receive</span>
+          <span className="text-sm text-white/80">You'll receive</span>
         </div>
         
-        <div className="flex items-center gap-1">
-          <span className={`text-lg font-bold text-${accentColor === 'purple' ? 'indigo' : 'yellow'}-300`}>
+        <div className="flex items-center gap-2">
+          <span className={`text-xl font-bold ${getTextColor()}`}>
             {estimatedResult ? parseFloat(estimatedResult.toFixed(6)) : '0.00'}
           </span>
-          <span className="text-xs text-white/60 mt-1">
+          <span className="text-sm text-white/70 px-2 py-0.5 rounded-md bg-white/5 border border-white/10">
             {exchangeDirection === 'eth_to_usdt' ? 'USDT' : 'ETH'}
           </span>
         </div>

@@ -75,12 +75,18 @@ export const ExchangeDialog = ({
     return exchangeType === 'frozen' ? 'amber' : 'purple';
   };
 
+  const getGlowEffect = () => {
+    return exchangeType === 'frozen' 
+      ? 'shadow-[0_0_30px_rgba(245,158,11,0.15)]'
+      : 'shadow-[0_0_30px_rgba(147,51,234,0.15)]';
+  };
+
   const accent = getAccentColor();
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent 
-        className={`sm:max-w-md bg-gradient-to-b ${getDialogGradient()} backdrop-blur-xl border border-${accent}-500/20 shadow-lg shadow-${accent}-500/10 rounded-xl`}
+        className={`sm:max-w-md bg-gradient-to-b ${getDialogGradient()} backdrop-blur-xl border border-${accent}-500/20 shadow-lg ${getGlowEffect()} rounded-xl`}
       >
         <div className={`absolute inset-0 rounded-lg bg-${accent}-500/5 pointer-events-none`} />
         
@@ -88,7 +94,7 @@ export const ExchangeDialog = ({
         
         <DialogHeader>
           <DialogTitle className={`text-xl font-bold bg-gradient-to-r from-${accent}-400 to-${accent === 'purple' ? 'indigo' : 'yellow'}-400 bg-clip-text text-transparent flex items-center gap-2`}>
-            <div className={`p-2 rounded-lg bg-${accent}-500/20`}>
+            <div className={`p-2 rounded-lg bg-${accent}-500/20 backdrop-blur-sm`}>
               <ArrowRightLeft className={`h-5 w-5 text-${accent}-500`} />
             </div>
             {exchangeType === 'frozen' ? 'Exchange Frozen Balance' : 'Exchange Currency'}
