@@ -17,6 +17,13 @@ export const ExchangeAmountInput = ({
   setExchangeAmount,
   accentColor = 'purple'
 }: ExchangeAmountInputProps) => {
+  // Get the appropriate text color based on the accent
+  const getTextColor = () => {
+    return accentColor === 'amber' 
+      ? 'text-amber-50' // Light amber text for frozen exchange
+      : 'text-white'; // White text for regular exchange
+  };
+
   return (
     <div className="space-y-1">
       <Label className={`text-sm font-medium text-${accentColor}-400/90 flex items-center gap-2`}>
@@ -31,7 +38,7 @@ export const ExchangeAmountInput = ({
           value={exchangeAmount} 
           onChange={e => setExchangeAmount(e.target.value)} 
           placeholder={`Enter amount in ${exchangeDirection === 'eth_to_usdt' ? 'ETH' : 'USDT'}`} 
-          className={`bg-${accentColor}-900/10 border-${accentColor}-500/20 focus:border-${accentColor}-500/40 pl-12 pr-4 h-14 text-lg text-${accentColor}-100 shadow-inner`} 
+          className={`${getTextColor()} bg-${accentColor}-900/10 border-${accentColor}-500/20 focus:border-${accentColor}-500/40 pl-12 pr-4 h-14 text-lg shadow-inner`} 
         />
         <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
           {exchangeDirection === 'eth_to_usdt' ? (
