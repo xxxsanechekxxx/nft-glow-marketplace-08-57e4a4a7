@@ -1,13 +1,5 @@
-
 import React from "react";
-import { 
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ArrowUpRight, ArrowDownLeft, RotateCw, ShoppingCart, Tag, Calendar } from "lucide-react";
@@ -23,7 +15,7 @@ const getStatusDetails = (status: string, isFrozen: boolean, isFrozenExchange: b
       text: "Pending"
     };
   }
-  
+
   // For sale transactions, they should be shown as frozen if funds go to hold
   if (type === 'sale' && isFrozen) {
     return {
@@ -32,7 +24,7 @@ const getStatusDetails = (status: string, isFrozen: boolean, isFrozenExchange: b
       text: "Frozen"
     };
   }
-  
+
   // For frozen balance but not frozen exchange, show as Frozen
   if (isFrozen && !isFrozenExchange) {
     return {
@@ -41,7 +33,7 @@ const getStatusDetails = (status: string, isFrozen: boolean, isFrozenExchange: b
       text: "Frozen"
     };
   }
-  
+
   // For exchange transactions from frozen balance, they're pending not frozen
   if (isFrozenExchange) {
     return {
@@ -50,7 +42,6 @@ const getStatusDetails = (status: string, isFrozen: boolean, isFrozenExchange: b
       text: "Pending"
     };
   }
-  
   switch (status) {
     case "completed":
       return {
@@ -136,24 +127,19 @@ const getCurrencyBadge = (currencyType: string) => {
     };
   }
 };
-
 interface TransactionHistoryProps {
   transactions: Transaction[];
 }
-
-export const TransactionHistory = ({ transactions }: TransactionHistoryProps) => {
+export const TransactionHistory = ({
+  transactions
+}: TransactionHistoryProps) => {
   const isMobile = useIsMobile();
-  
   if (!transactions || transactions.length === 0) {
-    return (
-      <div className="mt-6 text-center p-8 rounded-lg border border-primary/20 bg-white/5 backdrop-blur-sm">
+    return <div className="mt-6 text-center p-8 rounded-lg border border-primary/20 bg-white/5 backdrop-blur-sm">
         <p className="text-sm text-muted-foreground">No transactions found</p>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="mt-6">
+  return <div className="mt-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-base font-semibold text-white/90 flex items-center">
           <span className="bg-primary/15 p-1.5 rounded-md mr-2">
@@ -162,11 +148,9 @@ export const TransactionHistory = ({ transactions }: TransactionHistoryProps) =>
           Transaction History
         </h3>
         
-        {transactions.length > 0 && (
-          <span className="text-xs text-muted-foreground bg-white/5 px-2 py-1 rounded-md border border-primary/10">
+        {transactions.length > 0 && <span className="text-xs text-muted-foreground bg-white/5 px-2 py-1 rounded-md border border-primary/10">
             {transactions.length} transactions
-          </span>
-        )}
+          </span>}
       </div>
       
       <div className="overflow-hidden rounded-lg border border-primary/20 bg-black/40 backdrop-blur-sm transition-all hover:border-primary/30 shadow-[0_4px_12px_-2px_rgba(0,0,0,0.3)]">
@@ -182,20 +166,10 @@ export const TransactionHistory = ({ transactions }: TransactionHistoryProps) =>
             </TableHeader>
             <TableBody>
               {transactions.map(transaction => {
-                const typeDetails = getTypeDetails(transaction.type);
-                const statusDetails = getStatusDetails(
-                  transaction.status,
-                  transaction.is_frozen || false,
-                  transaction.is_frozen_exchange || false,
-                  transaction.type
-                );
-                const currencyBadge = getCurrencyBadge(transaction.currency_type || 'eth');
-                
-                return (
-                  <TableRow 
-                    key={transaction.id} 
-                    className="border-b border-primary/10 hover:bg-white/[0.03]"
-                  >
+              const typeDetails = getTypeDetails(transaction.type);
+              const statusDetails = getStatusDetails(transaction.status, transaction.is_frozen || false, transaction.is_frozen_exchange || false, transaction.type);
+              const currencyBadge = getCurrencyBadge(transaction.currency_type || 'eth');
+              return <TableRow key={transaction.id} className="border-b border-primary/10 hover:bg-white/[0.03]">
                     <TableCell className="py-3 text-xs text-white/70">
                       <div className="flex items-center gap-1.5">
                         <span className="inline-block p-1 rounded-full bg-white/10">
@@ -205,8 +179,7 @@ export const TransactionHistory = ({ transactions }: TransactionHistoryProps) =>
                       </div>
                     </TableCell>
                     
-                    {!isMobile && (
-                      <TableCell className="py-3">
+                    {!isMobile && <TableCell className="py-3">
                         <div className="flex items-center gap-2">
                           <div className={`p-1.5 rounded-full ${typeDetails.className}`}>
                             {typeDetails.icon}
@@ -215,49 +188,33 @@ export const TransactionHistory = ({ transactions }: TransactionHistoryProps) =>
                             {typeDetails.label}
                           </span>
                         </div>
-                      </TableCell>
-                    )}
+                      </TableCell>}
                     
                     <TableCell className="py-3 text-right">
                       <div className="flex items-center gap-2 justify-end">
-                        {isMobile && (
-                          <div className={`p-1 rounded-full ${typeDetails.className}`}>
+                        {isMobile && <div className={`p-1 rounded-full ${typeDetails.className}`}>
                             {typeDetails.icon}
-                          </div>
-                        )}
+                          </div>}
                         <div className="flex items-center gap-1.5">
-                          <span className={`text-xs font-medium ${
-                            transaction.type === 'deposit' || transaction.type === 'sale' 
-                              ? 'text-green-400' 
-                              : transaction.type === 'withdraw' || transaction.type === 'purchase' 
-                                ? 'text-red-400' 
-                                : 'text-white/80'
-                          }`}>
+                          <span className={`text-xs font-medium ${transaction.type === 'deposit' || transaction.type === 'sale' ? 'text-green-400' : transaction.type === 'withdraw' || transaction.type === 'purchase' ? 'text-red-400' : 'text-white/80'}`}>
                             {transaction.type === 'deposit' || transaction.type === 'sale' ? '+' : transaction.type === 'withdraw' || transaction.type === 'purchase' ? '-' : ''}
                             {parseFloat(transaction.amount).toFixed(transaction.currency_type === 'eth' ? 3 : 2)}
                           </span>
-                          <Badge variant="outline" className={`px-1.5 py-0 text-[10px] ${currencyBadge.className}`}>
-                            {currencyBadge.text}
-                          </Badge>
+                          
                         </div>
                       </div>
                     </TableCell>
                     
                     <TableCell className="py-3 text-right">
-                      <Badge 
-                        variant={statusDetails.variant} 
-                        className={`font-medium text-2xs px-2 py-0.5 ${statusDetails.className}`}
-                      >
+                      <Badge variant={statusDetails.variant} className={`font-medium text-2xs px-2 py-0.5 ${statusDetails.className}`}>
                         {statusDetails.text}
                       </Badge>
                     </TableCell>
-                  </TableRow>
-                );
-              })}
+                  </TableRow>;
+            })}
             </TableBody>
           </Table>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
