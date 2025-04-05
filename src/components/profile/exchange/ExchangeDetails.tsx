@@ -7,7 +7,7 @@ interface ExchangeDetailsProps {
   exchangeRate: number | null;
   reverseExchangeRate: number | null;
   isLoadingRate: boolean;
-  availableBalance: number;
+  availableBalance: string; // Changed from number to string to match the actual usage
   accentColor?: string;
 }
 
@@ -53,7 +53,7 @@ export const ExchangeDetails = ({
         </div>
         
         <span className={`text-xs font-medium text-${accentColor}-300`}>
-          {availableBalance} {exchangeDirection === 'eth_to_usdt' ? 'ETH' : 'USDT'}
+          {availableBalance}
         </span>
       </div>
     </div>
