@@ -20,22 +20,22 @@ export const ExchangeDetails = ({
   accentColor = 'purple'
 }: ExchangeDetailsProps) => {
   return (
-    <div className={`space-y-3 p-4 rounded-lg bg-${accentColor}-500/5 border border-${accentColor}-500/10`}>
+    <div className={`space-y-3 p-4 rounded-lg bg-black/50 border border-${accentColor}-500/20`}>
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <div className={`p-1 rounded-full bg-${accentColor}-500/20`}>
-            <Info className={`h-3.5 w-3.5 text-${accentColor}-400`} />
+          <div className={`p-1.5 rounded-full bg-${accentColor}-500/30`}>
+            <Info className={`h-3.5 w-3.5 text-${accentColor}-300`} />
           </div>
-          <span className="text-xs text-white/70">Exchange Rate</span>
+          <span className="text-sm text-white/90 font-medium">Exchange Rate</span>
         </div>
         
         {isLoadingRate ? (
           <div className="flex items-center gap-1.5">
-            <Loader2 className="h-3 w-3 animate-spin text-white/60" />
-            <span className="text-xs text-white/60">Loading...</span>
+            <Loader2 className={`h-3.5 w-3.5 animate-spin text-${accentColor}-300`} />
+            <span className={`text-sm text-${accentColor}-300`}>Loading...</span>
           </div>
         ) : (
-          <span className={`text-xs font-medium text-${accentColor}-300`}>
+          <span className={`text-sm font-medium text-${accentColor}-200`}>
             {exchangeDirection === 'eth_to_usdt' 
               ? `1 ETH ≈ ${exchangeRate?.toFixed(2)} USDT` 
               : `1 USDT ≈ ${reverseExchangeRate?.toFixed(6)} ETH`
@@ -46,13 +46,13 @@ export const ExchangeDetails = ({
       
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <div className={`p-1 rounded-full bg-${accentColor}-500/20`}>
-            <Wallet className={`h-3.5 w-3.5 text-${accentColor}-400`} />
+          <div className={`p-1.5 rounded-full bg-${accentColor}-500/30`}>
+            <Wallet className={`h-3.5 w-3.5 text-${accentColor}-300`} />
           </div>
-          <span className="text-xs text-white/70">Available Balance</span>
+          <span className="text-sm text-white/90 font-medium">Available Balance</span>
         </div>
         
-        <span className={`text-xs font-medium text-${accentColor}-300`}>
+        <span className={`text-sm font-medium text-${accentColor}-200`}>
           {availableBalance}
         </span>
       </div>

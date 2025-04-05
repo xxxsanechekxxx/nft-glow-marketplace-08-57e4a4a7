@@ -17,17 +17,23 @@ export const ExchangeAmountInput = ({
   setExchangeAmount,
   accentColor = 'purple'
 }: ExchangeAmountInputProps) => {
-  // Get the appropriate text color based on the accent
-  const getTextColor = () => {
-    return accentColor === 'amber' 
-      ? 'text-amber-50' // Light amber text for frozen exchange
-      : 'text-white'; // White text for regular exchange
+  // Get the appropriate input styling based on the accent color
+  const getInputClass = () => {
+    const baseClasses = "bg-opacity-20 border-opacity-30 focus:border-opacity-50 pl-12 pr-4 h-14 text-lg shadow-inner";
+    
+    if (accentColor === 'amber') {
+      // Enhanced contrast for frozen exchange
+      return `text-amber-100 bg-black/40 border-amber-500 focus:border-amber-400 ${baseClasses} shadow-amber-600/30`;
+    } else {
+      // Regular exchange
+      return `text-white bg-purple-900/20 border-purple-500/30 focus:border-purple-400 ${baseClasses} shadow-purple-600/20`;
+    }
   };
 
   return (
     <div className="space-y-1">
-      <Label className={`text-sm font-medium text-${accentColor}-400/90 flex items-center gap-2`}>
-        <DollarSign className="h-4 w-4" />
+      <Label className={`text-base font-medium text-${accentColor}-300 flex items-center gap-2`}>
+        <DollarSign className={`h-4 w-4 text-${accentColor}-400`} />
         Amount to Exchange
       </Label>
       <div className="relative">
@@ -38,7 +44,7 @@ export const ExchangeAmountInput = ({
           value={exchangeAmount} 
           onChange={e => setExchangeAmount(e.target.value)} 
           placeholder={`Enter amount in ${exchangeDirection === 'eth_to_usdt' ? 'ETH' : 'USDT'}`} 
-          className={`${getTextColor()} bg-${accentColor}-900/10 border-${accentColor}-500/20 focus:border-${accentColor}-500/40 pl-12 pr-4 h-14 text-lg shadow-inner`} 
+          className={getInputClass()} 
         />
         <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
           {exchangeDirection === 'eth_to_usdt' ? (
