@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -201,6 +202,9 @@ export const TransactionHistory = ({
                             {parseFloat(transaction.amount).toFixed(transaction.currency_type === 'eth' ? 3 : 2)}
                           </span>
                           
+                          <Badge variant="outline" className={`text-2xs px-1.5 py-0 ml-1 ${currencyBadge.className}`}>
+                            {currencyBadge.text}
+                          </Badge>
                         </div>
                       </div>
                     </TableCell>

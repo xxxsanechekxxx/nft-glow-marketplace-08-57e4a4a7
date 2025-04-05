@@ -8,16 +8,18 @@ interface ExchangeAmountInputProps {
   exchangeAmount: string;
   exchangeDirection: 'eth_to_usdt' | 'usdt_to_eth';
   setExchangeAmount: (value: string) => void;
+  accentColor?: string;
 }
 
 export const ExchangeAmountInput = ({
   exchangeAmount,
   exchangeDirection,
-  setExchangeAmount
+  setExchangeAmount,
+  accentColor = 'purple'
 }: ExchangeAmountInputProps) => {
   return (
     <div className="space-y-1">
-      <Label className="text-sm font-medium text-purple-400/90 flex items-center gap-2">
+      <Label className={`text-sm font-medium text-${accentColor}-400/90 flex items-center gap-2`}>
         <DollarSign className="h-4 w-4" />
         Amount to Exchange
       </Label>
@@ -29,7 +31,7 @@ export const ExchangeAmountInput = ({
           value={exchangeAmount} 
           onChange={e => setExchangeAmount(e.target.value)} 
           placeholder={`Enter amount in ${exchangeDirection === 'eth_to_usdt' ? 'ETH' : 'USDT'}`} 
-          className="bg-purple-900/10 border-purple-500/20 focus:border-purple-500/40 pl-12 pr-4 h-14 text-lg text-purple-100" 
+          className={`bg-${accentColor}-900/10 border-${accentColor}-500/20 focus:border-${accentColor}-500/40 pl-12 pr-4 h-14 text-lg text-${accentColor}-100 shadow-inner`} 
         />
         <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
           {exchangeDirection === 'eth_to_usdt' ? (
