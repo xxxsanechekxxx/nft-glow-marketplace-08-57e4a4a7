@@ -1,4 +1,3 @@
-
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
@@ -54,7 +53,6 @@ const NFTDetail = () => {
     enabled: !!user,
   });
 
-  // Simulate initial animation
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
@@ -68,7 +66,6 @@ const NFTDetail = () => {
   };
 
   const handleBidDeclined = () => {
-    // Invalidate both the nft and nft_bids queries to ensure fresh data is fetched
     queryClient.invalidateQueries({ queryKey: ['nft', id] });
     queryClient.invalidateQueries({ queryKey: ['user-balance', user?.id] });
     queryClient.invalidateQueries({ queryKey: ['nfts'] });
@@ -143,7 +140,6 @@ const NFTDetail = () => {
 
   return (
     <div className="min-h-[90vh] relative overflow-hidden bg-gradient-to-b from-background via-background/80 to-background/60">
-      {/* Enhanced background with animated gradient */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-purple-500/10 via-pink-500/5 to-primary/10 blur-3xl -z-10 animate-pulse" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_var(--tw-gradient-stops))] from-pink-500/5 via-primary/5 to-purple-500/10 blur-3xl -z-10 opacity-70" />
       
@@ -185,7 +181,6 @@ const NFTDetail = () => {
               </div>
             )}
             
-            {/* New decorative element */}
             <div className="absolute -bottom-6 -left-6 w-24 h-24 bg-gradient-to-tr from-primary/20 to-purple-500/40 rounded-full blur-2xl -z-10"></div>
             <div className="absolute -top-6 -right-6 w-32 h-32 bg-gradient-to-bl from-pink-500/20 to-primary/30 rounded-full blur-3xl -z-10"></div>
           </motion.div>
@@ -202,13 +197,6 @@ const NFTDetail = () => {
                   <div>
                     <p className="text-sm sm:text-base text-muted-foreground mb-2">Current price</p>
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-[#627EEA] to-[#3050B0] rounded-full flex items-center justify-center p-1 shadow-lg shadow-[#627EEA]/20">
-                        <img 
-                          src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
-                          alt="ETH"
-                          className="h-4 w-4 sm:h-6 sm:w-6"
-                        />
-                      </div>
                       <span className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-white to-primary bg-clip-text text-transparent">
                         {nft.price} ETH
                       </span>
