@@ -80,9 +80,11 @@ export const MarketplaceSearch = ({
         <Select value={sortBy} onValueChange={setSortBy}>
           <SelectTrigger 
             className="w-full md:w-[200px] bg-black/30 backdrop-blur-sm border-white/10 hover:border-white/20 transition-all duration-300 shadow-lg h-12"
-            icon={<SlidersHorizontal className="w-4 h-4 opacity-70 mr-2" />}
           >
-            <SelectValue placeholder="Sort by" />
+            <div className="flex items-center">
+              <SlidersHorizontal className="w-4 h-4 opacity-70 mr-2" />
+              <SelectValue placeholder="Sort by" />
+            </div>
           </SelectTrigger>
           <SelectContent className="bg-black/90 backdrop-blur-md border-primary/20 min-w-[200px]">
             <SelectItem value="newest">Newest First</SelectItem>
