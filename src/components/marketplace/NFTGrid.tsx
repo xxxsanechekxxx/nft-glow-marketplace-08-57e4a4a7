@@ -4,6 +4,7 @@ import { Loader2, Search } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { motion, AnimatePresence } from "framer-motion";
+import { Badge } from "@/components/ui/badge";
 
 interface NFT {
   id: string;
@@ -134,6 +135,61 @@ export const NFTGrid = ({
               ))}
             </AnimatePresence>
           </motion.div>
+
+          {/* Featured Collections Section */}
+          <div className="mt-12 mb-6">
+            <h3 className="text-xl font-semibold text-white mb-4">Featured Collections</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[1, 2, 3].map((index) => (
+                <motion.div 
+                  key={`collection-${index}`}
+                  className="bg-black/30 backdrop-blur-sm border border-white/10 hover:border-white/20 transition-all duration-300 shadow-lg rounded-xl overflow-hidden"
+                  whileHover={{ scale: 1.02 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 * index }}
+                >
+                  <div className="h-24 bg-gradient-to-r from-purple-500/20 to-pink-500/20 flex items-center justify-center">
+                    <div className="grid grid-cols-3 gap-1">
+                      {[1, 2, 3].map(i => (
+                        <div key={i} className="w-12 h-12 bg-white/10 rounded-md"></div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <h4 className="font-medium text-white">Collection {index}</h4>
+                    <p className="text-xs text-purple-300/80">24 items</p>
+                    <Badge className="mt-2 bg-primary/20 text-primary border-0">Featured</Badge>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          {/* Trending Artists Section */}
+          <div className="mt-8 mb-10">
+            <h3 className="text-xl font-semibold text-white mb-4">Trending Artists</h3>
+            <div className="flex flex-wrap gap-4">
+              {[1, 2, 3, 4, 5].map((index) => (
+                <motion.div 
+                  key={`artist-${index}`}
+                  className="flex items-center space-x-3 bg-black/30 backdrop-blur-sm border border-white/10 p-3 rounded-xl"
+                  whileHover={{ scale: 1.05 }}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 * index }}
+                >
+                  <div className="w-10 h-10 bg-gradient-to-r from-purple-500/30 to-pink-500/30 rounded-full flex items-center justify-center">
+                    <span className="text-white text-xs">#{index}</span>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium text-white">Artist {index}</h4>
+                    <p className="text-xs text-purple-300/80">Floor: 0.{index*2} ETH</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
 
           {isFetchingNextPage && (
             <motion.div 

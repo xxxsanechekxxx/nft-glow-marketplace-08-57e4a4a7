@@ -7,7 +7,10 @@ import { MarketplaceStats } from "@/components/marketplace/MarketplaceStats";
 import { MarketplaceSearch } from "@/components/marketplace/MarketplaceSearch";
 import { NFTGrid } from "@/components/marketplace/NFTGrid";
 import { motion } from "framer-motion";
-import { FilterX } from "lucide-react";
+import { FilterX, Sparkles, TrendingUp, Zap } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface NFT {
   id: string;
@@ -32,6 +35,8 @@ const Marketplace = () => {
   const { ref, inView } = useInView();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("newest");
+  const [currentCategory, setCurrentCategory] = useState<string | null>(null);
+  const isMobile = useIsMobile();
 
   const fetchNFTs = async ({ pageParam = 0 }) => {
     const from = pageParam * ITEMS_PER_PAGE;
@@ -86,7 +91,7 @@ const Marketplace = () => {
     isFetchingNextPage,
     refetch
   } = useInfiniteQuery({
-    queryKey: ['nfts', searchQuery, sortBy],
+    queryKey: ['nfts', searchQuery, sortBy, currentCategory],
     queryFn: fetchNFTs,
     getNextPageParam: (lastPage) => lastPage.nextPage,
     initialPageParam: 0,
@@ -97,7 +102,7 @@ const Marketplace = () => {
   // При изменении параметров сортировки или поиска, делаем новый запрос
   useEffect(() => {
     refetch();
-  }, [sortBy, searchQuery, refetch]);
+  }, [sortBy, searchQuery, currentCategory, refetch]);
 
   useEffect(() => {
     if (inView && !isLoading && !isFetchingNextPage && hasNextPage) {
@@ -118,6 +123,12 @@ const Marketplace = () => {
   const allNFTs = data?.pages.flatMap(page => page.data) || [];
   const hasResults = allNFTs.length > 0;
   const isFiltering = searchQuery.trim() !== '';
+
+  const categories = [
+    { id: 'art', name: 'Art', icon: <Sparkles className="h-4 w-4" /> },
+    { id: 'collectibles', name: 'Collectibles', icon: <Zap className="h-4 w-4" /> },
+    { id: 'trending', name: 'Trending', icon: <TrendingUp className="h-4 w-4" /> },
+  ];
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-b from-background via-background/80 to-background/60">
@@ -156,7 +167,7 @@ const Marketplace = () => {
       
       <div className="container mx-auto px-4 pt-24 pb-16">
         <motion.div 
-          className="text-center mb-12 space-y-8"
+          className="text-center mb-8 space-y-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -180,6 +191,38 @@ const Marketplace = () => {
               Discover and collect extraordinary NFTs from talented creators around the world
             </motion.p>
           </div>
+
+          {/* Category selector */}
+          <motion.div
+            className="flex justify-center gap-3 flex-wrap"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <Button
+              variant={!currentCategory ? "secondary" : "outline"}
+              size="sm"
+              onClick={() => setCurrentCategory(null)}
+              className={!currentCategory ? "bg-primary/20 border-primary/30 text-white" : ""}
+            >
+              All NFTs
+            </Button>
+            
+            {categories.map((category) => (
+              <Button
+                key={category.id}
+                variant={currentCategory === category.id ? "secondary" : "outline"}
+                size="sm"
+                onClick={() => setCurrentCategory(category.id)}
+                className={currentCategory === category.id ? "bg-primary/20 border-primary/30 text-white" : ""}
+              >
+                <span className="flex items-center gap-1.5">
+                  {category.icon}
+                  {category.name}
+                </span>
+              </Button>
+            ))}
+          </motion.div>
 
           <MarketplaceStats />
           
@@ -205,6 +248,40 @@ const Marketplace = () => {
                 >
                   <FilterX size={14} />
                 </button>
+              </div>
+            </motion.div>
+          )}
+          
+          {/* Featured NFT banner */}
+          {!isFiltering && !currentCategory && (
+            <motion.div 
+              className="mt-6 relative rounded-xl overflow-hidden"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-purple-500/20 to-pink-500/20 blur-md" />
+              <div className="relative bg-black/40 backdrop-blur-sm border border-white/10 p-6 rounded-xl flex flex-col md:flex-row items-center gap-6">
+                <div className="w-full md:w-1/3 aspect-square rounded-lg overflow-hidden">
+                  <img 
+                    src="public/lovable-uploads/350b8c2d-fce4-4eca-bddc-319d143587a0.png" 
+                    alt="Featured NFT" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="w-full md:w-2/3 space-y-4">
+                  <Badge className="bg-primary/20 text-primary border-0">Featured Collection</Badge>
+                  <h2 className="text-2xl md:text-3xl font-bold text-white">Bored Ape Yacht Club</h2>
+                  <p className="text-muted-foreground/80">
+                    The Bored Ape Yacht Club is a collection of 10,000 unique digital collectibles living on the Ethereum blockchain.
+                  </p>
+                  <div className="flex gap-3">
+                    <Button variant="secondary" className="bg-primary/20 border border-primary/30">
+                      View Collection
+                    </Button>
+                    <Button variant="outline">Learn More</Button>
+                  </div>
+                </div>
               </div>
             </motion.div>
           )}
