@@ -3,6 +3,7 @@ import { NFTCard } from "@/components/NFTCard";
 import { Loader2, Search } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface NFT {
   id: string;
@@ -30,28 +31,66 @@ export const NFTGrid = ({
 }: NFTGridProps) => {
   const isMobile = useIsMobile();
   
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+  
+  const item = {
+    hidden: { 
+      opacity: 0,
+      y: 20
+    },
+    show: { 
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 80,
+        damping: 20
+      }
+    }
+  };
+  
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[200px] space-y-4">
+      <motion.div 
+        className="flex flex-col items-center justify-center min-h-[300px] space-y-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
         <div className="relative">
-          <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-full blur-md animate-pulse" />
-          <Loader2 className="h-8 w-8 animate-[spin_2s_linear_infinite] text-primary relative" />
+          <div className="absolute -inset-8 bg-gradient-to-r from-primary/30 to-purple-500/30 rounded-full blur-xl opacity-70 animate-pulse" />
+          <Loader2 className="h-12 w-12 animate-[spin_2s_linear_infinite] text-primary relative" />
         </div>
-        <p className="text-muted-foreground animate-pulse">Loading NFTs...</p>
-      </div>
+        <p className="text-lg text-muted-foreground animate-pulse mt-4">Loading NFTs...</p>
+      </motion.div>
     );
   }
 
   if (nfts.length === 0) {
     return (
-      <div className="text-center py-16 space-y-4 animate-fade-in">
+      <motion.div 
+        className="text-center py-20 space-y-6"
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+      >
         <div className="relative inline-block">
-          <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-full blur-md" />
-          <Search className="w-12 h-12 text-muted-foreground" />
+          <div className="absolute -inset-10 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-full blur-xl" />
+          <Search className="w-16 h-16 text-muted-foreground" />
         </div>
-        <p className="text-2xl font-semibold text-muted-foreground">No NFTs found</p>
-        <p className="text-muted-foreground/60">Try adjusting your search criteria</p>
-      </div>
+        <div>
+          <p className="text-3xl font-semibold text-white">No NFTs found</p>
+          <p className="text-muted-foreground/60 mt-2 text-lg">Try adjusting your search criteria</p>
+        </div>
+      </motion.div>
     );
   }
 
@@ -64,35 +103,54 @@ export const NFTGrid = ({
       </div>
       
       <ScrollArea className={`${isMobile ? 'h-[calc(100vh-350px)]' : 'h-[calc(100vh-400px)]'} rounded-xl backdrop-blur-sm border border-primary/20 shadow-[0_0_15px_rgba(0,0,0,0.1)] relative`}>
-        <div className="p-4 md:p-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8 marketplace-nft-grid">
-            {nfts.map((nft, index) => (
-              <div
-                key={nft.id}
-                className="opacity-0 animate-[fadeIn_1s_ease-out_forwards] group"
-                style={{
-                  animationDelay: `${index * 200}ms`,
-                }}
-              >
-                <div className="relative transition-transform duration-700 group-hover:translate-y-[-8px] group-hover:scale-[1.02]">
-                  <div className="absolute -inset-2 bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                  <NFTCard {...nft} for_sale={nft.for_sale} />
-                </div>
-              </div>
-            ))}
-          </div>
+        <motion.div 
+          className="p-4 md:p-6"
+          variants={container}
+          initial="hidden"
+          animate="show"
+        >
+          <motion.div 
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 marketplace-nft-grid"
+            variants={container}
+            initial="hidden"
+            animate="show"
+          >
+            <AnimatePresence>
+              {nfts.map((nft) => (
+                <motion.div
+                  key={nft.id}
+                  variants={item}
+                  layout
+                  className="group"
+                >
+                  <motion.div 
+                    className="relative transition-all duration-700 group-hover:translate-y-[-8px]"
+                    whileHover={{ scale: 1.02 }}
+                  >
+                    <div className="absolute -inset-2 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                    <NFTCard {...nft} for_sale={nft.for_sale} />
+                  </motion.div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
 
           {isFetchingNextPage && (
-            <div className="flex justify-center py-12">
+            <motion.div 
+              className="flex justify-center py-12"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
               <div className="relative">
                 <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-full blur-md animate-pulse" />
                 <Loader2 className="h-8 w-8 animate-[spin_2s_linear_infinite] text-primary relative" />
               </div>
-            </div>
+            </motion.div>
           )}
 
           <div ref={lastElementRef} className="w-full h-20" />
-        </div>
+        </motion.div>
       </ScrollArea>
     </div>
   );
