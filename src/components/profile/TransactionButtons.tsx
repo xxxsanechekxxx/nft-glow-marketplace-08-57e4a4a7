@@ -1,7 +1,9 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowDownCircle, ArrowUpCircle, Wallet } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
 export const TransactionButtons = () => {
   const navigate = useNavigate();
   return <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -15,17 +17,17 @@ export const TransactionButtons = () => {
         {/* Content wrapper with z-index to appear above particles */}
         <div className="relative z-10 flex items-center justify-between w-full">
           <div className="flex items-center gap-4">
-            <div className="flex-shrink-0 w-14 h-14 flex items-center justify-center bg-gradient-to-br from-green-400/30 to-emerald-600/30 rounded-xl border border-green-500/30 backdrop-blur-md shadow-inner">
+            <div className="flex-shrink-0 w-14 h-14 flex items-center justify-center bg-gradient-to-br from-green-400/40 to-emerald-600/40 rounded-xl border border-green-500/40 backdrop-blur-md shadow-inner">
               <Wallet className="w-8 h-8 text-white" strokeWidth={1.5} />
             </div>
             
             <div className="flex flex-col items-start">
               <span className="text-2xl font-bold mb-1 bg-gradient-to-r from-white to-green-100 bg-clip-text text-transparent">Deposit</span>
-              
+              <span className="text-xs text-green-200/70 hidden md:inline-block">Add funds to your wallet</span>
             </div>
           </div>
           
-          <div className="hidden md:flex h-10 w-10 rounded-full bg-green-500/20 items-center justify-center group-hover:translate-x-1 transition-transform duration-300">
+          <div className="hidden md:flex h-10 w-10 rounded-full bg-green-500/30 items-center justify-center group-hover:translate-x-1 transition-transform duration-300 shadow-lg">
             <ArrowDownCircle className="h-6 w-6 text-green-200" strokeWidth={1.5} />
           </div>
         </div>
@@ -41,17 +43,17 @@ export const TransactionButtons = () => {
         {/* Content wrapper with z-index to appear above particles */}
         <div className="relative z-10 flex items-center justify-between w-full">
           <div className="flex items-center gap-4">
-            <div className="flex-shrink-0 w-14 h-14 flex items-center justify-center bg-gradient-to-br from-orange-400/30 to-red-600/30 rounded-xl border border-orange-400/30 backdrop-blur-md shadow-inner">
+            <div className="flex-shrink-0 w-14 h-14 flex items-center justify-center bg-gradient-to-br from-orange-400/40 to-red-600/40 rounded-xl border border-orange-400/40 backdrop-blur-md shadow-inner">
               <Wallet className="w-8 h-8 text-white" strokeWidth={1.5} />
             </div>
             
             <div className="flex flex-col items-start">
               <span className="text-2xl font-bold mb-1 bg-gradient-to-r from-white to-orange-100 bg-clip-text text-transparent">Withdraw</span>
-              
+              <span className="text-xs text-orange-200/70 hidden md:inline-block">Transfer funds to your account</span>
             </div>
           </div>
           
-          <div className="hidden md:flex h-10 w-10 rounded-full bg-orange-500/20 items-center justify-center group-hover:translate-x-1 transition-transform duration-300">
+          <div className="hidden md:flex h-10 w-10 rounded-full bg-orange-500/30 items-center justify-center group-hover:translate-x-1 transition-transform duration-300 shadow-lg">
             <ArrowUpCircle className="h-6 w-6 text-orange-200" strokeWidth={1.5} />
           </div>
         </div>

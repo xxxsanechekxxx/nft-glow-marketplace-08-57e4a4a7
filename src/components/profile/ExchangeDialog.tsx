@@ -59,48 +59,49 @@ export const ExchangeDialog = ({
     }
   };
 
-  const getDialogGradient = () => {
-    return exchangeType === 'frozen' 
-      ? 'from-amber-900/90 via-amber-800/90 to-amber-900/90'
-      : 'from-[#261E57]/90 via-[#201347]/90 to-[#1E1245]/90';
+  // Determine color scheme based on exchangeType
+  const getColors = () => {
+    if (exchangeType === 'frozen') {
+      return {
+        gradient: 'from-amber-900/95 via-amber-800/95 to-amber-900/95',
+        headerGradient: 'from-amber-300 to-yellow-300',
+        accentColor: 'amber',
+        buttonGradient: 'from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600',
+        glow: 'shadow-[0_0_35px_rgba(245,158,11,0.25)]',
+        topBorder: 'from-amber-600/70 via-amber-500/50 to-amber-600/70'
+      };
+    }
+    return {
+      gradient: 'from-[#261E57]/95 via-[#201347]/95 to-[#1E1245]/95',
+      headerGradient: 'from-purple-300 to-indigo-300',
+      accentColor: 'purple',
+      buttonGradient: 'from-purple-600 to-indigo-500 hover:from-purple-700 hover:to-indigo-600',
+      glow: 'shadow-[0_0_35px_rgba(147,51,234,0.25)]',
+      topBorder: 'from-purple-600/70 via-purple-500/50 to-purple-600/70'
+    };
   };
 
-  const getButtonGradient = () => {
-    return exchangeType === 'frozen'
-      ? 'bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 border-amber-500/50 shadow-amber-600/20'
-      : 'bg-gradient-to-r from-purple-600 to-indigo-500 hover:from-purple-700 hover:to-indigo-600 border-purple-500/50 shadow-purple-600/20';
-  };
-
-  const getAccentColor = () => {
-    return exchangeType === 'frozen' ? 'amber' : 'purple';
-  };
-
-  const getGlowEffect = () => {
-    return exchangeType === 'frozen' 
-      ? 'shadow-[0_0_35px_rgba(245,158,11,0.2)]'
-      : 'shadow-[0_0_35px_rgba(147,51,234,0.2)]';
-  };
-
-  const accent = getAccentColor();
+  const colors = getColors();
+  const accent = colors.accentColor;
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent 
-        className={`sm:max-w-md bg-gradient-to-b ${getDialogGradient()} backdrop-blur-xl border border-${accent}-500/30 shadow-lg ${getGlowEffect()} rounded-xl`}
+        className={`sm:max-w-md bg-gradient-to-b ${colors.gradient} backdrop-blur-xl border border-${accent}-500/40 shadow-lg ${colors.glow} rounded-xl`}
       >
         <div className={`absolute inset-0 rounded-lg bg-${accent}-500/5 pointer-events-none`} />
         
-        <div className={`absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-${accent}-600/70 via-${accent}-500/50 to-${accent}-600/70`}></div>
+        <div className={`absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r ${colors.topBorder}`}></div>
         
         <DialogHeader className="mb-4">
-          <DialogTitle className={`text-2xl font-bold bg-gradient-to-r from-${accent}-300 to-${accent === 'purple' ? 'indigo' : 'yellow'}-300 bg-clip-text text-transparent flex items-center gap-2`}>
-            <div className={`p-2 rounded-lg bg-${accent}-500/30 backdrop-blur-sm`}>
+          <DialogTitle className={`text-2xl font-bold bg-gradient-to-r ${colors.headerGradient} bg-clip-text text-transparent flex items-center gap-2`}>
+            <div className={`p-2 rounded-lg bg-${accent}-500/30 backdrop-blur-sm shadow-inner`}>
               <ArrowRightLeft className={`h-5 w-5 text-${accent}-400`} />
             </div>
             {exchangeType === 'frozen' ? 'Exchange Frozen Balance' : 'Exchange Currency'}
           </DialogTitle>
           <DialogDescription className={`text-${accent}-200 mt-2 text-base`}>
-            Convert between {exchangeType === 'frozen' ? 'frozen ' : ''}ETH and {exchangeType === 'frozen' ? 'frozen ' : ''}USDT with ease
+            Convert between {exchangeType === 'frozen' ? 'frozen ' : ''}ETH and {exchangeType === 'frozen' ? 'frozen ' : ''}USDT with real-time rates
           </DialogDescription>
         </DialogHeader>
         
@@ -136,7 +137,7 @@ export const ExchangeDialog = ({
           <div className="pt-3">
             <Button 
               type="submit" 
-              className={`w-full ${getButtonGradient()} text-white py-6 rounded-lg transition-all duration-300 shadow-lg border h-12 font-medium`}
+              className={`w-full bg-gradient-to-r ${colors.buttonGradient} text-white py-6 rounded-lg transition-all duration-300 shadow-lg border border-${accent}-500/50 h-12 font-medium`}
             >
               <ArrowRightLeft className="h-5 w-5 mr-2" />
               Confirm Exchange
