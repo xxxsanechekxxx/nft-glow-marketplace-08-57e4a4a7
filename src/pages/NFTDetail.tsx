@@ -1,3 +1,4 @@
+
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
@@ -197,6 +198,11 @@ const NFTDetail = () => {
                   <div>
                     <p className="text-sm sm:text-base text-muted-foreground mb-2">Current price</p>
                     <div className="flex items-center gap-2">
+                      <img 
+                        src="/lovable-uploads/7dcd0dff-e904-44df-813e-caf5a6160621.png" 
+                        alt="ETH"
+                        className="h-5 w-5 sm:h-6 sm:w-6"
+                      />
                       <span className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-white to-primary bg-clip-text text-transparent">
                         {nft.price} ETH
                       </span>
