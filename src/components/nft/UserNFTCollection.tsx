@@ -341,7 +341,7 @@ export const UserNFTCollection = () => {
                     <div className="p-1.5 rounded-lg bg-green-500/20 border border-green-500/30">
                       <Wallet className="w-4 h-4 text-green-400" />
                     </div>
-                    <CardTitle className="text-xl font-medium text-white">Currently Listed on Rarible</CardTitle>
+                    <CardTitle className="text-xl font-medium text-white">Currently Listed</CardTitle>
                   </div>
                   <CardDescription className="text-purple-300/70">NFTs you've put up for sale in the marketplace</CardDescription>
                 </CardHeader>
