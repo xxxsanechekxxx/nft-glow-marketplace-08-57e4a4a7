@@ -1,3 +1,4 @@
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
@@ -10,7 +11,7 @@ interface FraudWarningDialogProps {
 const FraudWarningDialog = ({ isOpen, onClose }: FraudWarningDialogProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md pt-10"> {/* Added pt-10 for more space at top */}
         <DialogHeader>
           <div className="flex flex-col items-center space-y-4">
             <X className="w-16 h-16 text-red-500" strokeWidth={2.5} />

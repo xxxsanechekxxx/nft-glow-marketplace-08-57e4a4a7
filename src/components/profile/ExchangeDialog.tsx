@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -87,7 +86,7 @@ export const ExchangeDialog = ({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent 
-        className={`sm:max-w-md bg-gradient-to-b ${colors.gradient} backdrop-blur-xl border border-${accent}-500/40 shadow-lg ${colors.glow} rounded-xl`}
+        className={`sm:max-w-md bg-gradient-to-b ${colors.gradient} backdrop-blur-xl border border-${accent}-500/40 shadow-lg ${colors.glow} rounded-xl pt-10`}
       >
         <div className={`absolute inset-0 rounded-lg bg-${accent}-500/5 pointer-events-none`} />
         
