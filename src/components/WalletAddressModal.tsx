@@ -6,11 +6,13 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from '@/lib/supabase';
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from '@/hooks/use-mobile';
+import { X } from "lucide-react";
 
 interface WalletAddressModalProps {
   isOpen: boolean;
@@ -59,12 +61,16 @@ const WalletAddressModal = ({ isOpen, onClose, onGenerated }: WalletAddressModal
         onClose();
       }
     }}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-[#0B0D17]/95 border-primary/20 text-white">
+        <DialogClose className="absolute right-4 top-4 rounded-full p-1 text-white hover:bg-primary/20 transition-colors">
+          <X className="h-5 w-5" />
+          <span className="sr-only">Close</span>
+        </DialogClose>
         <DialogHeader>
           <DialogTitle>
             {isGenerating ? "Generating Wallet Address" : "Wallet Address Generated"}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-gray-300">
             {isGenerating ? (
               <div className="space-y-4 mt-4">
                 <Progress value={progress} />
@@ -73,7 +79,7 @@ const WalletAddressModal = ({ isOpen, onClose, onGenerated }: WalletAddressModal
             ) : (
               <div className="space-y-4 mt-4">
                 <p>Your address has been generated successfully!</p>
-                <p className={`font-mono bg-muted p-2 rounded-md ${isMobile ? 'text-xs break-all' : 'break-all'}`}>
+                <p className={`font-mono bg-[#0F1525] p-2 rounded-md ${isMobile ? 'text-xs break-all' : 'break-all'}`}>
                   {generatedAddress}
                 </p>
                 <p>You can now transfer your Ethereum to this address to fund your balance.</p>
