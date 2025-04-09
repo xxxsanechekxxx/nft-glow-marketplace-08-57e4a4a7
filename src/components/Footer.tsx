@@ -47,7 +47,7 @@ export const Footer = () => {
               </h4>
               <form onSubmit={handleSubscribe} className="relative group">
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-lg blur opacity-50 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
-                <div className="relative flex gap-2">
+                <div className="relative flex flex-col sm:flex-row gap-2">
                   <Input
                     type="email"
                     name="email"
@@ -57,7 +57,7 @@ export const Footer = () => {
                   />
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-gradient-to-r from-primary to-purple-500 text-white rounded-md hover:brightness-110 transition-all duration-300 shadow-lg shadow-primary/20"
+                    className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-primary to-purple-500 text-white rounded-md hover:brightness-110 transition-all duration-300 shadow-lg shadow-primary/20"
                   >
                     Subscribe
                   </button>
