@@ -13,6 +13,7 @@ import { supabase } from '@/lib/supabase';
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from '@/hooks/use-mobile';
 import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface WalletAddressModalProps {
   isOpen: boolean;
@@ -83,6 +84,14 @@ const WalletAddressModal = ({ isOpen, onClose, onGenerated }: WalletAddressModal
                   {generatedAddress}
                 </p>
                 <p>You can now transfer your Ethereum to this address to fund your balance.</p>
+                {!generatedAddress && (
+                  <Button 
+                    variant="gradient" 
+                    className="w-full text-white bg-gradient-to-r from-purple-600 to-indigo-500 hover:from-purple-700 hover:to-indigo-600"
+                  >
+                    Generate Address
+                  </Button>
+                )}
               </div>
             )}
           </DialogDescription>
@@ -93,3 +102,4 @@ const WalletAddressModal = ({ isOpen, onClose, onGenerated }: WalletAddressModal
 };
 
 export default WalletAddressModal;
+
