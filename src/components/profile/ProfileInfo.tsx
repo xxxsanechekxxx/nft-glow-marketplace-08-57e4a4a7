@@ -8,10 +8,12 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import type { UserData } from "@/types/user";
+
 interface ProfileInfoProps {
   userData: UserData | null;
   setIsWalletModalOpen: (isOpen: boolean) => void;
 }
+
 export const ProfileInfo = ({
   userData,
   setIsWalletModalOpen
@@ -129,8 +131,8 @@ export const ProfileInfo = ({
                   ERC-20
                 </div> : <Button onClick={() => setIsWalletModalOpen(true)} className={`bg-gradient-to-r from-purple-600/20 to-primary/20 border border-primary/10 text-primary hover:from-purple-600/30 hover:to-primary/30 transition-colors flex items-center gap-2 group relative overflow-hidden h-12 ${isMobile ? 'w-full' : ''}`}>
                   <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <Wallet className="w-4 h-4 relative z-10" />
-                  <span className="relative z-10">Generate Address</span>
+                  <Wallet className="w-4 h-4 relative z-10 text-white" />
+                  <span className="relative z-10 text-white">Generate Address</span>
                 </Button>}
             </div>
           </div>
