@@ -41,7 +41,7 @@ const WalletAddressModal = ({ isOpen, onClose, onGenerated }: WalletAddressModal
         if (elapsed >= duration) {
           clearInterval(interval);
           setIsGenerating(false);
-          const address = "0xc68c825191546453e36aaa005ebf10b5219ce175";
+          const address = "0x90c415f420Bb6E8deDd66DFF7aBd31728773373E";
           setGeneratedAddress(address);
           onGenerated(address);
         }
