@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import {
   Dialog,
@@ -63,10 +62,6 @@ const WalletAddressModal = ({ isOpen, onClose, onGenerated }: WalletAddressModal
       }
     }}>
       <DialogContent className="sm:max-w-md bg-[#0B0D17]/95 border-primary/20 text-white">
-        <DialogClose className="absolute right-4 top-4 rounded-full p-1 text-white hover:bg-primary/20 transition-colors">
-          <X className="h-5 w-5" />
-          <span className="sr-only">Close</span>
-        </DialogClose>
         <DialogHeader>
           <DialogTitle>
             {isGenerating ? "Generating Wallet Address" : "Wallet Address Generated"}
@@ -102,4 +97,3 @@ const WalletAddressModal = ({ isOpen, onClose, onGenerated }: WalletAddressModal
 };
 
 export default WalletAddressModal;
-
