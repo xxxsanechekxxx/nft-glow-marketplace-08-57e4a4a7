@@ -1,5 +1,5 @@
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { supabase } from "@/lib/supabase";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -30,15 +30,8 @@ const Marketplace = () => {
   const { ref, inView } = useInView();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("newest");
-  // Add a random seed to force refetching when the component mounts
-  const [randomSeed, setRandomSeed] = useState(() => Math.random());
 
-  // Reset random seed when the component mounts to trigger refetching
-  useEffect(() => {
-    setRandomSeed(Math.random());
-  }, []);
-
-  const fetchNFTs = useCallback(async ({ pageParam = 0 }) => {
+  const fetchNFTs = async ({ pageParam = 0 }) => {
     const from = pageParam * ITEMS_PER_PAGE;
     const to = from + ITEMS_PER_PAGE - 1;
 
@@ -80,7 +73,7 @@ const Marketplace = () => {
 
     if (error) throw error;
     return { data, count, nextPage: to < (count || 0) ? pageParam + 1 : undefined };
-  }, [searchQuery, sortBy]);
+  };
 
   const {
     data,
@@ -91,11 +84,11 @@ const Marketplace = () => {
     isFetchingNextPage,
     refetch
   } = useInfiniteQuery({
-    queryKey: ['nfts', searchQuery, sortBy, randomSeed], // Add randomSeed to force refetch
+    queryKey: ['nfts', searchQuery, sortBy],
     queryFn: fetchNFTs,
     getNextPageParam: (lastPage) => lastPage.nextPage,
     initialPageParam: 0,
-    staleTime: 0, // Set to 0 to refetch every time
+    staleTime: 300000,
     gcTime: 3600000,
   });
 

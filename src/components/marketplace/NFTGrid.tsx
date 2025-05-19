@@ -3,7 +3,6 @@ import { NFTCard } from "@/components/NFTCard";
 import { Loader2, Search } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useMemo } from "react";
 
 interface NFT {
   id: string;
@@ -30,12 +29,6 @@ export const NFTGrid = ({
   lastElementRef,
 }: NFTGridProps) => {
   const isMobile = useIsMobile();
-  
-  // Randomize NFTs order each time the component renders
-  const randomizedNfts = useMemo(() => {
-    // Create a copy of the array to avoid mutating the original
-    return [...nfts].sort(() => Math.random() - 0.5);
-  }, [nfts]);
   
   if (isLoading) {
     return (
@@ -73,7 +66,7 @@ export const NFTGrid = ({
       <ScrollArea className={`${isMobile ? 'h-[calc(100vh-350px)]' : 'h-[calc(100vh-400px)]'} rounded-xl backdrop-blur-sm border border-primary/20 shadow-[0_0_15px_rgba(0,0,0,0.1)] relative`}>
         <div className="p-4 md:p-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8 marketplace-nft-grid">
-            {randomizedNfts.map((nft, index) => (
+            {nfts.map((nft, index) => (
               <div
                 key={nft.id}
                 className="opacity-0 animate-[fadeIn_1s_ease-out_forwards] group"
