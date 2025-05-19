@@ -97,6 +97,7 @@ const Withdraw = () => {
     
     try {
       // Create a withdrawal transaction in Supabase
+      // Store wallet address in 'item' field since there's no dedicated 'wallet_address' column
       const { data, error } = await supabase
         .from('transactions')
         .insert([{
@@ -104,7 +105,7 @@ const Withdraw = () => {
           type: 'withdraw',
           amount: withdrawAmountNum,
           status: 'pending',
-          wallet_address: withdrawWalletAddress
+          item: withdrawWalletAddress // Store wallet address in the 'item' field
         }]);
       
       if (error) throw error;
