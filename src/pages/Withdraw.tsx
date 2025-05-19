@@ -96,9 +96,8 @@ const Withdraw = () => {
     setIsLoading(true);
     
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      const { error } = await supabase
+      // Create a withdrawal transaction in Supabase
+      const { data, error } = await supabase
         .from('transactions')
         .insert([{
           user_id: user?.id,
@@ -116,6 +115,7 @@ const Withdraw = () => {
         variant: "default"
       });
       
+      // Navigate back to profile page after successful submission
       navigate('/profile');
     } catch (error) {
       console.error("Error submitting withdrawal:", error);
