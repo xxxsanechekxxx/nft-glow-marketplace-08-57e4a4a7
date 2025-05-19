@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -51,6 +50,16 @@ const Withdraw = () => {
     fetchUserData();
   }, [user, toast]);
 
+  // Enhanced Ethereum address validation function
+  const isValidEthereumAddress = (address: string): boolean => {
+    // Ethereum addresses are 42 characters long (including the '0x' prefix)
+    // and contain only hexadecimal characters (0-9, a-f, A-F)
+    if (!address) return false;
+    
+    // Case insensitive regex match
+    return /^0x[0-9a-f]{40}$/i.test(address);
+  };
+
   const handleWithdraw = async (e: React.FormEvent) => {
     e.preventDefault();
     const withdrawAmountNum = parseFloat(withdrawAmount);
@@ -83,11 +92,11 @@ const Withdraw = () => {
       return;
     }
     
-    // Basic Ethereum address validation
-    if (!withdrawWalletAddress.match(/^0x[a-fA-F0-9]{40}$/)) {
+    // Improved Ethereum address validation
+    if (!isValidEthereumAddress(withdrawWalletAddress)) {
       toast({
         title: "Invalid wallet address",
-        description: "Please enter a valid Ethereum wallet address",
+        description: "Please enter a valid Ethereum wallet address (0x followed by 40 hexadecimal characters)",
         variant: "destructive"
       });
       return;
