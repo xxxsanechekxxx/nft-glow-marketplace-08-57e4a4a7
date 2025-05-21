@@ -1,9 +1,10 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowUpCircle, Loader2, AlertCircle } from "lucide-react";
+import { ArrowLeft, ArrowUpCircle, Loader2, AlertCircle, ShieldCheck } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
@@ -151,142 +152,178 @@ const Withdraw = () => {
   };
 
   return (
-    <div className="container mx-auto py-8 px-4 mt-16 min-h-screen">
-      <div className="max-w-md mx-auto">
+    <div className="container mx-auto py-16 px-4 mt-8 min-h-screen">
+      <div className="max-w-lg mx-auto">
         <Button 
           variant="ghost" 
           onClick={() => navigate('/profile')}
-          className="mb-6 pl-0 text-muted-foreground flex items-center gap-2 hover:bg-transparent hover:text-primary transition-colors"
+          className="mb-8 pl-0 text-primary flex items-center gap-2 hover:bg-transparent hover:text-primary/80 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to profile
         </Button>
         
-        <Card className="border-primary/10 shadow-lg hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm bg-gradient-to-b from-[#1A1F2C]/95 to-[#131925]/95 overflow-hidden">
-          <div className="absolute inset-0 bg-destructive/5 rounded-lg pointer-events-none" />
-          <CardHeader className="relative flex flex-row items-center justify-between pb-2">
-            <div>
-              <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-destructive/20">
+        <div className="relative">
+          {/* Background glow effect */}
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/30 to-purple-500/30 rounded-xl blur-md opacity-75"></div>
+          
+          <Card className="border-none shadow-2xl relative bg-gradient-to-b from-background to-background/95 overflow-hidden backdrop-blur-sm">
+            {/* Top gradient line */}
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-primary/50 via-purple-500/50 to-primary/50"></div>
+            
+            {/* Background pattern */}
+            <div className="absolute inset-0 bg-[radial-gradient(#9b87f510_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
+            
+            <CardHeader className="relative pb-2">
+              <div className="flex flex-row items-center gap-4 mb-2">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-destructive/20 to-destructive/10 flex items-center justify-center shadow-inner">
                   <ArrowUpCircle className="w-6 h-6 text-destructive" />
                 </div>
-                Withdraw
-              </CardTitle>
-              <CardDescription className="text-muted-foreground mt-2">
-                Transfer funds to your wallet
-              </CardDescription>
-            </div>
-          </CardHeader>
-          <CardContent className="relative pt-4">
-            <form onSubmit={handleWithdraw} className="space-y-6">
-              {isLoadingBalance ? (
-                <div className="p-3 border border-primary/10 rounded-lg bg-primary/5 flex items-center justify-center">
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  <span>Loading balance...</span>
-                </div>
-              ) : userData ? (
-                <div className="p-3 border border-primary/10 rounded-lg bg-primary/5 flex justify-between">
-                  <span className="text-muted-foreground">Available Balance:</span>
-                  <span className="font-medium">{userData.balance} ETH</span>
-                </div>
-              ) : (
-                <div className="p-3 border border-destructive/20 rounded-lg bg-destructive/5 flex items-center">
-                  <AlertCircle className="h-4 w-4 text-destructive mr-2" />
-                  <span className="text-sm">Failed to load balance</span>
-                </div>
-              )}
-              
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium text-destructive/80">
-                      Amount (ETH)
-                    </label>
-                    <Button 
-                      type="button" 
-                      variant="ghost" 
-                      className="h-auto py-0 px-1 text-xs text-destructive/70 hover:text-destructive"
-                      onClick={() => userData && setWithdrawAmount(userData.balance)}
-                    >
-                      Max
-                    </Button>
-                  </div>
-                  <div className="relative">
-                    <Input 
-                      type="number" 
-                      step="0.0001" 
-                      min="0.0001" 
-                      value={withdrawAmount} 
-                      onChange={e => setWithdrawAmount(e.target.value)} 
-                      placeholder="Enter amount" 
-                      className="bg-background/40 border-destructive/20 focus:border-destructive/40 focus-visible:ring-destructive/20 pr-16" 
-                    />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-destructive/80">
-                      ETH
-                    </span>
-                  </div>
-                </div>
-
-                {withdrawAmount && parseFloat(withdrawAmount) > 0 && (
-                  <div className="space-y-2 p-3 border border-primary/10 rounded-lg bg-primary/5 animate-in fade-in">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Withdrawal Amount:</span>
-                      <span className="font-medium text-destructive/80">{withdrawAmount} ETH</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Fee (2%):</span>
-                      <span className="font-medium text-yellow-400">{calculateFee(withdrawAmount)} ETH</span>
-                    </div>
-                    <div className="h-px bg-primary/10 my-1"></div>
-                    <div className="flex justify-between text-sm font-medium">
-                      <span className="text-muted-foreground">You will receive:</span>
-                      <span className="text-destructive/80">{calculateReceiveAmount(withdrawAmount)} ETH</span>
-                    </div>
-                  </div>
-                )}
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-destructive/80 flex items-center gap-1.5">
-                    <ArrowUpCircle className="w-4 h-4" />
-                    Wallet Address
-                  </label>
-                  <Input 
-                    type="text" 
-                    value={withdrawWalletAddress} 
-                    onChange={e => setWithdrawWalletAddress(e.target.value)} 
-                    placeholder="Enter your ETH wallet address" 
-                    className="font-mono text-sm bg-background/40 border-destructive/20 focus:border-destructive/40 focus-visible:ring-destructive/20" 
-                  />
-                  <div className="text-xs text-muted-foreground flex items-start gap-1.5">
-                    <AlertCircle className="h-3.5 w-3.5 flex-shrink-0 mt-0.5 text-yellow-500" />
-                    <p>Make sure to double-check the wallet address. Transactions cannot be reversed after submission.</p>
-                  </div>
-                </div>
-                <Button 
-                  type="submit" 
-                  className="w-full bg-destructive/20 hover:bg-destructive/30 text-destructive transition-colors"
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Processing...
-                    </>
-                  ) : (
-                    "Confirm Withdrawal"
-                  )}
-                </Button>
-
-                <div className="text-xs text-muted-foreground bg-primary/5 p-3 rounded-lg border border-primary/10">
-                  <div className="flex items-start gap-2">
-                    <AlertCircle className="h-3.5 w-3.5 flex-shrink-0 mt-0.5 text-yellow-500" />
-                    <p>Withdrawal requests are processed manually and may take up to 24 hours to complete. If you need urgent assistance, please contact our support team.</p>
-                  </div>
+                <div>
+                  <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+                    Withdraw Funds
+                  </CardTitle>
+                  <CardDescription className="text-muted-foreground">
+                    Transfer ETH to your external wallet
+                  </CardDescription>
                 </div>
               </div>
-            </form>
-          </CardContent>
-        </Card>
+            </CardHeader>
+            
+            <CardContent className="relative pt-4">
+              <form onSubmit={handleWithdraw} className="space-y-6">
+                {isLoadingBalance ? (
+                  <div className="p-4 rounded-xl bg-gradient-to-r from-primary/5 to-purple-500/5 border border-primary/10 flex items-center justify-center">
+                    <Loader2 className="h-5 w-5 animate-spin mr-3 text-primary" />
+                    <span className="text-primary/80 font-medium">Loading your balance...</span>
+                  </div>
+                ) : userData ? (
+                  <div className="p-5 rounded-xl bg-gradient-to-r from-primary/10 to-purple-500/10 border border-primary/10 flex justify-between items-center">
+                    <div className="flex flex-col">
+                      <span className="text-sm text-muted-foreground mb-1">Available Balance</span>
+                      <span className="text-2xl font-bold text-white">{userData.balance} <span className="text-primary">ETH</span></span>
+                    </div>
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-purple-500/20 flex items-center justify-center">
+                      <ShieldCheck className="w-6 h-6 text-primary" />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-4 rounded-xl bg-destructive/5 border border-destructive/20 flex items-center">
+                    <AlertCircle className="h-5 w-5 text-destructive mr-3" />
+                    <span className="text-sm text-destructive">We couldn't load your balance. Please try again.</span>
+                  </div>
+                )}
+                
+                <div className="space-y-6 pt-2">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <label className="text-sm font-medium text-primary/90 flex items-center gap-1.5">
+                        Amount to Withdraw
+                      </label>
+                      <Button 
+                        type="button" 
+                        variant="ghost" 
+                        className="h-auto py-0 px-2 text-xs text-primary/80 hover:text-primary hover:bg-primary/5"
+                        onClick={() => userData && setWithdrawAmount(userData.balance)}
+                        disabled={isLoadingBalance || !userData}
+                      >
+                        Use Max Amount
+                      </Button>
+                    </div>
+                    <div className="relative">
+                      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-md blur-sm opacity-50"></div>
+                      <div className="relative">
+                        <Input 
+                          type="number" 
+                          step="0.0001" 
+                          min="0.0001" 
+                          value={withdrawAmount} 
+                          onChange={e => setWithdrawAmount(e.target.value)} 
+                          placeholder="Enter ETH amount" 
+                          className="bg-background border-primary/20 focus:border-primary/50 pr-16 text-lg transition-all"
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-primary/80">
+                          ETH
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {withdrawAmount && parseFloat(withdrawAmount) > 0 && (
+                    <div className="space-y-2 p-4 rounded-xl bg-gradient-to-r from-background/60 to-background/40 border border-primary/10 animate-in fade-in">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Withdrawal Amount:</span>
+                        <span className="font-medium text-white">{withdrawAmount} ETH</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Fee (2%):</span>
+                        <span className="font-medium text-yellow-400">{calculateFee(withdrawAmount)} ETH</span>
+                      </div>
+                      <div className="h-px bg-gradient-to-r from-primary/10 via-primary/20 to-primary/10 my-2"></div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground text-sm">You will receive:</span>
+                        <span className="text-lg font-bold text-white">{calculateReceiveAmount(withdrawAmount)} ETH</span>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="space-y-3">
+                    <label className="text-sm font-medium text-primary/90 flex items-center gap-1.5">
+                      Wallet Address
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-md blur-sm opacity-50"></div>
+                      <Input 
+                        type="text" 
+                        value={withdrawWalletAddress} 
+                        onChange={e => setWithdrawWalletAddress(e.target.value)} 
+                        placeholder="0x..." 
+                        className="font-mono text-sm bg-background border-primary/20 focus:border-primary/50 transition-all"
+                      />
+                    </div>
+                    <div className="text-xs text-muted-foreground flex items-start gap-1.5 px-1">
+                      <AlertCircle className="h-3.5 w-3.5 flex-shrink-0 mt-0.5 text-yellow-500" />
+                      <p>Double-check your wallet address carefully. Transactions cannot be reversed after submission.</p>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-4">
+                    <div className="relative">
+                      <div className="absolute -inset-0.5 bg-gradient-to-r from-destructive/50 to-red-500/50 rounded-md blur-md opacity-75 group-hover:opacity-100 transition-opacity"></div>
+                      <Button 
+                        type="submit" 
+                        className="relative w-full py-6 bg-gradient-to-r from-destructive/80 to-red-500/80 text-white font-medium text-lg hover:from-destructive hover:to-red-500 transition-all shadow-lg hover:shadow-destructive/20 group"
+                        disabled={isLoading || isLoadingBalance || !userData}
+                      >
+                        {isLoading ? (
+                          <>
+                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                            Processing...
+                          </>
+                        ) : (
+                          <>
+                            Confirm Withdrawal
+                            <ArrowUpCircle className="ml-2 h-5 w-5 group-hover:translate-y-[-2px] transition-transform" />
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="text-xs text-muted-foreground p-4 rounded-xl bg-primary/5 border border-primary/10">
+                    <div className="flex items-start gap-2">
+                      <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5 text-yellow-500" />
+                      <div>
+                        <p className="font-medium text-sm text-white mb-1">Processing Time</p>
+                        <p>Withdrawal requests are typically processed within 24 hours. For urgent assistance, please contact our support team.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
