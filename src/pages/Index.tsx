@@ -1,4 +1,3 @@
-
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -158,14 +157,13 @@ const Index = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Enhanced animated background with multiple layers */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-purple-500/10 to-pink-500/10 -z-10"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-purple-500/5 to-pink-500/5 -z-10"></div>
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background/80 to-background/60 -z-10"></div>
       
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[20%] right-[15%] w-[600px] h-[600px] bg-primary/10 rounded-full blur-[180px] animate-[pulse_10s_ease-in-out_infinite]"></div>
-        <div className="absolute bottom-[30%] left-[10%] w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[150px] animate-[pulse_15s_ease-in-out_infinite] delay-1000"></div>
-        <div className="absolute top-[40%] left-[30%] w-[800px] h-[800px] bg-pink-500/5 rounded-full blur-[200px] animate-[pulse_20s_ease-in-out_infinite] delay-500"></div>
+        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[150px] animate-[pulse_8s_ease-in-out_infinite]"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[150px] animate-[pulse_12s_ease-in-out_infinite] delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-pink-500/5 rounded-full blur-[150px] animate-[pulse_15s_ease-in-out_infinite] delay-500"></div>
       </div>
 
       <div ref={heroRef}>
@@ -176,23 +174,20 @@ const Index = () => {
         <HowItWorksSection />
       </div>
       
-      <div ref={trustRef} className="relative z-10">
-        <div className="absolute inset-0 bg-gradient-to-b from-background/0 via-background/80 to-background/0 -z-10"></div>
+      <div ref={trustRef}>
         <TrustIndicators />
       </div>
 
-      <div ref={statsRef} className="relative z-10">
-        <div className="absolute inset-0 bg-gradient-to-b from-background/0 via-background/60 to-background/0 -z-10"></div>
+      <div ref={statsRef}>
         <StatsSection />
       </div>
       
-      <div ref={testimonialsRef} className="relative z-10">
-        <div className="absolute inset-0 bg-gradient-to-t from-background/0 via-background/80 to-background/0 -z-10"></div>
+      <div ref={testimonialsRef}>
         <Testimonials />
       </div>
 
-      <div ref={featuredRef} className="py-24 bg-background/30 backdrop-blur-sm relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/10 via-purple-500/10 to-pink-500/5"></div>
+      <div ref={featuredRef} className="py-24 bg-background/50 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/5 via-purple-500/5 to-pink-500/5"></div>
         
         <div className="container mx-auto px-4 relative">
           <div className="flex flex-col md:flex-row justify-between items-center mb-12">
@@ -217,8 +212,8 @@ const Index = () => {
           </div>
           
           <div className="relative">
-            <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 to-purple-500/30 rounded-xl blur opacity-75"></div>
-            <div className="relative bg-background/20 backdrop-blur-xl rounded-xl border border-primary/20 p-8 shadow-lg shadow-primary/5">
+            <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-xl blur opacity-75"></div>
+            <div className="relative bg-background/20 backdrop-blur-xl rounded-xl border border-primary/10 p-8">
               <Carousel className="w-full max-w-5xl mx-auto">
                 <CarouselContent>
                   {featuredNFTs?.map((nft) => (
@@ -239,10 +234,10 @@ const Index = () => {
             <Link to="/marketplace" className="inline-block">
               <Button 
                 size="lg" 
-                className="relative overflow-hidden bg-primary/90 hover:bg-primary backdrop-blur-sm px-8 text-lg shadow-xl hover:shadow-primary/30 transition-all duration-700 group"
+                className="relative overflow-hidden bg-primary/90 hover:bg-primary backdrop-blur-sm px-8 text-lg shadow-lg hover:shadow-primary/20 transition-all duration-700 group"
               >
                 <span className="relative z-10">Explore Marketplace</span>
-                <ArrowRight className="ml-2 w-5 h-5 relative z-10 group-hover:translate-x-2 transition-transform duration-300" />
+                <ArrowRight className="ml-2 w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
                 <div className="absolute inset-0 bg-gradient-to-r from-primary via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
               </Button>
             </Link>

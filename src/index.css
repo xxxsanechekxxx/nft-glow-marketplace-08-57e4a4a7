@@ -24,7 +24,7 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 263 84% 74%;
-    --radius: 1rem;
+    --radius: 0.5rem;
   }
 }
 
@@ -42,77 +42,27 @@
     width: 100%;
     margin: 0;
     padding: 0;
-    background-image: 
-      radial-gradient(circle at 20% 30%, rgba(147, 51, 234, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
-    background-attachment: fixed;
   }
 
   body[data-state="open"] {
     overflow: hidden !important;
     padding-right: var(--removed-body-scroll-bar-size) !important;
   }
-  
-  /* Enhanced typography */
-  h1, h2, h3, h4, h5, h6 {
-    @apply tracking-tight;
-    letter-spacing: -0.015em;
-  }
-  
-  h1 {
-    @apply font-bold text-3xl md:text-4xl lg:text-5xl;
-  }
-  
-  h2 {
-    @apply font-bold text-2xl md:text-3xl lg:text-4xl;
-  }
-  
-  /* Link hover effect */
-  a:not(.no-underline) {
-    @apply relative;
-  }
-  
-  a:not(.no-underline):after {
-    content: '';
-    @apply absolute bottom-0 left-0 w-0 h-[1px] bg-primary/50 transition-all duration-300;
-  }
-  
-  a:not(.no-underline):hover:after {
-    @apply w-full;
-  }
 }
 
-/* Enhanced glass card effect */
-.glass-card {
-  @apply backdrop-blur-xl bg-background/60 border border-white/10;
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.25),
-    0 1px 1px rgba(255, 255, 255, 0.08) inset,
-    0 0 0 1px rgba(255, 255, 255, 0.05);
+.nft-card {
+  @apply relative overflow-hidden rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-xl;
+  background: linear-gradient(225deg, #2a2a2a 0%, #1a1f2c 100%);
 }
 
-/* Enhanced gradient text */
-.gradient-text {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-white via-primary to-purple-400 animate-gradient bg-300%;
+.hero-gradient {
+  background: linear-gradient(102.3deg, rgba(147,39,143,1) 5.9%, rgba(234,172,232,1) 64%, rgba(246,219,245,1) 89%);
 }
 
-/* Animated buttons */
-.btn-glow {
-  @apply relative overflow-hidden;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+.bg-usdt {
+  background-color: #26A17B;
 }
 
-.btn-glow:before {
-  content: '';
-  @apply absolute inset-0 bg-gradient-to-r from-primary/50 to-purple-500/50 opacity-0 blur-md -z-10;
-  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.btn-glow:hover:before {
-  @apply opacity-100;
-}
-
-/* Enhanced Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -205,59 +155,11 @@
   }
 }
 
-/* New design system components */
-.card-highlight {
-  @apply relative overflow-hidden transition-all duration-300 hover:translate-y-[-3px];
-  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.1);
-}
-
-.card-highlight:before {
-  content: '';
-  @apply absolute inset-0 bg-gradient-to-br from-primary/10 via-purple-500/10 to-pink-500/10 opacity-0 transition-opacity duration-500;
-}
-
-.card-highlight:hover:before {
-  @apply opacity-100;
-}
-
-.card-highlight:hover {
-  box-shadow: 0 10px 25px 0 rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(139, 92, 246, 0.1);
-}
-
-.input-highlight {
-  @apply transition-all duration-300;
-}
-
-.input-highlight:focus {
-  @apply ring-2 ring-primary/40;
-  box-shadow: 0 0 0 2px rgba(147, 39, 143, 0.2), 0 0 15px rgba(147, 39, 143, 0.1);
-}
-
-/* Enhanced Glow effects */
-.glow-effect {
-  position: relative;
-}
-
-.glow-effect:before {
-  content: '';
-  @apply absolute -inset-0.5 bg-gradient-to-r from-primary/50 to-purple-500/50 rounded-lg blur opacity-0;
-  transition: opacity 0.4s ease;
-}
-
-.glow-effect:hover:before {
-  @apply opacity-75;
-}
-
-/* Updated bid card styling */
+/* Updated bid card styling to match screenshot */
 .bid-card {
-  @apply relative rounded-lg p-4 border transition-all duration-300 hover:border-primary/30;
+  @apply relative rounded-lg p-4 border;
   background: #131B31;
   border-color: #2A3047;
-}
-
-.bid-card:hover {
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(139, 92, 246, 0.1);
-  transform: translateY(-2px);
 }
 
 .bid-badge {
@@ -285,67 +187,11 @@
 }
 
 .accept-button {
-  @apply bg-green-600 hover:bg-green-700 text-white w-full flex justify-center items-center transition-all duration-300;
+  @apply bg-green-600 hover:bg-green-700 text-white w-full flex justify-center items-center;
 }
 
 .decline-button {
-  @apply bg-transparent border border-red-500 text-red-400 hover:bg-red-950/30 w-full flex justify-center items-center transition-all duration-300;
-}
-
-/* Custom UI Elements */
-.blend-overlay {
-  @apply relative overflow-hidden;
-}
-
-.blend-overlay:before {
-  content: "";
-  @apply absolute inset-0 bg-gradient-to-br from-primary/10 to-purple-500/5 opacity-80 mix-blend-overlay;
-}
-
-.glass-panel {
-  @apply relative backdrop-blur-lg bg-white/5 border border-white/10 rounded-xl overflow-hidden;
-  box-shadow: 
-    0 4px 30px rgba(0, 0, 0, 0.1),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.03);
-}
-
-.glass-panel.active {
-  @apply border-primary/30;
-  box-shadow: 
-    0 4px 30px rgba(0, 0, 0, 0.15),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
-    0 0 15px rgba(155, 135, 245, 0.2);
-}
-
-.hover-lift {
-  @apply transition-all duration-500 ease-out;
-}
-
-.hover-lift:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-}
-
-.text-shadow-sm {
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-.text-shadow {
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.text-shadow-lg {
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-}
-
-/* Border glow effect */
-.border-glow {
-  @apply border border-primary/20 transition-all duration-300;
-}
-
-.border-glow:hover, .border-glow:focus {
-  @apply border-primary/50;
-  box-shadow: 0 0 0 1px rgba(155, 135, 245, 0.3), 0 0 15px rgba(155, 135, 245, 0.15);
+  @apply bg-transparent border border-red-500 text-red-400 hover:bg-red-950/30 w-full flex justify-center items-center;
 }
 
 /* Mobile-specific styles */
@@ -539,125 +385,117 @@
   }
 }
 
-/* Enhanced custom scrollbar styling */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+/* Responsive tab styles */
+.responsive-tabs-list {
+  @apply flex flex-wrap gap-1 !important;
 }
 
-::-webkit-scrollbar-track {
-  background: rgba(15, 15, 25, 0.9);
-  border-radius: 4px;
+.responsive-tab-trigger {
+  @apply flex-grow flex-shrink-0 !important;
 }
 
-::-webkit-scrollbar-thumb {
-  background: rgba(155, 135, 245, 0.6);
-  border-radius: 4px;
-  border: 1px solid rgba(155, 135, 245, 0.2);
+/* NFT collection view animations */
+.animate-in {
+  animation-duration: 0.3s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: both;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(155, 135, 245, 0.9);
+.fade-in {
+  animation-name: fadeIn;
 }
 
-/* New components styling */
-.card-3d {
-  @apply transition-all duration-500 relative;
-  transform-style: preserve-3d;
-  transform: perspective(1000px);
+/* Glassmorphism styles */
+.glass-panel {
+  background: rgba(26, 31, 44, 0.5);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(147, 39, 143, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
-.card-3d-content {
-  @apply absolute inset-0 bg-background/80 backdrop-blur-lg rounded-lg border border-white/10;
-  transform-style: preserve-3d;
-  transform: translateZ(20px);
-  box-shadow: 
-    0 10px 30px -5px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.05);
+/* View mode transition */
+.view-transition {
+  transition: all 0.3s ease;
 }
 
-.card-noise {
-  @apply relative overflow-hidden;
+/* NFT card sizing for marketplace */
+@media (max-width: 640px) {
+  .marketplace-nft-grid {
+    grid-template-columns: repeat(1, 1fr) !important;
+    gap: 1rem !important;
+  }
+  
+  .marketplace-nft-card .aspect-square {
+    height: 300px !important;
+  }
 }
 
-.card-noise:after {
+/* Transaction type icon-only styles */
+.transaction-type-icon-only {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.transaction-type-icon-only span {
+  display: none;
+}
+
+/* Glass effect for the circular button */
+.circular-button-glow {
+  position: relative;
+  z-index: 10;
+}
+
+.circular-button-glow::before {
   content: '';
-  @apply absolute inset-0 opacity-[0.03] pointer-events-none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-}
-
-/* Button styles */
-.btn-primary-glow {
-  @apply relative overflow-hidden bg-primary/90 hover:bg-primary text-white px-6 py-3 rounded-lg transition-all duration-300;
-  box-shadow: 0 4px 20px -5px rgba(147, 51, 234, 0.5);
-}
-
-.btn-primary-glow:hover {
-  box-shadow: 0 8px 25px -5px rgba(147, 51, 234, 0.7);
-}
-
-.btn-primary-glow:before {
-  content: '';
-  @apply absolute inset-0 bg-gradient-to-r from-primary via-purple-500 to-pink-500 opacity-0;
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(45deg, #9b87f5, #7e69ab, #d946ef);
+  border-radius: 50%;
+  filter: blur(8px);
+  opacity: 0.7;
+  z-index: -1;
   transition: opacity 0.3s ease;
 }
 
-.btn-primary-glow:hover:before {
-  @apply opacity-100;
+.circular-button-glow:hover::before {
+  opacity: 1;
 }
 
-.btn-primary-glow span {
-  @apply relative z-10;
-}
-
-/* Gradient borders */
-.gradient-border {
-  @apply relative rounded-xl overflow-hidden p-[1px];
-}
-
-.gradient-border:before {
-  content: '';
-  @apply absolute inset-0 rounded-xl;
-  background: linear-gradient(45deg, rgba(155, 135, 245, 0.5), rgba(139, 92, 246, 0.2), rgba(168, 85, 247, 0.4));
-  z-index: -2;
-}
-
-.gradient-border:after {
-  content: '';
-  @apply absolute inset-[1px] rounded-[calc(0.75rem-1px)] bg-background;
-  z-index: -1;
-}
-
-.gradient-border-content {
-  @apply relative z-10 rounded-lg;
-}
-
-/* Animation for shine effect on elements */
-@keyframes shine {
-  0% {
-    background-position: -100% 0;
+/* Additional mobile optimizations */
+@media (max-width: 768px) {
+  .header-logo {
+    font-size: 1.25rem !important;
   }
-  100% {
-    background-position: 200% 0;
+  
+  .header-logo-icon {
+    width: 1.5rem !important;
+    height: 1.5rem !important;
   }
-}
-
-.shine-effect {
-  position: relative;
-  overflow: hidden;
-}
-
-.shine-effect:before {
-  content: '';
-  position: absolute;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.1),
-    transparent
-  );
-  animation: shine 3s infinite;
+  
+  /* Adjust spacing for content below fixed header */
+  .main-content {
+    padding-top: 4.5rem !important;
+  }
+  
+  /* Make buttons easier to tap on mobile */
+  button, 
+  .button,
+  a.button,
+  [role="button"] {
+    min-height: 42px !important;
+    min-width: 42px !important;
+  }
+  
+  /* Improve form elements spacing on mobile */
+  .form-group {
+    margin-bottom: 1rem !important;
+  }
+  
+  /* Adjust card styling for mobile */
+  .card {
+    border-radius: 0.75rem !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+  }
 }
